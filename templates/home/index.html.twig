@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Binioufous!{% endblock %}
+
+{% block body %}
+<div class="loading" id="js-loader"><div class="loader"></div></div>
+<div class="mascotte"><canvas id="c"></canvas></div>
+<video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="../build/images/Foryou3.mp4" type="video/mp4"></video>
+<video id="video2" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="../build/images/soucoupe.mp4" type="video/mp4"></video>
+{% endblock %}
+
+{% block javascripts %}
+        {{ encore_entry_script_tags('index') }}
+{% endblock %}

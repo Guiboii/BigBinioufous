@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+
+{% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags('music') }}
+        {% endblock %}
+
+{% block title %}Track index{% endblock %}
+
+{% block body %}
+
+<div class="overlay">
+    <div class="player-wrap">
+        <div class="row">
+
+            <div class="waveW">
+                <div id="waveform"></div>
+            </div>
+        </div>
+        <div class="row playerButtons">
+            {# <a href="{{ path('track_new') }}">Upload</a> #}
+            <a id="uploadNew" href="/join">
+                <span id="upload"><svg class="bi bi-circle-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8"/></svg>
+                Upload</span>
+            </a>
+
+            <div id="stopTrack">
+                <span id="stop"><svg class="bi bi-stop-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5 3.5h6A1.5 1.5 0 0112.5 5v6a1.5 1.5 0 01-1.5 1.5H5A1.5 1.5 0 013.5 11V5A1.5 1.5 0 015 3.5z"/></svg>
+                </span>
+            </div>
+
+            <div id="playPause">
+                <span id="play"><svg class="bi bi-play-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 010 1.393z"/></svg>
+                </span>
+
+                <span id="pause" style="display: none"><svg class="bi bi-pause-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 3.5A1.5 1.5 0 017 5v6a1.5 1.5 0 01-3 0V5a1.5 1.5 0 011.5-1.5zm5 0A1.5 1.5 0 0112 5v6a1.5 1.5 0 01-3 0V5a1.5 1.5 0 011.5-1.5z"/></svg>
+                 </span>
+
+            </div>       
+
+            <div id="loopRegion">
+                <span id="loop" class""><svg class="bi bi-arrow-repeat" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 00-.708 0l-2 2a.5.5 0 10.708.708L2.5 8.207l1.646 1.647a.5.5 0 00.708-.708l-2-2zm13-1a.5.5 0 00-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 00-.708.708l2 2a.5.5 0 00.708 0l2-2a.5.5 0 000-.708z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M8 3a4.995 4.995 0 00-4.192 2.273.5.5 0 01-.837-.546A6 6 0 0114 8a.5.5 0 01-1.001 0 5 5 0 00-5-5zM2.5 7.5A.5.5 0 013 8a5 5 0 009.192 2.727.5.5 0 11.837.546A6 6 0 012 8a.5.5 0 01.501-.5z" clip-rule="evenodd"/></svg>
+                Loop</span>
+            </div>
+            <input id="slider" data-action="zoom" type="range" min="1" max="200" value="0" />
+        </div>
+</div>
+
+<div class="playlist-wrap">
+    <div class="accordion float-left" id="playlist">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="text-white bg-transparent" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Disco
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#playlist">
+                <div class="card-body">
+                    {% for track in tracks %}
+                    <a href="../uploads/music/test.mp3" class="list-group-item">
+                        <i class="glyphicon glyphicon-play"></i>
+                        {{ track.title }} by {{ track.artist.name }}
+                        <span class="badge">{{ track.duration }}</span></a>
+                    {% else %}
+                            <span>no records found</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+            <h2 class="mb-0">
+                <button class="text-white bg-transparent collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Rock
+                </button>
+            </h2>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#playlist">
+                <div class="card-body">
+
+                    {% for track in tracks %}
+                    <a href="../uploads/music/test.mp3" class="list-group-item">
+                        <i class="glyphicon glyphicon-play"></i>
+                        {{ track.title }} by {{ track.artist.name }}
+                        <span class="badge">{{ track.duration }}</span></a>
+                    {% else %}
+                            <span>no records found</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="members-only float-left">
+
+        <form id="loginForm">
+        <div class="form-group">
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="email to login">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="password">
+        </div>
+        <button type="submit" class="btn btn-dark">Unlock</button>
+        <a class="btn bg-yellow" href="/join" role="button">Register</a>
+        </form>
+
+        
+        <div class="loggedinContent d-none">
+        {% for track in tracks %}
+        <span class="list-group-item">Voix: {{ track.artist.name }}
+        <a href="{{ path('track_show', {'id': track.id}) }}">download</a></span>
+        {% else %}
+        <span>no link found</span>
+        {% endfor %}
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<div class="loading" id="js-loader"><div class="loader"></div></div>
+<div class="mascotte"><canvas id="c"></canvas></div>
+
+{% endblock %}
+
+{% block javascripts %}
+        <script src="https://unpkg.com/wavesurfer.js"></script>
+        <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
+
+        {{ encore_entry_script_tags('music') }}
+ 
+{% endblock %}

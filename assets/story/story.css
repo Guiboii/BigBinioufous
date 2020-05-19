@@ -1,0 +1,16 @@
+#computer-wrapper, #miniSite {
+    position: absolute;
+    z-index: 1000;
+    width: 790px;
+    height: 400px;
+    background: white;
+    left: 50%;
+    margin-left: -290px;
+    top: 23px;
+    overflow-y: scroll;
+}
+
+.navbar {
+    position: fixed;
+    width: 100%;
+}

@@ -1,0 +1,244 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.1.46",
+        "version" : "2.0"
+    },
+    "scene" : 6,
+    "scenes" : [
+        {
+            "name" : "Armoire"
+        },
+        {
+            "name" : "Desk"
+        },
+        {
+            "name" : "Desk.001"
+        },
+        {
+            "name" : "Flyer.001"
+        },
+        {
+            "name" : "Flyer.002"
+        },
+        {
+            "name" : "MAIN"
+        },
+        {
+            "name" : "MAIN.001",
+            "nodes" : [
+                0
+            ]
+        },
+        {
+            "name" : "Scene"
+        },
+        {
+            "name" : "spot"
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Flyer_R.003",
+            "rotation" : [
+                0.7705435752868652,
+                0,
+                0,
+                0.6373872756958008
+            ],
+            "scale" : [
+                -19.055572509765625,
+                -15.159538269042969,
+                -14.846055030822754
+            ],
+            "translation" : [
+                64.36943817138672,
+                19.750659942626953,
+                74.24552917480469
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "emissiveFactor" : [
+                0,
+                0,
+                0
+            ],
+            "name" : "YELLOW",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.8879233598709106,
+                    0.4452010691165924,
+                    0.03310481458902359,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
+            }
+        },
+        {
+            "doubleSided" : true,
+            "emissiveFactor" : [
+                0,
+                0,
+                0
+            ],
+            "name" : "WHITE",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Plane.010",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                },
+                {
+                    "attributes" : {
+                        "POSITION" : 4,
+                        "NORMAL" : 5,
+                        "TEXCOORD_0" : 6
+                    },
+                    "indices" : 7,
+                    "material" : 1
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 8,
+            "max" : [
+                8.940696716308594e-08,
+                2.2906923294067383,
+                3.1680259704589844
+            ],
+            "min" : [
+                -0.006175435613840818,
+                -0.27653491497039795,
+                -0.3436855673789978
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 8,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 8,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 12,
+            "type" : "SCALAR"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5126,
+            "count" : 4,
+            "max" : [
+                -0.0061753178015351295,
+                1.979404330253601,
+                1.6216713190078735
+            ],
+            "min" : [
+                -0.006175451446324587,
+                0.11486047506332397,
+                -0.24526208639144897
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 5,
+            "componentType" : 5126,
+            "count" : 4,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 6,
+            "componentType" : 5126,
+            "count" : 4,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 7,
+            "componentType" : 5123,
+            "count" : 6,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 96,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 96,
+            "byteOffset" : 96
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 64,
+            "byteOffset" : 192
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 24,
+            "byteOffset" : 256
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 280
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 48,
+            "byteOffset" : 328
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 32,
+            "byteOffset" : 376
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 12,
+            "byteOffset" : 408
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 420,
+            "uri" : "data:application/octet-stream;base64,AAAAM/qVjT6O96++AACAM/yVjb6O96++AADAM/yVjb6N968+AACAM/qVjT6N968+T1vKuzjXAkA7v70/nlrKuyibID5R1ew/7VnKu3Zpzj7wwEpAnlrKu7SaEkDlNTNAAACAv4BvZ7N7NzozAACAv4BvZ7N7NzozAACAv4BvZ7N7NzozAACAv4BvZ7N7NzozAACAv4JwArM0gpIzAACAv4JwArM0gpIzAACAv4JwArM0gpIzAACAv4JwArM0gpIzAAAAAP3/fz/8/38/AACAPwAAgD8AAIA0AABANAAAAAAAAAAA/f9/P/z/fz8AAIA/AACAPwAAgDQAAEA0AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAHFbyrttqtA//CV7vuFayrv4O+s90J37PVJayrvGme0+7ZLPP+FayrsfXf0/UXSgPwAAgL+pOQezn/1eMwAAgL+pOQezn/1eMwAAgL+pOQezn/1eMwAAgL+pOQezn/1eMwAAAAD9/38//P9/PwAAgD8AAIA/AACANAAAQDQAAAAAAAABAAIAAAACAAMA"
+        }
+    ]
+}

@@ -1,0 +1,278 @@
+body {
+    background-color: rgb(158, 174, 179);
+}
+
+.device-orientation {
+    position: absolute;
+    z-index: 1200;
+    color: #F2B233;
+    font-size: 3.5em;
+    width: 100%;
+    top: 25%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.btn-link, a,
+.btn-link:hover, a:hover {
+    color: #1F6652;
+}
+
+.bg-green {
+    background:  #1F6652;;
+}
+.bg-red {
+    background:  #9e0000;;
+}
+.bg-yellow {
+    background:  #F2B233;;
+}
+.text-green {
+    color:  #1F6652;;
+}
+.text-redwall {
+    color:  #BC2727;;
+}
+.text-yellow {
+    color:  #F2B233;;
+}
+#c {
+    position: absolute;
+    z-index: 800;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+canvas {
+	display: block;
+}
+
+.loader {
+    display: block;
+    background: url(b_mascot_loading.png) center no-repeat;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    margin-left: -50px;
+    margin-top: -50px;
+    
+}
+.isloaded .loader {
+    height: 0;
+    -webkit-transition-property: background-color height;
+    -webkit-transition-duration: 0.3s;
+    -webkit-transition-delay: 0.6s;
+    -webkit-transition-timing-function: ease;
+    transition-property: background-color height;
+    transition-duration: 0.3s;
+    transition-delay: 0.6s;
+    transition-timing-function: ease;
+}
+
+.loading {
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #9E0000;
+}
+
+.isloaded{
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    display: block;
+    background: #9E0000;
+    -webkit-transition-property: background-color height;
+    -webkit-transition-duration: 0.3s;
+    -webkit-transition-delay: 0.5s;
+    -webkit-transition-timing-function: ease;
+    transition-property: background-color height;
+    transition-duration: 0.3s;
+    transition-delay: 0.5s;
+    transition-timing-function: ease;
+}
+
+.list-group-item.active {
+    background-color: #1F6652;
+    border-color: #1F6652;
+}
+
+#joinForm, #loginForm {
+    position: absolute;
+    z-index: 900;
+    background: #BC2727;
+    width: 340px;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    margin-top: -200px;
+    margin-left: -170px;
+    padding: 2% 4%;
+    border: 5px solid #23272b;
+}
+
+#loginForm {
+    background: #1f6652;
+}
+
+#contactForm {
+    position: absolute;
+    z-index: 1100;
+    width: 790px;
+    height: 400px;
+    background: #1f6652;
+    left: 50%;
+    margin-left: -290px;
+    top: 23px;
+}
+
+form {
+    background: #1f6652;
+    text-align: center;
+    padding: 2% 4%;
+    border: 5px solid #23272b;
+}
+
+.login, .join {
+    position: absolute;
+    z-index: 900;
+    top: 50%;
+    width: 150px;
+    text-align: center;
+    left: 50%;
+    margin-left: -75px;
+}
+
+.login {
+    margin-left: -25%;
+}
+.join {
+    margin-left: 15%;
+}
+
+a.login:hover {
+    color: #F2B233;
+}
+a.join:hover {
+    color: #BC2727;
+}
+
+
+.navbar-collapse.collapsing, .no-transition {
+  -webkit-transition: height 0.0s;
+  -moz-transition: height 0.0s;
+  -ms-transition: height 0.0s;
+  -o-transition: height 0.0s;
+  transition: height 0.0s;
+
+}
+.navbar {
+    position: fixed;
+    z-index: 1000;
+    background: transparent;
+}
+
+.navbar.mini {
+    background: #0f352c;
+    width: 100%;
+}
+
+.navbar-collapse {
+    top: 10%;
+    left: 10%;
+    background: #fbdb7c;
+    border: 5px solid #1f6652;
+    padding: 5% 10%;
+    width: 80%;
+    position: fixed;
+    z-index: 1000;
+    text-align: center;
+}
+
+
+.navbar .navbar-toggler svg {
+    width: 50px;
+    height: 50px;
+    color: white;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    background: #1f6652;
+}
+
+li.nav-item.active, li.nav-item:hover,
+.navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus,
+.navbar-dark .navbar-nav .show > .nav-link, .navbar-dark .navbar-nav .active > .nav-link, .navbar-dark .navbar-nav .nav-link.show, .navbar-dark .navbar-nav .nav-link.active {
+    color: #1f6652;
+    text-decoration: underline;
+}
+.navbar-dark .navbar-nav .nav-link {
+    color: #1f6652;
+}
+
+.navbar-text {
+    color: #00000070;
+}
+
+#miniSite {
+    left: 50%;
+    margin-left: -290px;
+    top: 23px;
+}
+
+#miniSite {
+    position: absolute;
+    z-index: 900;
+    width: 790px;
+    height: 402px;
+    background: transparent;
+    overflow-y: scroll;
+}
+
+.scroll-wrapper.schedule {
+        margin: 56px 150px;
+    position: absolute;
+    z-index: 900;
+    width: 790px;
+    height: auto;
+}
+
+.scroll-wrapper.schedule .scroll {
+    margin-left: 150px;
+    width: 414px;
+    height: 552px;
+    background: white;
+    overflow-y: scroll;
+    float: left;
+    display: inline-block;
+}
+
+
+._scroll-wrapper.schedule .navbar {
+    left: 50%;
+    margin-left: 100px;
+}
+
+.scroll-wrapper.schedule img {
+    width: 100%;
+    height: auto;
+}
+
+
+#calendar {
+    width: 300px;
+    float: left;
+    margin-left: 54px;
+    display: inline-block;
+}

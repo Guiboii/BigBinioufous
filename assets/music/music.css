@@ -1,0 +1,155 @@
+iframe {
+    width: 750px;
+    border: none;
+}
+.overlay {
+    position: absolute;
+    top: 50%;
+    left:50%;
+    margin-top: -141px;
+    margin-left: -333px;
+    z-index: 900;
+        overflow: hidden;
+    display: block;
+    width: 642px;
+}
+
+table {
+    display: block;
+}
+
+.player-wrap {
+    background: transparent;
+    width: 100%;
+    height: 186px;
+    overflow: scroll;
+    margin-left: 0;
+}
+.player-wrap .row {
+    height: 91px;
+    width: 100%;
+    background: #695044;
+    margin: 0;
+}
+
+.player-wrap .row.playerButtons {
+    margin-top: 4px;
+    padding: 4px;
+    height: 39px;
+}
+
+
+.playlist-wrap {
+    background: #4a3d37;
+    height: 237px;
+    width: 641px;
+    margin-top: 0;
+    border: 5px solid #895b41;  
+    overflow: hidden;
+}
+
+.accordion, .members-only {
+    height: inherit;
+    overflow: scroll;
+    display: inline-block;
+    width: 50%;
+}
+
+
+.members-only form#loginForm {
+    padding: 12%;
+    border: 5px solid #4a3d37;
+    height: 100%;
+    position: relative;
+    margin-top: 0;
+    top: -5px;
+}
+
+.accordion button {
+    border: 0;  
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+.card { border-radius: 0;}
+.card-header, .card-body, .table {
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.waveW {
+    width: 100%;
+}
+
+#waveform, .accordion > .card > .card-header {
+    background: #4a3d37;;
+}
+
+#uploadNew {
+    width: 35%;
+}
+
+input#slider {  
+    width: 15%;
+    margin-left: 10px;
+}
+
+#loopRegion, #uploadNew {
+    margin-top: 5px;
+}
+
+#loopRegion, a#loopRegion:hover {
+    margin-left: 5px;
+    color: rgba(0, 0, 0, 0.4);
+}
+
+#uploadNew, a#uploadNew:hover {
+    padding: 0 0;
+    color: rgba(0, 0, 0, 0.4);
+    text-decoration: none;
+}
+
+#upload svg {
+    color:#9e0000;
+    width: 32px;
+    height: 32px;
+    margin-top: -3px;
+}
+#play svg {
+    color:#1F6652;
+    width: 42px;
+    height: 42px;
+}
+#pause svg {
+    color: white;
+    width: 42px;
+    height: 42px;
+}
+#stop svg {
+    color: black;
+    width: 42px;
+    height: 42px;
+}
+#loop svg {
+    color: rgba(0, 0, 0, 0.4);
+    width: 32px;
+    height: 32px;
+    margin-top: 0px;
+}
+#loopRegion.looping #loop svg {
+    color:#F2B233;
+}
+
+
+.card, .accordion > .card:not(:last-of-type) {
+    border: 0;
+    border-bottom: 1px solid #664c40;
+}
+
+button:focus {
+    outline: none;  
+}
+
+.card-body, .list-group-item {
+    font-size: 13px;
+}

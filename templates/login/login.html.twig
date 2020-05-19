@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">&nbsp;</div>
+        <div class="col-md-6">
+            <h1>Log you !!</h1>
+
+            {% if hasError %}
+                <div class="alert alert-danger">You made a mistake...</div>
+            {% endif %}
+            <form action="{{ path('login')}}" method="post">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" name="_username" id="email" class="form-control" placeholder="Your email..." required value = "{{username}}">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="_password" id="password" placeholder="Your password..." class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Connexion !</button>
+                </div>
+            </form>
+        
+        </div>
+    </div>
+</div>
+{% endblock %}

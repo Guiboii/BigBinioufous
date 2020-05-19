@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ScheduleController!{% endblock %}
+
+{% block body %}
+
+
+<div class="scroll-wrapper schedule">
+
+    <div class="scroll" data-spy="scroll" data-target="#calendar" data-offset="0">
+      <img id="jan" src="../build/images/flyer001.png">
+      <p>Alors au début!</p>
+      <h4 id="feb">@mdo</h4>
+      <img id="mar" src="../build/images/flyer002.png">
+      <h4 id="apr">two</h4>
+      <img id="may" src="../build/images/flyer001.png">
+      <h4 id="jun">three</h4>
+    </div>
+
+    <nav id="calendar" class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#">Month of</a>
+        <ul class="nav nav-pills">
+          <li class="nav-item"><a class="nav-link" href="#jan">JAN</a></li>
+          <li class="nav-item"><a class="nav-link" href="#feb">FEB</a></li>
+          <li class="nav-item"><a class="nav-link" href="#mar">MAR</a></li>
+          <li class="nav-item"><a class="nav-link" href="#apr">APR</a></li>
+          <li class="nav-item"><a class="nav-link" href="#may">MAY</a></li>
+          <li class="nav-item"><a class="nav-link" href="#jun">JUN</a></li>
+          <li class="nav-item"><a class="nav-link" href="#jul">JUL</a></li>
+          <li class="nav-item"><a class="nav-link" href="#aug">AUG</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sep">SEP</a></li>
+          <li class="nav-item"><a class="nav-link" href="#oct">OCT</a></li>
+          <li class="nav-item"><a class="nav-link" href="#nov">NOV</a></li>
+          <li class="nav-item"><a class="nav-link" href="#dec">DEC</a></li>
+          
+        </ul>
+    </nav>
+
+
+</div>
+
+
+
+
+<div class="loading" id="js-loader"><div class="loader"></div></div>
+<div class="mascotte"><canvas id="c"></canvas></div>
+<video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="../build/images/Foryou3.mp4" type="video/mp4"></video>
+{% endblock %}
+
+{% block javascripts %}
+        {{ encore_entry_script_tags('schedule') }}
+{% endblock %}

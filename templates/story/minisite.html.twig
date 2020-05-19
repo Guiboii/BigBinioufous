@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags('story') }}
+        {% endblock %}
+
+{% block title %}Hello JoinController!{% endblock %}
+
+
+
+{% block header %}
+        <nav class="mini navbar navbar-dark">
+
+            <ul class="nav nav-pills">
+              <li class="nav-item">
+                <a class="nav-link" href="#fat">@fat</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#one">@one</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#miniForm">@contact</a>
+              </li>
+            </ul>
+
+        </nav>
+
+{% endblock %}
+
+{% block body %}
+
+    <div data-spy="scroll" data-target="#navbar-example2" data-offset="0">
+      <h4 id="fat">@fat</h4>
+      <p>Alors au début, c’est juste pour se marrer : on reprend en bande de hautbois des thèmes populaires connus (pas au sens petit bonhomme en mousse, hein) plutôt genre, ABBA, StarWars, BeeGees. Ouais bon des trucs de vieux, ok, mais ça fait toujours autant swinguer n’empêche !!
+
+    Et pi quand même, parce qu’on est aussi une grosse majorité de hautboïstes (mais on est content quand d’autres instruments nous rejoignent), c’est pour montrer qu’on peut aussi s’amuser et jouer du hautbois comme des oufs. On doit bien reconnaître que si on s’imagine souvent les hautboïstes comme des gens un peu coincés, c’est qu’il doit bien y avoir une raison (enfin, quand on se les imagine…).
+    Parce qu’il faut bien admettre (et nous le déplorons tellement), notre cher hautbois (et en fait les tubas et bassons qui nous accompagnent aussi) restent des instruments très lointains dans l’imaginaire collectif. C’est sans doute dû au fait qu’il n’occupe pas beaucoup l’espace public. Alors on sort, on joue n’importe où, n’importe quand (ou presque) et on SOUFFLE FORT !!</p>
+      <h4 id="mdo">@mdo</h4>
+      <p>...</p>
+      <h4 id="one">one</h4>
+      <p>Alors au début, c’est juste pour se marrer : on reprend en bande de hautbois des thèmes populaires connus (pas au sens petit bonhomme en mousse, hein) plutôt genre, ABBA, StarWars, BeeGees. Ouais bon des trucs de vieux, ok, mais ça fait toujours autant swinguer n’empêche !!
+
+
+    Parce qu’il faut bien admettre (et nous le déplorons tellement), notre cher hautbois (et en fait les tubas et bassons qui nous accompagnent aussi) restent des instruments très lointains dans l’imaginaire collectif. C’est sans doute dû au fait qu’il n’occupe pas beaucoup l’espace public. Alors on sort, on joue n’importe où, n’importe quand (ou presque) et on SOUFFLE FORT !!</p>
+      <h4 id="two">two</h4>
+      <p>...</p>
+      <h4 id="three">three</h4>
+      <p>...</p>
+
+      <form id="miniForm">
+
+            <h4>Hello</h4>
+            <div class="form-group">
+            <label for="exampleFormControlInput1">Yo name</label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+            <label for="exampleFormControlSelect1">Yo email</label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+            </div>
+
+            <div class="form-group">
+            <label for="exampleFormControlTextarea1">wat yo want</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"></textarea>
+            </div>
+            <button type="button" class="btn btn-dark">OK</button>
+    </form>
+    </div>
+
+{% endblock %}
+
+
+
+{% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+{% endblock %}

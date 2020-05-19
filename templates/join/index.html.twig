@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello JoinController!{% endblock %}
+
+{% block body %}
+
+<a class="login text-yellow" href="#" role="button"><h1>Log in</h1></a>
+<a class="join text-redwall" href="#" role="button"><h1>Join us</h1></a>
+
+
+<form id="loginForm" class="d-none">
+        <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        <h4>Log in buddy</h4>
+        <div class="form-group">
+        <label for="exampleFormControlInput1">Email address</label>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+        <label for="exampleFormControlSelect1">Covid</label>
+        <select class="form-control" id="exampleFormControlSelect1">
+        <option>19</option>
+        <option>20</option>
+        <option>30</option>
+        <option>40</option>
+        <option>50</option>
+        </select>
+        </div>
+
+        <div class="form-group">
+        <label for="exampleFormControlTextarea1">Say something</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn-dark">Send</button>
+</form>
+
+
+<form id="joinForm" class="d-none">
+        <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        <h4>Join Binioufou</h4>
+        <div class="form-group">
+        <label for="exampleFormControlInput1">Email address</label>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+        <label for="exampleFormControlSelect1">Covid</label>
+        <select class="form-control" id="exampleFormControlSelect1">
+        <option>19</option>
+        <option>20</option>
+        <option>30</option>
+        <option>40</option>
+        <option>50</option>
+        </select>
+        </div>
+
+        <div class="form-group">
+        <label for="exampleFormControlTextarea1">Say something</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn-dark">Send</button>
+</form>
+
+<div class="loading" id="js-loader"><div class="loader"></div></div>
+<div class="mascotte"><canvas id="c"></canvas></div>
+{% endblock %}
+
+{% block javascripts %}
+        {{ encore_entry_script_tags('join') }}
+{% endblock %}
