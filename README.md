@@ -7,6 +7,9 @@
 alias composer="php7.4 ~/composer.phar"
 
 composer require symfony/webpack-encore-bundle
+
+if problem with memory : php7.4 -d memory_limit=-1 ../composer.phar --profile install --no-dev --optimize-autoloader
+
 npm-node10 install
 
 npm-node10 install jquery popper.js bootstrap --save
