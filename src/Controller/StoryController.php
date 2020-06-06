@@ -12,9 +12,7 @@ class StoryController extends AbstractController
      */
     public function index()
     {
-        return $this->render('story/index.html.twig', [
-            'controller_name' => 'StoryController',
-        ]);
+        return $this->render('story/index.html.twig');
     }
 
 /**
