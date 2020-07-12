@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello JoinController!{% endblock %}
+{% block title %}Join us !!{% endblock %}
 
 {% block body %}
 
@@ -9,58 +9,12 @@
 
 
 <form id="loginForm" class="d-none">
-        <button type="button" class="close" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-        <h4>Log in buddy</h4>
-        <div class="form-group">
-        <label for="exampleFormControlInput1">Email address</label>
-        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-        </div>
-        <div class="form-group">
-        <label for="exampleFormControlSelect1">Covid</label>
-        <select class="form-control" id="exampleFormControlSelect1">
-        <option>19</option>
-        <option>20</option>
-        <option>30</option>
-        <option>40</option>
-        <option>50</option>
-        </select>
-        </div>
-
-        <div class="form-group">
-        <label for="exampleFormControlTextarea1">Say something</label>
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-        </div>
-        <button type="button" class="btn btn-dark">Send</button>
+         {{ include ('join/login.html.twig') }}
 </form>
 
 
 <form id="joinForm" class="d-none">
-        <button type="button" class="close" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-        <h4>Join Binioufou</h4>
-        <div class="form-group">
-        <label for="exampleFormControlInput1">Email address</label>
-        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-        </div>
-        <div class="form-group">
-        <label for="exampleFormControlSelect1">Covid</label>
-        <select class="form-control" id="exampleFormControlSelect1">
-        <option>19</option>
-        <option>20</option>
-        <option>30</option>
-        <option>40</option>
-        <option>50</option>
-        </select>
-        </div>
-
-        <div class="form-group">
-        <label for="exampleFormControlTextarea1">Say something</label>
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-        </div>
-        <button type="button" class="btn btn-dark">Send</button>
+        {{ include ('join/registration.html.twig') }}
 </form>
 
 <div class="loading" id="js-loader"><div class="loader"></div></div>

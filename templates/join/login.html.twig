@@ -1,13 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'popup.html.twig' %}
 
 {% block title %}Login{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-3">&nbsp;</div>
-        <div class="col-md-6">
-            <h1>Log you !!</h1>
+            <h4>Log in buddy</h4>
 
             {% if hasError %}
                 <div class="alert alert-danger">You made a mistake...</div>
@@ -25,8 +21,4 @@
                     <button type="submit" class="btn btn-success">Connexion !</button>
                 </div>
             </form>
-        
-        </div>
-    </div>
-</div>
 {% endblock %}

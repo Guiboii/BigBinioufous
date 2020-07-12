@@ -36,9 +36,9 @@ class TrackController extends AbstractController
         $track = new Track();
         $form = $this->createForm(TrackType::class, $track);
         $form->handleRequest($request);
-        $trackFile = $form->get('file')->getData();
 
         if ($form->isSubmitted() && $form->isValid()) {
+        $trackFile = $form->get('file')->getData();
              if ($trackFile) {
                 $originalFilename = pathinfo($trackFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);

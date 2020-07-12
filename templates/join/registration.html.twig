@@ -1,14 +1,16 @@
-{% extends 'base.html.twig' %}
+{% extends 'popup.html.twig' %}
 
 {% block title %}Registration{% endblock %}
 
 {% block body %}
 
 <div class="container">
-    <h1>Go ahead and register !!</h1>
+    <h4>Go ahead and register !!</h4>
     {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="submit btn btn-success">Go !!</button>
+    <div class="nav-item" >
+    <button class="submit btn btn-success">Join !!</button>
+    </div>
     {{ form_end(form) }}
 
 </div>

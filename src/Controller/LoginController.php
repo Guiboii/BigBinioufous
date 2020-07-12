@@ -11,6 +11,25 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
 {
+     /**
+     * page to join
+     *
+     * @Route("/join", name="join")
+     */
+    public function index(AuthenticationUtils $utils)
+    {
+        $user = new User();
+        $error = $utils->getLastAuthenticationError();
+        $username = $utils->getLastUsername();
+        $form = $this->createForm(RegistrationType::class, $user);
+
+        return $this->render('join/index.html.twig', [
+            'hasError' => $error !== null,
+            'username' => $username,
+            'form' => $form->createView()
+        ]);
+    }
+
     /**
      * to login
      * 
@@ -23,7 +42,7 @@ class LoginController extends AbstractController
         $error = $utils->getLastAuthenticationError();
         $username = $utils->getLastUsername();
 
-        return $this->render('login/login.html.twig', [
+        return $this->render('join/login.html.twig', [
             'hasError' => $error !== null,
             'username' => $username
         ]);
@@ -50,7 +69,7 @@ class LoginController extends AbstractController
 
         $form = $this->createForm(RegistrationType::class, $user);
 
-        return $this->render('login/registration.html.twig', [
+        return $this->render('join/registration.html.twig', [
             'form' => $form->createView()
         ]);
     }
