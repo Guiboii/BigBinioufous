@@ -8,13 +8,13 @@
 <a class="join text-redwall" href="#" role="button"><h1>Join us</h1></a>
 
 
-<form id="loginForm" class="d-none">
+<form action="{{ path('join')}}" id="loginForm" class="d-none" method="post">
          {{ include ('join/login.html.twig') }}
 </form>
 
 
-<form id="joinForm" class="d-none">
-        {{ include ('join/registration.html.twig') }}
+<form id="joinForm" class="d-none" method="post">
+        {{ include ('join/launch.html.twig') }}
 </form>
 
 <div class="loading" id="js-loader"><div class="loader"></div></div>

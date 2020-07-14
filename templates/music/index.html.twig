@@ -63,7 +63,7 @@
                     <a href="../uploads/music/test.mp3" class="list-group-item">
                         <i class="glyphicon glyphicon-play"></i>
                         {{ track.title }} by {{ track.artist.name }}
-                        <span class="badge">{{ track.duration }}</span></a>
+                        <span class="badge">{{ track.minutes}}:{{ track.seconds }}</span></a>
                     {% else %}
                             <span>no records found</span>
                     {% endfor %}
@@ -85,7 +85,7 @@
                     <a href="../uploads/music/test.mp3" class="list-group-item">
                         <i class="glyphicon glyphicon-play"></i>
                         {{ track.title }} by {{ track.artist.name }}
-                        <span class="badge">{{ track.duration }}</span></a>
+                        <span class="badge">{{ track.minutes}}:{{ track.seconds }}</span></a>
                     {% else %}
                             <span>no records found</span>
                     {% endfor %}

@@ -22,11 +22,6 @@ class Track
     private $title;
 
     /**
-     * @ORM\Column(type="float")
-     */
-    private $duration;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Artist", inversedBy="songs")
      */
     private $artist;
@@ -35,6 +30,16 @@ class Track
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $trackFilename;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $minutes;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $seconds;
 
 
     public function getId(): ?int
@@ -50,18 +55,6 @@ class Track
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getDuration(): ?float
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(float $duration): self
-    {
-        $this->duration = $duration;
 
         return $this;
     }
@@ -86,6 +79,30 @@ class Track
     public function setTrackFilename(?string $trackFilename): self
     {
         $this->trackFilename = $trackFilename;
+
+        return $this;
+    }
+
+    public function getMinutes(): ?int
+    {
+        return $this->minutes;
+    }
+
+    public function setMinutes(int $minutes): self
+    {
+        $this->minutes = $minutes;
+
+        return $this;
+    }
+
+    public function getSeconds(): ?int
+    {
+        return $this->seconds;
+    }
+
+    public function setSeconds(int $seconds): self
+    {
+        $this->seconds = $seconds;
 
         return $this;
     }

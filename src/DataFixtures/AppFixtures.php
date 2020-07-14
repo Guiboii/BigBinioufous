@@ -56,10 +56,13 @@ class AppFixtures extends Fixture
             $track = new Track();
             
             $artist = $artists[mt_rand(0, count($artists) -1)];
+            $minutes = mt_rand(1, 4);
+            $seconds = mt_rand(1, 59);
     
             $track  ->setTitle($faker->realText($maxNbChars = 30, $indexSize = 2))
-                    ->setDuration($faker->randomFloat)
-                    ->setArtist($artist);
+                    ->setArtist($artist)
+                    ->setMinutes($minutes)
+                    ->setSeconds($seconds);
 
             $manager-> persist($track);
         }  
