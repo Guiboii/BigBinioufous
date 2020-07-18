@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h4>Update your profile !</h4>
+            {{ form_start(form )}}
+            {{ form_widget(form)}}
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a class="btn btn-secondary" href="update-password">Change your Password</a>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

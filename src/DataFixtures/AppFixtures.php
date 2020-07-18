@@ -29,11 +29,20 @@ class AppFixtures extends Fixture
             $user = new User();
 
             $hash = $this->encoder->encodePassword($user, 'password');
+
+            $genders = ['male', 'female'];
+            $gender = $faker->randomElement($genders);
     
-            $user   ->setFirstName($faker->firstname)
-                    ->setLastName($faker->lastname)
+            $user   ->setGender($gender)
+                    ->setFirstName($faker->firstName($gender))
+                    ->setLastName($faker->lastName($gender))
                     ->setEmail($faker->email)
-                    ->setHash($hash);
+                    ->setHash($hash)
+                    ->setUsername($faker->firstname)
+                    ->setCity($faker->city)
+                    ->setCountry($faker->country)
+                    ->setBirth($faker->dateTime($max='now'));
+
 
             $manager-> persist($user);
         }  

@@ -18,7 +18,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class TrackController extends AbstractController
 {
     /**
-     * @Route("/", name="track_index", methods={"GET"})
+     * @Route("/", name="music", methods={"GET"})
      */
     public function index(TrackRepository $trackRepository): Response
     {

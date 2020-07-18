@@ -1,4 +1,10 @@
 {
+    "components/bootstrap": {
+        "version": "3.4.1"
+    },
+    "components/jquery": {
+        "version": "3.5.1"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -96,11 +102,17 @@
     "egulias/email-validator": {
         "version": "2.1.17"
     },
+    "eternicode/bootstrap-datepicker": {
+        "version": "v1.9.0"
+    },
     "fzaninotto/faker": {
         "version": "v1.9.1"
     },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
+    },
+    "kriswallsmith/assetic": {
+        "version": "v1.0.5"
     },
     "monolog/monolog": {
         "version": "2.0.2"
@@ -140,6 +152,9 @@
     },
     "psr/log": {
         "version": "1.1.3"
+    },
+    "robloach/component-installer": {
+        "version": "0.2.3"
     },
     "sensio/framework-extra-bundle": {
         "version": "5.2",

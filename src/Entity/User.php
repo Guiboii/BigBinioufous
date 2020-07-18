@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"email"}, message="This email is already used by another user, please change")
@@ -22,19 +23,19 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * NotBlank(message="This field couldn't be empty")
+     * @Assert\NotBlank(message="This field couldn't be empty")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * NotBlank(message="This field couldn't be empty")
+     * @Assert\NotBlank(message="This field couldn't be empty")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * Email(message="Please enter a valid email address")
+     * @Assert\Email(message="Please enter a valid email address")
      */
     private $email;
 
@@ -42,6 +43,35 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $hash;
+    /**
+     * @Assert\EqualTo(propertyPath="hash", message="you made a mistake")
+     */
+    public $passwordConfirm;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $username;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $city;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $gender;
+
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $birth;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $country;
 
     public function getId(): ?int
     {
@@ -111,4 +141,59 @@ class User implements UserInterface
     }
 
     public function eraseCredentials () {}
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getBirth(): ?\DateTimeInterface
+    {
+        return $this->birth;
+    }
+
+    public function setBirth(\DateTimeInterface $birth): self
+    {
+        $this->birth = $birth;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(string $country): self
+    {
+        $this->country = $country;
+
+        return $this;
+    }
 }

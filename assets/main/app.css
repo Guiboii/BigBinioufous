@@ -139,7 +139,8 @@ canvas {
 
 form {
     background: #1f6652;
-    text-align: center;
+    text-align: left;
+    color: #F2B233;
     padding: 2% 4%;
     border: 5px solid #23272b;
 }

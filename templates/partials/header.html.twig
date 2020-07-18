@@ -1,0 +1,38 @@
+<header>
+    <nav class="navbar">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <svg class="bi bi-list" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z" clip-rule="evenodd"/></svg>
+        </button>
+        <div class="collapse navbar-collapse no-transition" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ path('home') }}"><h2>Home</h2><span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('story') }}"><h2>Story</h2></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('music') }}"><h2>Music</h2></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('schedule') }}"><h2>Schedule</h2></a>
+                </li>
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('profile') }}"><h2>Profile</h2></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout"><h2>Logout</h2></a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('join') }}"><h2>Join</h2></a>
+                    </li>
+                {% endif %}
+            </ul>
+            <span class="navbar-text">
+            The craziest oboe band of the Galaxy !!
+            </span>
+        </div>
+    </nav>
+</header>
