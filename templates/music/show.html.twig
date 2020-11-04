@@ -21,12 +21,13 @@
             </tr>
             <tr>
                 <th>Duration</th>
-                <td>{{ track.duration }}</td>
+                <td>{{ track.minutes }}'{{ track.seconds }}
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('track_index') }}">back to list</a>
+    <a href="{{ path('music') }}">back to list</a>
 
     <a href="{{ path('track_edit', {'id': track.id}) }}">edit</a>
 

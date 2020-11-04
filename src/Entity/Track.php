@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use Cocur\Slugify\Slugify;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TrackRepository")
@@ -35,42 +38,50 @@ class Track
      * @ORM\Column(type="integer")
      */
     private $minutes;
-
+    
     /**
      * @ORM\Column(type="integer")
      */
     private $seconds;
-
-
+    
+    /**
+     * @Assert\File(
+     *     maxSize = "200000k",
+     *     mimeTypes = {"application/mp3", "application/x-mp3"},
+     *     mimeTypesMessage = "Please upload a valid mp3"
+     * )
+     */
+    protected $trackFile;
+    
     public function getId(): ?int
     {
         return $this->id;
     }
-
+    
     public function getTitle(): ?string
     {
         return $this->title;
     }
-
+    
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
+        
         return $this;
     }
-
+    
     public function getArtist(): ?Artist
     {
         return $this->artist;
     }
-
+    
     public function setArtist(?Artist $artist): self
     {
         $this->artist = $artist;
-
+        
         return $this;
     }
-
+    
     public function getTrackFilename(): ?string
     {
         return $this->trackFilename;

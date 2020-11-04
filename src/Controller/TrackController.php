@@ -61,7 +61,7 @@ class TrackController extends AbstractController
 
 
 
-            return $this->redirectToRoute('track_index');
+            return $this->redirectToRoute('music');
         }
 
         return $this->render('music/new.html.twig', [
@@ -91,7 +91,7 @@ class TrackController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('track_index');
+            return $this->redirectToRoute('music');
         }
 
         return $this->render('music/edit.html.twig', [
@@ -111,6 +111,6 @@ class TrackController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('track_index');
+        return $this->redirectToRoute('music');
     }
 }

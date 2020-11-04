@@ -38,7 +38,7 @@ class TrackType extends ApplicationType
             ->add('file', FileType::class, [
                 'label' => 'track (mp3 file)',
                 'mapped' => false,
-                'required' => false,
+                'required' => true,
                 'constraints' => [
                     new File([
                         'maxSize' => '200000k',

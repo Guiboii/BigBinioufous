@@ -20,6 +20,7 @@ npm install
 
 composer require orm-fixtures --dev
 composer require fzaninotto/faker
+composer require cocur/slugify
 ```
 
 #### To compile and launch locally:

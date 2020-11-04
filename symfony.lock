@@ -1,4 +1,7 @@
 {
+    "cocur/slugify": {
+        "version": "v4.0.0"
+    },
     "components/bootstrap": {
         "version": "3.4.1"
     },
