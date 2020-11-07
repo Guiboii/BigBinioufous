@@ -1,0 +1,16 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}Desk{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row mt-2">
+        <div class="col-1">
+            <img src="{{ asset('uploads/pictures/' ~ app.user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ app.user.firstname}}"> 
+        </div>
+        <div class="col">
+        <h2>Hi {{ app.user.fullName }} !</h2>
+        </div>
+    </div>
+</div>
+{% endblock %}

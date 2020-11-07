@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(158, 174, 179);
+    background-color: #F2B233;
 }
 
 .device-orientation {
@@ -13,9 +13,21 @@ body {
     font-weight: bold;
 }
 
+.avatar {
+    max-width: 128px;
+    max-height: 128px;
+    border-radius: 25px;
+}
+
+.avatar-medium {
+    max-width: 64px;
+    max-height: 64px;
+}
+
 .btn-link, a,
 .btn-link:hover, a:hover {
     color: #1F6652;
+    border-radius: 25px;
 }
 
 .bg-green {
@@ -23,6 +35,9 @@ body {
 }
 .bg-red {
     background:  #9e0000;;
+}
+.bg-red-light{
+    background: #BC2727;
 }
 .bg-yellow {
     background:  #F2B233;;
@@ -163,10 +178,12 @@ form {
 }
 
 a.login:hover {
-    color: #F2B233;
+    background-color: #BC2727;
+    border-radius: 25px;
 }
 a.join:hover {
-    color: #BC2727;
+    background-color: #F2B233;
+    border-radius: 25px;
 }
 
 
@@ -192,6 +209,7 @@ a.join:hover {
 .navbar-collapse {
     top: 10%;
     left: 10%;
+    corner: ;
     background: #fbdb7c;
     border: 5px solid #1f6652;
     padding: 5% 10%;
@@ -200,7 +218,11 @@ a.join:hover {
     z-index: 1000;
     text-align: center;
 }
-
+.navbar-admin {
+    width: 100%;
+    z-index: 1000;
+    background: #BC2727;
+}
 
 .navbar .navbar-toggler svg {
     width: 50px;
@@ -216,10 +238,12 @@ li.nav-item.active, li.nav-item:hover,
 .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus,
 .navbar-dark .navbar-nav .show > .nav-link, .navbar-dark .navbar-nav .active > .nav-link, .navbar-dark .navbar-nav .nav-link.show, .navbar-dark .navbar-nav .nav-link.active {
     color: #1f6652;
-    text-decoration: underline;
+    background-color: #BC2727;
+    border-radius: 25px;
 }
 .navbar-dark .navbar-nav .nav-link {
     color: #1f6652;
+    background: #BC2727;
 }
 
 .navbar-text {

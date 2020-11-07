@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -90,18 +91,44 @@ class LoginController extends AbstractController
     /**
      * update profile
      * 
-     * @Route("/account/profile", name="profile")
+     * @Route("/desk/profile", name="profile")
      *
      * @return Response
      */
-    public function profile(Request $request, EntityManagerInterface $manager){
+    public function profile(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger){
 
         $user = $this->getUser();
         $form = $this->createForm(AccountType::class, $user);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()){
+            /** @var UploadedFile $brochureFile */
+            $pictureFile = $form->get('picture')->getData();
+
+            // this condition is needed because the 'brochure' field is not required
+            // so the PDF file must be processed only when a file is uploaded
+            if ($pictureFile) {
+            $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $pictureFile->move(
+                        $this->getParameter('pictures_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+                $user->setPicture($newFilename);
+            }
+
             $manager->persist($user);
             $manager->flush();
 
@@ -110,7 +137,7 @@ class LoginController extends AbstractController
             );
         }
 
-        return $this->render('join/profile.html.twig', [
+        return $this->render('desk/profile.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -118,7 +145,7 @@ class LoginController extends AbstractController
     /**
      * Update the password
      *
-     * @Route("/account/update-password", name="update-password")
+     * @Route("/desk/update-password", name="update-password")
      * 
      * @return void
      */
@@ -152,7 +179,7 @@ class LoginController extends AbstractController
             }
         }
 
-        return $this->render('join/password.html.twig', [
+        return $this->render('desk/password.html.twig', [
             'form' => $form->createView()
         ]);
     }

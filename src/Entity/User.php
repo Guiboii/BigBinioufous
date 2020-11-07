@@ -73,6 +73,15 @@ class User implements UserInterface
      */
     private $country;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $picture;
+
+    public function getFullName() {
+        return "{$this->firstName} {$this->lastName}";
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -193,6 +202,18 @@ class User implements UserInterface
     public function setCountry(string $country): self
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(string $picture): self
+    {
+        $this->picture = $picture;
 
         return $this;
     }
