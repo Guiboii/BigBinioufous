@@ -62,7 +62,7 @@ class LoginController extends AbstractController
      * 
      * @return Response
      */
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder){
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, SluggerInterface $slugger){
         $user = new User();
 
         $form = $this->createForm(RegistrationType::class, $user);
@@ -70,8 +70,31 @@ class LoginController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
+            /** @var UploadedFile $brochureFile */
+            $pictureFile = $form->get('picture')->getData();
+
+            // this condition is needed because the 'brochure' field is not required
+            // so the PDF file must be processed only when a file is uploaded
+            if ($pictureFile) {
+            $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $pictureFile->move(
+                        $this->getParameter('pictures_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
             $hash = $encoder->encodePassword($user, $user->getHash());
-            $user->setHash($hash);
+            $user   ->setHash($hash)
+                    ->setValidation(false)
+                    ->setPicture($newFilename);
+            }
 
             $manager->persist($user);
             $manager->flush();

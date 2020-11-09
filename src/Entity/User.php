@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -74,9 +76,29 @@ class User implements UserInterface
     private $country;
 
     /**
+     * @ORM\ManyToMany(targetEntity=Role::class, mappedBy="users")
+     */
+    private $roles;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $validation;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
+    private $wish;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
     private $picture;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     public function getFullName() {
         return "{$this->firstName} {$this->lastName}";
@@ -136,7 +158,13 @@ class User implements UserInterface
     }
 
     public function getRoles(){
-        return ['ROLE_USER'];
+        $roles = $this->roles->map(function($role){
+            return $role->getTitle();
+        })->toArray();
+
+        $roles[] = 'ROLE_USER';
+
+        return $roles;
     }
 
     public function getPassword(){
@@ -206,12 +234,56 @@ class User implements UserInterface
         return $this;
     }
 
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+            $role->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+            $role->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    public function getValidation(): ?bool
+    {
+        return $this->validation;
+    }
+
+    public function setValidation(bool $validation): self
+    {
+        $this->validation = $validation;
+
+        return $this;
+    }
+
+    public function getWish(): ?string
+    {
+        return $this->wish;
+    }
+
+    public function setWish(string $wish): self
+    {
+        $this->wish = $wish;
+
+        return $this;
+    }
+
     public function getPicture(): ?string
     {
         return $this->picture;
     }
 
-    public function setPicture(string $picture): self
+    public function setPicture(?string $picture): self
     {
         $this->picture = $picture;
 

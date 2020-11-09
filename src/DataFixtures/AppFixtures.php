@@ -25,13 +25,16 @@ class AppFixtures extends Fixture
     
         // ajout d'utilisateurs
 
-        for($i = 1; $i <= 10; $i++) {
+        for($i = 1; $i <= 30; $i++) {
             $user = new User();
 
             $hash = $this->encoder->encodePassword($user, 'password');
 
             $genders = ['male', 'female'];
             $gender = $faker->randomElement($genders);
+
+            $wishes = ['binioufous', 'simple', 'admin', 'member'];
+            $wish = $faker->randomElement($wishes);
     
             $user   ->setGender($gender)
                     ->setFirstName($faker->firstName($gender))
@@ -41,7 +44,9 @@ class AppFixtures extends Fixture
                     ->setUsername($faker->firstname)
                     ->setCity($faker->city)
                     ->setCountry($faker->country)
-                    ->setBirth($faker->dateTime($max='now'));
+                    ->setBirth($faker->dateTime($max='now'))
+                    ->setValidation(false)
+                    ->setWish($wish);
 
 
             $manager-> persist($user);

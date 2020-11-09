@@ -6,8 +6,10 @@ use App\Entity\User;
 use App\Form\ApplicationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -30,6 +32,7 @@ class RegistrationType extends ApplicationType
             ->add('country', CountryType::class, $this->getConfiguration("Your country", "choose your counrty"))
             ->add('city', TextType::class, $this->getConfiguration("Your city", "The city you live in, bro !"))
             ->add('birth', DateType::class, ['format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration("The date of your birth", "To whish your Birthday, of course !!"))
+            ->add('wish', ChoiceType::class,['choices' => ['An administrator' => 'admin', 'A real Binioufous !!' => 'binioufous', 'A Binioufous, but I cannot come to the rehearsals...' => 'member', 'A big Fan !!' => 'simple']], $this->getConfiguration("You want to be", "the place you have in the team"))
             ->add('picture', FileType::class, [
                 'label' => 'A picture of you (jpeg)',
 
@@ -44,10 +47,9 @@ class RegistrationType extends ApplicationType
                 // in the associated entity, so you can use the PHP constraint classes
                 'constraints' => [
                     new File([
-                        'maxSize' => '1024k',
+                        'maxSize' => '5000k',
                         'mimeTypes' => [
-                            'application/jpeg',
-                            'application/x-jpeg',
+                            'image/jpeg',
                         ],
                         'mimeTypesMessage' => 'Please upload a valid JPEG document',
                     ])

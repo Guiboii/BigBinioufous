@@ -24,6 +24,15 @@ body {
     max-height: 64px;
 }
 
+.badge-green {
+    color: #F2B233;
+    background-color: #1f6652;
+}
+.badge-red {
+    color: #F2B233;
+    background-color: #BC2727;
+}
+
 .btn-link, a,
 .btn-link:hover, a:hover {
     color: #1F6652;
@@ -42,6 +51,13 @@ body {
 .bg-yellow {
     background:  #F2B233;;
 }
+
+.centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .text-green {
     color:  #1F6652;;
 }
@@ -127,7 +143,7 @@ canvas {
     position: absolute;
     z-index: 900;
     background: #BC2727;
-    width: 340px;
+    width: 440px;
     text-align: center;
     top: 50%;
     left: 50%;
@@ -186,6 +202,26 @@ a.join:hover {
     border-radius: 25px;
 }
 
+.red-hover:hover {
+    background-color: #BC2727;
+    border-radius: 5px;
+    color: #F2B233;
+    padding: 6px 12px;
+}
+
+.green-hover:hover {
+    background-color: #1f6652;
+    border-radius: 5px;
+    color: #BC2727;
+    padding: 6px 12px;
+}
+
+.yellow-hover:hover {
+    background-color: #F2B233;
+    border-radius: 5px;
+    color: #1F6652;
+    padding: 6px 12px;
+}
 
 .navbar-collapse.collapsing, .no-transition {
   -webkit-transition: height 0.0s;
@@ -209,7 +245,6 @@ a.join:hover {
 .navbar-collapse {
     top: 10%;
     left: 10%;
-    corner: ;
     background: #fbdb7c;
     border: 5px solid #1f6652;
     padding: 5% 10%;

@@ -4,11 +4,19 @@
 
 {% block body %} 
     <div class="container">
-    <h4>Go ahead and join us !!</h4>
+        <a href="{{ path ('register')}}" class="nav-link text-yellow">
+            <h4>!! REGISTER HERE !!</h4>
+        </a>
         <div class="container">
-            <a class="btn btn-alert" href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations">
-            !! Be Careful !! you're almost at a non-return point, which will cause to you fun with your music instrument and damages to your mental health
+            <a class="nav-link text-yellow" href=" {{path ('register') }}">
+            If you want to receive newsletters and other informations, the path is free !
+            But if you want to access to our audio examples and all the incredible files, you should know that "Les Binioufous" is an association. You have to pay a subscription (only 10€ per year) to access to the other side of the <s>Moon</s> Fabulous site !!
             </a>
+        </div>
+        <div class="container">
+            <btn class="danger">
+                <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="green-hover text-yellow"><h3>!! SUSCRIBE HERE !!</a></h3>
+            </btn>
         </div>
     </div>
 {% endblock %}
