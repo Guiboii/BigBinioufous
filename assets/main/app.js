@@ -12,5 +12,7 @@
 import "../../node_modules/jquery/dist/jquery.js";
 import "../../node_modules/bootstrap/dist/js/bootstrap.min.js";
 import "../../node_modules/bootstrap/dist/css/bootstrap.css";
+import "../../node_modules/@fortawesome/fontawesome-free/js/fontawesome.min.js";
+import "../../node_modules/@fortawesome/fontawesome-free/css/fontawesome.css";
 import '../main/app.css';
 

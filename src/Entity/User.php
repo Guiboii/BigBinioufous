@@ -2,16 +2,18 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Cocur\Slugify\Slugify;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(fields={"email"}, message="This email is already used by another user, please change")
  */
 class User implements UserInterface
@@ -95,6 +97,26 @@ class User implements UserInterface
      */
     private $picture;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $slug;
+
+    /**
+     * Permet d'initialiser le slug
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     * 
+     * @return void
+     */
+    public function initializeSlug() {
+        if(empty($this->slug)) {
+            $slugify = new Slugify();
+            $this->slug = $slugify->slugify($this->firstName . ' ' . $this->lastName);
+        }
+    }
+    
     public function __construct()
     {
         $this->roles = new ArrayCollection();
@@ -286,6 +308,18 @@ class User implements UserInterface
     public function setPicture(?string $picture): self
     {
         $this->picture = $picture;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

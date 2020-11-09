@@ -9,29 +9,29 @@
         "eternicode/bootstrap-datepicker": "^1.9",
         "fzaninotto/faker": "^1.9",
         "sensio/framework-extra-bundle": "^5.1",
-        "symfony/asset": "5.0.*",
-        "symfony/console": "5.0.*",
-        "symfony/dotenv": "5.0.*",
-        "symfony/expression-language": "5.0.*",
+        "symfony/asset": "5.*",
+        "symfony/console": "5.*",
+        "symfony/dotenv": "5.*",
+        "symfony/expression-language": "5.*",
         "symfony/flex": "^1.7",
-        "symfony/form": "5.0.*",
-        "symfony/framework-bundle": "5.0.*",
-        "symfony/http-client": "5.0.*",
-        "symfony/intl": "5.0.*",
-        "symfony/mailer": "5.0.*",
+        "symfony/form": "5.*",
+        "symfony/framework-bundle": "5.*",
+        "symfony/http-client": "5.*",
+        "symfony/intl": "5.*",
+        "symfony/mailer": "5.*",
         "symfony/monolog-bundle": "^3.1",
-        "symfony/notifier": "5.0.*",
+        "symfony/notifier": "5.*",
         "symfony/orm-pack": "*",
-        "symfony/process": "5.0.*",
-        "symfony/security-bundle": "5.0.*",
+        "symfony/process": "5.*",
+        "symfony/security-bundle": "5.*",
         "symfony/serializer-pack": "*",
-        "symfony/string": "5.0.*",
-        "symfony/translation": "5.0.*",
+        "symfony/string": "5.*",
+        "symfony/translation": "5.*",
         "symfony/twig-pack": "*",
-        "symfony/validator": "5.0.*",
-        "symfony/web-link": "5.0.*",
+        "symfony/validator": "5.*",
+        "symfony/web-link": "5.*",
         "symfony/webpack-encore-bundle": "^1.7",
-        "symfony/yaml": "5.0.*"
+        "symfony/yaml": "5.*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
@@ -83,7 +83,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "5.0.*"
+            "require": "5.*"
         }
     }
 }

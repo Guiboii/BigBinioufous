@@ -19,6 +19,14 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function findUnvalids()
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.validation = false')
+            ->orderBy('a.lastName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

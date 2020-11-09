@@ -3,11 +3,13 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
+use App\Entity\Role;
 use App\Entity\User;
-use App\Entity\Artist;
 use App\Entity\Track;
+use App\Entity\Artist;
+use Cocur\Slugify\Slugify;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
@@ -22,7 +24,30 @@ class AppFixtures extends Fixture
     {
 
         $faker = Factory::create('FR-fr');
-    
+
+        //création des rôles
+
+        $adminRole = new Role();
+        $adminRole  ->setTitle('ROLE_ADMIN')
+                    ->setDescription('Administrator');
+            $manager->persist($adminRole);
+        $accountantRole = new Role();
+        $accountantRole->setTitle('ROLE_COMPTA')
+                    ->setDescription('Accountant');
+            $manager->persist($accountantRole);
+        $binioufousRole = new Role();
+        $binioufousRole->setTitle('ROLE_BINIOUFOUS')
+                    ->setDescription('Binioufous');
+        $manager->persist($binioufousRole);
+        $memberRole = new Role();
+        $memberRole->setTitle('ROLE_MEMBER')
+                    ->setDescription('Member');
+        $manager->persist($memberRole);
+        $userRole = new Role();
+        $userRole->setTitle('ROLE_USER')
+                    ->setDescription('User');
+        $manager->persist($userRole);
+
         // ajout d'utilisateurs
 
         for($i = 1; $i <= 30; $i++) {
@@ -35,7 +60,7 @@ class AppFixtures extends Fixture
 
             $wishes = ['binioufous', 'simple', 'admin', 'member'];
             $wish = $faker->randomElement($wishes);
-    
+
             $user   ->setGender($gender)
                     ->setFirstName($faker->firstName($gender))
                     ->setLastName($faker->lastName($gender))

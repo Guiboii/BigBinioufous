@@ -11,6 +11,15 @@
                 <li class="nav-item">
                     <a class="nav-link text-yellow" href="{{ path('profile') }}"><h3>Profile</h3></a>
                 </li>
+                {% for role in app.user.roles %}
+                    {% if app.user.roles == 'ROLE_ADMIN' %}
+                        <li class="nav-item">
+                            <a href="{{ path('admin') }}" class="nav-link text-yellow"><h3>Admin</h3></a>
+                        </li>
+                
+                    {% endif %}
+                {% endfor %}
+                
                 <li class="nav-item ml-auto">
                     <a class="nav-link text-yellow" href="{{ path('logout') }}"><h3>Logout</h3></a>
                 </li>

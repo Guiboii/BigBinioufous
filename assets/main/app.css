@@ -38,7 +38,17 @@ body {
     color: #1F6652;
     border-radius: 25px;
 }
-
+.btn-red {
+    color: #1F6652;
+    font-weight: bold;
+    border-radius: 25px;
+    background: #9E0000;
+    width: fit-content;
+}
+.btn-red:hover{
+    color: #F2B233;
+    background: #bd0707;
+}
 .bg-green {
     background:  #1F6652;;
 }

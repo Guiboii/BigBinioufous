@@ -2,18 +2,22 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\RoleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DeskController extends AbstractController
 {
     /**
      * @Route("/desk", name="desk")
      */
-    public function index()
+    public function index(EntityManagerInterface $manager, RoleRepository $repo)
     {
+        $roles = $repo->findAll($manager, $repo);
+
         return $this->render('desk/index.html.twig', [
-            'controller_name' => 'DeskController',
+            'roles' => $roles
         ]);
     }
 }

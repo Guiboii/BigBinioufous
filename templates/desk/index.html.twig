@@ -9,8 +9,46 @@
             <img src="{{ asset('uploads/pictures/' ~ app.user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ app.user.firstname}}"> 
         </div>
         <div class="col">
-        <h2>Hi {{ app.user.fullName }} !</h2>
+            <div class="row ml-4">
+                <h2>Hi {{ app.user.fullName }} !</h2>
+            </div>
+            <div class="row centered">
+                {% if app.user.validation == false %}
+                    <h3> Please be patient !! Your account have to be approuved by an administrator...</h3>
+                {% else %}
+                    {% for role in app.user.roles %}
+                        {% if role == 'ROLE_ADMIN' %}
+                        <div class="col">
+                            <a href="{{ path('admin')}}" class="btn btn-red">Administration</a>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% for role in app.user.roles %}
+                        {% if role == 'ROLE_COMPTA' %}
+                        <div class="col">
+                            <a href="{{ path('accountant')}}" class="btn btn-red">Accountant</a>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% for role in app.user.roles %}
+                        {% if role == 'ROLE_MEMBER' %}
+                        <p>bienvenue cher membre !!</p>
+                        {% endif %}
+                    {% endfor %}
+                    {% for role in app.user.roles %}
+                        {% if role == 'ROLE_BINOUFOUS' %}
+                        <p>bienvenue cher Binioufous !!</p>
+                        {% endif %}
+                    {% endfor %}
+                    {% for role in app.user.roles %}
+                        {% if role == 'ROLE_USER' %}
+                        <p>bienvenue cher utilisateur !!</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
