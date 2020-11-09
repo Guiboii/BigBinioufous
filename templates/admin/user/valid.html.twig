@@ -1,0 +1,21 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ user.fullName }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <a class="btn btn-primary" href="{{ path ('admin') }}">Retour aux listes</a>
+            <div class="col text-center">
+                <div class="card-header text-center">
+                    <h1>{{ user.fullName }}</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+                <button type="submit" class="btn btn-success">Valider</button>
+            {{ form_end(form) }}
+    </div>
+{% endblock %}

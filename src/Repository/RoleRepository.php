@@ -19,6 +19,20 @@ class RoleRepository extends ServiceEntityRepository
         parent::__construct($registry, Role::class);
     }
 
+    /**
+     * Pick the role that you send to the method
+     *
+     * @param [type] $wish
+     * @return void
+     */
+    public function findOneByDescription($wish)
+    {
+        return $this->createQueryBuilder('d')
+            ->andWhere('d.description = :wish')
+            ->setParameter('wish', $wish)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
     // /**
     //  * @return Role[] Returns an array of Role objects
     //  */

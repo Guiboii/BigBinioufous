@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\ValidRoleType;
+use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,19 +57,40 @@ class AdminController extends AbstractController
     }
 
     /**
-     * Permet de valider la demande d'un utilisateur
-     *
+     * Permet de valider l'inscription
+     * 
      * @Route("/admin/{wish}/{slug}/valid", name="user_valid")
+     *
+     * @return Request
      */
+    public function validUser(EntityManagerInterface $manager, User $user, RoleRepository $repo, Request $request){
 
-    public function validUser(User $user, EntityManagerInterface $manager)
-    {
-        $roles = $user->getRoles();
+        $wish = $user->getWish();
+        $role = $repo->findOneByDescription($wish);
+        dump($wish);
 
-            return $this->render('admin/user/show.html.twig', [
+        $form = $this->createForm(ValidRoleType::class, $user);
+        
+        $form->handleRequest($request);
+        
+        if($form->isSubmitted() && $form->isValid()) {
+            $user->addRole($role);
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                "Utilisateur accepté"
+            );
+
+            return $this->redirectToRoute('admin');
+        }
+
+        return $this->render('admin/user/valid.html.twig', [
             'user' => $user,
-            'roles' => $roles
+            'form' => $form->createView()
         ]);
     }
+
 
 }
