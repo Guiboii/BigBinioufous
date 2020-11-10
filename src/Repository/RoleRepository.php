@@ -33,6 +33,19 @@ class RoleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /*
+    public function findBinioufous($roleBinioufous)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.description LIKE :val')
+            ->leftJoin('u.id','u')
+            ->setParameter('val', $roleBinioufous)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    */
+
     // /**
     //  * @return Role[] Returns an array of Role objects
     //  */

@@ -21,6 +21,21 @@
                         <div class="col">
                             <a href="{{ path('valid')}}" class="btn btn-red">{{ unvalids | length }} Validation(s) en attente</a>
                         </div>
+                        <div class="container mt-2">
+                            {% include '/desk/lists/admins.html.twig' %}
+                        </div>
+                        <div class="container mt-2">
+                            {% include '/desk/lists/accountants.html.twig' %}
+                        </div>
+                        <div class="container mt-2">
+                            {% include '/desk/lists/binioufous.html.twig' %}
+                        </div>
+                        <div class="container mt-2">
+                            {% include '/desk/lists/members.html.twig' %}
+                        </div>
+                        <div class="container mt-2">
+                            {% include '/desk/lists/users.html.twig' %}
+                        </div>
                         {% endif %}
                     {% endfor %}
                     {% for role in app.user.roles %}
@@ -31,13 +46,13 @@
                         {% endif %}
                     {% endfor %}
                     {% for role in app.user.roles %}
-                        {% if role == 'ROLE_MEMBER' %}
-                        <p>bienvenue cher membre !!</p>
+                        {% if role == 'ROLE_BINOUFOUS' %}
+                        <p>bienvenue cher Binioufous !!</p>
                         {% endif %}
                     {% endfor %}
                     {% for role in app.user.roles %}
-                        {% if role == 'ROLE_BINOUFOUS' %}
-                        <p>bienvenue cher Binioufous !!</p>
+                        {% if role == 'ROLE_MEMBER' %}
+                        <p>bienvenue cher membre !!</p>
                         {% endif %}
                     {% endfor %}
                     {% for role in app.user.roles %}

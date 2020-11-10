@@ -16,29 +16,31 @@ class DeskController extends AbstractController
     public function index(EntityManagerInterface $manager, RoleRepository $repo, UserRepository $repoUser)
     {
         $roles = $repo->findAll($manager, $repo);
+        $unvalids = $repoUser->findUnvalids($manager, $repoUser);
+        
+        
         $roleAdmin = "Admin";
         $roleAccountant = "Accountant";
-        $roleBinioufous = "Binioufous";
-        $roleUser = "User";
+        $roleBinioufous = $repo->findOneByDescription('Binioufous');
         $roleMember = "Member";
-
-        $unvalids = $repoUser->findUnvalids($manager, $repoUser);
-        $binioufous = $repoUser->findBinioufous($roleBinioufous);
-        $members = $repoUser->findMembers($roleMember);
+        $roleUser = "User";
         
-        $users = $repoUser->findUsers($roleUser);
         $admins = $repoUser->findAdmins($roleAdmin);
         $accountants = $repoUser->findAccountants($roleAccountant);
-    
+        $binioufous = $repoUser->findBinioufous($roleBinioufous);
+        $members = $repoUser->findMembers($roleMember);
+        $users = $repoUser->findUsers($roleUser);
+        
+        dump($binioufous);
 
         return $this->render('desk/index.html.twig', [
             'roles' => $roles,
             'unvalids' => $unvalids,
+            'admins' => $admins,
+            'accountants' => $accountants,
             'binioufous' =>$binioufous,
-            /*
             'members' =>$members,
             'users' =>$users
-            */
         ]);
     }
 }

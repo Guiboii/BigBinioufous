@@ -1,0 +1,27 @@
+<table class="table table-hover">
+            <h3>Les Binioufous</h3>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Picture</th>
+                    <th>Gender</th>
+                    <th>City</th>
+                    <th>Instrument</th>
+                    <th>Wished role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for binioufou in binioufous %}
+                <tr>
+                    <td>{{ binioufou.fullName }}</td>
+                    <td><img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt="Avatar de {{ binioufou.fullName}}"> </td>
+                    <td>{{ binioufou.gender }}</td>
+                    <td>{{ binioufou.city }}</td>
+                    <td>instrument</td>
+                    <td>{{ binioufou.wish }}</td>
+                    <td> <a href="{{ path ('user_valid', {'slug' : binioufou.slug, 'wish' : binioufou.wish})}}" class="btn btn-primary"><i class="fas fa-check"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>

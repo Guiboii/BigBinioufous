@@ -1,0 +1,27 @@
+<table class="table table-hover">
+            <h3>Les Membres</h3>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Picture</th>
+                    <th>Gender</th>
+                    <th>City</th>
+                    <th>Instrument</th>
+                    <th>Wished role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr>
+                    <td>{{ binioufou.fullName }}</td>
+                    <td><img src="{{ asset('uploads/pictures/' ~ member.picture) }}" class="items-align-right avatar avatar-medium" alt="Avatar de {{ member.fullName}}"> </td>
+                    <td>{{ member.gender }}</td>
+                    <td>{{ member.city }}</td>
+                    <td>instrument</td>
+                    <td>{{ member.wish }}</td>
+                    <td> <a href="{{ path ('user_valid', {'slug' : member.slug, 'wish' : member.wish})}}" class="btn btn-primary"><i class="fas fa-check"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>

@@ -28,53 +28,62 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findBinioufous($roleBinioufous)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.wish = :val')
-            ->setParameter('val', $roleBinioufous)
-            ->orderBy('b.lastName', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-   public function findMembers($roleMember)
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.wish = :val')
-            ->setParameter('val', $roleMember)
-            ->orderBy('m.lastName', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    
-    public function findUsers($roleUser)
+    public function findAdmins($roleAdmin)
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.wish = :val')
-            ->setParameter('val', $roleUser)
+            ->andWhere('u.id = :val
+                        OR r.id = :val')
+            ->leftJoin('u.roles', 'r')
+            ->setParameter('val', $roleAdmin)
             ->orderBy('u.lastName', 'ASC')
             ->getQuery()
             ->getResult();
     }
-    
-    public function findAdmins($roleAdmin)
+
+    public function findAccountants($roleAccountant)
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.wish = :val')
-            ->setParameter('val', $roleAdmin)
-            ->orderBy('a.lastName', 'ASC')
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val
+                        OR r.id = :val')
+            ->leftJoin('u.roles', 'r')
+            ->setParameter('val', $roleAccountant)
+            ->orderBy('u.lastName', 'ASC')
             ->getQuery()
             ->getResult();
     }
-    
-    public function findAccountants($roleAccountant)
+
+    public function findBinioufous($roleBinioufous)
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.wish = :val')
-            ->setParameter('val', $roleAccountant)
-            ->orderBy('c.lastName', 'ASC')
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val
+                        OR r.id = :val')
+            ->leftJoin('u.roles', 'r')
+            ->setParameter('val', $roleBinioufous)
+            ->orderBy('u.lastName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findMembers($roleMember)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val
+                        OR r.id = :val')
+            ->leftJoin('u.roles', 'r')
+            ->setParameter('val', $roleMember)
+            ->orderBy('u.lastName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findUsers($roleUser)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val
+                        OR r.id = :val')
+            ->leftJoin('u.roles', 'r')
+            ->setParameter('val', $roleUser)
+            ->orderBy('u.lastName', 'ASC')
             ->getQuery()
             ->getResult();
     }
