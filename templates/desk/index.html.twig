@@ -19,7 +19,7 @@
                     {% for role in app.user.roles %}
                         {% if role == 'ROLE_ADMIN' %}
                         <div class="col">
-                            <a href="{{ path('admin')}}" class="btn btn-red">Administration</a>
+                            <a href="{{ path('valid')}}" class="btn btn-red">{{ unvalids | length }} Validation(s) en attente</a>
                         </div>
                         {% endif %}
                     {% endfor %}

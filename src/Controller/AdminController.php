@@ -15,13 +15,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class AdminController extends AbstractController
 {
     /**
-     * @Route("/admin", name="admin")
+     * @Route("/admin/valid", name="valid")
      */
     public function index(EntityManagerInterface $manager, UserRepository $repo): Response
     {
         $unvalids = $repo->findUnvalids($manager, $repo);
 
-        return $this->render('admin/index.html.twig', [
+        return $this->render('admin/unvalids.html.twig', [
             'unvalids' => $unvalids,
             //'binioufous' => $binioufous,
             //'admins' => $admins,
@@ -82,7 +82,7 @@ class AdminController extends AbstractController
                 "Utilisateur accepté"
             );
 
-            return $this->redirectToRoute('admin');
+            return $this->redirectToRoute('valid');
         }
 
         return $this->render('admin/user/valid.html.twig', [

@@ -39,15 +39,15 @@ body {
     border-radius: 25px;
 }
 .btn-red {
-    color: #1F6652;
+    color: #298b70;
     font-weight: bold;
     border-radius: 25px;
-    background: #9E0000;
+    background: #BC2727;
     width: fit-content;
 }
 .btn-red:hover{
     color: #F2B233;
-    background: #bd0707;
+    background: #9e0000;
 }
 .bg-green {
     background:  #1F6652;;
@@ -69,14 +69,15 @@ body {
 }
 
 .text-green {
-    color:  #1F6652;;
+    color:  #257a62;
 }
 .text-redwall {
-    color:  #BC2727;;
+    color:  #BC2727;
 }
 .text-yellow {
-    color:  #F2B233;;
+    color:  #F2B233;
 }
+
 #c {
     position: absolute;
     z-index: 800;
