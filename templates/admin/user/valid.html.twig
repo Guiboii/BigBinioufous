@@ -4,15 +4,26 @@
 
 {% block body %}
     <div class="container">
-        <div class="row">
-            <a class="btn btn-primary" href="{{ path ('admin') }}">Retour aux listes</a>
+        <div class="row mt-4">
+            <button class="bg-yellow">
+                <a class="btn btn-red" href="{{ path ('admin') }}"><h3>Retour aux listes</h3></a>
+            </button>
             <div class="col text-center">
-                <div class="card-header text-center">
-                    <h1>{{ user.fullName }}</h1>
+                <div class="row card-header centered">
+                    <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" alt="Avatar de {{ user.fullName}}" class="avatar mr-4"><h1>{{ user.fullName }}</h1>
+                </div>
+                <div class="container row">
+                    <ul>
+                        <li>{{ user.birth | date('d/m/Y') }}</li>
+                        <li>instrument</li>
+                        <li>{{ user.city }}</li>
+                        <li>{{ user.country }}</li>
+                        <li>{{ user.wish }}</li>
+                    </ul>
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row centered mt-4">
             {{ form_start(form) }}
             {{ form_widget(form) }}
                 <button type="submit" class="btn btn-success">Valider</button>

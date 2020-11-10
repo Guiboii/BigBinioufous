@@ -32,7 +32,7 @@ class RegistrationType extends ApplicationType
             ->add('country', CountryType::class, $this->getConfiguration("Your country", "choose your counrty"))
             ->add('city', TextType::class, $this->getConfiguration("Your city", "The city you live in, bro !"))
             ->add('birth', DateType::class, ['format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration("The date of your birth", "To whish your Birthday, of course !!"))
-            ->add('wish', ChoiceType::class,['choices' => ['An administrator' => 'admin', 'A real Binioufous !!' => 'binioufous', 'A Binioufous, but I cannot come to the rehearsals...' => 'member', 'A big Fan !!' => 'simple']], $this->getConfiguration("You want to be", "the place you have in the team"))
+            ->add('wish', ChoiceType::class,['choices' => ['An administrator' => 'Administrator', 'A real Binioufous !!' => 'Binioufous', 'A Binioufous, but I cannot come to the rehearsals...' => 'Member', 'A big Fan !!' => 'User']], $this->getConfiguration("You want to be", "the place you have in the team"))
             ->add('picture', FileType::class, [
                 'label' => 'A picture of you (jpeg)',
 

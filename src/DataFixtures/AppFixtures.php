@@ -48,6 +48,27 @@ class AppFixtures extends Fixture
                     ->setDescription('User');
         $manager->persist($userRole);
 
+        // ajout du Super Admin
+
+        $admin = new User();
+
+        $hash = $this->encoder->encodePassword($admin, 'password');
+
+        $admin -> setGender('male')
+                ->setFirstName('Guillaume')
+                ->setLastName('Hamet')
+                ->setEmail('guibrouille@gmail.com')
+                ->setHash($hash)
+                ->setUsername('Guiboï')
+                ->setCity('Vaulx-en-Velin')
+                ->setCountry('France')
+                ->setBirth($faker->dateTime($max='now'))
+                ->setValidation(true)
+                ->setWish('Administrator')
+                ->addRole($adminRole);
+
+            $manager->persist($admin);
+            
         // ajout d'utilisateurs
 
         for($i = 1; $i <= 30; $i++) {
@@ -58,7 +79,7 @@ class AppFixtures extends Fixture
             $genders = ['male', 'female'];
             $gender = $faker->randomElement($genders);
 
-            $wishes = ['binioufous', 'simple', 'admin', 'member'];
+            $wishes = ['Binioufous', 'User', 'Administrator', 'Member'];
             $wish = $faker->randomElement($wishes);
 
             $user   ->setGender($gender)

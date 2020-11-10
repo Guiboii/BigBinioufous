@@ -67,7 +67,6 @@ class AdminController extends AbstractController
 
         $wish = $user->getWish();
         $role = $repo->findOneByDescription($wish);
-        dump($wish);
 
         $form = $this->createForm(ValidRoleType::class, $user);
         

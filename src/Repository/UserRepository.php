@@ -24,6 +24,7 @@ class UserRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
             ->andWhere('a.validation = false')
             ->orderBy('a.lastName', 'ASC')
+            ->setMaxResults(5)
             ->getQuery()
             ->getResult();
     }

@@ -1,27 +1,27 @@
 <header>
     <nav class="navbar-admin navbar-expand-lg">
         <div class="container">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="fas fa-home"></i><h3>Home</h3></a>
+                    <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="fas fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('desk') }}"><h3>Desk</h3></a>
+                    <a class="nav-link text-yellow" href="{{ path('desk') }}"><i class="fas fa-desktop"></i> Desk</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('profile') }}"><h3>Profile</h3></a>
+                    <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="far fa-user-circle"></i> Profile</a>
                 </li>
                 {% for role in app.user.roles %}
                     {% if app.user.roles == 'ROLE_ADMIN' %}
                         <li class="nav-item">
-                            <a href="{{ path('admin') }}" class="nav-link text-yellow"><h3>Admin</h3></a>
+                            <a href="{{ path('admin') }}" class="nav-link text-yellow"><i class="fas fa-chart-line"></i> Admin</a>
                         </li>
                 
                     {% endif %}
                 {% endfor %}
                 
                 <li class="nav-item ml-auto">
-                    <a class="nav-link text-yellow" href="{{ path('logout') }}"><h3>Logout</h3></a>
+                    <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </li>
             </ul>
         </div>
