@@ -15,7 +15,11 @@
                 {% for binioufou in binioufous %}
                 <tr>
                     <td>{{ binioufou.fullName }}</td>
-                    <td><img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt="Avatar de {{ binioufou.fullName}}"> </td>
+                    <td>{% if binioufou.picture == null %}
+                        <i class="fas fa-portrait"></i> <em>no picture</em>
+                    {% else %}
+                        <img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ binioufou.firstname}}">
+                    {% endif %}</td>
                     <td>{{ binioufou.gender }}</td>
                     <td>{{ binioufou.city }}</td>
                     <td>instrument</td>

@@ -6,7 +6,11 @@
 <div class="container">
     <div class="row mt-2">
         <div class="col-1">
-            <img src="{{ asset('uploads/pictures/' ~ app.user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ app.user.firstname}}"> 
+            {% if app.user.picture == null %}
+                <a class="btn btn-red" href="{{ path('profile') }}"><i class="fas fa-portrait"></i> <em>Add picture!</em></a>
+            {% else %}
+                <img src="{{ asset('uploads/pictures/' ~ app.user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ app.user.firstname}}">
+            {% endif %}
         </div>
         <div class="col">
             <div class="row ml-4">

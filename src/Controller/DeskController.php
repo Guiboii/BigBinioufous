@@ -31,8 +31,6 @@ class DeskController extends AbstractController
         $members = $repoUser->findMembers($roleMember);
         $users = $repoUser->findUsers($roleUser);
 
-        dump($admins);
-
         return $this->render('desk/index.html.twig', [
             'roles' => $roles,
             'unvalids' => $unvalids,

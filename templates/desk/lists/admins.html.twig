@@ -15,7 +15,11 @@
                 {% for admin in admins %}
                 <tr>
                     <td>{{ admin.fullName }}</td>
-                    <td><img src="{{ asset('uploads/pictures/' ~ admin.picture) }}" class="items-align-right avatar avatar-medium" alt="Avatar de {{ admin.fullName}}"> </td>
+                    <td>{% if admin.picture == null %}
+                        <i class="fas fa-portrait"></i> <em>no picture</em>
+                    {% else %}
+                        <img src="{{ asset('uploads/pictures/' ~ admin.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ admin.firstname}}">
+                    {% endif %}</td>
                     <td>{{ admin.gender }}</td>
                     <td>{{ admin.city }}</td>
                     <td>instrument</td>
