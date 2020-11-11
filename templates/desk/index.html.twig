@@ -51,17 +51,27 @@
                     {% endfor %}
                     {% for role in app.user.roles %}
                         {% if role == 'ROLE_BINOUFOUS' %}
-                        <p>bienvenue cher Binioufous !!</p>
+                        <h3>Voici les Binioufous !</h3>
+                            <div class="container mt-2">
+                                {% include '/desk/lists/binioufous.html.twig' %}
+                            </div>
                         {% endif %}
                     {% endfor %}
                     {% for role in app.user.roles %}
                         {% if role == 'ROLE_MEMBER' %}
-                        <p>bienvenue cher membre !!</p>
+                        <div class="col">
+                            <p>mailing-lists you subscribed</p>
+                        </div>
+                        <div class="col">
+                            <p>favorites songs</p>
+                        </div>
                         {% endif %}
                     {% endfor %}
                     {% for role in app.user.roles %}
                         {% if role == 'ROLE_USER' %}
-                        <p>bienvenue cher utilisateur !!</p>
+                        <div class="col">
+                            <p>mailing-lists you subscribed</p>
+                        </div>
                         {% endif %}
                     {% endfor %}
                 {% endif %}

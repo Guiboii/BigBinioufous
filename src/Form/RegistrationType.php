@@ -3,9 +3,11 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Entity\Instrument;
 use App\Form\ApplicationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -27,6 +29,7 @@ class RegistrationType extends ApplicationType
             ->add('lastName', TextType::class, $this->getConfiguration("Last Name", "Your last name"))
             ->add('username', TextType::class, $this->getConfiguration("Username", "choose your username"))
             ->add('email', EmailType::class, $this->getConfiguration("Email", "Your email address"))
+            ->add('instrument', EntityType::class, ['class' => Instrument::class, 'choice_label' => 'title'])
             ->add('hash', PasswordType::class, $this->getConfiguration("Password", "Choose a strong one"))
             ->add('passwordConfirm', PasswordType::class, $this->getConfiguration("Confirm Password", "Please confirm your password"))
             ->add('country', CountryType::class, $this->getConfiguration("Your country", "choose your counrty"))

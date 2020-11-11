@@ -103,6 +103,16 @@ class User implements UserInterface
     private $slug;
 
     /**
+     * @ORM\ManyToOne(targetEntity=Instrument::class, inversedBy="users")
+     */
+    private $instrument;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
      * Permet d'initialiser le slug
      *
      * @ORM\PrePersist
@@ -114,6 +124,19 @@ class User implements UserInterface
         if(empty($this->slug)) {
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->firstName . ' ' . $this->lastName);
+        }
+    }
+
+    /**
+     * Remplis le champ createdAt
+     * 
+     * @ORM\PrePersist
+     * 
+     */
+    public function initializeCreatedAt()
+    {
+        if(empty($this->createdAt)){
+            $this->createdAt = new \DateTime();
         }
     }
     
@@ -320,6 +343,30 @@ class User implements UserInterface
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getInstrument(): ?Instrument
+    {
+        return $this->instrument;
+    }
+
+    public function setInstrument(?Instrument $instrument): self
+    {
+        $this->instrument = $instrument;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

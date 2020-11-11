@@ -10,17 +10,34 @@
             </button>
             <div class="col text-center">
                 <div class="row card-header centered">
-                    <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" alt="Avatar de {{ user.fullName}}" class="avatar mr-4"><h1>{{ user.fullName }}</h1>
+                    {% if user.picture == null %}
+                        <i class="fas fa-portrait"></i> <em>no picture</em>
+                    {% else %}
+                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname}}">
+                    {% endif %}<h1 class="ml-2">{{ user.fullName }}</h1>
                 </div>
-                <div class="container row">
-                    <ul>
-                        <li>{{ user.birth | date('d/m/Y') }}</li>
-                        <li>instrument</li>
-                        <li>{{ user.city }}</li>
-                        <li>{{ user.country }}</li>
-                        <li>{{ user.wish }}</li>
-                    </ul>
-                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Wish</th>
+                            <th>Gender</th>
+                            <th>Instrument</th>
+                            <th>City</th>
+                            <th>Country</th>
+                            <th>Date of Birth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ user.wish }}</td>
+                            <td> {% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</td>
+                            <td>{{ user.instrument.title }}</td>
+                            <td>{{ user.city }}</td>
+                            <td>{{ user.country }}</td>
+                            <td>{{ user.birth | date('d/m/Y') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="row centered mt-4">

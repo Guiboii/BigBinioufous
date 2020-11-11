@@ -20,9 +20,9 @@
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ binioufou.firstname}}">
                     {% endif %}</td>
-                    <td>{{ binioufou.gender }}</td>
+                    <td> {% if binioufou.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</td>
                     <td>{{ binioufou.city }}</td>
-                    <td>instrument</td>
+                    <td>{{ binioufou.instrument.title }}</td>
                     <td>{{ binioufou.wish }}</td>
                     <td> <a href="{{ path ('user_valid', {'slug' : binioufou.slug, 'wish' : binioufou.wish})}}" class="btn btn-primary"><i class="fas fa-check"></i></a></td>
                 </tr>

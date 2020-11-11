@@ -41,4 +41,14 @@ class DeskController extends AbstractController
             'users' =>$users
         ]);
     }
+
+    /**
+     * Songs menus and favorites tracks
+     *
+     * @Route("/desk/music", name="deskmusic")
+     */
+    public function favoritesSongs()
+    {
+        return $this->render('desk/music.html.twig', []);
+    }
 }

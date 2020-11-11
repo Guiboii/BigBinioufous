@@ -7,6 +7,7 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\Track;
 use App\Entity\Artist;
+use App\Entity\Instrument;
 use Cocur\Slugify\Slugify;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -48,6 +49,50 @@ class AppFixtures extends Fixture
                     ->setDescription('User');
         $manager->persist($userRole);
 
+        //création des instruments
+
+        $instruments = [];
+
+        $hautbois = new Instrument();
+        $hautbois->setTitle('Hautbois');
+        $manager->persist($hautbois);
+        $instruments[] = $hautbois;
+
+        $coranglais = new Instrument();
+        $coranglais->setTitle('Cor Anglais');
+        $manager->persist($coranglais);
+        $instruments[] = $coranglais;
+
+        $flute = new Instrument();
+        $flute->setTitle('Flûte');
+        $manager->persist($flute);
+        $instruments[] = $flute;
+        
+        $clarinette = new Instrument();
+        $clarinette->setTitle('Clarinette');
+        $manager->persist($clarinette);
+        $instruments[] = $clarinette;
+
+        $tuba = new Instrument();
+        $tuba->setTitle('Tuba');
+        $manager->persist($tuba);
+        $instruments[] = $tuba;
+
+        $euphonium = new Instrument();
+        $euphonium->setTitle('Euphonium');
+        $manager->persist($euphonium);
+        $instruments[] = $euphonium;
+
+        $batterie = new Instrument();
+        $batterie->setTitle('Batterie');
+        $manager->persist($batterie);
+        $instruments[] = $batterie;
+
+        $cor = new Instrument();
+        $cor->setTitle('Cor');
+        $manager->persist($cor);
+        $instruments[] = $cor;
+
         // ajout du Super Admin
 
         $admin = new User();
@@ -65,7 +110,9 @@ class AppFixtures extends Fixture
                 ->setBirth($faker->dateTime($max='now'))
                 ->setValidation(true)
                 ->setWish('Administrator')
-                ->addRole($adminRole);
+                ->addRole($adminRole)
+                ->setInstrument($coranglais)
+                ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
             $manager->persist($admin);
             
@@ -92,7 +139,9 @@ class AppFixtures extends Fixture
                     ->setCountry($faker->country)
                     ->setBirth($faker->dateTime($max='now'))
                     ->setValidation(false)
-                    ->setWish($wish);
+                    ->setWish($wish)
+                    ->setInstrument($faker->randomElement($instruments))
+                    ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
 
             $manager-> persist($user);

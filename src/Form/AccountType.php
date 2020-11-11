@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Entity\Instrument;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -24,6 +26,7 @@ class AccountType extends AbstractType
             ->add('lastName')
             ->add('birth', DateType::class, ['format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')])
             ->add('email')
+            ->add('instrument', EntityType::class, ['class' => Instrument::class, 'choice_label' => 'title'])
             ->add('city')
             ->add('country', CountryType::class)
             ->add('picture', FileType::class, [
