@@ -19,19 +19,19 @@ class DeskController extends AbstractController
         $unvalids = $repoUser->findUnvalids($manager, $repoUser);
         
         
-        $roleAdmin = "Admin";
-        $roleAccountant = "Accountant";
+        $roleAdmin = $repo->findOneByDescription('Administrator');
+        $roleAccountant = $repo->findOneByDescription('Accountant');
         $roleBinioufous = $repo->findOneByDescription('Binioufous');
-        $roleMember = "Member";
-        $roleUser = "User";
+        $roleMember = $repo->findOneByDescription('Member');
+        $roleUser = $repo->findOneByDescription('User');
         
         $admins = $repoUser->findAdmins($roleAdmin);
         $accountants = $repoUser->findAccountants($roleAccountant);
         $binioufous = $repoUser->findBinioufous($roleBinioufous);
         $members = $repoUser->findMembers($roleMember);
         $users = $repoUser->findUsers($roleUser);
-        
-        dump($binioufous);
+
+        dump($admins);
 
         return $this->render('desk/index.html.twig', [
             'roles' => $roles,

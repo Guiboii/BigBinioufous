@@ -14,7 +14,7 @@
             <tbody>
                 {% for member in members %}
                 <tr>
-                    <td>{{ binioufou.fullName }}</td>
+                    <td>{{ member.fullName }}</td>
                     <td><img src="{{ asset('uploads/pictures/' ~ member.picture) }}" class="items-align-right avatar avatar-medium" alt="Avatar de {{ member.fullName}}"> </td>
                     <td>{{ member.gender }}</td>
                     <td>{{ member.city }}</td>

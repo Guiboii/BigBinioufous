@@ -23,7 +23,7 @@ class UserRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.validation = false')
-            ->orderBy('a.lastName', 'ASC')
+            ->orderBy('a.wish', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -31,9 +31,8 @@ class UserRepository extends ServiceEntityRepository
     public function findAdmins($roleAdmin)
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.id = :val
-                        OR r.id = :val')
-            ->leftJoin('u.roles', 'r')
+            ->andWhere('r.id = :val')
+            ->join('u.roles', 'r')
             ->setParameter('val', $roleAdmin)
             ->orderBy('u.lastName', 'ASC')
             ->getQuery()
@@ -43,9 +42,8 @@ class UserRepository extends ServiceEntityRepository
     public function findAccountants($roleAccountant)
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.id = :val
-                        OR r.id = :val')
-            ->leftJoin('u.roles', 'r')
+            ->andWhere('r.id = :val')
+            ->join('u.roles', 'r')
             ->setParameter('val', $roleAccountant)
             ->orderBy('u.lastName', 'ASC')
             ->getQuery()
@@ -55,8 +53,7 @@ class UserRepository extends ServiceEntityRepository
     public function findBinioufous($roleBinioufous)
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.id = :val
-                        OR r.id = :val')
+            ->andWhere('r.id = :val')
             ->leftJoin('u.roles', 'r')
             ->setParameter('val', $roleBinioufous)
             ->orderBy('u.lastName', 'ASC')
@@ -67,8 +64,7 @@ class UserRepository extends ServiceEntityRepository
     public function findMembers($roleMember)
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.id = :val
-                        OR r.id = :val')
+            ->andWhere('r.id = :val')
             ->leftJoin('u.roles', 'r')
             ->setParameter('val', $roleMember)
             ->orderBy('u.lastName', 'ASC')
@@ -79,8 +75,7 @@ class UserRepository extends ServiceEntityRepository
     public function findUsers($roleUser)
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.id = :val
-                        OR r.id = :val')
+            ->andWhere('r.id = :val')
             ->leftJoin('u.roles', 'r')
             ->setParameter('val', $roleUser)
             ->orderBy('u.lastName', 'ASC')
