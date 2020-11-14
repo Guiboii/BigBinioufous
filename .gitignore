@@ -9,8 +9,8 @@
 /public/bundles/
 /var/
 /vendor/
-/public/uploads/music/*.mp3
-/public/uploads/pictures/*.jpeg
+/public/uploads/music/
+/public/uploads/pictures/
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###
