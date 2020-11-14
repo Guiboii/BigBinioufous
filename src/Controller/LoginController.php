@@ -62,39 +62,55 @@ class LoginController extends AbstractController
      * 
      * @return Response
      */
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, SluggerInterface $slugger){
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, SluggerInterface $slugger)
+    {
         $user = new User();
 
         $form = $this->createForm(RegistrationType::class, $user);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if($form->isSubmitted() && $form->isValid())
+        {
+            // valid simple user automatically
+
+            $validation = false;
+            $userole = $form->get('wish')->getData();
+            if ($userole == 'Simple')
+            {
+                $validation = true;
+            }
+             
             /** @var UploadedFile $brochureFile */
             $pictureFile = $form->get('picture')->getData();
 
             // this condition is needed because the 'brochure' field is not required
             // so the PDF file must be processed only when a file is uploaded
-            if ($pictureFile) {
+            if ($pictureFile)
+            {
             $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
 
                 // Move the file to the directory where brochures are stored
-                try {
+                try
+                {
                     $pictureFile->move(
                         $this->getParameter('pictures_directory'),
                         $newFilename
                     );
-                } catch (FileException $e) {
+                }
+                catch (FileException $e)
+                {
                     // ... handle exception if something happens during file upload
                 }
+            }
+
             $hash = $encoder->encodePassword($user, $user->getHash());
             $user   ->setHash($hash)
-                    ->setValidation(false)
+                    ->setValidation($validation)
                     ->setPicture($newFilename);
-            }
 
             $manager->persist($user);
             $manager->flush();
@@ -102,7 +118,7 @@ class LoginController extends AbstractController
             $this->addFlash(
             'success', "Welcome ! Log you now, your account has been created"
             );
-
+        
 
             return $this->redirectToRoute('join');
         }

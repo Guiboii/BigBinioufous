@@ -2,8 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Role;
 use App\Entity\User;
+use App\Form\AccountType;
+use App\Form\AddAdminType;
+use App\Form\EditUserType;
 use App\Form\ValidRoleType;
+use App\Form\AddAccountantType;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,28 +34,108 @@ class AdminController extends AbstractController
             //'users' => $users
         ]);
     }
-
+   
     /**
-     * @Route("/admin/compta", name="accountant")
+     * Ajoute le rôle d'admin à un utilisateur
+     *
+     * @Route("/admin/setadmin/{slug}", name="create_admin")
      */
-    public function compta(): Response
+
+    public function addAdminRole(User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request)
     {
-        return $this->render('admin/compta.html.twig');
+        $roles = $repo->findAll();
+    
+        $form = $this->createForm(AddAdminType::class, $user);
+        
+        $admin = $repo->findOneByTitle('ROLE_ADMIN');
+        
+        dump($admin);
+        
+        $form->handleRequest($request);
+        
+        if($form->isSubmitted() && $form->isValid()) {
+            $user->addRole($admin);
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                "Role add with success"
+            );
+
+            return $this->redirectToRoute('desk');
+        }
+
+                return $this->render('admin/user/addadmin.html.twig', [
+            'user' => $user,
+            'roles' => $roles,
+            'form' => $form->createView()
+        ]);
     }
 
-   
+    /**
+     * Ajoute le rôle de comptable à un utilisateur
+     *
+     * @Route("/admin/setaccountant/{slug}", name="create_accountant")
+     */
+
+    public function addAccountantRole(User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request)
+    {
+        $roles = $repo->findAll();
+    
+        $form = $this->createForm(AddAccountantType::class, $user);
+        
+        $accountant = $repo->findOneByTitle('ROLE_COMPTA');
+        
+        $form->handleRequest($request);
+        
+        if($form->isSubmitted() && $form->isValid()) {
+            $user->addRole($accountant);
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                "Role add with success"
+            );
+
+            return $this->redirectToRoute('desk');
+        }
+
+                return $this->render('admin/user/addaccountant.html.twig', [
+            'user' => $user,
+            'roles' => $roles,
+            'form' => $form->createView()
+        ]);
+    }
+
     /**
      * Permet d'afficher un utilisateur
      *
-     * @Route("/admin/users/{slug}", name="user_show")
+     * @Route("/admin/user/{slug}", name="user_show")
      */
 
-    public function showUser(User $user, EntityManagerInterface $manager)
-    {
-        $roles = $user->getUserRoles();
+    public function showUser(User $user, Request $request, EntityManagerInterface $manager, RoleRepository $repo){
 
-        dump($roles);
-                return $this->render('admin/user/show.html.twig', [
+        $userRoles = $user->getRoles();
+        $roles = $repo->findByTitle($userRoles);
+
+        $form = $this->createForm(EditUserType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success', "Profile saved"
+            );
+        }
+
+        return $this->render('admin/user/show.html.twig', [
+            'form' => $form->createView(),
             'user' => $user,
             'roles' => $roles
         ]);

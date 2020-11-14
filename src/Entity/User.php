@@ -55,7 +55,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $username;
+    private $nickname;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -223,10 +223,15 @@ class User implements UserInterface
     }
 
     public function eraseCredentials () {}
+    
+        public function getNickname(): ?string
+        {
+            return $this->nickname;
+        }
 
-    public function setUsername(string $username): self
+    public function setNickname(string $nickname): self
     {
-        $this->username = $username;
+        $this->nickname = $nickname;
 
         return $this;
     }

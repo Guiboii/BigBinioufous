@@ -27,7 +27,7 @@ class RegistrationType extends ApplicationType
             ->add('gender', ChoiceType::class, ['choices' => ['Male' => 'male', 'Female' => 'female', 'Still looking for...' => 'unknown']], $this->getConfiguration("Your gender", "(sorry for that)"))
             ->add('firstName', TextType::class, $this->getConfiguration("First Name", "Your first name"))
             ->add('lastName', TextType::class, $this->getConfiguration("Last Name", "Your last name"))
-            ->add('username', TextType::class, $this->getConfiguration("Username", "choose your username"))
+            ->add('nickname', TextType::class, $this->getConfiguration("Nickname", "choose your artist's name"))
             ->add('email', EmailType::class, $this->getConfiguration("Email", "Your email address"))
             ->add('instrument', EntityType::class, ['class' => Instrument::class, 'choice_label' => 'title'])
             ->add('hash', PasswordType::class, $this->getConfiguration("Password", "Choose a strong one"))
@@ -35,7 +35,7 @@ class RegistrationType extends ApplicationType
             ->add('country', CountryType::class, $this->getConfiguration("Your country", "choose your counrty"))
             ->add('city', TextType::class, $this->getConfiguration("Your city", "The city you live in, bro !"))
             ->add('birth', DateType::class, ['format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration("The date of your birth", "To whish your Birthday, of course !!"))
-            ->add('wish', ChoiceType::class,['choices' => ['An administrator' => 'Administrator', 'A real Binioufous !!' => 'Binioufous', 'A Binioufous, but I cannot come to the rehearsals...' => 'Member', 'A big Fan !!' => 'User']], $this->getConfiguration("You want to be", "the place you have in the team"))
+            ->add('wish', ChoiceType::class,['choices' => ['A real Binioufous !!' => 'Binioufous', 'A Binioufous, but I cannot come to the rehearsals...' => 'Member', 'A big Fan !!' => 'Simple']], $this->getConfiguration("You want to be", "the place you have in the team"))
             ->add('picture', FileType::class, [
                 'label' => 'A picture of you (jpeg)',
 

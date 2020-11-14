@@ -14,27 +14,27 @@
                         <i class="fas fa-portrait"></i> <em>no picture</em>
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname}}">
-                    {% endif %}<h1 class="ml-2">{{ user.fullName }}</h1>
+                    {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</h1>
                 </div>
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Wish</th>
-                            <th>Gender</th>
                             <th>Instrument</th>
-                            <th>City</th>
                             <th>Country</th>
+                            <th>City</th>
                             <th>Date of Birth</th>
+                            <th>Created At</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>{{ user.wish }}</td>
-                            <td> {% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</td>
                             <td>{{ user.instrument.title }}</td>
-                            <td>{{ user.city }}</td>
                             <td>{{ user.country }}</td>
+                            <td>{{ user.city }}</td>
                             <td>{{ user.birth | date('d/m/Y') }}</td>
+                            <td>{{ user.createdAt | date('d/m/Y') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -43,7 +43,9 @@
         <div class="row centered mt-4">
             {{ form_start(form) }}
             {{ form_widget(form) }}
-                <button type="submit" class="btn btn-success">Valider</button>
+            <div class="centered">
+                <button type="submit" class="btn btn-green">Valider</button>
+            </div>
             {{ form_end(form) }}
     </div>
 {% endblock %}

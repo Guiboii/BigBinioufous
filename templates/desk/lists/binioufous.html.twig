@@ -1,30 +1,26 @@
-<table class="table table-hover">
+<table class="table table-hover text-center">
             <h3>Les Binioufous</h3>
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Picture</th>
-                    <th>Gender</th>
                     <th>City</th>
                     <th>Instrument</th>
-                    <th>Wished role</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for binioufou in binioufous %}
                 <tr>
-                    <td>{{ binioufou.fullName }}</td>
+                    <td>{% if binioufou.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %} {{ binioufou.fullName }}</td>
                     <td>{% if binioufou.picture == null %}
                         <i class="fas fa-portrait"></i> <em>no picture</em>
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ binioufou.firstname}}">
                     {% endif %}</td>
-                    <td> {% if binioufou.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</td>
                     <td>{{ binioufou.city }}</td>
                     <td>{{ binioufou.instrument.title }}</td>
-                    <td>{{ binioufou.wish }}</td>
-                    <td> <a href="{{ path ('user_valid', {'slug' : binioufou.slug, 'wish' : binioufou.wish})}}" class="btn btn-primary"><i class="fas fa-check"></i></a></td>
+                    <td><a href="{{ path ('user_show', {'slug' : binioufou.slug})}}" class="btn btn-green"><i class="fas fa-user-edit"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

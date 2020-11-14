@@ -49,6 +49,18 @@ body {
     color: #F2B233;
     background: #9e0000;
 }
+
+.btn-green {
+    color: #BC2727;
+    font-weight: bold;
+    border-radius: 25px;
+    background: #298b70;
+    width: fit-content;
+}
+.btn-green:hover{
+    color: #F2B233;
+    background: #1F6652;
+}
 .bg-green {
     background:  #1F6652;;
 }

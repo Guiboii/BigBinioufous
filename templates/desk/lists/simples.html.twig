@@ -1,0 +1,29 @@
+<table class="table table-hover text-center">
+            <h3>Les simples utilisateurs</h3>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Picture</th>
+                    <th>Country</th>
+                    <th>City</th>
+                    <th>Instrument</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for simple in simples %}
+                <tr>
+                    <td>{% if simple.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %} {{ simple.fullName }} </td>
+                    <td>{% if simple.picture == null %}
+                        <i class="fas fa-portrait"></i> <em>no picture</em>
+                    {% else %}
+                        <img src="{{ asset('uploads/pictures/' ~ simple.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ simple.firstname}}">
+                    {% endif %}</td>
+                    <td>{{ simple.country }}</td>
+                    <td>{{ simple.city }}</td>
+                    <td>{{ simple.instrument.title }}</td>
+                    <td><a href="{{ path ('user_show', {'slug' : simple.slug})}}" class="btn btn-green"><i class="fas fa-user-edit"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>

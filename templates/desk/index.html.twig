@@ -12,16 +12,17 @@
                 <img src="{{ asset('uploads/pictures/' ~ app.user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ app.user.firstname}}">
             {% endif %}
         </div>
+
         <div class="col">
             <div class="row ml-4">
-                <h2>Hi {{ app.user.fullName }} !</h2>
+                <h2>Hi {{ app.user.nickname }} !</h2>
             </div>
             <div class="row centered">
                 {% if app.user.validation == false %}
                     <h3> Please be patient !! Your account have to be approuved by an administrator...</h3>
-                {% else %}
-                    {% for role in app.user.roles %}
-                        {% if role == 'ROLE_ADMIN' %}
+                {% endif %}
+                {% for role in app.user.roles %}
+                    {% if role == 'ROLE_ADMIN' %}
                         <div class="col">
                             <a href="{{ path('valid')}}" class="btn btn-red">{{ unvalids | length }} Validation(s) en attente</a>
                         </div>
@@ -38,43 +39,31 @@
                             {% include '/desk/lists/members.html.twig' %}
                         </div>
                         <div class="container mt-2">
-                            {% include '/desk/lists/users.html.twig' %}
+                            {% include '/desk/lists/simples.html.twig' %}
                         </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% for role in app.user.roles %}
-                        {% if role == 'ROLE_COMPTA' %}
+                    {% elseif role == 'ROLE_COMPTA' %}
                         <div class="col">
                             <a href="{{ path('accountant')}}" class="btn btn-red">Accountant</a>
                         </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% for role in app.user.roles %}
-                        {% if role == 'ROLE_BINOUFOUS' %}
+                    {% elseif role == 'ROLE_BINOUFOUS' %}
                         <h3>Voici les Binioufous !</h3>
-                            <div class="container mt-2">
-                                {% include '/desk/lists/binioufous.html.twig' %}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% for role in app.user.roles %}
-                        {% if role == 'ROLE_MEMBER' %}
+                        <div class="container mt-2">
+                            {% include '/desk/lists/binioufous.html.twig' %}
+                        </div>
+                    {% elseif role == 'ROLE_MEMBER' %}
                         <div class="col">
                             <p>mailing-lists you subscribed</p>
                         </div>
                         <div class="col">
                             <p>favorites songs</p>
                         </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% for role in app.user.roles %}
-                        {% if role == 'ROLE_USER' %}
+                    {% elseif role == 'ROLE_SIMPLE' %}
+                        <h3>Welcome dear user !!</h3>
                         <div class="col">
                             <p>mailing-lists you subscribed</p>
                         </div>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>

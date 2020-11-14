@@ -2,9 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\Instrument;
 use App\Form\ApplicationType;
+use App\Repository\RoleRepository;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
@@ -16,7 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 
-class AccountType extends ApplicationType
+class EditUserType extends ApplicationType
 {
     
     public function buildForm(FormBuilderInterface $builder, array $options)

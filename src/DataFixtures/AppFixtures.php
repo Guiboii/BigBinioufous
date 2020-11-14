@@ -44,6 +44,10 @@ class AppFixtures extends Fixture
         $memberRole->setTitle('ROLE_MEMBER')
                     ->setDescription('Member');
         $manager->persist($memberRole);
+        $simpleRole = new Role();
+        $simpleRole->setTitle('ROLE_Simple')
+                    ->setDescription('Simple');
+        $manager->persist($simpleRole);
         $userRole = new Role();
         $userRole->setTitle('ROLE_USER')
                     ->setDescription('User');
@@ -104,7 +108,7 @@ class AppFixtures extends Fixture
                 ->setLastName('Hamet')
                 ->setEmail('guibrouille@gmail.com')
                 ->setHash($hash)
-                ->setUsername('Guiboï')
+                ->setNickname('Guiboï')
                 ->setCity('Vaulx-en-Velin')
                 ->setCountry('France')
                 ->setBirth($faker->dateTime($max='now'))
@@ -116,9 +120,9 @@ class AppFixtures extends Fixture
 
             $manager->persist($admin);
             
-        // ajout d'utilisateurs
+        // ajout d'utilisateurs Binioufous et membres
 
-        for($i = 1; $i <= 30; $i++) {
+        for($i = 1; $i <= 20; $i++) {
             $user = new User();
 
             $hash = $this->encoder->encodePassword($user, 'password');
@@ -126,7 +130,7 @@ class AppFixtures extends Fixture
             $genders = ['male', 'female'];
             $gender = $faker->randomElement($genders);
 
-            $wishes = ['Binioufous', 'User', 'Administrator', 'Member'];
+            $wishes = ['Binioufous', 'Member'];
             $wish = $faker->randomElement($wishes);
 
             $user   ->setGender($gender)
@@ -134,12 +138,40 @@ class AppFixtures extends Fixture
                     ->setLastName($faker->lastName($gender))
                     ->setEmail($faker->email)
                     ->setHash($hash)
-                    ->setUsername($faker->firstname)
+                    ->setNickname($faker->firstname)
                     ->setCity($faker->city)
                     ->setCountry($faker->country)
                     ->setBirth($faker->dateTime($max='now'))
                     ->setValidation(false)
                     ->setWish($wish)
+                    ->setInstrument($faker->randomElement($instruments))
+                    ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
+
+
+            $manager-> persist($user);
+        }  
+        // ajout de simples utilisateurs
+
+        for($i = 1; $i <= 10; $i++) {
+            $user = new User();
+
+            $hash = $this->encoder->encodePassword($user, 'password');
+
+            $genders = ['male', 'female'];
+            $gender = $faker->randomElement($genders);
+
+            $user   ->setGender($gender)
+                    ->setFirstName($faker->firstName($gender))
+                    ->setLastName($faker->lastName($gender))
+                    ->setEmail($faker->email)
+                    ->setHash($hash)
+                    ->setNickname($faker->firstname)
+                    ->setCity($faker->city)
+                    ->setCountry($faker->country)
+                    ->setBirth($faker->dateTime($max='now'))
+                    ->setValidation(true)
+                    ->setWish('Simple')
+                    ->addRole($simpleRole)
                     ->setInstrument($faker->randomElement($instruments))
                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 

@@ -18,32 +18,11 @@
             <button class="btn btn-green">Contacter</button>
         </div>
         <div class="container text-center">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Roles</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for role in roles %}
-                        <tr>
-                            <td>{{ role.description }}</td>
-                            <td><a href="#" class="btn btn-red"><i class="fas fa-ban"></i></a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="card card-header centered">
-            <div class="row">
-                <a href="{{ path('create_admin', {'slug': user.slug }) }}" class="btn btn-red mr-2">Faire de cet utilisateur un administrateur</a>
-                <a href="{{ path('create_accountant', {'slug': user.slug }) }}" class="btn btn-red ml-2">Faire de cet utilisateur un comptable</a>
-            </div>
-            </div>
             <div class="card card-header centered">
                 {{ form_start(form) }}
                 {{ form_widget(form) }}
                 <div class="centered">
-                    <button type="submit" class="btn btn-green">Valider</button>
+                    <button type="submit" class="btn btn-green">Faire de cet utilisateur un administrateur</button>
                 </div>
                 {{ form_end(form) }}
             </div>

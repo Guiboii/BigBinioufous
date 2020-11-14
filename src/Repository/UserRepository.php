@@ -72,12 +72,12 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findUsers($roleUser)
+    public function findSimples($roleSimple)
     {
         return $this->createQueryBuilder('u')
             ->andWhere('r.id = :val')
             ->leftJoin('u.roles', 'r')
-            ->setParameter('val', $roleUser)
+            ->setParameter('val', $roleSimple)
             ->orderBy('u.lastName', 'ASC')
             ->getQuery()
             ->getResult();

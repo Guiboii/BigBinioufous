@@ -23,13 +23,13 @@ class DeskController extends AbstractController
         $roleAccountant = $repo->findOneByDescription('Accountant');
         $roleBinioufous = $repo->findOneByDescription('Binioufous');
         $roleMember = $repo->findOneByDescription('Member');
-        $roleUser = $repo->findOneByDescription('User');
+        $roleSimple = $repo->findOneByDescription('Simple');
         
         $admins = $repoUser->findAdmins($roleAdmin);
         $accountants = $repoUser->findAccountants($roleAccountant);
         $binioufous = $repoUser->findBinioufous($roleBinioufous);
         $members = $repoUser->findMembers($roleMember);
-        $users = $repoUser->findUsers($roleUser);
+        $simples = $repoUser->findSimples($roleSimple);
 
         return $this->render('desk/index.html.twig', [
             'roles' => $roles,
@@ -38,7 +38,7 @@ class DeskController extends AbstractController
             'accountants' => $accountants,
             'binioufous' =>$binioufous,
             'members' =>$members,
-            'users' =>$users
+            'simples' =>$simples
         ]);
     }
 
