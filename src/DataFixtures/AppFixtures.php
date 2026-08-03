@@ -71,7 +71,7 @@ class AppFixtures extends Fixture
         $flute->setTitle('Flûte');
         $manager->persist($flute);
         $instruments[] = $flute;
-        
+
         $clarinette = new Instrument();
         $clarinette->setTitle('Clarinette');
         $manager->persist($clarinette);
@@ -119,7 +119,7 @@ class AppFixtures extends Fixture
                 ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
             $manager->persist($admin);
-            
+
         // ajout d'utilisateurs Binioufous et membres
 
         for($i = 1; $i <= 20; $i++) {
@@ -149,7 +149,7 @@ class AppFixtures extends Fixture
 
 
             $manager-> persist($user);
-        }  
+        }
         // ajout de simples utilisateurs
 
         for($i = 1; $i <= 10; $i++) {
@@ -177,36 +177,36 @@ class AppFixtures extends Fixture
 
 
             $manager-> persist($user);
-        }  
-        
+        }
+
         //ajout d'artistes
         $artists = [];
-        
+
          for($i = 1; $i <= 5; $i++) {
             $artist = new Artist();
-    
+
             $artist  ->setName($faker->firstname);
 
-            $manager-> persist($artist);            
+            $manager-> persist($artist);
             $artists[] = $artist;
-        }  
-        
-			//ajout de titres        
-        
+        }
+
+			//ajout de titres
+
         for($i = 1; $i <= 10; $i++) {
             $track = new Track();
-            
+
             $artist = $artists[mt_rand(0, count($artists) -1)];
             $minutes = mt_rand(1, 4);
             $seconds = mt_rand(1, 59);
-    
+
             $track  ->setTitle($faker->realText($maxNbChars = 30, $indexSize = 2))
                     ->setArtist($artist)
                     ->setMinutes($minutes)
                     ->setSeconds($seconds);
 
             $manager-> persist($track);
-        }  
+        }
 
         $manager->flush();
     }
