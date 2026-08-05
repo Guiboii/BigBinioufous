@@ -6,13 +6,11 @@ use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class DeskController extends AbstractController
 {
-    /**
-     * @Route("/desk", name="desk")
-     */
+    #[Route('/desk', name: 'desk')]
     public function index(EntityManagerInterface $manager, RoleRepository $repo, UserRepository $repoUser)
     {
         $roles = $repo->findAll($manager, $repo);
@@ -43,9 +41,8 @@ class DeskController extends AbstractController
 
     /**
      * Songs menus and favorites tracks.
-     *
-     * @Route("/desk/music", name="deskmusic")
      */
+    #[Route('/desk/music', name: 'deskmusic')]
     public function favoritesSongs()
     {
         return $this->render('desk/music.html.twig', []);

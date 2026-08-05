@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Application web Symfony 5 pour la gestion d'une fanfare ("Binioufous") : inscription des membres, validation des adhésions, gestion des rôles/instruments, bibliothèque musicale, pages vitrines.
+Application web Symfony 6.4 pour la gestion d'une fanfare ("Binioufous") : inscription des membres, validation des adhésions, gestion des rôles/instruments, bibliothèque musicale, pages vitrines.
 
 ## Commands
 
@@ -15,7 +15,7 @@ Application web Symfony 5 pour la gestion d'une fanfare ("Binioufous") : inscrip
 - `php -S localhost:8000 -t public` — lance le serveur de dev
 - `php bin/phpunit` — lance les tests (aucun test réel actuellement, seulement `tests/bootstrap.php`)
 
-Attention version PHP : `composer.json` requiert `^7.2.5|^8.0`, le dev historique tourne en `7.4.33`, mais le PHP CLI système par défaut est en `8.4.23` — vérifier quel binaire est utilisé avant d'installer/lancer des commandes composer.
+Version PHP : `composer.json` requiert `^8.1` (bump depuis `^7.2.5|^8.0` lors de l'upgrade Symfony 5→6.4). Le PHP CLI système en `8.4.24` convient.
 
 ### Frontend (Node)
 
@@ -33,9 +33,9 @@ Attention version PHP : `composer.json` requiert `^7.2.5|^8.0`, le dev historiqu
 
 ## Architecture
 
-- Backend : Symfony 5, Doctrine ORM/DBAL, MySQL 5.7.
+- Backend : Symfony 6.4, Doctrine ORM/DBAL, MySQL 5.7. Routes et mapping ORM en **attributs PHP natifs** (`#[Route]`, `#[ORM\Entity]`...), plus d'annotations docblock (`sensio/framework-extra-bundle` retiré, remplacé par les attributs core Symfony 6.2+).
 - Entités principales : `User` (membre, lié à un `Instrument` et plusieurs `Role`), `Role` (`ROLE_ADMIN`, `ROLE_COMPTA`, `ROLE_BINIOUFOUS`, `ROLE_MEMBER`, `ROLE_Simple`, `ROLE_USER`), `Instrument`, `Artist`/`Track` (bibliothèque musicale).
-- Sécurité (`config/packages/security.yaml`) : `form_login`, provider Doctrine sur `User` (identifiant = email), mot de passe `bcrypt`. `/admin/*` réservé à `ROLE_ADMIN`, `/desk/*` réservé à `ROLE_USER`. Une inscription "Simple" est auto-validée ; les inscriptions Binioufous/Membre attendent une validation admin qui attribue le rôle.
+- Sécurité (`config/packages/security.yaml`) : `form_login`, provider Doctrine sur `User` (identifiant = email, `getUserIdentifier()`), `password_hashers` bcrypt (`encoders` renommé depuis 5.3). `/admin/*` réservé à `ROLE_ADMIN`, `/desk/*` réservé à `ROLE_USER`. Une inscription "Simple" est auto-validée ; les inscriptions Binioufous/Membre attendent une validation admin qui attribue le rôle.
 - Frontend : Webpack Encore `^7.2.0`, jQuery/Bootstrap 4, Sass via `sass` (dart-sass), Three.js (mascotte 3D, pages story/schedule), wavesurfer.js (lecteur musique). Points d'entrée sous `assets/<section>/`. `webpack.config.js` est en ESM (`import`/`export default`, `package.json` a `"type": "module"`).
 
 ## Branches & CI

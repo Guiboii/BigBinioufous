@@ -10,16 +10,15 @@ use App\Form\ValidRoleType;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class AdminController extends AbstractController
 {
-    /**
-     * @Route("/admin/valid", name="valid")
-     */
+    #[Route('/admin/valid', name: 'valid')]
     public function index(EntityManagerInterface $manager, UserRepository $repo): Response
     {
         $unvalids = $repo->findUnvalids($manager, $repo);
@@ -35,10 +34,9 @@ class AdminController extends AbstractController
 
     /**
      * Ajoute le rôle d'admin à un utilisateur.
-     *
-     * @Route("/admin/setadmin/{slug}", name="create_admin")
      */
-    public function addAdminRole(User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request)
+    #[Route('/admin/setadmin/{slug}', name: 'create_admin')]
+    public function addAdminRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request)
     {
         $roles = $repo->findAll();
 
@@ -72,10 +70,9 @@ class AdminController extends AbstractController
 
     /**
      * Ajoute le rôle de comptable à un utilisateur.
-     *
-     * @Route("/admin/setaccountant/{slug}", name="create_accountant")
      */
-    public function addAccountantRole(User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request)
+    #[Route('/admin/setaccountant/{slug}', name: 'create_accountant')]
+    public function addAccountantRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request)
     {
         $roles = $repo->findAll();
 
@@ -107,10 +104,9 @@ class AdminController extends AbstractController
 
     /**
      * Permet d'afficher un utilisateur.
-     *
-     * @Route("/admin/user/{slug}", name="user_show")
      */
-    public function showUser(User $user, Request $request, EntityManagerInterface $manager, RoleRepository $repo)
+    #[Route('/admin/user/{slug}', name: 'user_show')]
+    public function showUser(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, Request $request, EntityManagerInterface $manager, RoleRepository $repo)
     {
         $userRoles = $user->getRoles();
         $roles = $repo->findByTitle($userRoles);
@@ -138,11 +134,10 @@ class AdminController extends AbstractController
     /**
      * Permet de valider l'inscription.
      *
-     * @Route("/admin/{wish}/{slug}/valid", name="user_valid")
-     *
      * @return Request
      */
-    public function validUser(EntityManagerInterface $manager, User $user, RoleRepository $repo, Request $request)
+    #[Route('/admin/{wish}/{slug}/valid', name: 'user_valid')]
+    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, RoleRepository $repo, Request $request)
     {
         $wish = $user->getWish();
         $role = $repo->findOneByDescription($wish);
