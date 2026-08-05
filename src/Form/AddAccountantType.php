@@ -11,7 +11,6 @@ class AddAccountantType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        
     }
 
     public function configureOptions(OptionsResolver $resolver)

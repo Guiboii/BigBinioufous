@@ -27,14 +27,14 @@
                     <td>{% if user.picture == null %}
                         <i class="fas fa-portrait"></i> <em>no picture</em>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname}}">
+                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname }}">
                     {% endif %}</td>
                     <td>{{ user.wish }}</td>
                     <td>{{ user.instrument.title }}</td>
                     <td>{{ user.country }}</td>
                     <td>{{ user.city }}</td>
-                    <td>{{ user.createdAt | date('d/m/Y') }}</td>
-                    <td> <a href="{{ path ('user_valid', {'slug' : user.slug, 'wish' : user.wish})}}" class="btn btn-green"><i class="fas fa-check"></i></a></td>
+                    <td>{{ user.createdAt|date('d/m/Y') }}</td>
+                    <td> <a href="{{ path ('user_valid', {slug: user.slug, wish: user.wish}) }}" class="btn btn-green"><i class="fas fa-check"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

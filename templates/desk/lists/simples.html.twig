@@ -17,12 +17,12 @@
                     <td>{% if simple.picture == null %}
                         <i class="fas fa-portrait"></i> <em>no picture</em>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ simple.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ simple.firstname}}">
+                        <img src="{{ asset('uploads/pictures/' ~ simple.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ simple.firstname }}">
                     {% endif %}</td>
                     <td>{{ simple.country }}</td>
                     <td>{{ simple.city }}</td>
                     <td>{{ simple.instrument.title }}</td>
-                    <td><a href="{{ path ('user_show', {'slug' : simple.slug})}}" class="btn btn-green"><i class="fas fa-user-edit"></i></a></td>
+                    <td><a href="{{ path ('user_show', {slug: simple.slug}) }}" class="btn btn-green"><i class="fas fa-user-edit"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

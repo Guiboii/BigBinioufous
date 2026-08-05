@@ -2,40 +2,37 @@
 
 namespace App\Form;
 
-use App\Entity\User;
 use App\Entity\Instrument;
-use App\Form\ApplicationType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class RegistrationType extends ApplicationType
 {
-    
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('gender', ChoiceType::class, ['choices' => ['Male' => 'male', 'Female' => 'female', 'Still looking for...' => 'unknown']], $this->getConfiguration("Your gender", "(sorry for that)"))
-            ->add('firstName', TextType::class, $this->getConfiguration("First Name", "Your first name"))
-            ->add('lastName', TextType::class, $this->getConfiguration("Last Name", "Your last name"))
-            ->add('nickname', TextType::class, $this->getConfiguration("Nickname", "choose your artist's name"))
-            ->add('email', EmailType::class, $this->getConfiguration("Email", "Your email address"))
+            ->add('gender', ChoiceType::class, ['choices' => ['Male' => 'male', 'Female' => 'female', 'Still looking for...' => 'unknown']], $this->getConfiguration('Your gender', '(sorry for that)'))
+            ->add('firstName', TextType::class, $this->getConfiguration('First Name', 'Your first name'))
+            ->add('lastName', TextType::class, $this->getConfiguration('Last Name', 'Your last name'))
+            ->add('nickname', TextType::class, $this->getConfiguration('Nickname', "choose your artist's name"))
+            ->add('email', EmailType::class, $this->getConfiguration('Email', 'Your email address'))
             ->add('instrument', EntityType::class, ['class' => Instrument::class, 'choice_label' => 'title'])
-            ->add('hash', PasswordType::class, $this->getConfiguration("Password", "Choose a strong one"))
-            ->add('passwordConfirm', PasswordType::class, $this->getConfiguration("Confirm Password", "Please confirm your password"))
-            ->add('country', CountryType::class, $this->getConfiguration("Your country", "choose your counrty"))
-            ->add('city', TextType::class, $this->getConfiguration("Your city", "The city you live in, bro !"))
-            ->add('birth', DateType::class, ['format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration("The date of your birth", "To whish your Birthday, of course !!"))
-            ->add('wish', ChoiceType::class,['choices' => ['A real Binioufous !!' => 'Binioufous', 'A Binioufous, but I cannot come to the rehearsals...' => 'Member', 'A big Fan !!' => 'Simple']], $this->getConfiguration("You want to be", "the place you have in the team"))
+            ->add('hash', PasswordType::class, $this->getConfiguration('Password', 'Choose a strong one'))
+            ->add('passwordConfirm', PasswordType::class, $this->getConfiguration('Confirm Password', 'Please confirm your password'))
+            ->add('country', CountryType::class, $this->getConfiguration('Your country', 'choose your counrty'))
+            ->add('city', TextType::class, $this->getConfiguration('Your city', 'The city you live in, bro !'))
+            ->add('birth', DateType::class, ['format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration('The date of your birth', 'To whish your Birthday, of course !!'))
+            ->add('wish', ChoiceType::class, ['choices' => ['A real Binioufous !!' => 'Binioufous', 'A Binioufous, but I cannot come to the rehearsals...' => 'Member', 'A big Fan !!' => 'Simple']], $this->getConfiguration('You want to be', 'the place you have in the team'))
             ->add('picture', FileType::class, [
                 'label' => 'A picture of you (jpeg)',
 
@@ -55,7 +52,7 @@ class RegistrationType extends ApplicationType
                             'image/jpeg',
                         ],
                         'mimeTypesMessage' => 'Please upload a valid JPEG document',
-                    ])
+                    ]),
                 ],
             ])
         ;

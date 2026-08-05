@@ -26,7 +26,7 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 - **Node.js** `24` (version pinnée dans `.nvmrc`, requise par `@symfony/webpack-encore@^7.2.0`, dont l'`engines` exige `^22.18.0 || ^24.11.0 || >=26.0`)
 - **PHP** dev en `7.4.33`, PHP CLI système en `8.4.23` (attention à la compatibilité avec `^7.2.5` requis par `composer.json`)
 - Gestion de version des deps : `composer.lock`, `package-lock.json` (source de vérité pour npm), `symfony.lock`
-- **CI** : GitHub Actions (`.github/workflows/js-security.yml`) — `npm audit` sur push (scan complet), `dependency-review-action` sur PR vers `main_2026`/`master` (diff des deps ajoutées), seuil `high`
+- **CI** : GitHub Actions (`.github/workflows/pipeline.yml`), un seul fichier, jobs enchaînés (lint → sécurité → déploiement à venir) : lint PHP/Twig/JS, puis `npm audit` sur push (scan complet) ou `dependency-review-action` sur PR vers `main_2026`/`master` (diff des deps ajoutées), seuil `high`
 
 ## Structure du projet
 
@@ -186,3 +186,14 @@ Tests PHPUnit via le pack Symfony `test-pack` :
 ```bash
 php bin/phpunit
 ```
+
+## Conventions de code
+
+PHP (PHP-CS-Fixer, ruleset `@Symfony`), Twig (Twig-CS-Fixer) et JS (ESLint + Prettier), avec un `.editorconfig` commun pour l'indentation. Un `Makefile` unifie les commandes des deux écosystèmes (composer/npm) :
+
+```bash
+make lint       # vérifie tout (PHP + Twig + JS), sans rien modifier
+make lint-fix   # corrige tout automatiquement
+```
+
+Commandes détaillées si besoin de cibler un seul outil : `composer cs-php` / `cs-php-fix`, `composer cs-twig` / `cs-twig-fix`, `npm run lint:js` / `lint:js:fix`.

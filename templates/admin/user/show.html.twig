@@ -11,7 +11,7 @@
                     {% if user.picture == null %}
                         <i class="fas fa-portrait"></i> <em>no picture</em>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname}}">
+                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname }}">
                     {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</h1>
                 </div>
             </div>
@@ -35,8 +35,8 @@
             </table>
             <div class="card card-header centered">
             <div class="row">
-                <a href="{{ path('create_admin', {'slug': user.slug }) }}" class="btn btn-red mr-2">Faire de cet utilisateur un administrateur</a>
-                <a href="{{ path('create_accountant', {'slug': user.slug }) }}" class="btn btn-red ml-2">Faire de cet utilisateur un comptable</a>
+                <a href="{{ path('create_admin', {slug: user.slug}) }}" class="btn btn-red mr-2">Faire de cet utilisateur un administrateur</a>
+                <a href="{{ path('create_accountant', {slug: user.slug}) }}" class="btn btn-red ml-2">Faire de cet utilisateur un comptable</a>
             </div>
             </div>
             <div class="card card-header centered">

@@ -20,9 +20,10 @@ class RoleRepository extends ServiceEntityRepository
     }
 
     /**
-     * Pick the role that you send to the method
+     * Pick the role that you send to the method.
      *
      * @param [type] $wish
+     *
      * @return void
      */
     public function findOneByDescription($wish)

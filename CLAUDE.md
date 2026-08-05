@@ -24,6 +24,13 @@ Attention version PHP : `composer.json` requiert `^7.2.5|^8.0`, le dev historiqu
 - `npm run watch` — build Webpack Encore en dev avec watch
 - `npm run build` — build Webpack Encore en production
 
+### Conventions de code
+
+- `make lint` — vérifie PHP (PHP-CS-Fixer, `@Symfony`) + Twig (Twig-CS-Fixer) + JS (ESLint/Prettier), sans rien modifier
+- `make lint-fix` — corrige tout automatiquement
+- Configs : `.php-cs-fixer.dist.php`, `.twig-cs-fixer.dist.php`, `eslint.config.js` (flat config) + `.prettierrc.json`, `.editorconfig` (4 espaces PHP/Twig, 2 espaces JS/JSON/YAML)
+- Quelques règles JS (`no-unused-vars`, `no-redeclare`, `no-unassigned-vars`) sont volontairement en `warn` plutôt que `error` : le code legacy en contient déjà, corriger ça touche à la logique et relève de la passe page par page (Phase 5 de `ROADMAP.md`), pas de cette passe de style pure
+
 ## Architecture
 
 - Backend : Symfony 5, Doctrine ORM/DBAL, MySQL 5.7.
@@ -34,7 +41,10 @@ Attention version PHP : `composer.json` requiert `^7.2.5|^8.0`, le dev historiqu
 ## Branches & CI
 
 - `main_2026` sert de branche principale de travail pour cette utilisatrice (pas de droits de push sur `master`) ; la CI cible donc `main_2026` **et** `master`.
-- `.github/workflows/js-security.yml` : `npm audit --audit-level=high` sur chaque push (toutes branches, scan complet) ; `dependency-review-action` (`fail-on-severity: high`) sur PR vers `main_2026`/`master` (diff des deps ajoutées uniquement).
+- `.github/workflows/pipeline.yml` : un seul fichier, jobs enchaînés via `needs:` (lint → sécurité → déploiement à venir en Phase 3) :
+  - `lint-php-twig` / `lint-js` : PHP-CS-Fixer + Twig-CS-Fixer / ESLint, sur chaque push (toutes branches) et PR vers `main_2026`/`master`
+  - `npm-audit` (sur push) / `dependency-review` (sur PR) : dépendent des jobs de lint, mêmes seuils qu'avant (`--audit-level=high` / `fail-on-severity: high`)
+  - job `deploy` pas encore implémenté (commenté dans le fichier), prévu pour push sur `master` uniquement une fois la Phase 3 de `ROADMAP.md` faite
 - Dependabot est déjà actif sur ce repo (nombreuses branches distantes `dependabot/*`) — vérifier si une PR Dependabot existe déjà avant de monter une dépendance à la main.
 
 ## Convention de commit
