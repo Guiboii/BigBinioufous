@@ -6,7 +6,7 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 
 ## Phase 1 — Fondations
 
-- [ ] Conventions de code : `.editorconfig` au niveau du repo, formaliser PHP-CS-Fixer en config projet (`.php-cs-fixer.dist.php`, déjà utilisé en local via le profil VS Code), voir si besoin d'ESLint/Prettier côté JS
+- [x] Conventions de code : `.editorconfig`, PHP-CS-Fixer (`@Symfony`), Twig-CS-Fixer, ESLint/Prettier (flat config), `Makefile` (`make lint` / `make lint-fix`)
 - [ ] Intégrer ces conventions à la CI (job de lint qui bloque la PR si non respecté)
 
 ## Phase 2 — Pivot AssetMapper

@@ -15,7 +15,7 @@ class StoryController extends AbstractController
         return $this->render('story/index.html.twig');
     }
 
-/**
+    /**
      * @Route("/story/mini", name="minisite")
      */
     public function mini()

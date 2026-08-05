@@ -3,42 +3,47 @@
 namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ *
  * @ORM\HasLifecycleCallbacks()
+ *
  * @UniqueEntity(fields={"email"}, message="This email is already used by another user, please change")
  */
 class User implements UserInterface
 {
     /**
      * @ORM\Id()
+     *
      * @ORM\GeneratedValue()
+     *
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
      * @Assert\NotBlank(message="This field couldn't be empty")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
      * @Assert\NotBlank(message="This field couldn't be empty")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
      * @Assert\Email(message="Please enter a valid email address")
      */
     private $email;
@@ -113,39 +118,41 @@ class User implements UserInterface
     private $createdAt;
 
     /**
-     * Permet d'initialiser le slug
+     * Permet d'initialiser le slug.
      *
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
-     * 
+     *
      * @return void
      */
-    public function initializeSlug() {
-        if(empty($this->slug)) {
+    public function initializeSlug()
+    {
+        if (empty($this->slug)) {
             $slugify = new Slugify();
-            $this->slug = $slugify->slugify($this->firstName . ' ' . $this->lastName);
+            $this->slug = $slugify->slugify($this->firstName.' '.$this->lastName);
         }
     }
 
     /**
-     * Remplis le champ createdAt
-     * 
+     * Remplis le champ createdAt.
+     *
      * @ORM\PrePersist
-     * 
      */
     public function initializeCreatedAt()
     {
-        if(empty($this->createdAt)){
+        if (empty($this->createdAt)) {
             $this->createdAt = new \DateTime();
         }
     }
-    
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
     }
 
-    public function getFullName() {
+    public function getFullName()
+    {
         return "{$this->firstName} {$this->lastName}";
     }
 
@@ -202,8 +209,9 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRoles(){
-        $roles = $this->roles->map(function($role){
+    public function getRoles()
+    {
+        $roles = $this->roles->map(function ($role) {
             return $role->getTitle();
         })->toArray();
 
@@ -212,22 +220,28 @@ class User implements UserInterface
         return $roles;
     }
 
-    public function getPassword(){
+    public function getPassword()
+    {
         return $this->hash;
     }
 
-    public function getSalt(){}
+    public function getSalt()
+    {
+    }
 
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->email;
     }
 
-    public function eraseCredentials () {}
-    
-        public function getNickname(): ?string
-        {
-            return $this->nickname;
-        }
+    public function eraseCredentials()
+    {
+    }
+
+    public function getNickname(): ?string
+    {
+        return $this->nickname;
+    }
 
     public function setNickname(string $nickname): self
     {

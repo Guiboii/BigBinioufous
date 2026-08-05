@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 class DeskController extends AbstractController
 {
@@ -17,14 +17,13 @@ class DeskController extends AbstractController
     {
         $roles = $repo->findAll($manager, $repo);
         $unvalids = $repoUser->findUnvalids($manager, $repoUser);
-        
-        
+
         $roleAdmin = $repo->findOneByDescription('Administrator');
         $roleAccountant = $repo->findOneByDescription('Accountant');
         $roleBinioufous = $repo->findOneByDescription('Binioufous');
         $roleMember = $repo->findOneByDescription('Member');
         $roleSimple = $repo->findOneByDescription('Simple');
-        
+
         $admins = $repoUser->findAdmins($roleAdmin);
         $accountants = $repoUser->findAccountants($roleAccountant);
         $binioufous = $repoUser->findBinioufous($roleBinioufous);
@@ -36,14 +35,14 @@ class DeskController extends AbstractController
             'unvalids' => $unvalids,
             'admins' => $admins,
             'accountants' => $accountants,
-            'binioufous' =>$binioufous,
-            'members' =>$members,
-            'simples' =>$simples
+            'binioufous' => $binioufous,
+            'members' => $members,
+            'simples' => $simples,
         ]);
     }
 
     /**
-     * Songs menus and favorites tracks
+     * Songs menus and favorites tracks.
      *
      * @Route("/desk/music", name="deskmusic")
      */

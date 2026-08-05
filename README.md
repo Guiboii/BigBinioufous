@@ -186,3 +186,14 @@ Tests PHPUnit via le pack Symfony `test-pack` :
 ```bash
 php bin/phpunit
 ```
+
+## Conventions de code
+
+PHP (PHP-CS-Fixer, ruleset `@Symfony`), Twig (Twig-CS-Fixer) et JS (ESLint + Prettier), avec un `.editorconfig` commun pour l'indentation. Un `Makefile` unifie les commandes des deux écosystèmes (composer/npm) :
+
+```bash
+make lint       # vérifie tout (PHP + Twig + JS), sans rien modifier
+make lint-fix   # corrige tout automatiquement
+```
+
+Commandes détaillées si besoin de cibler un seul outil : `composer cs-php` / `cs-php-fix`, `composer cs-twig` / `cs-twig-fix`, `npm run lint:js` / `lint:js:fix`.

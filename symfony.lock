@@ -117,6 +117,18 @@
     "eternicode/bootstrap-datepicker": {
         "version": "v1.9.0"
     },
+    "friendsofphp/php-cs-fixer": {
+        "version": "3.95",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.39",
+            "ref": "97aaf9026490db73b86c23d49e5774bc89d2b232"
+        },
+        "files": [
+            ".php-cs-fixer.dist.php"
+        ]
+    },
     "fzaninotto/faker": {
         "version": "v1.9.1"
     },
@@ -585,6 +597,9 @@
     },
     "twig/twig": {
         "version": "v3.0.3"
+    },
+    "vincentlanglet/twig-cs-fixer": {
+        "version": "4.0.2"
     },
     "webmozart/assert": {
         "version": "1.7.0"

@@ -24,6 +24,13 @@ Attention version PHP : `composer.json` requiert `^7.2.5|^8.0`, le dev historiqu
 - `npm run watch` — build Webpack Encore en dev avec watch
 - `npm run build` — build Webpack Encore en production
 
+### Conventions de code
+
+- `make lint` — vérifie PHP (PHP-CS-Fixer, `@Symfony`) + Twig (Twig-CS-Fixer) + JS (ESLint/Prettier), sans rien modifier
+- `make lint-fix` — corrige tout automatiquement
+- Configs : `.php-cs-fixer.dist.php`, `.twig-cs-fixer.dist.php`, `eslint.config.js` (flat config) + `.prettierrc.json`, `.editorconfig` (4 espaces PHP/Twig, 2 espaces JS/JSON/YAML)
+- Quelques règles JS (`no-unused-vars`, `no-redeclare`, `no-unassigned-vars`) sont volontairement en `warn` plutôt que `error` : le code legacy en contient déjà, corriger ça touche à la logique et relève de la passe page par page (Phase 5 de `ROADMAP.md`), pas de cette passe de style pure
+
 ## Architecture
 
 - Backend : Symfony 5, Doctrine ORM/DBAL, MySQL 5.7.

@@ -2,12 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\User;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ValidRoleType extends ApplicationType
 {
@@ -15,9 +12,9 @@ class ValidRoleType extends ApplicationType
     {
         $builder
             ->add('validation', CheckboxType::class, [
-            'label'    => 'Valider l\'utilisateur?',
-            'required' => false,
-        ]);
+                'label' => 'Valider l\'utilisateur?',
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

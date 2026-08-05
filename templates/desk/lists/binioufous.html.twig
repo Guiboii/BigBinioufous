@@ -16,11 +16,11 @@
                     <td>{% if binioufou.picture == null %}
                         <i class="fas fa-portrait"></i> <em>no picture</em>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ binioufou.firstname}}">
+                        <img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ binioufou.firstname }}">
                     {% endif %}</td>
                     <td>{{ binioufou.city }}</td>
                     <td>{{ binioufou.instrument.title }}</td>
-                    <td><a href="{{ path ('user_show', {'slug' : binioufou.slug})}}" class="btn btn-green"><i class="fas fa-user-edit"></i></a></td>
+                    <td><a href="{{ path ('user_show', {slug: binioufou.slug}) }}" class="btn btn-green"><i class="fas fa-user-edit"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -2,40 +2,39 @@
 
 namespace App\DataFixtures;
 
-use Faker\Factory;
-use App\Entity\Role;
-use App\Entity\User;
-use App\Entity\Track;
 use App\Entity\Artist;
 use App\Entity\Instrument;
-use Cocur\Slugify\Slugify;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\Role;
+use App\Entity\Track;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
     private $encoder;
 
-    public function __construct(UserPasswordEncoderInterface $encoder){
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
         $this->encoder = $encoder;
     }
 
     public function load(ObjectManager $manager): void
     {
-
         $faker = Factory::create('FR-fr');
 
-        //création des rôles
+        // création des rôles
 
         $adminRole = new Role();
-        $adminRole  ->setTitle('ROLE_ADMIN')
+        $adminRole->setTitle('ROLE_ADMIN')
                     ->setDescription('Administrator');
-            $manager->persist($adminRole);
+        $manager->persist($adminRole);
         $accountantRole = new Role();
         $accountantRole->setTitle('ROLE_COMPTA')
                     ->setDescription('Accountant');
-            $manager->persist($accountantRole);
+        $manager->persist($accountantRole);
         $binioufousRole = new Role();
         $binioufousRole->setTitle('ROLE_BINIOUFOUS')
                     ->setDescription('Binioufous');
@@ -53,7 +52,7 @@ class AppFixtures extends Fixture
                     ->setDescription('User');
         $manager->persist($userRole);
 
-        //création des instruments
+        // création des instruments
 
         $instruments = [];
 
@@ -103,7 +102,7 @@ class AppFixtures extends Fixture
 
         $hash = $this->encoder->encodePassword($admin, 'password');
 
-        $admin -> setGender('male')
+        $admin->setGender('male')
                 ->setFirstName('Guillaume')
                 ->setLastName('Hamet')
                 ->setEmail('guibrouille@gmail.com')
@@ -111,18 +110,18 @@ class AppFixtures extends Fixture
                 ->setNickname('Guiboï')
                 ->setCity('Vaulx-en-Velin')
                 ->setCountry('France')
-                ->setBirth($faker->dateTime($max='now'))
+                ->setBirth($faker->dateTime($max = 'now'))
                 ->setValidation(true)
                 ->setWish('Administrator')
                 ->addRole($adminRole)
                 ->setInstrument($coranglais)
                 ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
-            $manager->persist($admin);
+        $manager->persist($admin);
 
         // ajout d'utilisateurs Binioufous et membres
 
-        for($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 20; ++$i) {
             $user = new User();
 
             $hash = $this->encoder->encodePassword($user, 'password');
@@ -133,7 +132,7 @@ class AppFixtures extends Fixture
             $wishes = ['Binioufous', 'Member'];
             $wish = $faker->randomElement($wishes);
 
-            $user   ->setGender($gender)
+            $user->setGender($gender)
                     ->setFirstName($faker->firstName($gender))
                     ->setLastName($faker->lastName($gender))
                     ->setEmail($faker->email)
@@ -141,18 +140,17 @@ class AppFixtures extends Fixture
                     ->setNickname($faker->firstname)
                     ->setCity($faker->city)
                     ->setCountry($faker->country)
-                    ->setBirth($faker->dateTime($max='now'))
+                    ->setBirth($faker->dateTime($max = 'now'))
                     ->setValidation(false)
                     ->setWish($wish)
                     ->setInstrument($faker->randomElement($instruments))
                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
-
-            $manager-> persist($user);
+            $manager->persist($user);
         }
         // ajout de simples utilisateurs
 
-        for($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 10; ++$i) {
             $user = new User();
 
             $hash = $this->encoder->encodePassword($user, 'password');
@@ -160,7 +158,7 @@ class AppFixtures extends Fixture
             $genders = ['male', 'female'];
             $gender = $faker->randomElement($genders);
 
-            $user   ->setGender($gender)
+            $user->setGender($gender)
                     ->setFirstName($faker->firstName($gender))
                     ->setLastName($faker->lastName($gender))
                     ->setEmail($faker->email)
@@ -168,44 +166,43 @@ class AppFixtures extends Fixture
                     ->setNickname($faker->firstname)
                     ->setCity($faker->city)
                     ->setCountry($faker->country)
-                    ->setBirth($faker->dateTime($max='now'))
+                    ->setBirth($faker->dateTime($max = 'now'))
                     ->setValidation(true)
                     ->setWish('Simple')
                     ->addRole($simpleRole)
                     ->setInstrument($faker->randomElement($instruments))
                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
-
-            $manager-> persist($user);
+            $manager->persist($user);
         }
 
-        //ajout d'artistes
+        // ajout d'artistes
         $artists = [];
 
-         for($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 5; ++$i) {
             $artist = new Artist();
 
-            $artist  ->setName($faker->firstname);
+            $artist->setName($faker->firstname);
 
-            $manager-> persist($artist);
+            $manager->persist($artist);
             $artists[] = $artist;
         }
 
-			//ajout de titres
+        // ajout de titres
 
-        for($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 10; ++$i) {
             $track = new Track();
 
-            $artist = $artists[mt_rand(0, count($artists) -1)];
+            $artist = $artists[mt_rand(0, count($artists) - 1)];
             $minutes = mt_rand(1, 4);
             $seconds = mt_rand(1, 59);
 
-            $track  ->setTitle($faker->realText($maxNbChars = 30, $indexSize = 2))
+            $track->setTitle($faker->realText($maxNbChars = 30, $indexSize = 2))
                     ->setArtist($artist)
                     ->setMinutes($minutes)
                     ->setSeconds($seconds);
 
-            $manager-> persist($track);
+            $manager->persist($track);
         }
 
         $manager->flush();

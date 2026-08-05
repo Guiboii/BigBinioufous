@@ -2,13 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\PasswordUpdateRepository;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
 
 class PasswordUpdate
 {
-    
     private $oldPassword;
 
     /**

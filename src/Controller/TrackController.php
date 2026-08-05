@@ -22,7 +22,6 @@ class TrackController extends AbstractController
      */
     public function index(TrackRepository $trackRepository): Response
     {
-    	
         return $this->render('music/index.html.twig', [
             'tracks' => $trackRepository->findAll(),
         ]);
@@ -38,8 +37,8 @@ class TrackController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-        $trackFile = $form->get('file')->getData();
-             if ($trackFile) {
+            $trackFile = $form->get('file')->getData();
+            if ($trackFile) {
                 $originalFilename = pathinfo($trackFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'.'.$trackFile->guessExtension();
@@ -49,17 +48,13 @@ class TrackController extends AbstractController
                         $this->getParameter('mp3'),
                         $newFilename
                     );
-                }
-                catch (FileException $e) {
-
+                } catch (FileException $e) {
                 }
             }
             $track->setTrackFilename($newFilename);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($track);
             $entityManager->flush();
-
-
 
             return $this->redirectToRoute('music');
         }
