@@ -23,9 +23,10 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 
 ### Outils / environnement
 
-- **Node.js** `v18.19.1` (yarn/npm)
+- **Node.js** `14` (version pinnée dans `.nvmrc`, requise pour compiler `node-sass` sans erreur ; les versions récentes de Node cassent le build natif)
 - **PHP** dev en `7.4.33`, PHP CLI système en `8.4.23` (attention à la compatibilité avec `^7.2.5` requis par `composer.json`)
-- Gestion de version des deps : `composer.lock`, `yarn.lock` / `package-lock.json`, `symfony.lock`
+- Gestion de version des deps : `composer.lock`, `package-lock.json` (source de vérité pour npm), `symfony.lock`
+- **CI** : GitHub Actions (`.github/workflows/js-security.yml`) — `npm audit` sur push (scan complet), `dependency-review-action` sur PR vers `main_2026`/`master` (diff des deps ajoutées), seuil `high`
 
 ## Structure du projet
 
@@ -72,7 +73,7 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 ├── tests/                    # Tests PHPUnit
 ├── translations/
 ├── composer.json / composer.lock   # Dépendances PHP
-├── package.json / yarn.lock        # Dépendances front
+├── package.json / package-lock.json # Dépendances front (npm)
 ├── webpack.config.js               # Config Webpack Encore (points d'entrée)
 ├── symfony.lock                    # Recettes Flex installées
 └── phpunit.xml.dist
@@ -123,9 +124,9 @@ Voir aussi les indications historiques ci-dessous (environnement legacy PHP 7.4 
 # Dépendances PHP
 composer install
 
-# Dépendances front
-yarn install
-# ou : npm install
+# Dépendances front (utiliser la version Node du .nvmrc)
+nvm use
+npm ci
 
 # Base de données
 php bin/console doctrine:database:create
@@ -165,9 +166,9 @@ php -S localhost:8000 -t public
 Compilation des assets (Webpack Encore) :
 
 ```bash
-yarn encore dev --watch
+npm run watch
 # ou pour la prod :
-yarn encore production
+npm run build
 ```
 
 ## Configuration (`.env`)
