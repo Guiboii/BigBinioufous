@@ -7,7 +7,7 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 ### Backend
 
 - **PHP** `^8.1` (requis par Symfony 6.3+)
-- **Symfony** `6.4.*` LTS (framework-bundle, security-bundle, form, validator, twig, orm-pack, serializer-pack...) — upgradé depuis Symfony 5.4, routes/entités en attributs PHP natifs
+- **Symfony** `7.4.*` LTS (framework-bundle, security-bundle, form, validator, twig, orm-pack, serializer-pack...) — upgradé depuis Symfony 5.4 (via 6.4), routes/entités en attributs PHP natifs
 - **Doctrine ORM/DBAL** + **Doctrine Migrations** — persistance des données
 - **MySQL** `5.7` (voir `DATABASE_URL` dans `.env`)
 - **Symfony Flex** — gestion des recettes de bundles

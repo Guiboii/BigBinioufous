@@ -9,7 +9,7 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 - [x] Conventions de code : `.editorconfig`, PHP-CS-Fixer (`@Symfony`), Twig-CS-Fixer, ESLint/Prettier (flat config), `Makefile` (`make lint` / `make lint-fix`)
 - [x] Intégrer ces conventions à la CI (`.github/workflows/pipeline.yml`, consolidé avec la CI sécurité JS : lint → sécurité, jobs enchaînés via `needs:`)
 
-## Phase 2 — Upgrade Symfony 5 → 6.4 (prérequis pour AssetMapper)
+## Phase 2 — Upgrade Symfony 5 → 7.4 (prérequis pour AssetMapper)
 
 **Bloquant découvert le 2026-08-05** : `symfony/asset-mapper` n'existe qu'à partir de Symfony `6.3.0`, le projet tournait en `5.4.45`. Upgrade fait avant de reprendre le pivot AssetMapper.
 
@@ -21,7 +21,7 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 - [x] `Kernel.php` : `RouteCollectionBuilder` (supprimé) → `RoutingConfigurator`
 - [x] Bump PHP minimum requis par composer.json à `^8.1` (Symfony 6.3+), couvert par le PHP CLI système en 8.4
 - [x] Toutes les pages testées manuellement (accueil, story, schedule, join, login, music, desk, admin, accountant) + validé par l'utilisatrice en localhost
-- [ ] Upgrade vers Symfony 7.x (pas fait dans ce chantier, resté sur 6.4 LTS pour l'instant)
+- [x] Upgrade vers Symfony 7.4 LTS : aucun changement de code nécessaire (tout traité au passage 6.4), seul `symfony/webpack-encore-bundle` bumpé `^1.7` → `^2.4` pour supporter `symfony/asset ^7.0`
 
 ## Phase 2bis — Pivot AssetMapper (après la Phase 2)
 
