@@ -11,40 +11,38 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 - **Doctrine ORM/DBAL** + **Doctrine Migrations** — persistance des données
 - **MySQL** `5.7` (voir `DATABASE_URL` dans `.env`)
 - **Symfony Flex** — gestion des recettes de bundles
-- Bibliothèques notables : `cocur/slugify` (slugs), `fakerphp/faker` (fixtures), `eternicode/bootstrap-datepicker`
+- Bibliothèques notables : `cocur/slugify` (slugs), `fakerphp/faker` (fixtures)
 
 ### Frontend
 
-- **Webpack Encore** `^7.2.0` — build des assets (JS/CSS)
-- **jQuery** `^3.5.1`, **Bootstrap** `^4.5.0` (+ `bootstrap-icons`, `popper.js`)
-- **Sass** via `sass` (dart-sass)
-- **wavesurfer.js** — lecteur audio (waveform) pour la partie musique
-- **Three.js** (`assets/libs/three.module.js`, `GLTFLoader`, `OrbitControls`, `dat.gui`) — rendu 3D pour la mascotte et les pages story/schedule (modèles `.gltf`)
+- **Symfony AssetMapper** (natif, zéro build Node en prod) — remplace Webpack Encore depuis la migration du 2026-08-05. Dépendances JS déclarées dans `importmap.php`, installées via `php bin/console importmap:require`, servies avec URL versionnée (hash) directement par Symfony.
+- **jQuery** `~3.6`, **Bootstrap** `^4.6` (+ `popper.js` `^1.16`) — versions **épinglées explicitement** : `importmap:require bootstrap` résout par défaut la dernière version (Bootstrap 5, incompatible avec le code existant en syntaxe `data-toggle`/v4)
+- **Three.js** `0.128.0` — épinglé aussi : le code utilise des API anciennes (`PlaneBufferGeometry`, `sRGBEncoding`...) supprimées dans les versions récentes. Rendu 3D pour la mascotte et les pages story/schedule (modèles `.gltf`)
+- **wavesurfer.js** — chargé en CDN (`<script src="https://unpkg.com/wavesurfer.js">`), pas géré par AssetMapper
+- Fichiers binaires (`.gltf`, `.mp4`, `.png`) référencés depuis du JS vanilla via `window.BB_ASSETS` (objet injecté dans `base.html.twig` via `asset()`, voir `CLAUDE.md`) : AssetMapper ne sert que les URLs hashées exactes, pas les chemins logiques bruts
 
 ### Outils / environnement
 
-- **Node.js** `24` (version pinnée dans `.nvmrc`, requise par `@symfony/webpack-encore@^7.2.0`, dont l'`engines` exige `^22.18.0 || ^24.11.0 || >=26.0`)
+- **Node.js** `24` (version pinnée dans `.nvmrc`) — utilisé uniquement pour l'outillage de lint (ESLint/Prettier), plus aucun build JS en prod
 - **PHP** CLI système en `8.4.24`, compatible avec `^8.1` requis par `composer.json`
-- Gestion de version des deps : `composer.lock`, `package-lock.json` (source de vérité pour npm), `symfony.lock`
+- Gestion de version des deps : `composer.lock`, `package-lock.json` (source de vérité pour npm, devDependencies de lint uniquement), `symfony.lock`
 - **CI** : GitHub Actions (`.github/workflows/pipeline.yml`), un seul fichier, jobs enchaînés (lint → sécurité → déploiement à venir) : lint PHP/Twig/JS, puis `npm audit` sur push (scan complet) ou `dependency-review-action` sur PR vers `main_2026`/`master` (diff des deps ajoutées), seuil `high`
 
 ## Structure du projet
 
 ```
-├── assets/                 # Sources JS/CSS/3D par page (compilées par Webpack Encore)
-│   ├── libs/                # Librairies vendorisées (three.js, dat.gui, GLTFLoader, OrbitControls)
-│   ├── login/                # Page "join" (login/register)
-│   ├── main/                  # Entrée "app" (styles/scripts globaux)
-│   ├── mascotte/               # Entrée "index" — mascotte 3D (gltf)
-│   ├── music/                  # Entrée "music" — lecteur wavesurfer
-│   ├── schedule/                # Entrée "schedule" — planning + assets 3D
-│   ├── story/                    # Entrée "story" — page histoire + minisite
-│   └── uploads/                   # Fichiers uploadés (musique...)
-│
-├── components/              # Dépendances front installées via composer/robloach (bootstrap, jquery, require.js...)
+├── assets/                 # Sources JS/CSS/3D par page, servies par AssetMapper
+│   ├── login/                # Point d'entrée "join" (login/register)
+│   ├── main/                  # Point d'entrée "app" (styles/scripts globaux)
+│   ├── mascotte/               # Point d'entrée "index" — mascotte 3D (gltf)
+│   ├── music/                  # Point d'entrée "music" — lecteur wavesurfer
+│   ├── schedule/                # Point d'entrée "schedule" — planning + assets 3D
+│   ├── story/                    # Point d'entrée "story" — page histoire + minisite
+│   ├── vendor/                    # Dépendances JS téléchargées par importmap:require (gitignoré)
+│   └── uploads/                    # Fichiers uploadés (musique...)
 │
 ├── config/
-│   ├── packages/            # Config des bundles Symfony (security, doctrine, twig, mailer...)
+│   ├── packages/            # Config des bundles Symfony (security, doctrine, twig, asset_mapper, mailer...)
 │   ├── routes/               # Routes (attributs PHP)
 │   ├── bundles.php
 │   └── services.yaml
@@ -52,7 +50,6 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 ├── migrations/ + src/Migrations/   # Migrations Doctrine (schéma BDD)
 │
 ├── public/
-│   ├── build/                # Assets compilés (générés par Encore, ne pas éditer à la main)
 │   ├── uploads/               # Fichiers uploadés servis publiquement (musique, photos)
 │   └── index.php              # Front controller Symfony
 │
@@ -67,14 +64,14 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 │
 ├── templates/                # Vues Twig, une sous-arborescence par section
 │   ├── home/ join/ desk/ admin/ accountant/ music/ schedule/ story/
-│   ├── base.html.twig         # Layout principal
+│   ├── base.html.twig         # Layout principal (contient window.BB_ASSETS, voir CLAUDE.md)
 │   └── partials/                # Header, etc.
 │
 ├── tests/                    # Tests PHPUnit
 ├── translations/
 ├── composer.json / composer.lock   # Dépendances PHP
-├── package.json / package-lock.json # Dépendances front (npm)
-├── webpack.config.js               # Config Webpack Encore (points d'entrée)
+├── package.json / package-lock.json # Outillage de lint JS uniquement (npm)
+├── importmap.php                   # Dépendances JS AssetMapper (points d'entrée + libs)
 ├── symfony.lock                    # Recettes Flex installées
 └── phpunit.xml.dist
 ```
@@ -118,13 +115,13 @@ Les fixtures (`src/DataFixtures/AppFixtures.php`) créent : les rôles, les inst
 
 ## Installation
 
-Voir aussi les indications historiques ci-dessous (environnement legacy PHP 7.4 / npm 10).
+Voir aussi les indications historiques ci-dessous (environnement legacy PHP 7.4 / npm 10, obsolètes depuis la migration AssetMapper).
 
 ```bash
-# Dépendances PHP
+# Dépendances PHP (installe aussi les deps JS via importmap.php, pas besoin de npm pour faire tourner le site)
 composer install
 
-# Dépendances front (utiliser la version Node du .nvmrc)
+# Outillage de lint JS (optionnel, pour contribuer au code JS)
 nvm use
 npm ci
 
@@ -157,19 +154,11 @@ composer require cocur/slugify
 
 ## Lancer le projet en local
 
-Serveur PHP Symfony :
-
 ```bash
 php -S localhost:8000 -t public
 ```
 
-Compilation des assets (Webpack Encore) :
-
-```bash
-npm run watch
-# ou pour la prod :
-npm run build
-```
+Aucune étape de build front nécessaire : AssetMapper sert les assets directement depuis `assets/` en dev. En prod, `php bin/console asset-map:compile` (généralement joué automatiquement par la recette Flex au déploiement).
 
 ## Configuration (`.env`)
 

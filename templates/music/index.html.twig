@@ -1,9 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
-        {{ encore_entry_link_tags('music') }}
-        {% endblock %}
+{% block importmap %}{{ importmap(['app', 'music']) }}{% endblock %}
 
 {% block title %}Track index{% endblock %}
 
@@ -134,7 +131,4 @@
 {% block javascripts %}
         <script src="https://unpkg.com/wavesurfer.js"></script>
         <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
-
-        {{ encore_entry_script_tags('music') }}
-
 {% endblock %}

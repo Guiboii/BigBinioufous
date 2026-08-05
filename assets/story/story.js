@@ -1,9 +1,9 @@
-import '../../node_modules/jquery/dist/jquery.js';
-import '../../node_modules/bootstrap/dist/js/bootstrap.min.js';
-// import '../story/story.css';
+import 'jquery';
+import 'bootstrap';
+// import './story.css';
 
-import * as THREE from '../libs/three.module.js';
-import { GLTFLoader } from '../libs/GLTFLoader.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 var canvas,
   clock,
@@ -65,7 +65,7 @@ function init() {
 
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/Binioufou_Final4.gltf',
+    window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;
       let fileAnimations = gltf.animations;
@@ -90,7 +90,7 @@ function init() {
   // Soucoupe 3D MODEL
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/Soucoupe.gltf',
+    window.BB_ASSETS['story/Soucoupe.gltf'],
     function (gltf) {
       model = gltf.scene;
       model.position.set(7, 3, -6);
@@ -121,7 +121,7 @@ function init() {
   // desk
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/Desk.gltf',
+    window.BB_ASSETS['story/Desk.gltf'],
     function (gltf) {
       model = gltf.scene;
       model.scale.set(0.5, 0.5, 0.5);

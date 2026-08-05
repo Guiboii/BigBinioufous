@@ -3,9 +3,18 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Binioufous!{% endblock %}</title>
-        {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+        <script>
+            window.BB_ASSETS = {
+                'mascotte/Binioufou_Final4.gltf': '{{ asset('mascotte/Binioufou_Final4.gltf') }}',
+                'mascotte/moveB.gltf': '{{ asset('mascotte/moveB.gltf') }}',
+                'story/Soucoupe.gltf': '{{ asset('story/Soucoupe.gltf') }}',
+                'story/Desk.gltf': '{{ asset('story/Desk.gltf') }}',
+                'story/Desk1.gltf': '{{ asset('story/Desk1.gltf') }}',
+                'music/SoundSystem.gltf': '{{ asset('music/SoundSystem.gltf') }}',
+                'schedule/flyer002.png': '{{ asset('schedule/flyer002.png') }}',
+            };
+        </script>
         {{ include('/partials/header.html.twig') }}
     </head>
     <body>
@@ -20,9 +29,7 @@
     {% endfor %}
         {% block body %}
         {% endblock %}
-        {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
-        {% endblock %}
+        {% block javascripts %}{% endblock %}
     </body>
 
 </html>

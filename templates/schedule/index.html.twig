@@ -7,12 +7,12 @@
 <div class="scroll-wrapper schedule">
 
     <div class="scroll" data-spy="scroll" data-target="#calendar" data-offset="0">
-      <img id="jan" src="../build/images/flyer001.png">
+      <img id="jan" src="{{ asset('schedule/flyer001.png') }}">
       <p>Alors au début!</p>
       <h4 id="feb">@mdo</h4>
-      <img id="mar" src="../build/images/flyer002.png">
+      <img id="mar" src="{{ asset('schedule/flyer002.png') }}">
       <h4 id="apr">two</h4>
-      <img id="may" src="../build/images/flyer001.png">
+      <img id="may" src="{{ asset('schedule/flyer001.png') }}">
       <h4 id="jun">three</h4>
     </div>
 
@@ -39,9 +39,7 @@
 
 <div class="loading" id="js-loader"><div class="loader"></div></div>
 <div class="mascotte"><canvas id="c"></canvas></div>
-<video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="../build/images/Foryou3.mp4" type="video/mp4"></video>
+<video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('story/Foryou3.mp4') }}" type="video/mp4"></video>
 {% endblock %}
 
-{% block javascripts %}
-        {{ encore_entry_script_tags('schedule') }}
-{% endblock %}
+{% block importmap %}{{ importmap(['app', 'schedule']) }}{% endblock %}

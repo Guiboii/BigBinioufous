@@ -1,8 +1,8 @@
-import '../../node_modules/jquery/dist/jquery.js';
-import '../../node_modules/bootstrap/dist/js/bootstrap.min.js';
+import 'jquery';
+import 'bootstrap';
 
-import * as THREE from '../libs/three.module.js';
-import { GLTFLoader } from '../libs/GLTFLoader.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 var canvas,
   clock,
@@ -64,7 +64,7 @@ function init() {
   roomGeo(20, 10, 2);
 
   // flyer right
-  var texture = new THREE.TextureLoader().load('../build/images/flyer002.png');
+  var texture = new THREE.TextureLoader().load(window.BB_ASSETS['schedule/flyer002.png']);
   var flyerRight = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(6, 8),
     new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture }),
@@ -99,7 +99,7 @@ function init() {
 
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/Binioufou_Final4.gltf',
+    window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;
       let fileAnimations = gltf.animations;
@@ -124,7 +124,7 @@ function init() {
   // desk
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/Desk1.gltf',
+    window.BB_ASSETS['story/Desk1.gltf'],
     function (gltf) {
       model = gltf.scene;
       model.scale.set(0.5, 0.5, 0.5);

@@ -1,11 +1,11 @@
-import '../../node_modules/jquery/dist/jquery.js';
-import '../../node_modules/bootstrap/dist/js/bootstrap.min.js';
-import '../music/music.css';
+import 'jquery';
+import 'bootstrap';
+import './music.css';
 
-import * as THREE from '../libs/three.module.js';
-import { GLTFLoader } from '../libs/GLTFLoader.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import '../music/Player.js';
+import './Player.js';
 
 var canvas,
   clock,
@@ -67,7 +67,7 @@ function init() {
 
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/Binioufou_Final4.gltf',
+    window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;
       let fileAnimations = gltf.animations;
@@ -92,7 +92,7 @@ function init() {
   // sound system
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/SoundSystem.gltf',
+    window.BB_ASSETS['music/SoundSystem.gltf'],
     function (gltf) {
       model = gltf.scene;
       model.name = 'music';

@@ -7,11 +7,9 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 
-// import { $, jQuery } from 'jquery';
-// import "../../node_modules/bootstrap/dist/js/bootstrap.js";
-import '../../node_modules/jquery/dist/jquery.js';
-import '../../node_modules/bootstrap/dist/js/bootstrap.min.js';
-import '../../node_modules/bootstrap/dist/css/bootstrap.css';
-import '../../node_modules/@fortawesome/fontawesome-free/js/fontawesome.min.js';
-import '../../node_modules/@fortawesome/fontawesome-free/css/fontawesome.css';
-import '../main/app.css';
+import 'jquery';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '@fortawesome/fontawesome-free/js/fontawesome.min.js';
+import '@fortawesome/fontawesome-free/css/fontawesome.min.css';
+import './app.css';

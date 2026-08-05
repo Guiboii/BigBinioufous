@@ -25,10 +25,13 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 
 ## Phase 2bis — Pivot AssetMapper (après la Phase 2)
 
-- [ ] Remplacer Webpack Encore par AssetMapper (natif Symfony, zéro build Node en prod)
-- [ ] Adapter les templates Twig qui référencent les assets compilés
-- [ ] Réévaluer la CI JS (le job `npm audit`/`dependency-review` n'aura peut-être plus lieu d'être si Node disparaît du projet)
-- [ ] Détail complet des correspondances déjà en mémoire projet (`project_assetmapper_migration.md`) : cartographie des chemins d'assets binaires, des entrées JS, des templates concernés
+- [x] Remplacer Webpack Encore par AssetMapper (natif Symfony, zéro build Node en prod) : `webpack-encore-bundle`, `webpack.config.js` supprimés, dépendances JS déclarées dans `importmap.php`
+- [x] `eternicode/bootstrap-datepicker` retiré (confirmé mort), ce qui a aussi supprimé `robloach/component-installer` (abandonné) et `components/`
+- [x] Adapter les 9 templates Twig qui référencent les assets compilés (`encore_entry_*` → `importmap()`)
+- [x] Piège Bootstrap 5/Three.js récent résolus par défaut par `importmap:require` (incompatibles avec le code existant) : versions épinglées explicitement (`bootstrap@^4.6`, `three@0.128.0`)
+- [x] Piège des URLs hashées pour les fichiers binaires (`.gltf`, images) référencés en JS : résolu via `window.BB_ASSETS` injecté dans `base.html.twig`
+- [x] Testé manuellement (curl + navigateur Playwright, screenshot de la mascotte 3D) sur toutes les pages, 0 erreur console (hors CDN wavesurfer bloqué par la sandbox de test, sans rapport avec la migration)
+- [x] CI JS réévaluée : gardée telle quelle, `npm audit` passe à 0 vulnérabilité (devDependencies de lint uniquement désormais)
 
 ## Phase 3 — Déploiement automatique (VPS auto-géré)
 

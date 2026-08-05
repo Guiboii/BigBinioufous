@@ -19,6 +19,4 @@
 <div class="mascotte"><canvas id="c"></canvas></div>
 {% endblock %}
 
-{% block javascripts %}
-        {{ encore_entry_script_tags('join') }}
-{% endblock %}
+{% block importmap %}{{ importmap(['app', 'join']) }}{% endblock %}

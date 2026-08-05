@@ -1,9 +1,9 @@
-import '../../node_modules/jquery/dist/jquery.js';
-import '../../node_modules/bootstrap/dist/js/bootstrap.min.js';
+import 'jquery';
+import 'bootstrap';
 
-import * as THREE from '../libs/three.module.js';
-import { OrbitControls } from '../libs/OrbitControls.js';
-import { GLTFLoader } from '../libs/GLTFLoader.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 var canvas,
   clock,
@@ -132,7 +132,7 @@ function init() {
   flyerRightVid.name = 'soucoupe';
   scene.add(flyerRightVid);
 
-  var texture = new THREE.TextureLoader().load('../build/images/flyer002.png');
+  var texture = new THREE.TextureLoader().load(window.BB_ASSETS['schedule/flyer002.png']);
   var flyerRight = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(6, 8),
     new THREE.MeshToonMaterial({ color: 0xffffff, map: texture }),
@@ -146,7 +146,7 @@ function init() {
 
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/Binioufou_Final4.gltf',
+    window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;
       let fileAnimations = gltf.animations;
@@ -173,7 +173,7 @@ function init() {
   // desk
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/Desk.gltf',
+    window.BB_ASSETS['story/Desk.gltf'],
     function (gltf) {
       model = gltf.scene;
       model.scale.set(0.5, 0.5, 0.5);
@@ -191,7 +191,7 @@ function init() {
   // sound system
   var loader = new GLTFLoader();
   loader.load(
-    '../build/images/SoundSystem.gltf',
+    window.BB_ASSETS['music/SoundSystem.gltf'],
     function (gltf) {
       model = gltf.scene;
       model.scale.set(0.7, 0.7, 0.7);

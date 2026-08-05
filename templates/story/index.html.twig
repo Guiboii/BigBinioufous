@@ -1,9 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
-        {{ encore_entry_link_tags('story') }}
-        {% endblock %}
+{% block importmap %}{{ importmap(['app', 'story']) }}{% endblock %}
 
 {% block title %}Story{% endblock %}
 
@@ -33,8 +30,4 @@
 <div class="loading" id="js-loader"><div class="loader"></div></div>
 <div class="mascotte"><canvas id="c"></canvas></div>
 
-{% endblock %}
-
-{% block javascripts %}
-        {{ encore_entry_script_tags('story') }}
 {% endblock %}

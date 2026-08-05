@@ -19,12 +19,14 @@ Version PHP : `composer.json` requiert `^8.1` (bump depuis `^7.2.5|^8.0` lors de
 
 Historique upgrade Symfony : `5.4` → `6.4` LTS (annotations → attributs PHP, sensio retiré) → `7.4` LTS (aucun changement de code nécessaire, tout avait déjà été traité au passage 6.4 ; seul `symfony/webpack-encore-bundle` a dû être bumpé `^1.7` → `^2.4` pour supporter `symfony/asset ^7.0`).
 
-### Frontend (Node)
+### Frontend (AssetMapper, plus de build Node)
 
-- Version Node pinnée dans `.nvmrc` à **24** (requise par `@symfony/webpack-encore@^7.2.0`, dont l'`engines` exige `^22.18.0 || ^24.11.0 || >=26.0`). Faire `nvm use` avant toute commande npm.
-- `npm ci` est la commande canonique d'installation (utilise `package-lock.json`, seul lock file du projet — `yarn.lock` a été supprimé car legacy/inutilisé, ne pas le réintroduire)
-- `npm run watch` — build Webpack Encore en dev avec watch
-- `npm run build` — build Webpack Encore en production
+- `composer require symfony/asset-mapper` a remplacé Webpack Encore le 2026-08-05. Zéro build JS : les assets sont servis directement par Symfony depuis `assets/`, en dev comme en prod (`asset-map:compile` en prod).
+- Dépendances JS déclarées dans `importmap.php` (racine), installées/mises à jour via `php bin/console importmap:require <package>` (téléchargées dans `assets/vendor/`, gitignoré).
+- **Piège** : `importmap:require <lib>` résout par défaut la dernière version du package. Pour ce projet, `bootstrap` et `three` doivent rester épinglés à d'anciennes versions (`bootstrap@^4.6`, `three@0.128.0`) car le code utilise leurs anciennes API (Bootstrap 4 `data-toggle`, Three.js `PlaneBufferGeometry`/`sRGBEncoding`). Toujours vérifier après un `importmap:require` que la version résolue est compatible avant de committer.
+- **Fichiers binaires référencés en JS** (`.gltf`, images) : AssetMapper ne sert que l'URL hashée exacte, pas le chemin logique brut (`/assets/mascotte/x.gltf` → 404, il faut `/assets/mascotte/x-HASH.gltf`). Solution : `window.BB_ASSETS` est injecté dans `templates/base.html.twig` via `{{ asset('chemin/fichier') }}` pour chaque binaire utilisé en JS vanilla ; les fichiers JS consomment `window.BB_ASSETS['chemin/fichier']`. Pour un nouveau binaire, l'ajouter des deux côtés.
+- `.nvmrc` (Node `24`) reste utile uniquement pour l'outillage de lint JS (ESLint/Prettier), plus pour un build.
+- `npm ci` : installe seulement les devDependencies de lint (`package.json` ne contient plus aucune dépendance runtime).
 
 ### Conventions de code
 
@@ -38,7 +40,7 @@ Historique upgrade Symfony : `5.4` → `6.4` LTS (annotations → attributs PHP,
 - Backend : Symfony 7.4 LTS, Doctrine ORM/DBAL, MySQL 5.7. Routes et mapping ORM en **attributs PHP natifs** (`#[Route]`, `#[ORM\Entity]`...), plus d'annotations docblock (`sensio/framework-extra-bundle` retiré, remplacé par les attributs core Symfony 6.2+).
 - Entités principales : `User` (membre, lié à un `Instrument` et plusieurs `Role`), `Role` (`ROLE_ADMIN`, `ROLE_COMPTA`, `ROLE_BINIOUFOUS`, `ROLE_MEMBER`, `ROLE_Simple`, `ROLE_USER`), `Instrument`, `Artist`/`Track` (bibliothèque musicale).
 - Sécurité (`config/packages/security.yaml`) : `form_login`, provider Doctrine sur `User` (identifiant = email, `getUserIdentifier()`), `password_hashers` bcrypt (`encoders` renommé depuis 5.3). `/admin/*` réservé à `ROLE_ADMIN`, `/desk/*` réservé à `ROLE_USER`. Une inscription "Simple" est auto-validée ; les inscriptions Binioufous/Membre attendent une validation admin qui attribue le rôle.
-- Frontend : Webpack Encore `^7.2.0` (npm) + `symfony/webpack-encore-bundle` `^2.4` (côté PHP, bumpé depuis `^1.7` pour Symfony 7), jQuery/Bootstrap 4, Sass via `sass` (dart-sass), Three.js (mascotte 3D, pages story/schedule), wavesurfer.js (lecteur musique). Points d'entrée sous `assets/<section>/`. `webpack.config.js` est en ESM (`import`/`export default`, `package.json` a `"type": "module"`).
+- Frontend : Symfony AssetMapper (zéro build Node, cf. section Commands ci-dessus), jQuery/Bootstrap 4, Three.js (mascotte 3D, pages story/schedule), wavesurfer.js (lecteur musique, chargé en CDN, pas géré par AssetMapper). Points d'entrée déclarés dans `importmap.php`, sous `assets/<section>/`. Chaque template Twig appelle `{{ importmap([...]) }}` (remplace `encore_entry_*`), voir `templates/base.html.twig` pour le pattern par défaut et `templates/story/minisite.html.twig` pour le cas particulier CSS-sans-JS (`<link>` manuel via `asset()`).
 
 ## Branches & CI
 

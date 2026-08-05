@@ -3,9 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Binioufous!{% endblock %}</title>
-        {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+        {{ importmap('app') }}
     </head>
     <body>
         {% block header %}
@@ -14,9 +12,6 @@
         </button>
         {% endblock %}
         {% block body %}
-        {% endblock %}
-        {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </body>
 </html>
