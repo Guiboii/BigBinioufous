@@ -7,7 +7,7 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 ## Phase 1 — Fondations
 
 - [x] Conventions de code : `.editorconfig`, PHP-CS-Fixer (`@Symfony`), Twig-CS-Fixer, ESLint/Prettier (flat config), `Makefile` (`make lint` / `make lint-fix`)
-- [ ] Intégrer ces conventions à la CI (job de lint qui bloque la PR si non respecté)
+- [x] Intégrer ces conventions à la CI (`.github/workflows/pipeline.yml`, consolidé avec la CI sécurité JS : lint → sécurité, jobs enchaînés via `needs:`)
 
 ## Phase 2 — Pivot AssetMapper
 
