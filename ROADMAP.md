@@ -9,11 +9,22 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 - [x] Conventions de code : `.editorconfig`, PHP-CS-Fixer (`@Symfony`), Twig-CS-Fixer, ESLint/Prettier (flat config), `Makefile` (`make lint` / `make lint-fix`)
 - [x] Intégrer ces conventions à la CI (`.github/workflows/pipeline.yml`, consolidé avec la CI sécurité JS : lint → sécurité, jobs enchaînés via `needs:`)
 
-## Phase 2 — Pivot AssetMapper
+## Phase 2 — Upgrade Symfony 5 → 6.4/7 (prérequis pour AssetMapper)
+
+**Bloquant découvert le 2026-08-05** : `symfony/asset-mapper` n'existe qu'à partir de Symfony `6.3.0`. Le projet tourne en Symfony `5.4.45` (LTS), `composer require symfony/asset-mapper` échoue proprement (composer annule tout seul, rien de cassé). Décision : faire cet upgrade avant de reprendre le pivot AssetMapper.
+
+- [ ] Recherche/plan de l'upgrade (chemin 5.4 → 6.4 LTS, éventuellement → 7.x ensuite)
+- [ ] Traiter les dépréciations Symfony 5.4 avant de sauter de version
+- [ ] Remplacer `sensio/framework-extra-bundle` (fusionné dans le framework-bundle depuis Symfony 6)
+- [ ] Vérifier compatibilité Doctrine, security.yaml, annotations → attributs PHP natifs
+- [ ] Bump PHP minimum requis par composer.json si besoin (Symfony 6.3+ exige PHP 8.1+, déjà couvert par le PHP CLI système en 8.4)
+
+## Phase 2bis — Pivot AssetMapper (après la Phase 2)
 
 - [ ] Remplacer Webpack Encore par AssetMapper (natif Symfony, zéro build Node en prod)
 - [ ] Adapter les templates Twig qui référencent les assets compilés
 - [ ] Réévaluer la CI JS (le job `npm audit`/`dependency-review` n'aura peut-être plus lieu d'être si Node disparaît du projet)
+- [ ] Détail complet des correspondances déjà en mémoire projet (`project_assetmapper_migration.md`) : cartographie des chemins d'assets binaires, des entrées JS, des templates concernés
 
 ## Phase 3 — Déploiement automatique (VPS auto-géré)
 
