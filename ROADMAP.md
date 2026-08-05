@@ -20,6 +20,8 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 - [ ] Décider de l'approche (Docker + docker-compose vs déploiement direct) — à creuser ensemble
 - [ ] Pipeline GitHub Actions : build, migrations, déploiement SSH vers le VPS
 - [ ] Secrets de déploiement (clé SSH, credentials DB prod) via GitHub Secrets
+- [ ] Gestion `.env` dev vs prod : `.env` reste les valeurs par défaut (déjà le cas), `.env.local`/`.env.prod.local` pour les vraies valeurs de prod (jamais commitées), voir `composer dump-env prod` pour compiler les variables en prod
+- [ ] Gestion de la base de données dev vs prod : BDD locale (fixtures Faker) séparée de la vraie BDD prod, définir comment les migrations Doctrine sont jouées en prod (manuellement vs étape du pipeline de déploiement)
 
 ## Phase 4 — Système de traduction (i18n)
 
