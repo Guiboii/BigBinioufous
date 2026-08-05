@@ -8,14 +8,10 @@ class PasswordUpdate
 {
     private $oldPassword;
 
-    /**
-     * @Assert\Length(min=8, minMessage="Please insert 8 characters at least")
-     */
+    #[Assert\Length(min: 8, minMessage: 'Please insert 8 characters at least')]
     private $newPassword;
 
-    /**
-     * @Assert\EqualTo(propertyPath="newPassword", message="Please confirm")
-     */
+    #[Assert\EqualTo(propertyPath: 'newPassword', message: 'Please confirm')]
     private $confirmPassword;
 
     public function getOldPassword(): ?string

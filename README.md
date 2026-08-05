@@ -6,12 +6,12 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 
 ### Backend
 
-- **PHP** `^7.2.5` (testé en dev avec PHP 7.4)
-- **Symfony** `5.*` (framework-bundle, security-bundle, form, validator, twig, orm-pack, serializer-pack...)
+- **PHP** `^8.1` (requis par Symfony 6.3+)
+- **Symfony** `6.4.*` LTS (framework-bundle, security-bundle, form, validator, twig, orm-pack, serializer-pack...) — upgradé depuis Symfony 5.4, routes/entités en attributs PHP natifs
 - **Doctrine ORM/DBAL** + **Doctrine Migrations** — persistance des données
 - **MySQL** `5.7` (voir `DATABASE_URL` dans `.env`)
 - **Symfony Flex** — gestion des recettes de bundles
-- Bibliothèques notables : `cocur/slugify` (slugs), `fzaninotto/faker` (fixtures), `sensio/framework-extra-bundle`, `eternicode/bootstrap-datepicker`
+- Bibliothèques notables : `cocur/slugify` (slugs), `fakerphp/faker` (fixtures), `eternicode/bootstrap-datepicker`
 
 ### Frontend
 
@@ -24,7 +24,7 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 ### Outils / environnement
 
 - **Node.js** `24` (version pinnée dans `.nvmrc`, requise par `@symfony/webpack-encore@^7.2.0`, dont l'`engines` exige `^22.18.0 || ^24.11.0 || >=26.0`)
-- **PHP** dev en `7.4.33`, PHP CLI système en `8.4.23` (attention à la compatibilité avec `^7.2.5` requis par `composer.json`)
+- **PHP** CLI système en `8.4.24`, compatible avec `^8.1` requis par `composer.json`
 - Gestion de version des deps : `composer.lock`, `package-lock.json` (source de vérité pour npm), `symfony.lock`
 - **CI** : GitHub Actions (`.github/workflows/pipeline.yml`), un seul fichier, jobs enchaînés (lint → sécurité → déploiement à venir) : lint PHP/Twig/JS, puis `npm audit` sur push (scan complet) ou `dependency-review-action` sur PR vers `main_2026`/`master` (diff des deps ajoutées), seuil `high`
 
@@ -45,7 +45,7 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 │
 ├── config/
 │   ├── packages/            # Config des bundles Symfony (security, doctrine, twig, mailer...)
-│   ├── routes/               # Routes (annotations)
+│   ├── routes/               # Routes (attributs PHP)
 │   ├── bundles.php
 │   └── services.yaml
 │
@@ -112,7 +112,7 @@ Les fixtures (`src/DataFixtures/AppFixtures.php`) créent : les rôles, les inst
 
 ### Sécurité (`config/packages/security.yaml`)
 
-- Authentification par formulaire (`form_login`), provider Doctrine sur `App\Entity\User` (identifiant = email), mot de passe hashé en `bcrypt`.
+- Authentification par formulaire (`form_login`), provider Doctrine sur `App\Entity\User` (identifiant = email via `getUserIdentifier()`), mot de passe hashé en `bcrypt` (`password_hashers`).
 - `/admin/*` réservé à `ROLE_ADMIN`, `/desk/*` réservé à `ROLE_USER`.
 - Un nouvel inscrit avec le souhait "Simple" est validé automatiquement ; les autres (Binioufous/Membre) attendent une validation admin qui leur attribue le rôle correspondant.
 

@@ -10,13 +10,13 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private $encoder;
 
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordHasherInterface $encoder)
     {
         $this->encoder = $encoder;
     }
@@ -100,7 +100,7 @@ class AppFixtures extends Fixture
 
         $admin = new User();
 
-        $hash = $this->encoder->encodePassword($admin, 'password');
+        $hash = $this->encoder->hashPassword($admin, 'password');
 
         $admin->setGender('male')
                 ->setFirstName('Guillaume')
@@ -124,7 +124,7 @@ class AppFixtures extends Fixture
         for ($i = 1; $i <= 20; ++$i) {
             $user = new User();
 
-            $hash = $this->encoder->encodePassword($user, 'password');
+            $hash = $this->encoder->hashPassword($user, 'password');
 
             $genders = ['male', 'female'];
             $gender = $faker->randomElement($genders);
@@ -153,7 +153,7 @@ class AppFixtures extends Fixture
         for ($i = 1; $i <= 10; ++$i) {
             $user = new User();
 
-            $hash = $this->encoder->encodePassword($user, 'password');
+            $hash = $this->encoder->hashPassword($user, 'password');
 
             $genders = ['male', 'female'];
             $gender = $faker->randomElement($genders);

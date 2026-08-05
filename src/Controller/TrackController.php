@@ -9,17 +9,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-/**
- * @Route("/music")
- */
+#[Route('/music')]
 class TrackController extends AbstractController
 {
-    /**
-     * @Route("/", name="music", methods={"GET"})
-     */
+    #[Route('/', name: 'music', methods: ['GET'])]
     public function index(TrackRepository $trackRepository): Response
     {
         return $this->render('music/index.html.twig', [
@@ -27,9 +23,7 @@ class TrackController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="track_new", methods={"GET","POST"})
-     */
+    #[Route('/new', name: 'track_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SluggerInterface $slugger): Response
     {
         $track = new Track();
@@ -65,9 +59,7 @@ class TrackController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="track_show", methods={"GET"})
-     */
+    #[Route('/{id}', name: 'track_show', methods: ['GET'])]
     public function show(Track $track): Response
     {
         return $this->render('music/show.html.twig', [
@@ -75,9 +67,7 @@ class TrackController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="track_edit", methods={"GET","POST"})
-     */
+    #[Route('/{id}/edit', name: 'track_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Track $track): Response
     {
         $form = $this->createForm(TrackType::class, $track);
@@ -95,9 +85,7 @@ class TrackController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="track_delete", methods={"DELETE"})
-     */
+    #[Route('/{id}', name: 'track_delete', methods: ['DELETE'])]
     public function delete(Request $request, Track $track): Response
     {
         if ($this->isCsrfTokenValid('delete'.$track->getId(), $request->request->get('_token'))) {

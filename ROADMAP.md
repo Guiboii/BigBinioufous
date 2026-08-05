@@ -9,11 +9,26 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 - [x] Conventions de code : `.editorconfig`, PHP-CS-Fixer (`@Symfony`), Twig-CS-Fixer, ESLint/Prettier (flat config), `Makefile` (`make lint` / `make lint-fix`)
 - [x] Intégrer ces conventions à la CI (`.github/workflows/pipeline.yml`, consolidé avec la CI sécurité JS : lint → sécurité, jobs enchaînés via `needs:`)
 
-## Phase 2 — Pivot AssetMapper
+## Phase 2 — Upgrade Symfony 5 → 6.4 (prérequis pour AssetMapper)
+
+**Bloquant découvert le 2026-08-05** : `symfony/asset-mapper` n'existe qu'à partir de Symfony `6.3.0`, le projet tournait en `5.4.45`. Upgrade fait avant de reprendre le pivot AssetMapper.
+
+- [x] Upgrade composer.json 5.* → 6.4.* (aucun conflit de dépendances remonté par composer)
+- [x] Remplacer `sensio/framework-extra-bundle` par les attributs PHP natifs Symfony 6.2+ (`#[Route]` sur tous les contrôleurs)
+- [x] Mapping Doctrine ORM : annotations → attributs PHP (`#[ORM\Entity]` etc.) sur les 6 entités
+- [x] `security.yaml` : `anonymous` (obsolète) retiré, `encoders` → `password_hashers`
+- [x] `User.php` : interface de sécurité modernisée (`getRoles(): array`, `getUserIdentifier()`, `PasswordAuthenticatedUserInterface`)
+- [x] `Kernel.php` : `RouteCollectionBuilder` (supprimé) → `RoutingConfigurator`
+- [x] Bump PHP minimum requis par composer.json à `^8.1` (Symfony 6.3+), couvert par le PHP CLI système en 8.4
+- [x] Toutes les pages testées manuellement (accueil, story, schedule, join, login, music, desk, admin, accountant) + validé par l'utilisatrice en localhost
+- [ ] Upgrade vers Symfony 7.x (pas fait dans ce chantier, resté sur 6.4 LTS pour l'instant)
+
+## Phase 2bis — Pivot AssetMapper (après la Phase 2)
 
 - [ ] Remplacer Webpack Encore par AssetMapper (natif Symfony, zéro build Node en prod)
 - [ ] Adapter les templates Twig qui référencent les assets compilés
 - [ ] Réévaluer la CI JS (le job `npm audit`/`dependency-review` n'aura peut-être plus lieu d'être si Node disparaît du projet)
+- [ ] Détail complet des correspondances déjà en mémoire projet (`project_assetmapper_migration.md`) : cartographie des chemins d'assets binaires, des entrées JS, des templates concernés
 
 ## Phase 3 — Déploiement automatique (VPS auto-géré)
 

@@ -11,8 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -20,10 +20,9 @@ class LoginController extends AbstractController
 {
     /**
      * page to join.
-     *
-     * @Route("/join", name="join")
      */
-    public function index(AuthenticationUtils $utils, Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder)
+    #[Route('/join', name: 'join')]
+    public function index(AuthenticationUtils $utils, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder)
     {
         $error = $utils->getLastAuthenticationError();
         $username = $utils->getLastUsername();
@@ -37,22 +36,26 @@ class LoginController extends AbstractController
     /**
      * to login.
      *
-     * @Route("/login", name="login")
-     *
      * @return Response
      */
-    public function login()
+    #[Route('/login', name: 'login')]
+    public function login(AuthenticationUtils $utils)
     {
-        return $this->render('join/login.html.twig');
+        $error = $utils->getLastAuthenticationError();
+        $username = $utils->getLastUsername();
+
+        return $this->render('join/login.html.twig', [
+            'hasError' => null !== $error,
+            'username' => $username,
+        ]);
     }
 
     /**
      * to logout.
      *
-     * @Route("/logout", name="logout")
-     *
      * @return void
      */
+    #[Route('/logout', name: 'logout')]
     public function logout()
     {
     }
@@ -60,11 +63,10 @@ class LoginController extends AbstractController
     /**
      * to register.
      *
-     * @Route("/register", name="register")
-     *
      * @return Response
      */
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, SluggerInterface $slugger)
+    #[Route('/register', name: 'register')]
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, SluggerInterface $slugger)
     {
         $user = new User();
 
@@ -103,7 +105,7 @@ class LoginController extends AbstractController
                 }
             }
 
-            $hash = $encoder->encodePassword($user, $user->getHash());
+            $hash = $encoder->hashPassword($user, $user->getHash());
             $user->setHash($hash)
                     ->setValidation($validation)
                     ->setPicture($newFilename);
@@ -126,10 +128,9 @@ class LoginController extends AbstractController
     /**
      * update profile.
      *
-     * @Route("/desk/profile", name="profile")
-     *
      * @return Response
      */
+    #[Route('/desk/profile', name: 'profile')]
     public function profile(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger)
     {
         $user = $this->getUser();
@@ -180,11 +181,10 @@ class LoginController extends AbstractController
     /**
      * Update the password.
      *
-     * @Route("/desk/update-password", name="update-password")
-     *
      * @return void
      */
-    public function updatePassword(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
+    #[Route('/desk/update-password', name: 'update-password')]
+    public function updatePassword(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager)
     {
         $passwordUpdate = new PasswordUpdate();
 
@@ -198,7 +198,7 @@ class LoginController extends AbstractController
             if (!password_verify($passwordUpdate->getOldPassword(), $user->getHash())) {
             } else {
                 $newPassword = $passwordUpdate->getNewPassword();
-                $hash = $encoder->encodePassword($user, $newPassword);
+                $hash = $encoder->hashPassword($user, $newPassword);
 
                 $user->setHash($hash);
 

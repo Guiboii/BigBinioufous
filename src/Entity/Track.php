@@ -5,52 +5,34 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\TrackRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\TrackRepository::class)]
 class Track
 {
-    /**
-     * @ORM\Id()
-     *
-     * @ORM\GeneratedValue()
-     *
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $title;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Artist", inversedBy="songs")
-     */
+    #[ORM\ManyToOne(targetEntity: Artist::class, inversedBy: 'songs')]
     private $artist;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $trackFilename;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $minutes;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $seconds;
 
-    /**
-     * @Assert\File(
-     *     maxSize = "200000k",
-     *     mimeTypes = {"application/mp3", "application/x-mp3"},
-     *     mimeTypesMessage = "Please upload a valid mp3"
-     * )
-     */
+    #[Assert\File(
+        maxSize: '200000k',
+        mimeTypes: ['application/mp3', 'application/x-mp3'],
+        mimeTypesMessage: 'Please upload a valid mp3',
+    )]
     protected $trackFile;
 
     public function getId(): ?int

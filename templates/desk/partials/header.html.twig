@@ -11,21 +11,23 @@
                 <li class="nav-item">
                     <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="far fa-user-circle"></i> Profile</a>
                 </li>
-                {% for role in app.user.roles %}
-                    {% if role == 'ROLE_ADMIN' %}
-                        <li class="nav-item">
-                            <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> Songs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link text-yellow"><i class="fas fa-chart-line"></i> Admin</a>
-                        </li>
-                    {% endif %}
-                    {% if role == 'ROLE_BINIOUFOUS' %}
-                        <li class="nav-item">
-                            <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> Songs</a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
+                {% if app.user %}
+                    {% for role in app.user.roles %}
+                        {% if role == 'ROLE_ADMIN' %}
+                            <li class="nav-item">
+                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> Songs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link text-yellow"><i class="fas fa-chart-line"></i> Admin</a>
+                            </li>
+                        {% endif %}
+                        {% if role == 'ROLE_BINIOUFOUS' %}
+                            <li class="nav-item">
+                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> Songs</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
 
                 <li class="nav-item ml-auto">
                     <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
