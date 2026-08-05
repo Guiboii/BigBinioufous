@@ -15,15 +15,15 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 
 ### Frontend
 
-- **Webpack Encore** `^0.30.2` — build des assets (JS/CSS)
+- **Webpack Encore** `^7.2.0` — build des assets (JS/CSS)
 - **jQuery** `^3.5.1`, **Bootstrap** `^4.5.0` (+ `bootstrap-icons`, `popper.js`)
-- **Sass** via `node-sass`
+- **Sass** via `sass` (dart-sass)
 - **wavesurfer.js** — lecteur audio (waveform) pour la partie musique
 - **Three.js** (`assets/libs/three.module.js`, `GLTFLoader`, `OrbitControls`, `dat.gui`) — rendu 3D pour la mascotte et les pages story/schedule (modèles `.gltf`)
 
 ### Outils / environnement
 
-- **Node.js** `14` (version pinnée dans `.nvmrc`, requise pour compiler `node-sass` sans erreur ; les versions récentes de Node cassent le build natif)
+- **Node.js** `24` (version pinnée dans `.nvmrc`, requise par `@symfony/webpack-encore@^7.2.0`, dont l'`engines` exige `^22.18.0 || ^24.11.0 || >=26.0`)
 - **PHP** dev en `7.4.33`, PHP CLI système en `8.4.23` (attention à la compatibilité avec `^7.2.5` requis par `composer.json`)
 - Gestion de version des deps : `composer.lock`, `package-lock.json` (source de vérité pour npm), `symfony.lock`
 - **CI** : GitHub Actions (`.github/workflows/js-security.yml`) — `npm audit` sur push (scan complet), `dependency-review-action` sur PR vers `main_2026`/`master` (diff des deps ajoutées), seuil `high`

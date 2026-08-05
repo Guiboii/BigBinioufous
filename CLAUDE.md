@@ -19,7 +19,7 @@ Attention version PHP : `composer.json` requiert `^7.2.5|^8.0`, le dev historiqu
 
 ### Frontend (Node)
 
-- Version Node pinnée dans `.nvmrc` à **14** (obligatoire : les Node récents cassent la compilation native de `node-sass` via node-gyp/python). Faire `nvm use` avant toute commande npm.
+- Version Node pinnée dans `.nvmrc` à **24** (requise par `@symfony/webpack-encore@^7.2.0`, dont l'`engines` exige `^22.18.0 || ^24.11.0 || >=26.0`). Faire `nvm use` avant toute commande npm.
 - `npm ci` est la commande canonique d'installation (utilise `package-lock.json`, seul lock file du projet — `yarn.lock` a été supprimé car legacy/inutilisé, ne pas le réintroduire)
 - `npm run watch` — build Webpack Encore en dev avec watch
 - `npm run build` — build Webpack Encore en production
@@ -29,7 +29,7 @@ Attention version PHP : `composer.json` requiert `^7.2.5|^8.0`, le dev historiqu
 - Backend : Symfony 5, Doctrine ORM/DBAL, MySQL 5.7.
 - Entités principales : `User` (membre, lié à un `Instrument` et plusieurs `Role`), `Role` (`ROLE_ADMIN`, `ROLE_COMPTA`, `ROLE_BINIOUFOUS`, `ROLE_MEMBER`, `ROLE_Simple`, `ROLE_USER`), `Instrument`, `Artist`/`Track` (bibliothèque musicale).
 - Sécurité (`config/packages/security.yaml`) : `form_login`, provider Doctrine sur `User` (identifiant = email), mot de passe `bcrypt`. `/admin/*` réservé à `ROLE_ADMIN`, `/desk/*` réservé à `ROLE_USER`. Une inscription "Simple" est auto-validée ; les inscriptions Binioufous/Membre attendent une validation admin qui attribue le rôle.
-- Frontend : Webpack Encore, jQuery/Bootstrap 4, Sass via `node-sass`, Three.js (mascotte 3D, pages story/schedule), wavesurfer.js (lecteur musique). Points d'entrée sous `assets/<section>/`.
+- Frontend : Webpack Encore `^7.2.0`, jQuery/Bootstrap 4, Sass via `sass` (dart-sass), Three.js (mascotte 3D, pages story/schedule), wavesurfer.js (lecteur musique). Points d'entrée sous `assets/<section>/`. `webpack.config.js` est en ESM (`import`/`export default`, `package.json` a `"type": "module"`).
 
 ## Branches & CI
 
