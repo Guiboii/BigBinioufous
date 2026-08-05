@@ -66,4 +66,4 @@ Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : é
 - [x] Node pinné à `24` via `.nvmrc`
 - [x] Nettoyage fichiers obsolètes (backups d'éditeur, `old.cpp`, `.env` retiré du tracking git)
 - [x] Convention de commit (gitmoji + français, template `.gitmessage`)
-- [x] `CREDITS.md` créé (cousin de Guillaume à identifier, aucune trace trouvée dans git ni dans les fichiers `.gltf`)
+- [x] Crédits déplacés dans `.github/CONTRIBUTING.md` (emplacement standard GitHub, plus de `CREDITS.md` à la racine) : cousin de Guillaume à identifier, aucune trace trouvée dans git ni dans les fichiers `.gltf`
