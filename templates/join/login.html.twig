@@ -1,21 +1,21 @@
 {% extends 'popup.html.twig' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}{{ 'join.login_title'|trans }}{% endblock %}
 
 {% block body %}
-    <h4>Log in buddy !!</h4>
+    <h4>{{ 'join.login_heading'|trans }}</h4>
     {% if hasError %}
-        <div class="alert alert-danger">You made a mistake...</div>
+        <div class="alert alert-danger">{{ 'join.login_error'|trans }}</div>
     {% endif %}
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="text" name="_username" id="email" class="form-control" placeholder="Your email..." required value = "{{ username }}">
+            <label for="email">{{ 'Email'|trans }}</label>
+            <input type="text" name="_username" id="email" class="form-control" placeholder="{{ 'join.email_placeholder'|trans }}" required value = "{{ username }}">
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="_password" id="password" placeholder="Your password..." class="form-control" required>
+            <label for="password">{{ 'Password'|trans }}</label>
+            <input type="password" name="_password" id="password" placeholder="{{ 'join.password_placeholder'|trans }}" class="form-control" required>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-success">Connexion !</button>
+            <button type="submit" class="btn btn-success">{{ 'join.login_submit'|trans }}</button>
         </div>
 {% endblock %}

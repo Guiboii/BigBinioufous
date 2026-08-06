@@ -3,34 +3,41 @@
         <div class="container">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="fas fa-home"></i> Home</a>
+                    <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="fas fa-home"></i> {{ 'nav.home'|trans }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('desk') }}"><i class="fas fa-desktop"></i> Desk</a>
+                    <a class="nav-link text-yellow" href="{{ path('desk') }}"><i class="fas fa-desktop"></i> {{ 'nav.desk'|trans }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="far fa-user-circle"></i> Profile</a>
+                    <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="far fa-user-circle"></i> {{ 'nav.profile'|trans }}</a>
                 </li>
                 {% if app.user %}
                     {% for role in app.user.roles %}
                         {% if role == 'ROLE_ADMIN' %}
                             <li class="nav-item">
-                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> Songs</a>
+                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> {{ 'nav.songs'|trans }}</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link text-yellow"><i class="fas fa-chart-line"></i> Admin</a>
+                                <a href="#" class="nav-link text-yellow"><i class="fas fa-chart-line"></i> {{ 'nav.admin'|trans }}</a>
                             </li>
                         {% endif %}
                         {% if role == 'ROLE_BINIOUFOUS' %}
                             <li class="nav-item">
-                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> Songs</a>
+                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> {{ 'nav.songs'|trans }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
                 {% endif %}
 
+                <li class="nav-item lang-switcher">
+                    <select class="form-control form-control-sm" onchange="window.location.href=this.value">
+                        <option value="{{ path('app_locale', {locale: 'fr'}) }}" {% if app.request.locale == 'fr' %}selected{% endif %}>FR</option>
+                        <option value="{{ path('app_locale', {locale: 'en'}) }}" {% if app.request.locale == 'en' %}selected{% endif %}>EN</option>
+                        <option value="{{ path('app_locale', {locale: 'br'}) }}" {% if app.request.locale == 'br' %}selected{% endif %}>BR</option>
+                    </select>
+                </li>
                 <li class="nav-item ml-auto">
-                    <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> {{ 'nav.logout'|trans }}</a>
                 </li>
             </ul>
         </div>

@@ -1,21 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Registration{% endblock %}
+{% block title %}{{ 'join.registration_title'|trans }}{% endblock %}
 
 {% block body %}
 
 <div class="container">
     <div class="row ml-4 centered">
         <span class="badge badge-green mt-4">
-            <h4>Go ahead and register !!</h4>
+            <h4>{{ 'join.registration_heading'|trans }}</h4>
         </span>
         <div class="text-green text-center mt-4">
-            <p class="text-red">The register have to be approuved by an administrator !!</p>
-            <p>Please notice that you must pay a subscription, to become a real Binioufous or if you just want to use our folders to play music with separates voices</p>
+            <p class="text-red">{{ 'join.registration_warning'|trans }}</p>
+            <p>{{ 'join.registration_notice'|trans }}</p>
         </div>
         <div class="row">
             <button class="btn badge-red mb-4">
-                <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="link red-hover">PAY A SUBSCRIPTION FOR ONE YEAR</a>
+                <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="link red-hover">{{ 'join.pay_subscription'|trans }}</a>
             </button>
         </div>
     </div>
@@ -23,7 +23,7 @@
     {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="nav-item" >
-    <button class="submit btn btn-success">Join !!</button>
+    <button class="submit btn btn-success">{{ 'join.submit'|trans }}</button>
     </div>
     {{ form_end(form) }}
 

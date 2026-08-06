@@ -26,6 +26,16 @@ jobs:
         run: composer cs-php
       - name: Lint Twig (Twig-CS-Fixer)
         run: composer cs-twig
+      - name: .env éphémère pour booter le kernel (jamais commité, juste pour ce job)
+        run: echo "APP_ENV=test" > .env
+      - name: Vérifie les fichiers de traduction (syntaxe + clés manquantes fr/en)
+        run: |
+          php bin/console lint:yaml translations/
+          php bin/console debug:translation fr --only-missing
+          php bin/console debug:translation en --only-missing
+          # br exclu du check strict : Symfony embarque ses propres messages de
+          # validation/sécurité en interne (fr/en...) mais pas en breton, donc
+          # --only-missing y trouvera toujours du bruit venant du framework lui-même
 
   lint-js:
     runs-on: ubuntu-latest

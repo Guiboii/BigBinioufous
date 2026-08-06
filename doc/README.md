@@ -8,5 +8,6 @@ Docs courtes, une par partie du projet, pour se remettre dans le code vite. Chac
 - [forms.md](forms.md) : les types de formulaires, ce qui est dupliqué (`AccountType`/`EditUserType`), le pattern d'upload de fichier.
 - [security.md](security.md) : authentification, `access_control`, comment les rôles sont obtenus.
 - [style.md](style.md) : frontend : **les deux systèmes d'icônes** (Font Awesome vs SVG bootstrap-icons collés à la main), palette de couleurs, entries Webpack Encore.
+- [i18n.md](i18n.md) : traduction (fr/en/br), sélecteur de langue, comment ajouter une clé, limite du check CI sur le breton.
 
 Vue d'ensemble stack/installation/structure : voir le [README.md](../README.md) à la racine.

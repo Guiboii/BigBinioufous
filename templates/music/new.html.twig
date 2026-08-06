@@ -1,11 +1,12 @@
 {% extends 'popup.html.twig' %}
 
-{% block title %}New Track{% endblock %}
+{% block title %}{{ 'music.new_title'|trans }}
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Track</h1>
+    <h1>{{ 'music.create_heading'|trans }}</h1>
 
     {{ include('music/_form.html.twig') }}
 
-    <a href="{{ path('music') }}">back to list</a>
+    <a href="{{ path('music') }}">{{ 'music.back_to_list'|trans }}</a>
 {% endblock %}

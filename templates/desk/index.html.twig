@@ -1,13 +1,13 @@
 {% extends 'desk/base.html.twig' %}
 
-{% block title %}Desk{% endblock %}
+{% block title %}{{ 'nav.desk'|trans }}{% endblock %}
 
 {% block body %}
 <div class="container">
     <div class="row mt-2">
         <div class="col-1">
             {% if app.user.picture == null %}
-                <a class="btn btn-red" href="{{ path('profile') }}"><i class="fas fa-portrait"></i> <em>Add picture!</em></a>
+                <a class="btn btn-red" href="{{ path('profile') }}"><i class="fas fa-portrait"></i> <em>{{ 'desk.add_picture'|trans }}</em></a>
             {% else %}
                 <img src="{{ asset('uploads/pictures/' ~ app.user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ app.user.firstname }}">
             {% endif %}
@@ -15,16 +15,16 @@
 
         <div class="col">
             <div class="row ml-4">
-                <h2>Hi {{ app.user.nickname }} !</h2>
+                <h2>{{ 'desk.hello'|trans({'%nickname%': app.user.nickname}) }}</h2>
             </div>
             <div class="row centered">
                 {% if app.user.validation == false %}
-                    <h3> Please be patient !! Your account have to be approuved by an administrator...</h3>
+                    <h3>{{ 'desk.pending_validation'|trans }}</h3>
                 {% endif %}
                 {% for role in app.user.roles %}
                     {% if role == 'ROLE_ADMIN' %}
                         <div class="col">
-                            <a href="{{ path('valid') }}" class="btn btn-red">{{ unvalids|length }} Validation(s) en attente</a>
+                            <a href="{{ path('valid') }}" class="btn btn-red">{{ 'desk.pending_count'|trans({'%count%': unvalids|length}) }}</a>
                         </div>
                         <div class="container mt-2">
                             {{ include('/desk/lists/admins.html.twig') }}
@@ -43,24 +43,24 @@
                         </div>
                     {% elseif role == 'ROLE_COMPTA' %}
                         <div class="col">
-                            <a href="{{ path('accountant') }}" class="btn btn-red">Accountant</a>
+                            <a href="{{ path('accountant') }}" class="btn btn-red">{{ 'desk.accountant_link'|trans }}</a>
                         </div>
                     {% elseif role == 'ROLE_BINIOUFOUS' %}
-                        <h3>Voici les Binioufous !</h3>
+                        <h3>{{ 'desk.binioufous_heading'|trans }}</h3>
                         <div class="container mt-2">
                             {{ include('/desk/lists/binioufous.html.twig') }}
                         </div>
                     {% elseif role == 'ROLE_MEMBER' %}
                         <div class="col">
-                            <p>mailing-lists you subscribed</p>
+                            <p>{{ 'desk.mailing_lists'|trans }}</p>
                         </div>
                         <div class="col">
-                            <p>favorites songs</p>
+                            <p>{{ 'desk.favorite_songs'|trans }}</p>
                         </div>
                     {% elseif role == 'ROLE_Simple' %}
-                        <h3>Welcome dear user !!</h3>
+                        <h3>{{ 'desk.welcome_simple'|trans }}</h3>
                         <div class="col">
-                            <p>mailing-lists you subscribed</p>
+                            <p>{{ 'desk.mailing_lists'|trans }}</p>
                         </div>
                     {% endif %}
                 {% endfor %}

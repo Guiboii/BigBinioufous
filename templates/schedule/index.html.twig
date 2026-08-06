@@ -1,45 +1,77 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ScheduleController!{% endblock %}
+{% block title %}
+    {{ 'schedule.title'|trans }}
+{% endblock %}
 
 {% block body %}
 
-<div class="scroll-wrapper schedule">
+    <div class="scroll-wrapper schedule">
 
-    <div class="scroll" data-spy="scroll" data-target="#calendar" data-offset="0">
-      <img id="jan" src="{{ asset('schedule/flyer001.png') }}">
-      <p>Alors au début!</p>
-      <h4 id="feb">@mdo</h4>
-      <img id="mar" src="{{ asset('schedule/flyer002.png') }}">
-      <h4 id="apr">two</h4>
-      <img id="may" src="{{ asset('schedule/flyer001.png') }}">
-      <h4 id="jun">three</h4>
+        <div class="scroll" data-spy="scroll" data-target="#calendar" data-offset="0">
+            <img id="jan" src="{{ asset('schedule/flyer001.png') }}">
+            <p>{{ 'schedule.intro'|trans }}</p>
+            <h4 id="feb">@mdo</h4>
+            <img id="mar" src="{{ asset('schedule/flyer002.png') }}">
+            <h4 id="apr">{{ 'schedule.item_two'|trans }}</h4>
+            <img id="may" src="{{ asset('schedule/flyer001.png') }}">
+            <h4 id="jun">{{ 'schedule.item_three'|trans }}</h4>
+        </div>
+
+        <nav id="calendar" class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">{{ 'schedule.month_of'|trans }}</a>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link" href="#jan">{{ 'schedule.month.jan'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#feb">{{ 'schedule.month.feb'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#mar">{{ 'schedule.month.mar'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#apr">{{ 'schedule.month.apr'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#may">{{ 'schedule.month.may'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#jun">{{ 'schedule.month.jun'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#jul">{{ 'schedule.month.jul'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#aug">{{ 'schedule.month.aug'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#sep">{{ 'schedule.month.sep'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#oct">{{ 'schedule.month.oct'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#nov">{{ 'schedule.month.nov'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#dec">{{ 'schedule.month.dec'|trans }}</a>
+                </li>
+
+            </ul>
+        </nav>
+
     </div>
 
-    <nav id="calendar" class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="#">Month of</a>
-        <ul class="nav nav-pills">
-          <li class="nav-item"><a class="nav-link" href="#jan">JAN</a></li>
-          <li class="nav-item"><a class="nav-link" href="#feb">FEB</a></li>
-          <li class="nav-item"><a class="nav-link" href="#mar">MAR</a></li>
-          <li class="nav-item"><a class="nav-link" href="#apr">APR</a></li>
-          <li class="nav-item"><a class="nav-link" href="#may">MAY</a></li>
-          <li class="nav-item"><a class="nav-link" href="#jun">JUN</a></li>
-          <li class="nav-item"><a class="nav-link" href="#jul">JUL</a></li>
-          <li class="nav-item"><a class="nav-link" href="#aug">AUG</a></li>
-          <li class="nav-item"><a class="nav-link" href="#sep">SEP</a></li>
-          <li class="nav-item"><a class="nav-link" href="#oct">OCT</a></li>
-          <li class="nav-item"><a class="nav-link" href="#nov">NOV</a></li>
-          <li class="nav-item"><a class="nav-link" href="#dec">DEC</a></li>
-
-        </ul>
-    </nav>
-
-</div>
-
-<div class="loading" id="js-loader"><div class="loader"></div></div>
-<div class="mascotte"><canvas id="c"></canvas></div>
-<video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('story/Foryou3.mp4') }}" type="video/mp4"></video>
+    <div class="loading" id="js-loader">
+        <div class="loader"></div>
+    </div>
+    <div class="mascotte">
+        <canvas id="c"></canvas>
+    </div>
+    <video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('story/Foryou3.mp4') }}" type="video/mp4"></video>
 {% endblock %}
 
-{% block importmap %}{{ importmap(['app', 'schedule']) }}{% endblock %}
+{% block importmap %}
+    {{ importmap(['app', 'schedule']) }}
+{% endblock %}

@@ -1,15 +1,15 @@
 {% extends 'desk/base.html.twig' %}
 
-{% block title %}Hello AccountantController!{% endblock %}
+{% block title %}{{ 'accountant.title'|trans }}{% endblock %}
 
 {% block body %}
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <h1>{{ 'accountant.placeholder_heading'|trans({'%name%': controller_name}) }} ✅</h1>
 
-    This friendly message is coming from:
+    {{ 'accountant.placeholder_intro'|trans }}
     <ul>
-        <li>Your controller at <code><a href="{{ '/Users/guillaumehamet/Sites/BigBinioufous/src/Controller/AccountantController.php'|file_link(0) }}">src/Controller/AccountantController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Users/guillaumehamet/Sites/BigBinioufous/templates/accountant/index.html.twig'|file_link(0) }}">templates/accountant/index.html.twig</a></code></li>
+        <li>{{ 'accountant.placeholder_controller'|trans }} <code><a href="{{ '/Users/guillaumehamet/Sites/BigBinioufous/src/Controller/AccountantController.php'|file_link(0) }}">src/Controller/AccountantController.php</a></code></li>
+        <li>{{ 'accountant.placeholder_template'|trans }} <code><a href="{{ '/Users/guillaumehamet/Sites/BigBinioufous/templates/accountant/index.html.twig'|file_link(0) }}">templates/accountant/index.html.twig</a></code></li>
     </ul>
 </div>
 {% endblock %}

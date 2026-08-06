@@ -46,9 +46,9 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 
 Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : évite de retraduire/re-toucher chaque page une deuxième fois après coup.
 
-- [ ] Mettre en place le composant de traduction Symfony (`symfony/translation`, déjà en dépendance)
-- [ ] Extraire les textes actuellement en dur dans les templates Twig vers des fichiers de traduction (`translations/`)
-- [ ] Décider des langues à couvrir (au moins FR, à confirmer si autre langue prévue)
+- [x] Mettre en place le composant de traduction Symfony (`symfony/translation`, déjà en dépendance) : `default_locale: fr`, `enabled_locales: [fr, en, br]`, fallback `fr`
+- [x] Extraire les textes en dur des templates Twig (tous) et des labels/placeholders des formulaires (`src/Form/*.php`, via `ApplicationType::getConfiguration` qui passe désormais par le `TranslatorInterface`) vers `translations/messages.{fr,en,br}.yaml` et `translations/validators.{fr,en,br}.yaml`
+- [x] Langues couvertes : **fr** (défaut), **en**, et **br** (breton, "pour le fun" ; traduction perso non relue par un·e locuteur·rice native, à vérifier si l'exactitude compte un jour). Voir [doc/i18n.md](doc/i18n.md) pour le détail (sélecteur de langue, route `/locale/{locale}`, limite du check CI sur `br`)
 
 ## Phase 5 : Passage page par page (code + UX)
 

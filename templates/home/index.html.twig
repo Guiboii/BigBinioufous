@@ -1,12 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Binioufous!{% endblock %}
-
-{% block body %}
-<div class="loading" id="js-loader"><div class="loader"></div></div>
-<div class="mascotte"><canvas id="c"></canvas></div>
-<video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('story/Foryou3.mp4') }}" type="video/mp4"></video>
-<video id="video2" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('schedule/soucoupe.mp4') }}" type="video/mp4"></video>
+{% block title %}Binioufous!
 {% endblock %}
 
-{% block importmap %}{{ importmap(['app', 'index']) }}{% endblock %}
+{% block body %}
+    <div class="loading" id="js-loader">
+        <div class="loader"></div>
+    </div>
+    <div class="mascotte">
+        <canvas id="c"></canvas>
+    </div>
+    <video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('story/Foryou3.mp4') }}" type="video/mp4"></video>
+    <video id="video2" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('schedule/soucoupe.mp4') }}" type="video/mp4"></video>
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap(['app', 'index']) }}
+{% endblock %}

@@ -1,0 +1,228 @@
+# Fichier généré au fil de l'extraction des textes en dur des templates Twig.
+# Breton traduit au mieux (je ne suis pas locutrice native) : à faire relire
+# par quelqu'un qui parle breton si l'exactitude compte, ceci est une base.
+
+nav:
+    home: Degemer
+    story: Istor
+    music: Sonerezh
+    schedule: Deiziadur
+    desk: Burev
+    profile: Profil
+    logout: Digennaskañ
+    join_or_login: "Kevredañ pe kennaskañ"
+    tagline: "Ar strollad sonerezh ar muiañ foll er Galaksi !!"
+    songs: Tonioù
+    admin: Melestradurezh
+
+contact:
+    title: Salud
+    name_label: Da anv
+    email_label: Da imel
+    message_label: Petra a fell dit lavarout dimp
+    submit: Mat eo
+
+story:
+    title: Istor
+    nav_intro: "@intro"
+    nav_who: "@piv ?"
+    nav_what: "@petra ?"
+    nav_why: "@perak ?"
+    nav_contact: "@darempred"
+    intro: "Donemat war lec'hienn ar Binioufous, ar strollad sonerezh ar muiañ foll er c'halaksi (met ket hepken) !! Amañ e kavi an holl ditouroù diwar-benn ac'hanomp, ha ma fell dit e c'helli leuskel ur gemennadenn deomp, laouen e vimp 🙂"
+    who_title: "Neuze, piv eo ar Binioufous…"
+    who_ages_title: "Yaouank, ha kozh"
+    who_ages_text: "Er Binioufous ez eus tud a bep oad hag a bep live. Bugale, deugantoù, tud vras… Gwir eo e vez tud ar skolioù muzik. N'hon eus ket gwelet c'hoazh un den en em deskiñ e-unan. Gortoz a reomp ac'hanout !!"
+    who_instruments_title: "Hautbois, ha traoù all"
+    who_instruments_text: "Evit ar muiañ eus ac'hanomp e seniomp hautbois, hep mar ebet ! Met ez eus ivez tuben, basson, ha meur a bezh sonerezh all… Karout a reomp seniñ kreñv, met n'eo ket kement all treut kennebeut, gant hor c'hentelioù. Karout a reomp seniñ a bep seurt, hen ha nevez. A-wechoù anavezet-mat, a-wechoù n'anavezomp nemetomp anezho, rak n'implijomp ket partiturioù, neuze ez adkemeromp alies evit deskiñ anezho."
+    who_level_title: "Deskarded, ha barrekaion, netra nemet Binioufous !"
+    who_level_text: "Ya, deskarded ha barrekaion. Evel-se emañ ar Binioufous, mesket-tout. Darn a zeu eus skolioù bras enorapl Lyon, darn a zeu eus skolioù bihan, darn a zeu a bell, darn a zeu war droad rak tost-tost int, darn a zeu gant o marc'h-houarn, ha re all gant ar bus. A-wechoù ne zeuont ket, ken. Gwir eo penn-da-benn ez ouezont c'hoari hag ez ant da zeskiñ atav. Ret e vefe goulenn dezho met me a gred eo evit-se e teuont."
+    who_no_sheet_title: "Hep partitur, met gant son"
+    who_no_sheet_text: "Ya, hep partitur. Evel-se emañ ar Binioufous, n'eus ket a bartitur ! Ha se a ro deomp gallout seniñ e pep lec'h, ha sellet ouzh an dud a-eeun en o daoulagad. Sellout mat, ha c'hwezhañ, ha c'hwezhañ… Fiñval, ha diskuizhañ. N'omp biken prennet a-dreñv ur skrid, ha ne ankounac'homp biken hor partiturioù. Setu ma vez lakoc'h hor sac'h."
+    what_title: "Ar Binioufous, ur strollad hautbois, met ket kement…"
+    what_intro_text: "Da gentañ, evit farsal hepken eo : adseniñ a reomp, evel strollad hautbois, tonioù brudet evel ABBA, Star Wars, pe ar Bee Gees. Ya, traoù kozh, met dañsal a raent atav !!"
+    what_oboe_text: "Ha c'hoazh, dre ma'z omp ar muiañ hautboisourien (met laouen omp pa zeu ur benveg all d'hor c'heñveriañ), evit diskouez e c'heller c'hoari hautbois hag ober fentigell. Ret eo anzav ez eus abeg d'an dud da soñjal e vez ar hautboisourien un tammig start."
+    what_instrument_text: "Rak ret eo anzav (ha keuz a zo deomp), hor hautbois ker (ha tuben ha basson a c'hoari ganeomp ivez) a chom pell diouzh soñj an dud. Sur eo abalamour n'eo ket alies gwelet er straed. Setu ez eomp er-maez, seniñ e pep lec'h, e pep amzer (pe dost) ha C'HWEZHAÑ KREÑV !!"
+    history_title: "Fellout a ra dit gouzout istor wir ur strollad hautbois, ar Binioufous ?"
+    history_ok: "Mat,"
+    history_text: "Ur wech e oa ur c'helenner-soner anvet Guiboï. Un devezh e oa erruet en ur skol vuzik tost da Lyon. Neuze e kavas, e-touez an diskibien, pevar a oa en o eil derez. Div vaouez ha daou baotr. Neuze e c'houlennas outo mont a-gevret ha seniñ tonioù asambles. Petra ? met petra a c'hellfemp seniñ, kelenner ker ? Ne ouzon ket, met tonioù a garit, ar re a c'hellfec'h seniñ er straed, ar re a anavezfe an dud oc'h tremen ! Ha setu, kroget e oa an dra. Ar strollad a greskas, dre red an amzer e teuas sonerien all da genstrivañ ganto. Hiziv an deiz ez eus ugent a dud er Binioufous, hervez an aroñsadenn… Met mar fell dit gouzout piv eo ar Binioufous, gwel ivinell « Piv eo ar Binioufous ? »."
+    why_title: "Ar Binioufous, evit petra ?"
+    why_party_title: "Evit ar fest, sur !!"
+    why_party_text: "Evel ma lavaromp, ar muiañ ac'hanomp a c'hoari hautbois. Karout a reomp ober fest ha kenrannañ hor c'harantez evit ar binvioù-mañ, graet « diarven » (ni a lavar « kaer »). N'omp ket start ha degemer a reomp sonerien all (memes ma n'omp ket atav prest da gompren an dud a c'hoari binvioù nebeutoc'h kaer eget hon hini…). Fellout a ra deomp kenrannañ hor sonerezh, hor c'henlabour, ha hor follentez. Setu :"
+    why_li_concert: "fellout a ra dit ober fest hag aozañ ur c'hoñsertenn foll hag orin ? Dont a raimp aes e Rhône-Alpes, ret e vo kaozeal mar bez pelloc'h."
+    why_li_teacher: "kelenner-soner out ha klask a rez un tammig follentez d'ober asambles gant da ziskibien ? Kas a raimp deoc'h hor restroù son (biskoazh partitur, gwir Binioufous !), adkemer a rit gant ho tiskibien, seniñ a rit tonioù ar Binioufous, ha dont a raimp seniñ ganeoc'h ivez !"
+    why_li_school: "kelenner, renour, pe dilennad ar sevenadur out hag e vank dit un abadenn evit ar bloavezh a zeu ? Aozañ a raimp, evel just, kas a raimp deoc'h hor restroù ha dont a raimp ur wech, div wech, teir gwech (pe muioc'h) e-doug ar bloavezh evit lakaat tan (a-fed komz, ya !!)."
+    why_li_clarinet: "klarinetour out ? Kinnig a reomp dit kentelioù hautbois !!"
+    why_outro: "Ma n'ouzez ket c'hoazh petra ober gant ar Binioufous, kas deomp ur gemennadenn, bez e vo un tamm graet dija !!"
+
+schedule:
+    title: Deiziadur
+    intro: "Neuze, da gentañ !"
+    item_two: daou
+    item_three: tri
+    month_of: Miz
+    month:
+        jan: Gen
+        feb: C'hwe
+        mar: Meu
+        apr: Ebr
+        may: Mae
+        jun: Eve
+        jul: Goue
+        aug: Eost
+        sep: Gwen
+        oct: Here
+        nov: Du
+        dec: Kzu
+
+join:
+    title: "Kevredañ !!"
+    login_button: Kennaskañ
+    join_button: Kevredañ
+    login_title: Kennaskañ
+    login_heading: "Kennaska, mignon !!"
+    login_error: "Fazi zo bet..."
+    email_placeholder: "Da imel..."
+    password_placeholder: "Da c'her-tremen..."
+    login_submit: "Kennaskañ !"
+    register_title: Enskrivadur
+    register_here: "!! ENSKRIV AMAÑ !!"
+    register_info: "Ma fell dit resev ar gelaouenn hag titouroù all, digor eo an hent evit netra ! Met ma fell dit tizhout hor skouerioù klevet hag holl restroù dispar, gwez e vez ar Binioufous ur gevredigezh. Ret eo paeañ ur c'houtouenn (10€ hepken ar bloaz) evit tizhout tu all al Loar, al lec'hienn dispar-mañ !!"
+    subscribe_here: "!! PAEAÑ AMAÑ !!"
+    registration_title: Enskrivadur
+    registration_heading: "Deus, enskriv !!"
+    registration_warning: "Ret eo d'un melestrour kadarnaat an enskrivadur !!"
+    registration_notice: "Gwez e ret eo dit paeañ ur c'houtouenn evit dont da vezañ ur Binioufous gwir, pe ma fell dit implij hor partiturioù evit seniñ sonerezh gant meur a vouezh"
+    pay_subscription: "PAEAÑ UR C'HOUTOUENN EVIT UR BLOAZ"
+    submit: "Kevredañ !!"
+
+desk:
+    add_picture: "Lakaat ur skeudenn !"
+    hello: "Salud %nickname% !"
+    pending_validation: "Bezit pasiant !! Ret eo d'ur melestrour kadarnaat ho kont..."
+    pending_count: "%count% kadarnadenn(où) o gortoz"
+    accountant_link: Kontabilite
+    binioufous_heading: "Setu ar Binioufous !"
+    mailing_lists: "Rolloù postel out enskrivet enno"
+    favorite_songs: Tonioù karetañ
+    welcome_simple: "Donemat, implijer ker !!"
+    favorite_songs_intro: Setu da donioù karetañ
+    change_password: Cheñch da c'her-tremen
+    update_submit: Hizivaat
+    update_profile: "Hizivaat da brofil !"
+    list:
+        admins_title: Ar Velestrourien
+        accountants_title: Ar Gontourien
+        binioufous_title: Ar Binioufous
+        members_title: An Izili
+        simples_title: An implijerien eeun
+
+music:
+    title: Roll an tonioù
+    upload: Kas
+    loop: Adseniñ
+    category_disco: Disco
+    category_rock: Rock
+    by: gant
+    no_records: n'eus bet kavet ton ebet
+    voice_label: "Mouezh :"
+    download: pellgargañ
+    no_links: n'eus bet kavet liamm ebet
+    login_email_placeholder: imel evit kennaskañ
+    login_password_placeholder: ger-tremen
+    unlock: Digeriñ
+    register: Enskrivañ
+    new_title: Ton nevez
+    create_heading: Krouiñ un ton nevez
+    back_to_list: distro d'ar roll
+    edit_title: Kemmañ an ton
+    edit_heading: Kemmañ an ton
+    update_submit: Hizivaat
+    save_submit: Enrollañ
+    confirm_delete: "Sur out da zilemel an dra-mañ ?"
+    delete: Dilemel
+    track_title: Ton
+    artist: Arzour
+    duration: Padelezh
+    edit_link: kemmañ
+
+Id: Id
+
+accountant:
+    title: "Salud AccountantController !"
+    placeholder_heading: "Salud %name% !"
+    placeholder_intro: "Ar gemennadenn-mañ a zeu eus :"
+    placeholder_controller: "Da c'houarner e"
+    placeholder_template: "Da patrom e"
+
+admin:
+    compta_title: Kontabilite
+    compta_hello: "Salud %name% !"
+    compta_welcome: "Donemat war bajenn ar gontabilite !!"
+    compta_wip: "Mat eo, un tammig labour c'hoazh a-raok implij anezhi"
+    validation_title: Kadarnadenn
+    pending_requests_title: Goulennoù kadarnadenn o gortoz
+    wished_role: Roll c'hoantet
+    created_at: Krouet d'an
+    back_to_lists: Distro d'ar rolloù
+    contact: Darempred
+    make_admin: Lakaat an implijer-mañ da velestrour
+    make_accountant: Lakaat an implijer-mañ da gontour
+    roles: Rolloù
+    validate: Kadarnaat
+    wish: C'hoant
+    date_of_birth: Deiz-ha-bloaz
+
+Name: Anv
+Picture: Skeudenn
+City: Kêr
+Instrument: Benveg
+Actions: Oberoù
+Country: Bro
+"no picture": "skeudenn ebet"
+
+"Your gender": Da genrouez
+"(sorry for that)": "(digarez evit se)"
+Male: Paotr
+Female: Plac'h
+"Still looking for...": "C'hoazh o klask..."
+"First Name": Anv-bihan
+"Your first name": Da anv-bihan
+"Last Name": Anv-familh
+"Your last name": Da anv-familh
+Nickname: Lesanv
+"Your nickname": Da lesanv
+"choose your artist's name": "dibab da anv arzour"
+"Your artist's name": "Da anv arzour"
+Email: Imel
+"Your email address": Da chomlec'h imel
+Password: "Ger-tremen"
+"Choose a strong one": "Dibab unan kreñv"
+"Confirm Password": "Kadarnaat ar ger-tremen"
+"Please confirm your password": "Kadarnaat da c'her-tremen"
+"Your country": Da vro
+"choose your counrty": "dibab da vro"
+"choose your country": "dibab da vro"
+"Your city": Da gêr
+"The city you live in, bro !": "Ar gêr ma chomez enni, mignon !"
+"The date of your birth": Da zeiz-ha-bloaz
+"To whish your Birthday, of course !!": "Evit hetiñ da deiz-ha-bloaz, sur !!"
+"The date of your Birth": Da zeiz-ha-bloaz
+"To wish your Birhtday, of course": "Evit hetiñ da deiz-ha-bloaz, sur"
+"You want to be": "Fellout a ra dit bezañ"
+"the place you have in the team": "da lec'h er skipailh"
+"A real Binioufous !!": "Ur Binioufous gwir !!"
+"A Binioufous, but I cannot come to the rehearsals...": "Ur Binioufous, met ne c'hellan ket dont d'ar c'hlaskerezhioù..."
+"A big Fan !!": "Ur mirour bras !!"
+"A picture of you (jpeg)": "Ur skeudenn ac'hanout (jpeg)"
+"A picture of you (jpg)": "Ur skeudenn ac'hanout (jpg)"
+"Last password": "Ger-tremen kozh"
+"Insert your password": "Skriv da c'her-tremen"
+"New password": "Ger-tremen nevez"
+"Confirm password": "Kadarnaat ar ger-tremen"
+"Valider l'utilisateur?": "Kadarnaat an implijer ?"
+Title: Titl
+"title of the file": "titl ar restr"
+Minutes: Munutennoù
+Seconds: Eilennoù
+"track (mp3 file)": "ton (restr mp3)"

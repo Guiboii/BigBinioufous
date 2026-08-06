@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Track{% endblock %}
+{% block title %}{{ 'music.edit_title'|trans }}
+{% endblock %}
 
 {% block body %}
-    <h1>Edit Track</h1>
+    <h1>{{ 'music.edit_heading'|trans }}</h1>
 
-    {{ include('music/_form.html.twig', {button_label: 'Update'}) }}
+    {{ include('music/_form.html.twig', {button_label: 'music.update_submit'}) }}
 
-    <a href="{{ path('music') }}">back to list</a>
+    <a href="{{ path('music') }}">{{ 'music.back_to_list'|trans }}</a>
 
     {{ include('music/_delete_form.html.twig') }}
 {% endblock %}

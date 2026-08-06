@@ -6,12 +6,12 @@
     <div class="container">
         <div class="row mt-4">
             <button class="bg-yellow">
-                <a class="btn btn-red" href="{{ path ('valid') }}"><h3>Retour aux listes</h3></a>
+                <a class="btn btn-red" href="{{ path ('valid') }}"><h3>{{ 'admin.back_to_lists'|trans }}</h3></a>
             </button>
             <div class="col text-center">
                 <div class="row card-header centered">
                     {% if user.picture == null %}
-                        <i class="fas fa-portrait"></i> <em>no picture</em>
+                        <i class="fas fa-portrait"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname }}">
                     {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</h1>
@@ -19,12 +19,12 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Wish</th>
-                            <th>Instrument</th>
-                            <th>Country</th>
-                            <th>City</th>
-                            <th>Date of Birth</th>
-                            <th>Created At</th>
+                            <th>{{ 'admin.wish'|trans }}</th>
+                            <th>{{ 'Instrument'|trans }}</th>
+                            <th>{{ 'Country'|trans }}</th>
+                            <th>{{ 'City'|trans }}</th>
+                            <th>{{ 'admin.date_of_birth'|trans }}</th>
+                            <th>{{ 'admin.created_at'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,7 +44,7 @@
             {{ form_start(form) }}
             {{ form_widget(form) }}
             <div class="centered">
-                <button type="submit" class="btn btn-green">Valider</button>
+                <button type="submit" class="btn btn-green">{{ 'admin.validate'|trans }}</button>
             </div>
             {{ form_end(form) }}
     </div>

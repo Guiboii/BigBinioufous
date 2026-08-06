@@ -1,14 +1,14 @@
 {% extends 'desk/base.html.twig' %}
 
-{% block title %}Compta{% endblock %}
+{% block title %}{{ 'admin.compta_title'|trans }}{% endblock %}
 
 {% block body %}
 <div class="example-wrapper">
-    <h1>Hello {{ app.user.fullName }}!</h1>
+    <h1>{{ 'admin.compta_hello'|trans({'%name%': app.user.fullName}) }}</h1>
 
-    Welcome to the acountant's page !!
+    {{ 'admin.compta_welcome'|trans }}
     <ul>
-        <li>OK, little work here before using it</li>
+        <li>{{ 'admin.compta_wip'|trans }}</li>
     </ul>
 </div>
 {% endblock %}

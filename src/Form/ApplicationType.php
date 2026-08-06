@@ -3,9 +3,14 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ApplicationType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     /**
      * Active la configuration de base pour un champ.
      *
@@ -18,9 +23,9 @@ class ApplicationType extends AbstractType
     protected function getConfiguration($label, $placeholder, $options = [])
     {
         return array_merge([
-            'label' => $label,
+            'label' => $this->translator->trans($label),
             'attr' => [
-                'placeholder' => $placeholder,
+                'placeholder' => $this->translator->trans($placeholder),
             ],
         ], $options);
     }
