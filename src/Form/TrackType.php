@@ -38,12 +38,12 @@ class TrackType extends ApplicationType
                 'required' => true,
                 'constraints' => [
                     new File([
-            'maxSize' => '200000k',
-            'mimeTypes' => [
-                'audio/mp3',
-                'audio/mpeg',
-            ],
-            'mimeTypesMessage' => 'Please upload a valid MP3 document',
+                        'maxSize' => '200000k',
+                        'mimeTypes' => [
+                            'audio/mp3',
+                            'audio/mpeg',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid MP3 document',
                     ])],
             ])
         ;
