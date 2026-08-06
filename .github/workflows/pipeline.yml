@@ -82,9 +82,27 @@ jobs:
         with:
           fail-on-severity: high
 
-  # --- Déploiement (Phase 3 de ROADMAP.md, pas encore implémenté) ---------
-  # deploy:
-  #   needs: [composer-audit, npm-audit]
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-  #   runs-on: ubuntu-latest
+  # --- Déploiement (Phase 3 de ROADMAP.md) --------------------------------
+  # Déploiement direct (pas de Docker) : connexion SSH au VPS, git pull,
+  # migrations, recompilation des assets. Nécessite les secrets VPS_HOST,
+  # VPS_USER, VPS_SSH_KEY, VPS_PATH (voir ROADMAP.md, Phase 3), et un clone
+  # initial du repo déjà fait à la main sur le VPS.
+  deploy:
+    needs: [composer-audit, npm-audit]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déploiement SSH sur le VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ${{ secrets.VPS_PATH }}
+            git pull origin master
+            composer install --no-dev --no-progress --prefer-dist --optimize-autoloader
+            php bin/console doctrine:migrations:migrate --no-interaction
+            php bin/console asset-map:compile
+            php bin/console cache:clear
   #   steps: ...

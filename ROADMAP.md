@@ -35,11 +35,12 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 
 ## Phase 3 : Déploiement automatique (VPS auto-géré)
 
-- [ ] Décider de l'approche (Docker + docker-compose vs déploiement direct) : à creuser ensemble
-- [ ] Pipeline GitHub Actions : build, migrations, déploiement SSH vers le VPS
-- [ ] Secrets de déploiement (clé SSH, credentials DB prod) via GitHub Secrets
-- [ ] Gestion `.env` dev vs prod : `.env` reste les valeurs par défaut (déjà le cas), `.env.local`/`.env.prod.local` pour les vraies valeurs de prod (jamais commitées), voir `composer dump-env prod` pour compiler les variables en prod
-- [ ] Gestion de la base de données dev vs prod : BDD locale (fixtures Faker) séparée de la vraie BDD prod, définir comment les migrations Doctrine sont jouées en prod (manuellement vs étape du pipeline de déploiement)
+- [x] Approche décidée : déploiement direct (pas de Docker). Priorité donnée à la simplicité de reprise en main par un·e futur·e mainteneur·se de l'assos qui ne connaît pas forcément Docker, plutôt qu'à la reproductibilité de l'environnement (peu utile ici : un seul VPS, pas de scaling prévu)
+- [x] Pipeline GitHub Actions : job `deploy` ajouté (`needs: [composer-audit, npm-audit]`, déclenché sur push vers `master` uniquement) : connexion SSH au VPS, `git pull`, `composer install --no-dev`, migrations, `asset-map:compile`, `cache:clear`
+- [x] Migrations Doctrine en prod : automatisées comme étape du pipeline (`doctrine:migrations:migrate --no-interaction`, jouée après le `git pull` et avant le `cache:clear`), pas d'étape manuelle à retenir pour un futur repreneur
+- [ ] Secrets de déploiement à créer dans GitHub Secrets (Settings → Secrets and variables → Actions) : `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY` (clé privée), `VPS_PATH` (chemin du repo cloné sur le VPS). Étape manuelle côté GitHub, à faire par l'utilisatrice.
+- [ ] Setup initial one-shot sur le VPS (avant le premier déploiement automatique) : `git clone` du repo, PHP 8.1+/MySQL/Apache ou Nginx installés, `.env.prod.local` créé à la main (voir point suivant), `composer install` une première fois
+- [ ] Gestion `.env` dev vs prod : `.env` reste les valeurs par défaut (déjà le cas), `.env.local`/`.env.prod.local` pour les vraies valeurs de prod (jamais commitées, créé une fois à la main sur le VPS), voir `composer dump-env prod` pour compiler les variables en prod
 
 ## Phase 4 : Système de traduction (i18n)
 
