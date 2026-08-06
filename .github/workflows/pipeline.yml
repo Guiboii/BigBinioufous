@@ -41,6 +41,21 @@ jobs:
         run: npm run lint:js
 
   # --- Sécurité (après le lint) --------------------------------------------
+  composer-audit:
+    needs: [lint-php-twig, lint-js]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist
+      - name: Full dependency audit
+        run: composer audit
+
   npm-audit:
     needs: [lint-php-twig, lint-js]
     if: github.event_name == 'push'
@@ -69,7 +84,7 @@ jobs:
 
   # --- Déploiement (Phase 3 de ROADMAP.md, pas encore implémenté) ---------
   # deploy:
-  #   needs: [npm-audit]
+  #   needs: [composer-audit, npm-audit]
   #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
   #   runs-on: ubuntu-latest
   #   steps: ...
