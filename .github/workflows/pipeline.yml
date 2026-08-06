@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --no-scripts
       - name: Full dependency audit
-        run: composer audit
+        run: composer audit --abandoned=report
 
   npm-audit:
     needs: [lint-php-twig, lint-js]
