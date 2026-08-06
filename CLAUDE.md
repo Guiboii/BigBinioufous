@@ -10,10 +10,10 @@ Application web Symfony 7.4 pour la gestion d'une fanfare ("Binioufous") : inscr
 
 ### PHP / Symfony
 
-- `composer install` — installe les deps PHP
-- `php bin/console doctrine:database:create` / `doctrine:migrations:migrate` / `doctrine:fixtures:load` — setup BDD (fixtures = jeu de données de démo via Faker)
-- `php -S localhost:8000 -t public` — lance le serveur de dev
-- `php bin/phpunit` — lance les tests (aucun test réel actuellement, seulement `tests/bootstrap.php`)
+- `composer install` : installe les deps PHP
+- `php bin/console doctrine:database:create` / `doctrine:migrations:migrate` / `doctrine:fixtures:load` : setup BDD (fixtures = jeu de données de démo via Faker)
+- `php -S localhost:8000 -t public` : lance le serveur de dev
+- `php bin/phpunit` : lance les tests (aucun test réel actuellement, seulement `tests/bootstrap.php`)
 
 Version PHP : `composer.json` requiert `^8.1` (bump depuis `^7.2.5|^8.0` lors de l'upgrade Symfony 5→6.4). Le PHP CLI système en `8.4.24` convient.
 
@@ -30,8 +30,8 @@ Historique upgrade Symfony : `5.4` → `6.4` LTS (annotations → attributs PHP,
 
 ### Conventions de code
 
-- `make lint` — vérifie PHP (PHP-CS-Fixer, `@Symfony`) + Twig (Twig-CS-Fixer) + JS (ESLint/Prettier), sans rien modifier
-- `make lint-fix` — corrige tout automatiquement
+- `make lint` : vérifie PHP (PHP-CS-Fixer, `@Symfony`) + Twig (Twig-CS-Fixer) + JS (ESLint/Prettier), sans rien modifier
+- `make lint-fix` : corrige tout automatiquement
 - Configs : `.php-cs-fixer.dist.php`, `.twig-cs-fixer.dist.php`, `eslint.config.js` (flat config) + `.prettierrc.json`, `.editorconfig` (4 espaces PHP/Twig, 2 espaces JS/JSON/YAML)
 - Quelques règles JS (`no-unused-vars`, `no-redeclare`, `no-unassigned-vars`) sont volontairement en `warn` plutôt que `error` : le code legacy en contient déjà, corriger ça touche à la logique et relève de la passe page par page (Phase 5 de `ROADMAP.md`), pas de cette passe de style pure
 
@@ -49,7 +49,7 @@ Historique upgrade Symfony : `5.4` → `6.4` LTS (annotations → attributs PHP,
   - `lint-php-twig` / `lint-js` : PHP-CS-Fixer + Twig-CS-Fixer / ESLint, sur chaque push (toutes branches) et PR vers `main_2026`/`master`
   - `npm-audit` (sur push) / `dependency-review` (sur PR) : dépendent des jobs de lint, mêmes seuils qu'avant (`--audit-level=high` / `fail-on-severity: high`)
   - job `deploy` pas encore implémenté (commenté dans le fichier), prévu pour push sur `master` uniquement une fois la Phase 3 de `ROADMAP.md` faite
-- Dependabot est déjà actif sur ce repo (nombreuses branches distantes `dependabot/*`) — vérifier si une PR Dependabot existe déjà avant de monter une dépendance à la main.
+- Dependabot est déjà actif sur ce repo (nombreuses branches distantes `dependabot/*`) : vérifier si une PR Dependabot existe déjà avant de monter une dépendance à la main.
 
 ## Convention de commit
 

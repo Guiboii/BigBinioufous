@@ -2,11 +2,11 @@
 
 - **Provider** : `in_database`, entité `App\Entity\User`, identifiant = `email`.
 - **Mot de passe** : encodeur `bcrypt` sur `App\Entity\User`.
-- **Firewall `main`** : `anonymous: true`, `form_login` (page `/join`, submit sur `/join` aussi — `check_path` = `login_path`), redirection par défaut vers `desk` après connexion. Logout sur `/logout` → redirige vers `home`.
-- **`access_control`** (seule couche de contrôle d'accès basée sur les rôles, aucune vérification en dur dans les contrôleurs — voir [controllers.md](controllers.md)) :
+- **Firewall `main`** : `anonymous: true`, `form_login` (page `/join`, submit sur `/join` aussi : `check_path` = `login_path`), redirection par défaut vers `desk` après connexion. Logout sur `/logout` → redirige vers `home`.
+- **`access_control`** (seule couche de contrôle d'accès basée sur les rôles, aucune vérification en dur dans les contrôleurs : voir [controllers.md](controllers.md)) :
   - `^/admin` → `ROLE_ADMIN`
   - `^/desk` → `ROLE_USER`
-  - Tout le reste (`/`, `/music/*`, `/accountant`, `/story`, `/schedule`...) n'est protégé par **aucune règle de rôle** ; `/music` et `/accountant` sont accessibles à n'importe quel utilisateur connecté (et même anonyme s'il n'y a pas de vérif dans le contrôleur — à vérifier au cas par cas).
+  - Tout le reste (`/`, `/music/*`, `/accountant`, `/story`, `/schedule`...) n'est protégé par **aucune règle de rôle** ; `/music` et `/accountant` sont accessibles à n'importe quel utilisateur connecté (et même anonyme s'il n'y a pas de vérif dans le contrôleur : à vérifier au cas par cas).
 
 ## Comment un rôle est obtenu
 
@@ -17,8 +17,8 @@ Voir [role.md](role.md) pour le détail métier. En résumé technique :
 
 ## Upload / fichiers
 
-- `pictures_directory` (`public/uploads/pictures`) et `mp3` (`public/uploads/music`) sont définis comme paramètres dans `config/services.yaml` — utilisés par `LoginController` (photo profil) et `TrackController` (morceaux). Voir [forms.md](forms.md).
+- `pictures_directory` (`public/uploads/pictures`) et `mp3` (`public/uploads/music`) sont définis comme paramètres dans `config/services.yaml` : utilisés par `LoginController` (photo profil) et `TrackController` (morceaux). Voir [forms.md](forms.md).
 
 ## Gotcha
 
-- Pas de vote/voter Symfony custom (`Security\Voter`) dans le projet — tout le contrôle d'accès par rôle passe par `access_control`. Si tu ajoutes une page qui doit être réservée à `ROLE_COMPTA` ou `ROLE_BINIOUFOUS` par exemple, il n'existe **aucun mécanisme existant** pour ça : il faudra soit ajouter une règle `access_control`, soit un `denyAccessUnlessGranted` dans le contrôleur.
+- Pas de vote/voter Symfony custom (`Security\Voter`) dans le projet : tout le contrôle d'accès par rôle passe par `access_control`. Si tu ajoutes une page qui doit être réservée à `ROLE_COMPTA` ou `ROLE_BINIOUFOUS` par exemple, il n'existe **aucun mécanisme existant** pour ça : il faudra soit ajouter une règle `access_control`, soit un `denyAccessUnlessGranted` dans le contrôleur.

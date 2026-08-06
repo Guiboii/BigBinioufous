@@ -21,4 +21,4 @@ Résumé des rôles définis dans l'application (voir `src/DataFixtures/AppFixtu
 
 ## Points d'attention relevés
 
-- ~~Incohérence de casse/orthographe entre les rôles stockés et ceux testés dans les templates~~ — corrigé dans `templates/desk/index.html.twig` (`ROLE_BINOUFOUS` → `ROLE_BINIOUFOUS`, `ROLE_SIMPLE` → `ROLE_Simple`).
+- ~~Incohérence de casse/orthographe entre les rôles stockés et ceux testés dans les templates~~ : corrigé dans `templates/desk/index.html.twig` (`ROLE_BINOUFOUS` → `ROLE_BINIOUFOUS`, `ROLE_SIMPLE` → `ROLE_Simple`).

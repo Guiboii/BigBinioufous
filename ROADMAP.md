@@ -4,12 +4,12 @@ Objectif : remettre BigBinioufous dans un état correct pour 2026, et facile à 
 
 Ordre choisi pour éviter de refaire le même travail deux fois : les fondations et l'architecture d'abord, le contenu (pages, fonctionnalités) ensuite.
 
-## Phase 1 — Fondations
+## Phase 1 : Fondations
 
 - [x] Conventions de code : `.editorconfig`, PHP-CS-Fixer (`@Symfony`), Twig-CS-Fixer, ESLint/Prettier (flat config), `Makefile` (`make lint` / `make lint-fix`)
 - [x] Intégrer ces conventions à la CI (`.github/workflows/pipeline.yml`, consolidé avec la CI sécurité JS : lint → sécurité, jobs enchaînés via `needs:`)
 
-## Phase 2 — Upgrade Symfony 5 → 7.4 (prérequis pour AssetMapper)
+## Phase 2 : Upgrade Symfony 5 → 7.4 (prérequis pour AssetMapper)
 
 **Bloquant découvert le 2026-08-05** : `symfony/asset-mapper` n'existe qu'à partir de Symfony `6.3.0`, le projet tournait en `5.4.45`. Upgrade fait avant de reprendre le pivot AssetMapper.
 
@@ -23,7 +23,7 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 - [x] Toutes les pages testées manuellement (accueil, story, schedule, join, login, music, desk, admin, accountant) + validé par l'utilisatrice en localhost
 - [x] Upgrade vers Symfony 7.4 LTS : aucun changement de code nécessaire (tout traité au passage 6.4), seul `symfony/webpack-encore-bundle` bumpé `^1.7` → `^2.4` pour supporter `symfony/asset ^7.0`
 
-## Phase 2bis — Pivot AssetMapper (après la Phase 2)
+## Phase 2bis : Pivot AssetMapper (après la Phase 2)
 
 - [x] Remplacer Webpack Encore par AssetMapper (natif Symfony, zéro build Node en prod) : `webpack-encore-bundle`, `webpack.config.js` supprimés, dépendances JS déclarées dans `importmap.php`
 - [x] `eternicode/bootstrap-datepicker` retiré (confirmé mort), ce qui a aussi supprimé `robloach/component-installer` (abandonné) et `components/`
@@ -33,15 +33,15 @@ Ordre choisi pour éviter de refaire le même travail deux fois : les fondations
 - [x] Testé manuellement (curl + navigateur Playwright, screenshot de la mascotte 3D) sur toutes les pages, 0 erreur console (hors CDN wavesurfer bloqué par la sandbox de test, sans rapport avec la migration)
 - [x] CI JS réévaluée : gardée telle quelle, `npm audit` passe à 0 vulnérabilité (devDependencies de lint uniquement désormais)
 
-## Phase 3 — Déploiement automatique (VPS auto-géré)
+## Phase 3 : Déploiement automatique (VPS auto-géré)
 
-- [ ] Décider de l'approche (Docker + docker-compose vs déploiement direct) — à creuser ensemble
+- [ ] Décider de l'approche (Docker + docker-compose vs déploiement direct) : à creuser ensemble
 - [ ] Pipeline GitHub Actions : build, migrations, déploiement SSH vers le VPS
 - [ ] Secrets de déploiement (clé SSH, credentials DB prod) via GitHub Secrets
 - [ ] Gestion `.env` dev vs prod : `.env` reste les valeurs par défaut (déjà le cas), `.env.local`/`.env.prod.local` pour les vraies valeurs de prod (jamais commitées), voir `composer dump-env prod` pour compiler les variables en prod
 - [ ] Gestion de la base de données dev vs prod : BDD locale (fixtures Faker) séparée de la vraie BDD prod, définir comment les migrations Doctrine sont jouées en prod (manuellement vs étape du pipeline de déploiement)
 
-## Phase 4 — Système de traduction (i18n)
+## Phase 4 : Système de traduction (i18n)
 
 Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : évite de retraduire/re-toucher chaque page une deuxième fois après coup.
 
@@ -49,16 +49,16 @@ Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : é
 - [ ] Extraire les textes actuellement en dur dans les templates Twig vers des fichiers de traduction (`translations/`)
 - [ ] Décider des langues à couvrir (au moins FR, à confirmer si autre langue prévue)
 
-## Phase 5 — Passage page par page (code + UX)
+## Phase 5 : Passage page par page (code + UX)
 
 - [ ] Une page à la fois : lisibilité du code (Twig/PHP/JS) et lisibilité visuelle/UX
 - [ ] Ordre des pages à définir (vitrine d'abord, ou pages métier d'abord ?)
 
-## Phase 6 — Pages par rôle
+## Phase 6 : Pages par rôle
 
 - [ ] Même passage (code + UX), page par page, pour les vues spécifiques à chaque rôle (admin, comptable, membre, binioufous...)
 
-## Phase 7 — Nouvelles fonctionnalités
+## Phase 7 : Nouvelles fonctionnalités
 
 - [ ] Une par une, sur une base stabilisée
 

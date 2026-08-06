@@ -7,23 +7,23 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 ### Backend
 
 - **PHP** `^8.1` (requis par Symfony 6.3+)
-- **Symfony** `7.4.*` LTS (framework-bundle, security-bundle, form, validator, twig, orm-pack, serializer-pack...) — upgradé depuis Symfony 5.4 (via 6.4), routes/entités en attributs PHP natifs
-- **Doctrine ORM/DBAL** + **Doctrine Migrations** — persistance des données
+- **Symfony** `7.4.*` LTS (framework-bundle, security-bundle, form, validator, twig, orm-pack, serializer-pack...) : upgradé depuis Symfony 5.4 (via 6.4), routes/entités en attributs PHP natifs
+- **Doctrine ORM/DBAL** + **Doctrine Migrations** : persistance des données
 - **MySQL** `5.7` (voir `DATABASE_URL` dans `.env`)
-- **Symfony Flex** — gestion des recettes de bundles
+- **Symfony Flex** : gestion des recettes de bundles
 - Bibliothèques notables : `cocur/slugify` (slugs), `fakerphp/faker` (fixtures)
 
 ### Frontend
 
-- **Symfony AssetMapper** (natif, zéro build Node en prod) — remplace Webpack Encore depuis la migration du 2026-08-05. Dépendances JS déclarées dans `importmap.php`, installées via `php bin/console importmap:require`, servies avec URL versionnée (hash) directement par Symfony.
-- **jQuery** `~3.6`, **Bootstrap** `^4.6` (+ `popper.js` `^1.16`) — versions **épinglées explicitement** : `importmap:require bootstrap` résout par défaut la dernière version (Bootstrap 5, incompatible avec le code existant en syntaxe `data-toggle`/v4)
-- **Three.js** `0.128.0` — épinglé aussi : le code utilise des API anciennes (`PlaneBufferGeometry`, `sRGBEncoding`...) supprimées dans les versions récentes. Rendu 3D pour la mascotte et les pages story/schedule (modèles `.gltf`)
-- **wavesurfer.js** — chargé en CDN (`<script src="https://unpkg.com/wavesurfer.js">`), pas géré par AssetMapper
+- **Symfony AssetMapper** (natif, zéro build Node en prod) : remplace Webpack Encore depuis la migration du 2026-08-05. Dépendances JS déclarées dans `importmap.php`, installées via `php bin/console importmap:require`, servies avec URL versionnée (hash) directement par Symfony.
+- **jQuery** `~3.6`, **Bootstrap** `^4.6` (+ `popper.js` `^1.16`), versions **épinglées explicitement** : `importmap:require bootstrap` résout par défaut la dernière version (Bootstrap 5, incompatible avec le code existant en syntaxe `data-toggle`/v4)
+- **Three.js** `0.128.0`, épinglé aussi : le code utilise des API anciennes (`PlaneBufferGeometry`, `sRGBEncoding`...) supprimées dans les versions récentes. Rendu 3D pour la mascotte et les pages story/schedule (modèles `.gltf`)
+- **wavesurfer.js** : chargé en CDN (`<script src="https://unpkg.com/wavesurfer.js">`), pas géré par AssetMapper
 - Fichiers binaires (`.gltf`, `.mp4`, `.png`) référencés depuis du JS vanilla via `window.BB_ASSETS` (objet injecté dans `base.html.twig` via `asset()`, voir `CLAUDE.md`) : AssetMapper ne sert que les URLs hashées exactes, pas les chemins logiques bruts
 
 ### Outils / environnement
 
-- **Node.js** `24` (version pinnée dans `.nvmrc`) — utilisé uniquement pour l'outillage de lint (ESLint/Prettier), plus aucun build JS en prod
+- **Node.js** `24` (version pinnée dans `.nvmrc`) : utilisé uniquement pour l'outillage de lint (ESLint/Prettier), plus aucun build JS en prod
 - **PHP** CLI système en `8.4.24`, compatible avec `^8.1` requis par `composer.json`
 - Gestion de version des deps : `composer.lock`, `package-lock.json` (source de vérité pour npm, devDependencies de lint uniquement), `symfony.lock`
 - **CI** : GitHub Actions (`.github/workflows/pipeline.yml`), un seul fichier, jobs enchaînés (lint → sécurité → déploiement à venir) : lint PHP/Twig/JS, puis `npm audit` sur push (scan complet) ou `dependency-review-action` sur PR vers `main_2026`/`master` (diff des deps ajoutées), seuil `high`
@@ -34,10 +34,10 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 ├── assets/                 # Sources JS/CSS/3D par page, servies par AssetMapper
 │   ├── login/                # Point d'entrée "join" (login/register)
 │   ├── main/                  # Point d'entrée "app" (styles/scripts globaux)
-│   ├── mascotte/               # Point d'entrée "index" — mascotte 3D (gltf)
-│   ├── music/                  # Point d'entrée "music" — lecteur wavesurfer
-│   ├── schedule/                # Point d'entrée "schedule" — planning + assets 3D
-│   ├── story/                    # Point d'entrée "story" — page histoire + minisite
+│   ├── mascotte/               # Point d'entrée "index", mascotte 3D (gltf)
+│   ├── music/                  # Point d'entrée "music", lecteur wavesurfer
+│   ├── schedule/                # Point d'entrée "schedule", planning + assets 3D
+│   ├── story/                    # Point d'entrée "story", page histoire + minisite
 │   ├── vendor/                    # Dépendances JS téléchargées par importmap:require (gitignoré)
 │   └── uploads/                    # Fichiers uploadés (musique...)
 │
@@ -78,19 +78,19 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 
 ## Modèle de données
 
-- **User** — membre du site : identité (nom, prénom, email, hash de mot de passe bcrypt), profil (surnom, ville, genre, pays, date de naissance, photo, slug), statut d'inscription (`validation`, `wish` = rôle souhaité), lié à un **Instrument** et à plusieurs **Role** (relation Many-to-Many).
-- **Role** — rôle applicatif (`ROLE_ADMIN`, `ROLE_COMPTA`, `ROLE_BINIOUFOUS`, `ROLE_MEMBER`, `ROLE_Simple`, `ROLE_USER`), avec titre + description, lié à plusieurs `User`.
-- **Instrument** — instrument de musique (Hautbois, Cor Anglais, Flûte, Clarinette, Tuba, Euphonium, Batterie, Cor...), lié à plusieurs `User`.
-- **Artist** — artiste, lié à plusieurs `Track`.
-- **Track** — morceau de musique (titre, durée, fichier mp3 uploadé), lié à un `Artist`.
-- **PasswordUpdate** — DTO de formulaire pour le changement de mot de passe (non persisté).
+- **User** : membre du site, identité (nom, prénom, email, hash de mot de passe bcrypt), profil (surnom, ville, genre, pays, date de naissance, photo, slug), statut d'inscription (`validation`, `wish` = rôle souhaité), lié à un **Instrument** et à plusieurs **Role** (relation Many-to-Many).
+- **Role** : rôle applicatif (`ROLE_ADMIN`, `ROLE_COMPTA`, `ROLE_BINIOUFOUS`, `ROLE_MEMBER`, `ROLE_Simple`, `ROLE_USER`), avec titre + description, lié à plusieurs `User`.
+- **Instrument** : instrument de musique (Hautbois, Cor Anglais, Flûte, Clarinette, Tuba, Euphonium, Batterie, Cor...), lié à plusieurs `User`.
+- **Artist** : artiste, lié à plusieurs `Track`.
+- **Track** : morceau de musique (titre, durée, fichier mp3 uploadé), lié à un `Artist`.
+- **PasswordUpdate** : DTO de formulaire pour le changement de mot de passe (non persisté).
 
 Les fixtures (`src/DataFixtures/AppFixtures.php`) créent : les rôles, les instruments, un super-admin, 20 utilisateurs Binioufous/Membres, 10 utilisateurs simples, 5 artistes et 10 morceaux (via Faker).
 
 ## Fonctionnalités / routes principales
 
 | Route                                                     | Contrôleur             | Description                                                                                                       |
-| --------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| --------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------|
 | `/`                                                       | `HomeController`       | Page d'accueil                                                                                                    |
 | `/story`, `/story/mini`                                   | `StoryController`      | Page histoire de l'association + minisite                                                                         |
 | `/schedule`                                               | `ScheduleController`   | Page planning                                                                                                     |
