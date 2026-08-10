@@ -27,7 +27,9 @@ jobs:
       - name: Lint Twig (Twig-CS-Fixer)
         run: composer cs-twig
       - name: .env éphémère pour booter le kernel (jamais commité, juste pour ce job)
-        run: echo "APP_ENV=test" > .env
+        run: |
+          echo "APP_ENV=test" > .env
+          echo 'DATABASE_URL="mysql://user:password@127.0.0.1:3306/app?serverVersion=5.7"' >> .env
       - name: Vérifie les fichiers de traduction (syntaxe + clés manquantes fr/en)
         run: |
           php bin/console lint:yaml translations/

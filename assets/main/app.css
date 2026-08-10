@@ -1,26 +1,19 @@
 :root {
     --bb-gold: #F2B233;
+    --bb-gold-rgb: 242, 178, 51;
     --bb-gold-pale: #FBDB7C;
     --bb-green-deep: #0F352C;
     --bb-green-mid: #1F6652;
+    --bb-green-vivid: #257A62;
     --bb-red: #BC2727;
+    --bb-red-dark: #9E0000;
     --bb-ink: #16140F;
     --bb-white: #FFFFFF;
+    --bb-border-dark: #23272B;
 }
 
 body {
-    background-color: #F2B233;
-}
-
-.device-orientation {
-    position: absolute;
-    z-index: 1200;
-    color: #F2B233;
-    font-size: 3.5em;
-    width: 100%;
-    top: 25%;
-    text-align: center;
-    font-weight: bold;
+    background-color: var(--bb-gold);
 }
 
 .avatar {
@@ -35,53 +28,47 @@ body {
 }
 
 .badge-green {
-    color: #F2B233;
-    background-color: #1f6652;
+    color: var(--bb-gold);
+    background-color: var(--bb-green-mid);
 }
 .badge-red {
-    color: #F2B233;
-    background-color: #BC2727;
+    color: var(--bb-gold);
+    background-color: var(--bb-red);
 }
 
 .btn-link, a,
 .btn-link:hover, a:hover {
-    color: #1F6652;
+    color: var(--bb-green-mid);
     border-radius: 25px;
 }
+/* Texte blanc (pas vert) sur fond rouge : même bug de contraste (~1.45:1)
+   que celui corrigé sur la navbar, ici sur les boutons "refuser" du desk/admin */
 .btn-red {
-    color: #298b70;
+    color: var(--bb-white);
     font-weight: bold;
     border-radius: 25px;
-    background: #BC2727;
+    background: var(--bb-red);
     width: fit-content;
 }
 .btn-red:hover{
-    color: #F2B233;
-    background: #9e0000;
+    color: var(--bb-white);
+    background: var(--bb-red-dark);
 }
 
+/* Texte blanc (pas rouge) sur fond vert : même bug, sur les boutons "valider" */
 .btn-green {
-    color: #BC2727;
+    color: var(--bb-white);
     font-weight: bold;
     border-radius: 25px;
-    background: #298b70;
+    background: var(--bb-green-mid);
     width: fit-content;
 }
 .btn-green:hover{
-    color: #F2B233;
-    background: #1F6652;
-}
-.bg-green {
-    background:  #1F6652;;
-}
-.bg-red {
-    background:  #9e0000;;
-}
-.bg-red-light{
-    background: #BC2727;
+    color: var(--bb-white);
+    background: var(--bb-green-deep);
 }
 .bg-yellow {
-    background:  #F2B233;;
+    background: var(--bb-gold);
 }
 
 .centered {
@@ -91,13 +78,13 @@ body {
 }
 
 .text-green {
-    color:  #257a62;
+    color: var(--bb-green-vivid);
 }
 .text-redwall {
-    color:  #BC2727;
+    color: var(--bb-red);
 }
 .text-yellow {
-    color:  #F2B233;
+    color: var(--bb-gold);
 }
 
 #c {
@@ -145,7 +132,7 @@ canvas {
     width: 100%;
     height: 100%;
     display: block;
-    background: #9E0000;
+    background: var(--bb-red-dark);
 }
 
 .isloaded{
@@ -156,7 +143,7 @@ canvas {
     width: 100%;
     height: 0%;
     display: block;
-    background: #9E0000;
+    background: var(--bb-red-dark);
     -webkit-transition-property: background-color height;
     -webkit-transition-duration: 0.3s;
     -webkit-transition-delay: 0.5s;
@@ -168,26 +155,27 @@ canvas {
 }
 
 .list-group-item.active {
-    background-color: #1F6652;
-    border-color: #1F6652;
+    background-color: var(--bb-green-mid);
+    border-color: var(--bb-green-mid);
 }
 
+/* padding/border volontairement absents ici : déjà posés une fois par le
+   sélecteur générique "form" plus bas (ce sont de vrais <form>), pas besoin
+   de les répéter à l'identique */
 #joinForm, #loginForm {
     position: absolute;
     z-index: 900;
-    background: #BC2727;
+    background: var(--bb-red);
     width: 440px;
     text-align: center;
     top: 50%;
     left: 50%;
     margin-top: -200px;
     margin-left: -170px;
-    padding: 2% 4%;
-    border: 5px solid #23272b;
 }
 
 #loginForm {
-    background: #1f6652;
+    background: var(--bb-green-mid);
 }
 
 #contactForm {
@@ -195,18 +183,18 @@ canvas {
     z-index: 1100;
     width: 790px;
     height: 400px;
-    background: #1f6652;
+    background: var(--bb-green-mid);
     left: 50%;
     margin-left: -290px;
     top: 23px;
 }
 
 form {
-    background: #1f6652;
+    background: var(--bb-green-mid);
     text-align: left;
-    color: #F2B233;
+    color: var(--bb-gold);
     padding: 2% 4%;
-    border: 5px solid #23272b;
+    border: 5px solid var(--bb-border-dark);
 }
 
 .login, .join {
@@ -216,7 +204,6 @@ form {
     width: 150px;
     text-align: center;
     left: 50%;
-    margin-left: -75px;
 }
 
 .login {
@@ -227,32 +214,27 @@ form {
 }
 
 a.login:hover {
-    background-color: #BC2727;
+    background-color: var(--bb-red);
     border-radius: 25px;
 }
 a.join:hover {
-    background-color: #F2B233;
+    background-color: var(--bb-gold);
     border-radius: 25px;
 }
 
+/* Texte blanc au survol (pas gold/rouge) : même bug de contraste que sur la
+   navbar, ici sur les CTA "payer l'adhésion" / "s'abonner" */
 .red-hover:hover {
-    background-color: #BC2727;
+    background-color: var(--bb-red);
     border-radius: 5px;
-    color: #F2B233;
+    color: var(--bb-white);
     padding: 6px 12px;
 }
 
 .green-hover:hover {
-    background-color: #1f6652;
+    background-color: var(--bb-green-mid);
     border-radius: 5px;
-    color: #BC2727;
-    padding: 6px 12px;
-}
-
-.yellow-hover:hover {
-    background-color: #F2B233;
-    border-radius: 5px;
-    color: #1F6652;
+    color: var(--bb-white);
     padding: 6px 12px;
 }
 
@@ -271,7 +253,7 @@ a.join:hover {
 }
 
 .navbar.mini {
-    background: #0f352c;
+    background: var(--bb-green-deep);
     width: 100%;
 }
 
@@ -329,7 +311,7 @@ a.join:hover {
     border-radius: 0;
 }
 .navbar-collapse .navbar-nav .nav-item + .nav-item {
-    border-top: 1px solid rgba(242, 178, 51, 0.25);
+    border-top: 1px solid rgba(var(--bb-gold-rgb), 0.25);
 }
 .navbar-collapse .nav-link {
     display: flex;
@@ -398,7 +380,7 @@ a.join:hover {
 .navbar-collapse .lang-switcher {
     margin-top: 0;
     padding-top: 0.75rem;
-    border-top: 1px solid rgba(242, 178, 51, 0.25);
+    border-top: 1px solid rgba(var(--bb-gold-rgb), 0.25);
     display: flex;
     justify-content: center;
     gap: 0.5rem;
@@ -433,7 +415,7 @@ a.join:hover {
 .navbar-admin {
     width: 100%;
     z-index: 1000;
-    background: #BC2727;
+    background: var(--bb-red);
 }
 
 .navbar .navbar-toggler svg {
@@ -445,20 +427,26 @@ a.join:hover {
     color: var(--bb-gold);
 }
 
+/* Texte blanc explicite : sans ça le texte hérite du vert de la règle "a"
+   globale et devient illisible (vert sur vert) sur les pills actives du
+   planning et de la minisite histoire */
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    background: #1f6652;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
 }
 
+/* Même bug de contraste rouge/vert que sur l'ancienne navbar (~1.1:1),
+   ici sur le survol des pills planning/histoire : texte blanc à la place */
 li.nav-item.active, li.nav-item:hover,
 .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus,
 .navbar-dark .navbar-nav .show > .nav-link, .navbar-dark .navbar-nav .active > .nav-link, .navbar-dark .navbar-nav .nav-link.show, .navbar-dark .navbar-nav .nav-link.active {
-    color: #1f6652;
-    background-color: #BC2727;
+    color: var(--bb-white);
+    background-color: var(--bb-red);
     border-radius: 25px;
 }
 .navbar-dark .navbar-nav .nav-link {
-    color: #1f6652;
-    background: #BC2727;
+    color: var(--bb-white);
+    background: var(--bb-red);
 }
 
 #miniSite {
@@ -488,7 +476,7 @@ li.nav-item.active, li.nav-item:hover,
     margin-left: 150px;
     width: 414px;
     height: 552px;
-    background: white;
+    background: var(--bb-white);
     overflow-y: scroll;
     float: left;
     display: inline-block;
