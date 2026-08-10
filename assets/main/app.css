@@ -449,17 +449,22 @@ li.nav-item.active, li.nav-item:hover,
     background: var(--bb-red);
 }
 
-#miniSite {
-    left: 50%;
-    margin-left: -290px;
-    top: 23px;
-}
-
+/* Aligné sur l'écran 3D de la page /story : la caméra Three.js est fixe
+   (pas d'orbit controls, cf. story.js) mais son aspect ratio suit la
+   fenêtre, donc l'écran affiché change de taille/position avec elle. Pas
+   de vraie projection 3D->2D ici (le mesh "Desk" n'a pas de sous-objet
+   "écran" isolé à cibler), juste un calibrage en unités de viewport
+   (mesuré précisément en pixels à 1280x800 puis converti en vw/vh) pour
+   suivre le redimensionnement au lieu d'une boîte figée en px : suit
+   raisonnablement bien la plupart des tailles d'écran, sans être
+   pixel-perfect à toutes les résolutions/ratios. */
 #miniSite {
     position: absolute;
     z-index: 900;
-    width: 790px;
-    height: 402px;
+    left: 21.8vw;
+    top: 1.6vh;
+    width: 76.4vw;
+    height: 63.9vh;
     background: transparent;
     overflow-y: scroll;
 }

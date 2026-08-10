@@ -41,9 +41,27 @@ Classes maison notables (à réutiliser plutôt que recréer) :
 
 `.bg-red`, `.bg-green`, `.bg-red-light`, `.yellow-hover`, `.device-orientation` ont existé mais n'étaient référencés dans **aucun** template ni JS : supprimés le 2026-08-10 (ne pas les recréer sans vérifier qu'il y a un vrai usage).
 
-Police d'affiche **Bungee** (Google Fonts, `<link>` CDN dans `base.html.twig`, pas géré par AssetMapper) pour les libellés de la navbar publique. Le reste du site n'a pas de police custom (défauts Bootstrap/navigateur).
+Police d'affiche **Bungee** (Google Fonts, `<link>` CDN dans `base.html.twig`, pas géré par AssetMapper) pour les libellés de la navbar publique. Le reste du site n'a pas de police custom (défauts Bootstrap/navigateur), **sauf la minisite Histoire, cf. ci-dessous**.
 
 Grille : classes Bootstrap standard (`container`, `row`, `col-*`).
+
+### Cas à part : la minisite Histoire (`assets/story/minisite.css`)
+
+**Piège** : cette page a sa **propre** palette (`--term-*`), différente de `--bb-*` ci-dessus. Ne pas confondre les deux en copiant une couleur d'un fichier vers l'autre.
+
+`templates/story/minisite.html.twig` n'étend pas `base.html.twig` : page HTML autonome, sans AssetMapper (CSS et police Google Fonts `VT323`/`IBM Plex Mono` chargées en `<link>` manuel dans son propre `<head>`, pas d'entry `importmap`). Design terminal rétro, variables `--term-*` déclarées dans `assets/story/minisite.css` (redéclarent volontairement certaines valeurs `--bb-*` sous les mêmes noms, cf. commentaire en tête de fichier, plutôt que de charger `app.css` en entier et risquer des collisions de style).
+
+**Cette page a 2 rôles distincts**, cf. `CLAUDE.md` :
+1. Contenu affiché dans l'iframe `#miniSite` sur l'écran 3D de `/story` (desktop, ≥700px).
+2. Page à part entière quand `/story` redirige ici directement sur mobile (<700px), cf. `templates/story/index.html.twig`.
+
+Structure en "bureau + fenêtre" (rôle 1) plutôt qu'en plein écran : `.desktop` (dégradé `--desktop-a`/`--desktop-b`, icônes `.desktop-icon--folder`/`--trash` en CSS pur via `clip-path`, pas d'image) sert de fond, avec `.term-window` centrée dedans à 80% de la largeur/hauteur du conteneur (`width/height: 80%`, en `%` et pas `vw`/`vh` pour rester correct quand `.site-nav` ci-dessous prend de la place, cf. `.term-titlebar`/`.term-nav`/`main` en `flex-direction: column`, `main` seul scrollable via `flex:1; overflow-y:auto`). `.taskbar` (barre du bas, bouton "start" + horloge + batterie décorative) est en dehors du flux flex de `.desktop` (`position:absolute`). L'horloge (`#taskbar-clock`) est mise à jour par un `<script>` inline minimal dans le template (pas de fichier JS séparé, pas de dépendance) ; la batterie est purement décorative (l'API Battery Status du navigateur n'est plus fiable/disponible partout, pas utilisée).
+
+Sous 700px de large, tout ce chrome "bureau" disparaît (`display:none` sur `.desktop-icons`/`.taskbar`) et la fenêtre repasse en plein écran (rôle 2, cf. ci-dessous) : pas la place de voir un bureau sur un petit écran.
+
+**Détection rôle 1 vs rôle 2** : un `<script>` synchrone en tête de `<head>` (avant tout rendu, pour éviter un flash) pose `window.self !== window.top ? 'is-embedded' : 'is-standalone'` comme classe sur `<html>`. `.site-nav` (petite barre en haut : phrase "vue simplifiée" + liens vers Accueil/Musique/Planning/Rejoindre, mêmes routes que la navbar principale) n'est visible qu'en `.is-standalone`, jamais en `.is-embedded` (sinon on retombe dans le bug "page dans la page" déjà corrigé une fois). `body` est en `flex-direction:column` pour que `.desktop` se réduise proprement quand `.site-nav` prend de la place au-dessus, au lieu de déborder.
+
+**Redirection mobile** : `templates/story/index.html.twig` a un `<script>` synchrone similaire en tête de `<head>` (avant le chargement des assets 3D/Three.js) qui fait un `window.location.replace(path('minisite'))` si `matchMedia('(max-width: 700px)')` correspond. Évite de charger toute la scène 3D pour un écran où le "moniteur" serait de toute façon minuscule et illisible.
 
 ## JS/CSS : AssetMapper, un entry point par section
 
@@ -55,7 +73,7 @@ Pas de Webpack : `symfony/asset-mapper` (natif Symfony, zéro build Node en prod
 | `index` | `assets/mascotte/mascotte.js` | Mascotte 3D (Three.js + modèles `.gltf`) |
 | `music` | `assets/music/music.js` (+ `Player.js`) | Lecteur audio wavesurfer.js (chargé en CDN, pas par AssetMapper) |
 | `schedule` | `assets/schedule/schedule.js` | Page planning + éléments 3D |
-| `story` | `assets/story/story.js` | Page histoire + minisite |
+| `story` | `assets/story/story.js` | Page histoire (scène 3D uniquement ; la minisite affichée dedans est une page à part, hors AssetMapper, cf. plus haut) |
 | `join` | `assets/login/join.js` | Page login/register |
 
 Three.js et ses modules (`GLTFLoader`, `OrbitControls`) viennent du package npm `three` via `importmap:require`, **épinglé à `0.128.0`** (pas de libs vendorisées à la main dans `assets/libs/`, ce dossier n'existe plus).

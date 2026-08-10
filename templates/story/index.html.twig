@@ -1,6 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block importmap %}
+    {# Sur petit écran, la scène 3D écrase tout et le "moniteur" avec le
+       terminal dedans devient minuscule/illisible : on redirige direct
+       vers le contenu de la minisite (déjà responsive en autonome) avant
+       de charger les assets 3D, plutôt que de les charger pour rien. #}
+    <script>
+        if (window.matchMedia('(max-width: 700px)').matches) {
+            window.location.replace('{{ path('minisite') }}');
+        }
+    </script>
     {{ importmap(['app', 'story']) }}
 {% endblock %}
 
@@ -10,7 +19,7 @@
 
 {% block body %}
 
-    <iframe id="miniSite" src="http://4fun.binioufous.fr/story/mini"></iframe>
+    <iframe id="miniSite" src="{{ path('minisite') }}"></iframe>
     <form id="contactForm" class="d-none">
         <button type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>

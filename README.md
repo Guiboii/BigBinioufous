@@ -20,7 +20,7 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 - **Three.js** `0.128.0`, épinglé aussi : le code utilise des API anciennes (`PlaneBufferGeometry`, `sRGBEncoding`...) supprimées dans les versions récentes. Rendu 3D pour la mascotte et les pages story/schedule (modèles `.gltf`)
 - **wavesurfer.js** : chargé en CDN (`<script src="https://unpkg.com/wavesurfer.js">`), pas géré par AssetMapper
 - **Font Awesome** `^7` (icônes desk/admin) et **Remixicon** (icônes navbar principale) : les deux via `importmap:require`. Remixicon n'a pas de module JS (juste du CSS+fonts), donc requis directement sur le fichier `remixicon/fonts/remixicon.css` plutôt que sur le package entier
-- **Google Fonts** (`Bungee`, `<link>` CDN dans `base.html.twig`) : police d'affiche de la navbar principale, pas gérée par AssetMapper (même logique que wavesurfer.js)
+- **Google Fonts** : `Bungee` (`<link>` CDN dans `base.html.twig`) pour la navbar principale ; `VT323` + `IBM Plex Mono` (`<link>` CDN dans `templates/story/minisite.html.twig`, propre à cette page) pour le thème terminal rétro de la minisite Histoire. Aucune des deux n'est gérée par AssetMapper (même logique que wavesurfer.js)
 - Fichiers binaires (`.gltf`, `.mp4`, `.png`) référencés depuis du JS vanilla via `window.BB_ASSETS` (objet injecté dans `base.html.twig` via `asset()`, voir `CLAUDE.md`) : AssetMapper ne sert que les URLs hashées exactes, pas les chemins logiques bruts
 
 ### Outils / environnement
