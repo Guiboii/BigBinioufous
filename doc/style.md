@@ -23,11 +23,10 @@ Pas de SCSS, mais un jeu de variables CSS natives (`:root`) en haut du fichier, 
 | `--bb-gold` | `#F2B233` | Couleur signature du site (fond `body`, accents, texte clair) |
 | `--bb-gold-pale` | `#FBDB7C` | Texte/accents sur fond vert foncé (navbar) |
 | `--bb-gold-rgb` | `242, 178, 51` | Pour composer un `rgba(var(--bb-gold-rgb), <alpha>)` (ex. filets de séparation semi-transparents) |
-| `--bb-green-deep` | `#0F352C` | Vert le plus foncé (hover boutons, fond badge toggler navbar ouverte) |
+| `--bb-green-deep` | `#0F352C` | Vert le plus foncé (hover boutons, fond badge toggler navbar ouverte, `.text-green`) |
 | `--bb-green-mid` | `#1F6652` | Vert "normal" du site (liens, panneau navbar, formulaires) |
-| `--bb-green-vivid` | `#257A62` | Nuance distincte utilisée par `.text-green` |
 | `--bb-red` | `#BC2727` | Rouge du site (danger/refus, navbar admin) |
-| `--bb-red-dark` | `#9E0000` | Rouge plus foncé (hover, overlays de chargement) |
+| `--bb-red-dark` | `#9E0000` | Rouge plus foncé (hover, overlays de chargement, `.text-redwall`) |
 | `--bb-ink` | `#16140F` | Quasi-noir de la palette (icônes sur fond clair) |
 | `--bb-white` | `#FFFFFF` | Blanc, utilisé notamment comme texte sur fond rouge/vert (voir Gotcha contraste ci-dessous) |
 | `--bb-border-dark` | `#23272B` | Bordure sombre des formulaires (`#joinForm`, `#loginForm`, `form`) |
@@ -81,7 +80,7 @@ Three.js et ses modules (`GLTFLoader`, `OrbitControls`) viennent du package npm 
 ## Gotchas à retenir
 
 - **Trois systèmes d'icônes cohabitent** (voir plus haut) : ne pas mélanger les syntaxes, et vérifier que la classe existe bien avant de l'utiliser (`grep` dans `assets/vendor/<lib>/` après un `importmap:install`, ce dossier est gitignoré donc pas toujours présent).
-- **Ne jamais superposer rouge et vert pour du texte sur un fond** (ou l'inverse) : plusieurs bugs de contraste de ce type ont été trouvés et corrigés le 2026-08-10 (navbar, boutons `.btn-red`/`.btn-green`, pills actives du planning/histoire, `.red-hover`/`.green-hover`) — un cas allait même jusqu'au texte totalement invisible (vert sur vert, couleur héritée de la règle globale `a { color: var(--bb-green-mid) }`). Si tu ajoutes un état hover/actif avec un fond rouge ou vert, mets du texte blanc (`var(--bb-white)`) ou clair, pas une autre couleur saturée de la palette.
+- **Ne jamais superposer rouge et vert pour du texte sur un fond** (ou l'inverse) : plusieurs bugs de contraste de ce type ont été trouvés et corrigés le 2026-08-10 (navbar, boutons `.btn-red`/`.btn-green`, pills actives du planning/histoire, `.red-hover`/`.green-hover`), un cas allant même jusqu'au texte totalement invisible (vert sur vert, couleur héritée de la règle globale `a { color: var(--bb-green-mid) }`). Si tu ajoutes un état hover/actif avec un fond rouge ou vert, mets du texte blanc (`var(--bb-white)`) ou clair, pas une autre couleur saturée de la palette.
 - Si tu ajoutes une couleur, réutilise une variable `--bb-*` existante plutôt que d'en inventer une nouvelle ; si vraiment aucune ne convient, ajoute-la au bloc `:root` de `assets/main/app.css` avec un nom `--bb-*` cohérent.
 - `templates/desk/index.html.twig` avait un bug de typo sur les noms de rôles (`ROLE_BINOUFOUS`/`ROLE_SIMPLE` au lieu de `ROLE_BINIOUFOUS`/`ROLE_Simple`) : corrigé, voir [role.md](role.md).
 - **Toute lib chargée en CDN sans version dans l'URL résout la dernière release**, pas celle avec laquelle le code a été écrit (déjà vu pour Bootstrap/Three.js via `importmap:require`, et pour wavesurfer.js en CDN : `<script src="https://unpkg.com/wavesurfer.js">` chargeait la 7.x, réécriture complète en modules ES sans l'API globale `WaveSurfer.create()` qu'utilise `Player.js`, donc le lecteur audio ne fonctionnait pas du tout). Toujours épingler une version explicite dans l'URL CDN.

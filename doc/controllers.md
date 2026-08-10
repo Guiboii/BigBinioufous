@@ -14,7 +14,7 @@ Toutes les routes sont déclarées en attributs PHP natifs `#[Route]` directemen
 
 ## `LoginController` (`src/Controller/LoginController.php`)
 - `GET /join` (`join`) : page de connexion/inscription (SPA-like, affiche l'erreur d'auth éventuelle).
-- `GET /login` (`login`) : vue login seule.
+- `GET /login` (`login`) : redirige vers `/join` (route jamais utilisée par le vrai flux de connexion, `security.yaml` pointe `login_path`/`check_path` vers `join`). Rendait `join/login.html.twig` en document autonome jusqu'au 2026-08-10 ; devenu impossible une fois ce template allégé en simple fragment inclus dans `join/index.html.twig` (cf. `ROADMAP.md` Phase 5, entrée "Audit accessibilité global").
 - `/logout` (`logout`) : géré entièrement par le firewall Symfony (méthode vide, jamais exécutée).
 - `/register` (`register`) : inscription (`RegistrationType`) :
   - si `wish == 'Simple'` → `validation = true` automatiquement, sinon en attente d'un admin.

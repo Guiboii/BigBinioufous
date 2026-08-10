@@ -4,7 +4,6 @@
     --bb-gold-pale: #FBDB7C;
     --bb-green-deep: #0F352C;
     --bb-green-mid: #1F6652;
-    --bb-green-vivid: #257A62;
     --bb-red: #BC2727;
     --bb-red-dark: #9E0000;
     --bb-ink: #16140F;
@@ -102,8 +101,9 @@ body {
 
 /* .text-green/.text-redwall : seul usage actuel, join/registration.html.twig,
    posés directement sur le fond --bb-gold du body (pas sur .navbar-collapse/
-   #joinForm où --bb-green-vivid/--bb-red sont par ailleurs déjà bien
-   contrastés). --bb-green-vivid sur --bb-gold ne tenait que 2.77:1, --bb-red
+   #loginForm/#joinForm où --bb-green-mid/--bb-red sont par ailleurs déjà bien
+   contrastés). L'ancienne couleur (--bb-green-vivid, retirée : plus aucun
+   usage une fois .text-green corrigé) sur --bb-gold ne tenait que 2.77:1, --bb-red
    3.23:1 : sous le minimum AA (4.5:1 texte normal). Variantes plus sombres
    déjà présentes dans la palette (:root) plutôt qu'une nouvelle teinte :
    --bb-green-deep tient 7.15:1 (AAA), --bb-red-dark 4.56:1 (AA, tout juste :

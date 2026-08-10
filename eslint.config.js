@@ -19,7 +19,7 @@ export default [
         rules: {
             // legacy code has pre-existing dead/duplicate variables; downgraded to warn
             // so the style pass (Phase 1) doesn't block on cleanup that belongs to the
-            // page-by-page pass (Phase 5) — fixing these means touching actual logic
+            // page-by-page pass (Phase 5): fixing these means touching actual logic
             'no-unused-vars': 'warn',
             'no-redeclare': 'warn',
             'no-unassigned-vars': 'warn',
