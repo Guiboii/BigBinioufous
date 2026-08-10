@@ -9,19 +9,19 @@
     <table class="table">
         <tbody>
             <tr>
-                <th>{{ 'Id'|trans }}</th>
+                <th scope="row">{{ 'Id'|trans }}</th>
                 <td>{{ track.id }}</td>
             </tr>
             <tr>
-                <th>{{ 'music.artist'|trans }}</th>
+                <th scope="row">{{ 'music.artist'|trans }}</th>
                 <td>{{ track.artist.name }}</td>
             </tr>
             <tr>
-                <th>{{ 'Title'|trans }}</th>
+                <th scope="row">{{ 'Title'|trans }}</th>
                 <td>{{ track.title }}</td>
             </tr>
             <tr>
-                <th>{{ 'music.duration'|trans }}</th>
+                <th scope="row">{{ 'music.duration'|trans }}</th>
                 <td>{{ track.minutes }}'{{ track.seconds }}
                 </td>
             </tr>

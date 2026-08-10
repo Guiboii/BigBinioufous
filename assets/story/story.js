@@ -212,16 +212,42 @@ function raycast(e, touch = false) {
         playModifierAnimation(idle, 0.25, next, 0.25);
       }
     } else if (object.name === 'contactPlane') {
-      document.getElementById('contactForm').classList.remove('d-none');
+      openContactForm();
     } else if (object.parent.name === 'Soucoupe') {
       location.href = '/join';
     }
   }
 }
 
+// #contactForm (role="dialog", cf. story/index.html.twig) : géré comme une
+// vraie boîte de dialogue une fois ouverte, même si son seul déclencheur
+// actuel est un clic 3D (raycast) sans équivalent clavier direct (cf.
+// commentaire dans le template : le vrai formulaire de contact accessible
+// au clavier est celui de la minisite, atteignable via la navbar). Focus
+// posé sur le 1er champ à l'ouverture, Echap referme et rend le focus au
+// canvas 3D (pas de bouton déclencheur à qui le rendre ici).
+var contactForm = document.getElementById('contactForm');
+
+function openContactForm() {
+  contactForm.classList.remove('d-none');
+  var firstField = contactForm.querySelector('input, textarea');
+  if (firstField) {
+    firstField.focus();
+  }
+}
+
+function closeContactForm() {
+  contactForm.classList.add('d-none');
+  canvas.focus();
+}
+
 var close = document.querySelector('.close');
-close.addEventListener('click', function () {
-  document.getElementById('contactForm').classList.add('d-none');
+close.addEventListener('click', closeContactForm);
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !contactForm.classList.contains('d-none')) {
+    closeContactForm();
+  }
 });
 
 function playModifierAnimation(from, fSpeed, to, tSpeed) {

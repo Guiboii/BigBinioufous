@@ -1,21 +1,24 @@
-{% extends 'popup.html.twig' %}
-
-{% block title %}{{ 'join.register_title'|trans }}{% endblock %}
-
-{% block body %}
+{# Fragment inclus dans join/index.html.twig (pas un document autonome), cf.
+   commentaire dans join/login.html.twig pour le pourquoi (plus d'extends
+   'popup.html.twig' ici : évite un 2e <html><head> imbriqué). #}
+<button type="button" class="close" aria-label="{{ 'common.close'|trans }}">
+    <span aria-hidden="true">&times;</span>
+</button>
+<div class="container">
+    <a href="{{ path ('register') }}" class="nav-link text-yellow">
+        <h4>{{ 'join.register_here'|trans }}</h4>
+    </a>
     <div class="container">
-        <a href="{{ path ('register') }}" class="nav-link text-yellow">
-            <h4>{{ 'join.register_here'|trans }}</h4>
+        <a class="nav-link text-yellow" href="{{ path ('register') }}">
+        {{ 'join.register_info'|trans|raw }}
         </a>
-        <div class="container">
-            <a class="nav-link text-yellow" href=" {{ path ('register') }}">
-            {{ 'join.register_info'|trans|raw }}
-            </a>
-        </div>
-        <div class="container">
-            <btn class="danger">
-                <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="green-hover text-yellow"><h3>{{ 'join.subscribe_here'|trans }}</a></h3>
-            </btn>
-        </div>
     </div>
-{% endblock %}
+    {# Avant : <btn> (balise inexistante, ignorée par le navigateur) enveloppant
+       un <a> dont les balises de fermeture étaient inversées (<h3>...</a></h3>,
+       invalide). Un seul <a>, vraie navigation externe donc pas de <button>. #}
+    <div class="container">
+        <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="green-hover text-yellow">
+            <h3>{{ 'join.subscribe_here'|trans }}</h3>
+        </a>
+    </div>
+</div>

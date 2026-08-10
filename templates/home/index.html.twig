@@ -4,10 +4,18 @@
 {% endblock %}
 
 {% block body %}
-    <div class="loading" id="js-loader">
+    {# Le contenu réel (accueil, navigation) est déjà dans la navbar (nav
+       principale de base.html.twig) : le h1 ci-dessous donne une structure
+       de page valide (1 seul h1) sans dupliquer visuellement le titre. La
+       scène 3D est une façon "bonus" de naviguer (cliquer sur le meuble,
+       le bureau...) en plus des vrais liens de la navbar, pas la seule :
+       canvas + overlay de chargement marqués aria-hidden, la navigation au
+       clavier/lecteur d'écran reste possible via la navbar. #}
+    <h1 class="sr-only">{{ 'home.heading'|trans }}</h1>
+    <div class="loading" id="js-loader" aria-hidden="true">
         <div class="loader"></div>
     </div>
-    <div class="mascotte">
+    <div class="mascotte" aria-hidden="true">
         <canvas id="c"></canvas>
     </div>
     <video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('story/Foryou3.mp4') }}" type="video/mp4"></video>

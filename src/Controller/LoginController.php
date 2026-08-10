@@ -34,20 +34,16 @@ class LoginController extends AbstractController
     }
 
     /**
-     * to login.
-     *
-     * @return Response
+     * /login redirects to /join: security.yaml's login_path/check_path already
+     * point to the "join" route, /login is never used by the real auth flow.
+     * join/login.html.twig used to be rendered here as a standalone document
+     * (via popup.html.twig) but is now a fragment included inline in
+     * join/index.html.twig, so it can no longer be rendered on its own.
      */
     #[Route('/login', name: 'login')]
-    public function login(AuthenticationUtils $utils)
+    public function login(): Response
     {
-        $error = $utils->getLastAuthenticationError();
-        $username = $utils->getLastUsername();
-
-        return $this->render('join/login.html.twig', [
-            'hasError' => null !== $error,
-            'username' => $username,
-        ]);
+        return $this->redirectToRoute('join');
     }
 
     /**

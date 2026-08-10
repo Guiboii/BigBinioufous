@@ -123,11 +123,20 @@ function initMiniCalendar() {
 
       if (dateKey === todayStr) {
         cell.classList.add('mini-calendar__day--today');
+        // aria-current="date" : "aujourd'hui" n'est sinon signalé que par un
+        // contour CSS (cf. .mini-calendar__day--today dans schedule.css),
+        // invisible pour un lecteur d'écran.
+        cell.setAttribute('aria-current', 'date');
       }
       if (hasEvents) {
         cell.classList.add('mini-calendar__day--event');
         cell.href = '#month-' + monthKey;
-        cell.title = eventsByDate[dateKey].join(', ');
+        // title (info-bulle souris) + aria-label (lecteur d'écran) : le
+        // texte visible du lien n'est que le numéro du jour, insuffisant
+        // seul pour savoir qu'un événement y est rattaché.
+        var eventNames = eventsByDate[dateKey].join(', ');
+        cell.title = eventNames;
+        cell.setAttribute('aria-label', dateKey + ' : ' + eventNames);
       }
 
       grid.appendChild(cell);

@@ -2,6 +2,15 @@
 # Breton traduit au mieux (je ne suis pas locutrice native) : à faire relire
 # par quelqu'un qui parle breton si l'exactitude compte, ceci est une base.
 
+a11y:
+    skip_to_content: "Mont d'an endalc'had pennañ"
+
+common:
+    close: Serriñ
+
+home:
+    heading: "Donemat e-touez ar Binioufous !!"
+
 nav:
     home: Degemer
     story: Istor
@@ -14,6 +23,7 @@ nav:
     tagline: "Ar strollad sonerezh ar muiañ foll er Galaksi !!"
     songs: Tonioù
     admin: Melestradurezh
+    toggle: "Diskouez/kuzhat ar merdeiñ"
 
 contact:
     title: Salud
@@ -140,6 +150,11 @@ music:
     artist: Arzour
     duration: Padelezh
     edit_link: kemmañ
+    zoom_label: "Zoumañ war stumm an don"
+    play_label: Seniñ
+    pause_label: Ehan
+    stop_label: Paouez
+    player_region: "C'hoarier son"
 
 Id: Id
 

@@ -20,36 +20,49 @@ document.querySelector('#slider').oninput = function () {
 };
 
 // Bind controls
+//
+// #stopTrack/#playPause/#loopRegion sont maintenant de vrais <button>
+// (avant : <div> avec juste un handler click, ni focusables ni activables
+// au clavier, cf. music/index.html.twig). Le handler écoute directement sur
+// le bouton plutôt que sur l'ancien <span id="stop"> interne : un clic
+// clavier (Entrée/Espace) déclenche l'événement "click" avec le bouton
+// lui-même comme cible, pas un de ses enfants.
 document.addEventListener('DOMContentLoaded', function () {
   var playPause = document.querySelector('#playPause');
   playPause.addEventListener('click', function () {
     wavesurfer.playPause();
   });
 
-  var stop = document.querySelector('#stop');
-  stop.addEventListener('click', function () {
+  var stopTrack = document.querySelector('#stopTrack');
+  stopTrack.addEventListener('click', function () {
     wavesurfer.stop();
   });
 
-  // Toggle play/pause text
+  // Toggle play/pause icon + nom accessible (le bouton n'a pas de texte
+  // visible, seulement une icône : sans aria-label à jour, un lecteur
+  // d'écran annoncerait toujours "Lecture" même une fois en pause).
   wavesurfer.on('play', function () {
     document.querySelector('#play').style.display = 'none';
     document.querySelector('#pause').style.display = '';
+    playPause.setAttribute('aria-label', playPause.dataset.pauseLabel);
   });
   wavesurfer.on('pause', function () {
     document.querySelector('#play').style.display = '';
     document.querySelector('#pause').style.display = 'none';
+    playPause.setAttribute('aria-label', playPause.dataset.playLabel);
   });
 
   var loopRegion = document.querySelector('#loopRegion');
   loopRegion.addEventListener('click', function () {
     if (hasClass(loopRegion, 'looping')) {
       loopRegion.classList.remove('looping');
+      loopRegion.setAttribute('aria-pressed', 'false');
       wavesurfer.clearRegions();
       //wavesurfer.play();
     } else {
       wavesurfer.clearRegions();
       loopRegion.classList.add('looping');
+      loopRegion.setAttribute('aria-pressed', 'true');
       wavesurfer.addRegion({
         id: 'loop',
         start: 5,
@@ -68,10 +81,15 @@ document.addEventListener('DOMContentLoaded', function () {
   var currentTrack = 0;
 
   // Load a track by index and highlight the corresponding link
+  // aria-current="true" en plus de la classe .active : la classe seule ne
+  // porte l'info que visuellement (couleur de fond), un lecteur d'écran ne
+  // peut pas la détecter.
   var setCurrentSong = function (index) {
     links[currentTrack].classList.remove('active');
+    links[currentTrack].removeAttribute('aria-current');
     currentTrack = index;
     links[currentTrack].classList.add('active');
+    links[currentTrack].setAttribute('aria-current', 'true');
     wavesurfer.load(links[currentTrack].href);
   };
 

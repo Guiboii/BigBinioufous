@@ -1,5 +1,14 @@
 # Fichier généré au fil de l'extraction des textes en dur des templates Twig.
 
+a11y:
+    skip_to_content: Aller au contenu principal
+
+common:
+    close: Fermer
+
+home:
+    heading: "Bienvenue chez les Binioufous !!"
+
 nav:
     home: Accueil
     story: Histoire
@@ -12,6 +21,7 @@ nav:
     tagline: "Le groupe de hautbois le plus déjanté de la Galaxie !!"
     songs: Morceaux
     admin: Administration
+    toggle: Basculer la navigation
 
 contact:
     title: Hello
@@ -179,6 +189,11 @@ music:
     artist: Artiste
     duration: Durée
     edit_link: modifier
+    zoom_label: "Zoom sur la forme d'onde"
+    play_label: Lecture
+    pause_label: "Mettre en pause"
+    stop_label: Arrêter
+    player_region: "Lecteur audio"
 
 Id: Id
 

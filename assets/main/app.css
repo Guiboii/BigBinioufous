@@ -16,6 +16,29 @@ body {
     background-color: var(--bb-gold);
 }
 
+/* Skip link : 1er élément focusable de la page (cf. templates/base.html.twig),
+   invisible tant qu'il n'a pas le focus clavier (hors écran plutôt que
+   display:none, pour rester atteignable par Tab), visible et à fort contraste
+   dès qu'il est focus. Permet de sauter la navbar/scène 3D pour aller direct
+   au contenu (#main-content). */
+.skip-link {
+    position: absolute;
+    z-index: 2000;
+    top: -3rem;
+    left: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--bb-ink);
+    color: var(--bb-white);
+    font-weight: bold;
+    border-radius: 0 0 8px 8px;
+    transition: top 0.15s ease;
+}
+.skip-link:focus {
+    top: 0;
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
 .avatar {
     max-width: 128px;
     max-height: 128px;
@@ -77,11 +100,20 @@ body {
     justify-content: center;
 }
 
+/* .text-green/.text-redwall : seul usage actuel, join/registration.html.twig,
+   posés directement sur le fond --bb-gold du body (pas sur .navbar-collapse/
+   #joinForm où --bb-green-vivid/--bb-red sont par ailleurs déjà bien
+   contrastés). --bb-green-vivid sur --bb-gold ne tenait que 2.77:1, --bb-red
+   3.23:1 : sous le minimum AA (4.5:1 texte normal). Variantes plus sombres
+   déjà présentes dans la palette (:root) plutôt qu'une nouvelle teinte :
+   --bb-green-deep tient 7.15:1 (AAA), --bb-red-dark 4.56:1 (AA, tout juste :
+   la palette n'a pas de rouge plus sombre sans dénaturer la couleur de
+   marque au point de la rendre méconnaissable). */
 .text-green {
-    color: var(--bb-green-vivid);
+    color: var(--bb-green-deep);
 }
 .text-redwall {
-    color: var(--bb-red);
+    color: var(--bb-red-dark);
 }
 .text-yellow {
     color: var(--bb-gold);

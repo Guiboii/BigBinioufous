@@ -1,5 +1,14 @@
 # Fichier généré au fil de l'extraction des textes en dur des templates Twig.
 
+a11y:
+    skip_to_content: Skip to main content
+
+common:
+    close: Close
+
+home:
+    heading: "Welcome to the Binioufous !!"
+
 nav:
     home: Home
     story: Story
@@ -12,6 +21,7 @@ nav:
     tagline: "The craziest oboe band of the Galaxy !!"
     songs: Songs
     admin: Admin
+    toggle: Toggle navigation
 
 contact:
     title: Hello
@@ -179,6 +189,11 @@ music:
     artist: Artist
     duration: Duration
     edit_link: edit
+    zoom_label: Zoom waveform
+    play_label: Play
+    pause_label: Pause
+    stop_label: Stop
+    player_region: Audio player
 
 Id: Id
 

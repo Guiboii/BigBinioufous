@@ -16,6 +16,8 @@
 
 {% block body %}
 
+    <h1 class="sr-only">{{ 'schedule.title'|trans }}</h1>
+
     <p class="mobile-note">{{ 'schedule.mobile_note'|trans }}</p>
 
     <div class="scroll-wrapper schedule">
@@ -23,15 +25,24 @@
         <div class="scroll">
             {% for monthNum, month in eventsByMonth %}
                 <div id="month-{{ monthNum }}" class="event-month">
-                    <h4>{{ ('schedule.month.' ~ month.label)|trans }}</h4>
+                    {# h4/h5 avant : rien entre le h1 (désormais ajouté ci-dessus)
+                       et ces titres de mois, saut de niveau. h2 (mois) > h3
+                       (titre d'événement) suit directement le h1 de page. #}
+                    <h2>{{ ('schedule.month.' ~ month.label)|trans }}</h2>
                     {% for item in month.events %}
                         {% set event = item.event %}
                         <article class="event-card event-card--{{ event.type }}">
                             {% if event.posterFilename %}
-                                <img src="{{ asset('uploads/events/' ~ event.posterFilename) }}" alt="">
+                                {# Affiche = contenu informatif (pas décoratif) mais
+                                   l'entité Event n'a pas de champ de description
+                                   dédiée pour l'image : le titre de l'événement
+                                   reste la meilleure alternative texte disponible,
+                                   mieux qu'un alt vide qui la rendrait invisible
+                                   pour les lecteurs d'écran. #}
+                                <img src="{{ asset('uploads/events/' ~ event.posterFilename) }}" alt="{{ event.title }}">
                             {% endif %}
                             <span class="event-type">{{ ('event.type_' ~ event.type)|trans }}</span>
-                            <h5><i class="ri-megaphone-fill" aria-hidden="true"></i> {{ event.title }}</h5>
+                            <h3><i class="ri-megaphone-fill" aria-hidden="true"></i> {{ event.title }}</h3>
                             {# 00:00 = pas d'heure connue plutôt qu'une vraie heure de minuit (aucun
                                événement ici n'en a une) : afficher juste la date évite de laisser
                                croire à une heure précise inventée. endDate facultatif : affiché en
@@ -75,12 +86,16 @@
            mois (pas seulement ceux qui ont des événements, contrairement
            aux pastilles avant). Un jour cliquable (en rouge) renvoie vers
            #month-XX dans .scroll. #}
-        <div id="calendar" class="mini-calendar">
+        <div id="calendar" class="mini-calendar" role="region" aria-label="{{ 'schedule.title'|trans }}">
             <div class="mini-calendar__header">
                 <button type="button" class="mini-calendar__nav" data-nav="prev" aria-label="{{ 'schedule.prev_month'|trans }}">
                     <i class="ri-arrow-left-s-line" aria-hidden="true"></i>
                 </button>
-                <span class="mini-calendar__title"></span>
+                {# aria-live : le changement de mois (schedule.js) n'est déclenché
+                   que par un clic sur un bouton déjà focus, sans changement de
+                   page ; sans ça un lecteur d'écran ne signale pas le nouveau
+                   mois affiché. #}
+                <span class="mini-calendar__title" aria-live="polite"></span>
                 <button type="button" class="mini-calendar__nav" data-nav="next" aria-label="{{ 'schedule.next_month'|trans }}">
                     <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
                 </button>
@@ -106,10 +121,10 @@
 
     </div>
 
-    <div class="loading" id="js-loader">
+    <div class="loading" id="js-loader" aria-hidden="true">
         <div class="loader"></div>
     </div>
-    <div class="mascotte">
+    <div class="mascotte" aria-hidden="true">
         <canvas id="c"></canvas>
     </div>
     <video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('story/Foryou3.mp4') }}" type="video/mp4"></video>

@@ -64,7 +64,12 @@
 .event-month {
     padding: 0.75rem 1rem 0;
 }
-.event-month h4 {
+/* h2 (avant h4, cf. schedule/index.html.twig : hiérarchie de titres corrigée
+   pour suivre le h1 de page sans sauter de niveau). font-size explicite pour
+   garder le même rendu visuel qu'avant (h4 Bootstrap 4 = 1.5rem par défaut,
+   h2 = 2rem : sans ça la taille du titre de mois changerait visuellement). */
+.event-month h2 {
+    font-size: 1.5rem;
     color: var(--bb-green-deep);
     border-bottom: 2px solid var(--bb-red);
     padding-bottom: 0.25rem;
@@ -81,8 +86,11 @@
     border-radius: 4px;
     margin-bottom: 0.5rem;
 }
-.event-card h5 {
+/* h3 (avant h5, cf. schedule/index.html.twig). Même logique de font-size
+   explicite que .event-month h2 ci-dessus (h5 Bootstrap 4 = 1.25rem). */
+.event-card h3 {
     margin: 0 0 0.25rem;
+    font-size: 1.25rem;
     color: var(--bb-ink);
 }
 .event-card .event-date,
@@ -113,7 +121,7 @@
 /* Icônes Remixicon (même famille que la navbar, assets/main/app.js) devant
    titre/date/adresse/agenda, en accent rouge pour ressortir sur les cartes
    claires (>= 3:1 exigé pour un élément graphique, ~5.9:1 ici). */
-.event-card h5 i,
+.event-card h3 i,
 .event-card .event-date i,
 .event-card .event-location i,
 .event-add-to-calendar__label i {

@@ -6,24 +6,33 @@
 
 <div class="container">
     <div class="row ml-4 centered">
+        {# Avant : <h4> ici, aucun <h1> ailleurs sur la page (saut direct de
+           rien à h4). Cette rubrique est le vrai titre de la page /register :
+           <h1>, en gardant les classes visuelles (badge) inchangées. #}
         <span class="badge badge-green mt-4">
-            <h4>{{ 'join.registration_heading'|trans }}</h4>
+            <h1>{{ 'join.registration_heading'|trans }}</h1>
         </span>
         <div class="text-green text-center mt-4">
-            <p class="text-red">{{ 'join.registration_warning'|trans }}</p>
+            {# .text-red était une classe fantôme (jamais définie en CSS,
+               cf. assets/main/app.css) : le texte héritait donc du vert du
+               conteneur parent au lieu du rouge voulu. .text-redwall est la
+               vraie classe existante pour ce rouge. #}
+            <p class="text-redwall">{{ 'join.registration_warning'|trans }}</p>
             <p>{{ 'join.registration_notice'|trans }}</p>
         </div>
         <div class="row">
-            <button class="btn badge-red mb-4">
-                <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="link red-hover">{{ 'join.pay_subscription'|trans }}</a>
-            </button>
+            {# Avant : <button><a>...</a></button>, imbrication invalide (un
+               <a> n'est pas un contenu autorisé dans <button>) en plus de
+               poser 2 arrêts de tabulation pour une seule action. Un seul
+               <a>, vraie navigation externe donc pas de <button>. #}
+            <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="btn badge-red mb-4 red-hover">{{ 'join.pay_subscription'|trans }}</a>
         </div>
     </div>
 
     {{ form_start(form) }}
     {{ form_widget(form) }}
     <div class="nav-item" >
-    <button class="submit btn btn-success">{{ 'join.submit'|trans }}</button>
+    <button type="submit" class="submit btn btn-success">{{ 'join.submit'|trans }}</button>
     </div>
     {{ form_end(form) }}
 

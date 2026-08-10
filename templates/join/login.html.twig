@@ -1,21 +1,23 @@
-{% extends 'popup.html.twig' %}
-
-{% block title %}{{ 'join.login_title'|trans }}{% endblock %}
-
-{% block body %}
-    <h4>{{ 'join.login_heading'|trans }}</h4>
-    {% if hasError %}
-        <div class="alert alert-danger">{{ 'join.login_error'|trans }}</div>
-    {% endif %}
-        <div class="form-group">
-            <label for="email">{{ 'Email'|trans }}</label>
-            <input type="text" name="_username" id="email" class="form-control" placeholder="{{ 'join.email_placeholder'|trans }}" required value = "{{ username }}">
-        </div>
-        <div class="form-group">
-            <label for="password">{{ 'Password'|trans }}</label>
-            <input type="password" name="_password" id="password" placeholder="{{ 'join.password_placeholder'|trans }}" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success">{{ 'join.login_submit'|trans }}</button>
-        </div>
-{% endblock %}
+{# Fragment inclus dans join/index.html.twig (pas un document autonome) :
+   avant extends 'popup.html.twig', ce qui imbriquait un 2e <html><head>
+   complet (avec son propre <script type="importmap">) dans la page /join.
+   Un document n'accepte qu'un seul importmap valide : le 2e/3e bloc rendait
+   le 1er incomplet côté navigateur (CSS de /join parfois non chargée). #}
+<button type="button" class="close" aria-label="{{ 'common.close'|trans }}">
+    <span aria-hidden="true">&times;</span>
+</button>
+<h4>{{ 'join.login_heading'|trans }}</h4>
+{% if hasError %}
+    <div class="alert alert-danger" role="alert">{{ 'join.login_error'|trans }}</div>
+{% endif %}
+    <div class="form-group">
+        <label for="email">{{ 'Email'|trans }}</label>
+        <input type="text" name="_username" id="email" class="form-control" placeholder="{{ 'join.email_placeholder'|trans }}" autocomplete="email" required value = "{{ username }}">
+    </div>
+    <div class="form-group">
+        <label for="password">{{ 'Password'|trans }}</label>
+        <input type="password" name="_password" id="password" placeholder="{{ 'join.password_placeholder'|trans }}" class="form-control" autocomplete="current-password" required>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-success">{{ 'join.login_submit'|trans }}</button>
+    </div>

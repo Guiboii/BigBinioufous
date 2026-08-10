@@ -19,12 +19,18 @@
 'story/Soucoupe.gltf': '{{ asset('story/Soucoupe.gltf') }}',
 'story/Desk.gltf': '{{ asset('story/Desk.gltf') }}',
 'story/Desk1.gltf': '{{ asset('story/Desk1.gltf') }}',
-'music/SoundSystem.gltf': '{{ asset('music/SoundSystem.gltf') }}'
+'music/SoundSystem.gltf': '{{ asset('music/SoundSystem.gltf') }}',
+'schedule/flyer002.png': '{{ asset('schedule/flyer002.png') }}'
 };
         </script>
-        {{ include('/partials/header.html.twig') }}
     </head>
     <body>
+        {# En tête du body (1er élément atteignable au clavier) : reste invisible
+           jusqu'à recevoir le focus (Tab), permet de sauter la navbar/scène 3D
+           pour aller directement au contenu principal. Voir .skip-link dans
+           assets/main/app.css. #}
+        <a class="skip-link" href="#main-content">{{ 'a11y.skip_to_content'|trans }}</a>
+        {{ include('/partials/header.html.twig') }}
         {% for label, messages in app.flashes %}
             <div class="container">
                 <div class="alert alert-{{ label }} mt-4">
@@ -34,7 +40,9 @@
                 </div>
             </div>
         {% endfor %}
-        {% block body %}{% endblock %}
+        <main id="main-content" tabindex="-1">
+            {% block body %}{% endblock %}
+        </main>
         {% block javascripts %}{% endblock %}
     </body>
 

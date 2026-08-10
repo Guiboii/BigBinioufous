@@ -250,6 +250,21 @@ input#slider:focus-visible {
     margin-top: 5px;
 }
 
+/* #stopTrack/#playPause/#loopRegion sont maintenant de vrais <button>
+   (avant : <div>, cf. music/index.html.twig) : reset des styles par défaut
+   du navigateur (border/background/font), le reste de leur apparence (icônes,
+   couleurs, espacement) était déjà porté par les règles ci-dessous qui
+   ciblent les mêmes ids et n'ont pas besoin de changer. */
+.player-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
 /* Icônes du lecteur : fond #695044 (marron moyen, L≈0.09) derrière tout ça.
    Avant : rgba(0,0,0,0.4) et --bb-green-mid/--bb-red-dark/--bb-ink, tous des
    tons sombres sur un fond déjà sombre (~1.1-1.7:1, sous le minimum 3:1 des
@@ -297,8 +312,15 @@ input#slider:focus-visible {
 }
 
 
-button:focus {
-    outline: none;
+/* Avant : button:focus { outline: none; } sans remplacement, donc aucun
+   indicateur de focus clavier visible sur les boutons du lecteur une fois
+   convertis en vrais <button> (cf. .player-btn ci-dessus). Même traitement
+   :focus-visible que le reste du site (fond sombre #695044 ici, L≈0.09 :
+   blanc tient largement le 3:1 minimum d'un indicateur de focus). */
+.player-btn:focus-visible,
+#uploadNew:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: 2px;
 }
 
 /* Mode mobile (<=700px, cf. le script dans music/index.html.twig qui pose

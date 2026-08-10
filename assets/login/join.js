@@ -226,25 +226,93 @@ function raycast(e, touch = false) {
   }
 }
 // show the popup forms
+//
+// Chaque popup (#joinForm/#loginForm, role="dialog" posé dans
+// join/index.html.twig) est ouverte/fermée en gardant clavier et lecteur
+// d'écran cohérents avec l'état visuel :
+// - le bouton déclencheur expose son état via aria-expanded
+// - à l'ouverture, le focus part sur le 1er champ du formulaire (ou le
+//   bouton fermer s'il n'y a pas de champ) plutôt que de rester sur place
+// - Echap ferme la popup ouverte et rend le focus au bouton déclencheur
+// - un simple piège de tabulation (Tab/Shift+Tab) empêche de sortir de la
+//   popup pendant qu'elle est ouverte (role="dialog" + aria-modal="true"
+//   sans ça ne suffit pas : rien n'empêche réellement le focus de sortir)
 
-var joinLink = document.querySelector('a.join');
-var loginLink = document.querySelector('a.login');
+var joinButton = document.querySelector('button.join');
+var loginButton = document.querySelector('button.login');
+var joinForm = document.getElementById('joinForm');
+var loginForm = document.getElementById('loginForm');
 
-joinLink.addEventListener('click', function () {
-  document.getElementById('joinForm').classList.remove('d-none');
+function getFocusable(container) {
+  return Array.prototype.slice
+    .call(container.querySelectorAll('input, textarea, select, button, a[href]'))
+    .filter(function (el) {
+      return !el.disabled && el.offsetParent !== null;
+    });
+}
+
+function openPopup(form, trigger) {
+  form.classList.remove('d-none');
+  trigger.setAttribute('aria-expanded', 'true');
+  form.dataset.trigger = trigger === joinButton ? 'join' : 'login';
+  var focusable = getFocusable(form);
+  if (focusable.length) {
+    focusable[0].focus();
+  }
+}
+
+function closePopup(form) {
+  form.classList.add('d-none');
+  var trigger = form.dataset.trigger === 'join' ? joinButton : loginButton;
+  trigger.setAttribute('aria-expanded', 'false');
+  trigger.focus();
+}
+
+function isOpen(form) {
+  return !form.classList.contains('d-none');
+}
+
+joinButton.addEventListener('click', function () {
+  openPopup(joinForm, joinButton);
 });
-loginLink.addEventListener('click', function () {
-  document.getElementById('loginForm').classList.remove('d-none');
+loginButton.addEventListener('click', function () {
+  openPopup(loginForm, loginButton);
 });
 
 // close the popups
-var closeJ = document.querySelector('#joinForm .close');
-var closeL = document.querySelector('#loginForm .close');
+var closeJ = joinForm.querySelector('.close');
+var closeL = loginForm.querySelector('.close');
 closeJ.addEventListener('click', function () {
-  document.getElementById('joinForm').classList.add('d-none');
+  closePopup(joinForm);
 });
 closeL.addEventListener('click', function () {
-  document.getElementById('loginForm').classList.add('d-none');
+  closePopup(loginForm);
+});
+
+document.addEventListener('keydown', function (e) {
+  var openForm = isOpen(joinForm) ? joinForm : isOpen(loginForm) ? loginForm : null;
+  if (!openForm) {
+    return;
+  }
+  if (e.key === 'Escape') {
+    closePopup(openForm);
+    return;
+  }
+  if (e.key === 'Tab') {
+    var focusable = getFocusable(openForm);
+    if (!focusable.length) {
+      return;
+    }
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
 });
 
 function animate() {
