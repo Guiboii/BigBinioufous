@@ -127,10 +127,7 @@ music:
     voice_label: "Voix :"
     download: télécharger
     no_links: aucun lien trouvé
-    login_email_placeholder: email pour te connecter
-    login_password_placeholder: mot de passe
-    unlock: Débloquer
-    register: S'inscrire
+    members_prompt: "Réservé aux membres, pour débloquer les téléchargements :"
     new_title: Nouveau morceau
     create_heading: Créer un nouveau morceau
     back_to_list: retour à la liste

@@ -120,18 +120,13 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <form action="/join" id="loginForm" method="post">
-                        <div class="form-group">
-                            <input type="email" name="_username" class="form-control" id="email" aria-describedby="emailHelp" placeholder="{{ 'music.login_email_placeholder'|trans }}" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="password" name="_password" class="form-control" id="password" placeholder="{{ 'music.login_password_placeholder'|trans }}" required>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-dark">{{ 'music.unlock'|trans }}</button>
-                            <a class="btn bg-yellow" href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" role="button">{{ 'music.register'|trans }}</a>
-                        </div>
-                    </form>
+                    {# Pas de formulaire de connexion ad hoc ici : à terme, un
+                       composant popup de connexion réutilisable (cf. ROADMAP.md),
+                       en attendant on renvoie vers la vraie page /join. #}
+                    <p class="members-prompt">
+                        {{ 'music.members_prompt'|trans }}
+                        <a href="{{ path('join') }}">{{ 'nav.join_or_login'|trans }}</a>
+                    </p>
                 {% endif %}
             </div>
         </div>
@@ -147,6 +142,11 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="https://unpkg.com/wavesurfer.js"></script>
-    <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
+    {# Épinglé à 6.6.4 (dernière version 6.x) : sans version, unpkg résout la
+       dernière release (7.x), une réécriture complète en modules ES qui n'a
+       plus l'API globale WaveSurfer.create()/.regions.create() qu'utilise
+       Player.js. Même piège que bootstrap/three.js, déjà documenté dans
+       CLAUDE.md, jamais appliqué ici avant le 2026-08-10. #}
+    <script src="https://unpkg.com/wavesurfer.js@6.6.4"></script>
+    <script src="https://unpkg.com/wavesurfer.js@6.6.4/dist/plugin/wavesurfer.regions.min.js"></script>
 {% endblock %}

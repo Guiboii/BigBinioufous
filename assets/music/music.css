@@ -56,13 +56,24 @@ table {
 }
 
 
-.members-only form#loginForm {
+/* Fond hérité de .playlist-wrap (#4a3d37, marron très sombre, L≈0.05) :
+   sans couleur explicite, le texte serait noir par défaut et le lien
+   hériterait du vert --bb-green-mid (règle globale "a { color: ... }"),
+   l'un comme l'autre illisibles ici (~1:1). */
+.members-prompt {
     padding: 12%;
-    border: 5px solid #4a3d37;
-    height: 100%;
-    position: relative;
-    margin-top: 0;
-    top: -5px;
+    color: var(--bb-gold-pale);
+    font-size: 13px;
+    line-height: 1.5;
+}
+.members-prompt a {
+    color: var(--bb-white);
+    font-weight: bold;
+    text-decoration: underline;
+}
+.members-prompt a:hover,
+.members-prompt a:focus-visible {
+    color: var(--bb-gold);
 }
 
 .accordion button {
@@ -98,25 +109,29 @@ input#slider {
     margin-top: 5px;
 }
 
+/* Icônes du lecteur : fond #695044 (marron moyen, L≈0.09) derrière tout ça.
+   Avant : rgba(0,0,0,0.4) et --bb-green-mid/--bb-red-dark/--bb-ink, tous des
+   tons sombres sur un fond déjà sombre (~1.1-1.7:1, sous le minimum 3:1 des
+   icônes/UI WCAG). --bb-gold-pale tient ~5.5:1 dessus. */
 #loopRegion, a#loopRegion:hover {
     margin-left: 5px;
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--bb-gold-pale);
 }
 
 #uploadNew, a#uploadNew:hover {
     padding: 0 0;
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--bb-gold-pale);
     text-decoration: none;
 }
 
 #upload svg {
-    color: var(--bb-red-dark);
+    color: var(--bb-gold-pale);
     width: 32px;
     height: 32px;
     margin-top: -3px;
 }
 #play svg {
-    color: var(--bb-green-mid);
+    color: var(--bb-gold-pale);
     width: 42px;
     height: 42px;
 }
@@ -126,12 +141,12 @@ input#slider {
     height: 42px;
 }
 #stop svg {
-    color: var(--bb-ink);
+    color: var(--bb-gold-pale);
     width: 42px;
     height: 42px;
 }
 #loop svg {
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--bb-gold-pale);
     width: 32px;
     height: 32px;
     margin-top: 0px;

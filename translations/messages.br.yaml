@@ -129,10 +129,7 @@ music:
     voice_label: "Mouezh :"
     download: pellgargañ
     no_links: n'eus bet kavet liamm ebet
-    login_email_placeholder: imel evit kennaskañ
-    login_password_placeholder: ger-tremen
-    unlock: Digeriñ
-    register: Enskrivañ
+    members_prompt: "Evit an izili nemetken, evit dibrennañ ar pellgargadurioù :"
     new_title: Ton nevez
     create_heading: Krouiñ un ton nevez
     back_to_list: distro d'ar roll
