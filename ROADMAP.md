@@ -56,12 +56,17 @@ Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : é
 - [ ] Une page à la fois : lisibilité du code (Twig/PHP/JS) et lisibilité visuelle/UX
 - [x] Ordre des pages : vitrine d'abord, en commençant par **Histoire** (`templates/story/`, branche `phase5_story`)
 - [x] Minisite Histoire (`templates/story/minisite.html.twig`, `assets/story/minisite.css`) : iframe morte (ancien domaine `4fun.binioufous.fr` mort en DNS) corrigée, refonte complète en page autonome (fini le "page dans la page" avec navbar/barre Symfony dupliquées), thème terminal rétro vert biniou (IBM Plex Mono + VT323, contrastes vérifiés AA/AAA + simulation daltonisme), cadre recalé en `vw`/`vh` sur l'écran 3D de `/story`. Chrome "bureau" ajouté par-dessus : fenêtre terminal à 80% de l'écran flottant sur un bureau (dégradé + icônes CSS + barre des tâches avec horloge/batterie décorative), scrollbar thématisée. `<li>`/ids dupliqués/menu d'ancres mort corrigés au passage.
-- [ ] Idée à creuser : rendre le texte de la page Histoire modifiable via un simple fichier Markdown plutôt que codé en dur dans `minisite.html.twig`/`translations/*.yaml`, éditable par un ou plusieurs rôles à définir (lesquels ? admin seul, ou aussi binioufous ?)
+- [x] Adaptation mobile de la page Histoire : sous 700px, `/story` redirige directement vers `/story/mini` plutôt que de charger la scène 3D (illisible en petit + gaspillage data/batterie pour rien). La minisite y bascule en plein écran avec une petite navbar de site (Accueil/Musique/Planning/Rejoindre) + une note "vue simplifiée" (`story.mobile_note`, fr/en/br), visibles uniquement hors iframe (détection `window.self !== window.top`) pour ne pas revenir au bug "page dans la page".
+- [ ] Manque côté fonctionnel : import/rendu de Markdown pour le texte de la page Histoire, plutôt que codé en dur dans `minisite.html.twig`/`translations/*.yaml`. Éditable par un ou plusieurs rôles à définir (lesquels ? admin seul, ou aussi binioufous ?)
 - [ ] À un moment : audit accessibilité **global**, toutes pages confondues (pas juste page par page au fil de l'eau) : contrastes, daltonisme, navigation clavier, `alt`/labels manquants... Voir la section Accessibilité de `CLAUDE.md` pour la méthode déjà utilisée (navbar + page Histoire). Probablement à faire une fois plusieurs pages retravaillées, pour auditer d'un coup plutôt que plusieurs fois.
 
 ## Phase 6 : Pages par rôle
 
 - [ ] Même passage (code + UX), page par page, pour les vues spécifiques à chaque rôle (admin, comptable, membre, binioufous...)
+
+## Avant les nouvelles fonctionnalités
+
+- [ ] Emails fonctionnels : `symfony/mailer` est configuré (`config/packages/mailer.yaml`) mais `MAILER_DSN` est commenté dans `.env`, rien n'est réellement envoyé. Les formulaires de contact (`templates/story/index.html.twig` #contactForm, `templates/story/minisite.html.twig` #minisite-contact-form) ont des boutons `type="button"` : aucun des deux ne soumet quoi que ce soit, `story.js` se contente d'afficher/masquer le formulaire. Important malgré tout (pas juste un "nice to have"), à faire avant la Phase 7.
 
 ## Phase 7 : Nouvelles fonctionnalités
 

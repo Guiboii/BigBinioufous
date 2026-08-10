@@ -8,8 +8,30 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('story/minisite.css') }}">
+        {# Cette page sert 2 rôles : contenu affiché dans l'iframe #miniSite
+           sur l'écran 3D de /story (desktop), ET page à part entière quand
+           /story redirige ici directement sur mobile (cf. story/index.html.twig).
+           Seul le 2e cas a besoin d'une navbar pour continuer la visite du
+           site : détection avant le premier rendu pour éviter un flash. #}
+        <script>
+            document.documentElement.classList.add(window.self !== window.top ? 'is-embedded' : 'is-standalone');
+        </script>
     </head>
     <body>
+        <nav class="site-nav" aria-label="{{ 'nav.tagline'|trans }}">
+            <p class="site-nav-note">{{ 'story.mobile_note'|trans }}</p>
+            <div class="site-nav-links">
+                <a href="{{ path('home') }}">{{ 'nav.home'|trans }}</a>
+                <a href="{{ path('music') }}">{{ 'nav.music'|trans }}</a>
+                <a href="{{ path('schedule') }}">{{ 'nav.schedule'|trans }}</a>
+                {% if app.user %}
+                    <a href="{{ path('desk') }}">{{ 'nav.desk'|trans }}</a>
+                {% else %}
+                    <a href="{{ path('join') }}">{{ 'nav.join_or_login'|trans }}</a>
+                {% endif %}
+            </div>
+        </nav>
+
         <div class="desktop">
             <div class="desktop-icons" aria-hidden="true">
                 <span class="desktop-icon desktop-icon--folder"></span>
