@@ -1,55 +1,68 @@
 # Frontend / style : pour s'y retrouver vite
 
-Pas de design system formalisé : c'est un mélange **Bootstrap 4 + classes maison** dans `assets/main/app.css`, avec **deux systèmes d'icônes différents** (le vrai piège du projet, cf. ci-dessous).
+Pas de design system formalisé au sens strict, mais depuis la refonte de la navbar (2026-08-10) `assets/main/app.css` a un vrai jeu de variables de couleurs (`:root { --bb-* }`) à réutiliser. Reste un mélange **Bootstrap 4 + classes maison**, avec **trois systèmes d'icônes différents** (le vrai piège du projet, cf. ci-dessous).
 
-## Icônes : attention, il y en a DEUX systèmes
+## Icônes : attention, il y en a TROIS systèmes
 
 | Système | Installé comment | Utilisé où | Syntaxe |
 |---|---|---|---|
-| **Font Awesome 5** (`@fortawesome/fontawesome-free`) | importé en JS/CSS dans `assets/main/app.js` (`fontawesome.min.js` + `.css`), donc dispo partout où l'entry `app` est chargée | Quasi tous les liens de menu (`templates/partials/header.html.twig`, `templates/desk/partials/header.html.twig`...) | `<i class="fas fa-home"></i>`, `<i class="fas fa-music"></i>`, etc. |
-| **Bootstrap Icons** (`bootstrap-icons` dans `package.json`) | package présent mais **jamais importé comme police/CSS** : le SVG de chaque icône a été copié-collé à la main directement dans les templates | Le burger menu du header (`bi bi-list`), les boutons du lecteur audio (`templates/music/index.html.twig` : play/pause/stop/loop) | `<svg class="bi bi-play-fill" ...>...path...</svg>` (markup SVG brut, pas une classe qui "marche" toute seule) |
+| **Font Awesome** (`@fortawesome/fontawesome-free`) | `importmap:require`, importé en JS/CSS dans `assets/main/app.js` (`fontawesome.min.js` + `.css`), donc dispo partout où l'entry `app` est chargée (= toutes les pages) | Navbar desk/admin (`templates/desk/partials/header.html.twig`) | `<i class="fas fa-home"></i>`, `<i class="far fa-user-circle"></i>`, etc. |
+| **Remixicon** | `importmap:require remixicon/fonts/remixicon.css` (le package n'a pas de module JS, seul le fichier CSS est requis directement), importé dans `assets/main/app.js`, dispo partout comme Font Awesome | Navbar publique (`templates/partials/header.html.twig`), variante **`-fill`** (pleine, plus contrastée que `-line`) | `<i class="ri-home-4-fill"></i>`, `<i class="ri-music-2-fill"></i>`, etc. |
+| **Bootstrap Icons** | package **pas installé du tout** : le SVG de chaque icône a été copié-collé à la main directement dans les templates | Le burger menu du header public (`bi bi-list`), les boutons du lecteur audio (`templates/music/index.html.twig` : play/pause/stop/loop) | `<svg class="bi bi-play-fill" ...>...path...</svg>` (markup SVG brut, pas une classe qui "marche" toute seule) |
 
-**Piège** : mettre `<i class="bi bi-xxx">` ne fonctionnera pas comme avec Font Awesome : bootstrap-icons n'est pas chargé comme police d'icônes, il faut copier le SVG complet depuis [bootstrap-icons](https://icons.getbootstrap.com/) (comme c'est déjà fait pour les 5 icônes existantes).
+**Piège** : mettre `<i class="bi bi-xxx">` ne fonctionnera pas : Bootstrap Icons n'est chargé nulle part comme police d'icônes, il faut copier le SVG complet depuis [bootstrap-icons](https://icons.getbootstrap.com/) (comme c'est déjà fait pour les icônes existantes).
 
-→ Pour une nouvelle icône : par défaut utiliser **Font Awesome** (`<i class="fas fa-...">`), c'est le système "normal" du projet. Ne touche au SVG bootstrap-icons que si tu modifies le lecteur audio ou le burger menu.
+→ Pour une nouvelle icône : dans la navbar publique ou toute nouvelle page "vitrine", utiliser **Remixicon** (`<i class="ri-...-fill">`, catalogue sur [remixicon.com](https://remixicon.com/)), c'est le système le plus récent et le plus riche. Dans le desk/admin, rester sur **Font Awesome** (`<i class="fas fa-...">`) pour la cohérence avec l'existant. Ne touche au SVG Bootstrap Icons que si tu modifies le lecteur audio ou le burger menu.
 
 ## CSS : `assets/main/app.css`
 
-Pas de SCSS/variables : les couleurs sont des codes hex répétés partout. Palette du projet (couleurs de la fanfare) :
+Pas de SCSS, mais un jeu de variables CSS natives (`:root`) en haut du fichier, à réutiliser plutôt que ressortir un hex :
 
-| Couleur | Hex | Usage |
+| Variable | Hex | Usage |
 |---|---|---|
-| Jaune (fond, texte clair) | `#F2B233` | `body`, `.text-yellow`, `.bg-yellow` |
-| Vert | `#1F6652` / `#298b70` (clair) | `.text-green`, `.bg-green`, `.btn-green`, liens |
-| Rouge | `#BC2727` / `#9e0000` (foncé) | `.text-redwall`, `.bg-red`, `.btn-red`, navbar admin |
+| `--bb-gold` | `#F2B233` | Couleur signature du site (fond `body`, accents, texte clair) |
+| `--bb-gold-pale` | `#FBDB7C` | Texte/accents sur fond vert foncé (navbar) |
+| `--bb-gold-rgb` | `242, 178, 51` | Pour composer un `rgba(var(--bb-gold-rgb), <alpha>)` (ex. filets de séparation semi-transparents) |
+| `--bb-green-deep` | `#0F352C` | Vert le plus foncé (hover boutons, fond badge toggler navbar ouverte) |
+| `--bb-green-mid` | `#1F6652` | Vert "normal" du site (liens, panneau navbar, formulaires) |
+| `--bb-green-vivid` | `#257A62` | Nuance distincte utilisée par `.text-green` |
+| `--bb-red` | `#BC2727` | Rouge du site (danger/refus, navbar admin) |
+| `--bb-red-dark` | `#9E0000` | Rouge plus foncé (hover, overlays de chargement) |
+| `--bb-ink` | `#16140F` | Quasi-noir de la palette (icônes sur fond clair) |
+| `--bb-white` | `#FFFFFF` | Blanc, utilisé notamment comme texte sur fond rouge/vert (voir Gotcha contraste ci-dessous) |
+| `--bb-border-dark` | `#23272B` | Bordure sombre des formulaires (`#joinForm`, `#loginForm`, `form`) |
 
 Classes maison notables (à réutiliser plutôt que recréer) :
 - `.btn-red` / `.btn-green` : boutons custom (pas les boutons Bootstrap habituels `.btn-primary`)
-- `.bg-red` / `.bg-green` / `.bg-yellow`, `.text-red...` / `.text-green` / `.text-yellow`
+- `.bg-yellow`, `.text-redwall` / `.text-green` / `.text-yellow` : couleur de fond/texte isolée
 - `.avatar` / `.avatar-medium` : photos de profil rondes
 - `.centered` : flex center rapide (`display:flex; align-items:center; justify-content:center`)
-- `.red-hover` / `.green-hover` / `.yellow-hover` : effet hover générique
+- `.red-hover` / `.green-hover` : effet hover générique (texte blanc au survol, voir Gotcha)
+
+`.bg-red`, `.bg-green`, `.bg-red-light`, `.yellow-hover`, `.device-orientation` ont existé mais n'étaient référencés dans **aucun** template ni JS : supprimés le 2026-08-10 (ne pas les recréer sans vérifier qu'il y a un vrai usage).
+
+Police d'affiche **Bungee** (Google Fonts, `<link>` CDN dans `base.html.twig`, pas géré par AssetMapper) pour les libellés de la navbar publique. Le reste du site n'a pas de police custom (défauts Bootstrap/navigateur).
 
 Grille : classes Bootstrap standard (`container`, `row`, `col-*`).
 
-## JS : un entry point Webpack Encore par section
+## JS/CSS : AssetMapper, un entry point par section
 
-Voir `webpack.config.js` (`.addEntry(...)`). Chaque page charge sa propre entry, **`app` est toujours chargé** (dans `base.html.twig`) donc jQuery/Bootstrap/FontAwesome/`app.css` sont globaux ; le reste est spécifique à la page :
+Pas de Webpack : `symfony/asset-mapper` (natif Symfony, zéro build Node en prod, cf. `CLAUDE.md` et le `README.md` racine pour le détail). Les entries sont déclarées dans `importmap.php` (racine) et appelées par chaque template via `{{ importmap([...]) }}` :
 
 | Entry | Fichier source | Contenu |
 |---|---|---|
-| `app` | `assets/main/app.js` | jQuery, Bootstrap JS/CSS, Font Awesome, `app.css` : chargé sur **toutes** les pages |
+| `app` | `assets/main/app.js` | jQuery, Bootstrap JS/CSS, Font Awesome, Remixicon, `app.css` : chargé sur **toutes** les pages |
 | `index` | `assets/mascotte/mascotte.js` | Mascotte 3D (Three.js + modèles `.gltf`) |
-| `music` | `assets/music/music.js` (+ `Player.js`) | Lecteur audio wavesurfer.js |
+| `music` | `assets/music/music.js` (+ `Player.js`) | Lecteur audio wavesurfer.js (chargé en CDN, pas par AssetMapper) |
 | `schedule` | `assets/schedule/schedule.js` | Page planning + éléments 3D |
 | `story` | `assets/story/story.js` | Page histoire + minisite |
 | `join` | `assets/login/join.js` | Page login/register |
 
-`assets/libs/` contient des libs Three.js vendorisées à la main (pas via npm) : `three.module.js`, `GLTFLoader.js`, `OrbitControls.js`, `dat.gui.module.js`.
+Three.js et ses modules (`GLTFLoader`, `OrbitControls`) viennent du package npm `three` via `importmap:require`, **épinglé à `0.128.0`** (pas de libs vendorisées à la main dans `assets/libs/`, ce dossier n'existe plus).
 
 ## Gotchas à retenir
 
-- **Deux systèmes d'icônes cohabitent** (voir plus haut) : ne pas mélanger les syntaxes.
-- `bootstrap-icons` est dans `package.json` mais son CSS/police n'est importé nulle part : ne pas essayer `<i class="bi bi-xxx">`, ça ne rendra rien.
-- Pas de variables Sass malgré `node-sass` en dépendance : tout est en CSS brut avec des hex répétés. Si tu ajoutes une couleur, réutilise la palette ci-dessus plutôt que d'en inventer une nouvelle.
+- **Trois systèmes d'icônes cohabitent** (voir plus haut) : ne pas mélanger les syntaxes, et vérifier que la classe existe bien avant de l'utiliser (`grep` dans `assets/vendor/<lib>/` après un `importmap:install`, ce dossier est gitignoré donc pas toujours présent).
+- **Ne jamais superposer rouge et vert pour du texte sur un fond** (ou l'inverse) : plusieurs bugs de contraste de ce type ont été trouvés et corrigés le 2026-08-10 (navbar, boutons `.btn-red`/`.btn-green`, pills actives du planning/histoire, `.red-hover`/`.green-hover`) — un cas allait même jusqu'au texte totalement invisible (vert sur vert, couleur héritée de la règle globale `a { color: var(--bb-green-mid) }`). Si tu ajoutes un état hover/actif avec un fond rouge ou vert, mets du texte blanc (`var(--bb-white)`) ou clair, pas une autre couleur saturée de la palette.
+- Si tu ajoutes une couleur, réutilise une variable `--bb-*` existante plutôt que d'en inventer une nouvelle ; si vraiment aucune ne convient, ajoute-la au bloc `:root` de `assets/main/app.css` avec un nom `--bb-*` cohérent.
 - `templates/desk/index.html.twig` avait un bug de typo sur les noms de rôles (`ROLE_BINOUFOUS`/`ROLE_SIMPLE` au lieu de `ROLE_BINIOUFOUS`/`ROLE_Simple`) : corrigé, voir [role.md](role.md).

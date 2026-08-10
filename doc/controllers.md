@@ -1,6 +1,6 @@
 # Contrôleurs & routes
 
-Toutes les routes sont déclarées en annotations `@Route` directement sur les méthodes (pas de fichier `routes.yaml` central).
+Toutes les routes sont déclarées en attributs PHP natifs `#[Route]` directement sur les méthodes (pas de fichier `routes.yaml` central). Migré depuis les annotations `@Route` lors de l'upgrade Symfony 6.4 (retrait de `sensio/framework-extra-bundle`, cf. `ROADMAP.md` Phase 2).
 
 ## `HomeController`
 - `GET /` (`home`) : page d'accueil.

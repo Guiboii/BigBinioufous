@@ -2,7 +2,7 @@
 
 - **Provider** : `in_database`, entité `App\Entity\User`, identifiant = `email`.
 - **Mot de passe** : encodeur `bcrypt` sur `App\Entity\User`.
-- **Firewall `main`** : `anonymous: true`, `form_login` (page `/join`, submit sur `/join` aussi : `check_path` = `login_path`), redirection par défaut vers `desk` après connexion. Logout sur `/logout` → redirige vers `home`.
+- **Firewall `main`** : `form_login` (`login_path`/`check_path` pointent tous les deux vers la route `join`, donc `/join`), redirection par défaut vers `desk` après connexion. Logout sur `/logout` → redirige vers `home`. Pas de clé `anonymous` (obsolète, retirée lors de l'upgrade Symfony 6.4, cf. `ROADMAP.md` Phase 2).
 - **`access_control`** (seule couche de contrôle d'accès basée sur les rôles, aucune vérification en dur dans les contrôleurs : voir [controllers.md](controllers.md)) :
   - `^/admin` → `ROLE_ADMIN`
   - `^/desk` → `ROLE_USER`

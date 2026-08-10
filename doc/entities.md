@@ -1,6 +1,6 @@
 # Modèle de données (entités Doctrine)
 
-Toutes les entités sont dans `src/Entity/`, mappées avec des annotations Doctrine ORM.
+Toutes les entités sont dans `src/Entity/`, mappées avec des attributs PHP natifs Doctrine ORM (`#[ORM\Entity]`, `#[ORM\Column]`...). Migré depuis les annotations docblock lors de l'upgrade Symfony 6.4 (cf. `ROADMAP.md` Phase 2).
 
 ## `User`
 
