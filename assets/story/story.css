@@ -3,7 +3,7 @@
     z-index: 1000;
     width: 790px;
     height: 400px;
-    background: white;
+    background: var(--bb-white);
     left: 50%;
     margin-left: -290px;
     top: 23px;

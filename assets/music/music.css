@@ -110,23 +110,23 @@ input#slider {
 }
 
 #upload svg {
-    color:#9e0000;
+    color: var(--bb-red-dark);
     width: 32px;
     height: 32px;
     margin-top: -3px;
 }
 #play svg {
-    color:#1F6652;
+    color: var(--bb-green-mid);
     width: 42px;
     height: 42px;
 }
 #pause svg {
-    color: white;
+    color: var(--bb-white);
     width: 42px;
     height: 42px;
 }
 #stop svg {
-    color: black;
+    color: var(--bb-ink);
     width: 42px;
     height: 42px;
 }
@@ -137,7 +137,7 @@ input#slider {
     margin-top: 0px;
 }
 #loopRegion.looping #loop svg {
-    color:#F2B233;
+    color: var(--bb-gold);
 }
 
 
