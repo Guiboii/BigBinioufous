@@ -159,25 +159,6 @@ canvas {
     border-color: var(--bb-green-mid);
 }
 
-/* padding/border volontairement absents ici : déjà posés une fois par le
-   sélecteur générique "form" plus bas (ce sont de vrais <form>), pas besoin
-   de les répéter à l'identique */
-#joinForm, #loginForm {
-    position: absolute;
-    z-index: 900;
-    background: var(--bb-red);
-    width: 440px;
-    text-align: center;
-    top: 50%;
-    left: 50%;
-    margin-top: -200px;
-    margin-left: -170px;
-}
-
-#loginForm {
-    background: var(--bb-green-mid);
-}
-
 #contactForm {
     position: absolute;
     z-index: 1100;
@@ -197,30 +178,9 @@ form {
     border: 5px solid var(--bb-border-dark);
 }
 
-.login, .join {
-    position: absolute;
-    z-index: 900;
-    top: 50%;
-    width: 150px;
-    text-align: center;
-    left: 50%;
-}
-
-.login {
-    margin-left: -25%;
-}
-.join {
-    margin-left: 15%;
-}
-
-a.login:hover {
-    background-color: var(--bb-red);
-    border-radius: 25px;
-}
-a.join:hover {
-    background-color: var(--bb-gold);
-    border-radius: 25px;
-}
+/* .login/.join et #joinForm/#loginForm déménagés dans assets/login/join.css
+   (même convention que Musique/Histoire/Planning : une page avec sa propre
+   scène 3D a son propre fichier). */
 
 /* Texte blanc au survol (pas gold/rouge) : même bug de contraste que sur la
    navbar, ici sur les CTA "payer l'adhésion" / "s'abonner" */

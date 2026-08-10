@@ -31,7 +31,7 @@ class RegistrationType extends ApplicationType
             ->add('passwordConfirm', PasswordType::class, $this->getConfiguration('Confirm Password', 'Please confirm your password'))
             ->add('country', CountryType::class, $this->getConfiguration('Your country', 'choose your counrty'))
             ->add('city', TextType::class, $this->getConfiguration('Your city', 'The city you live in, bro !'))
-            ->add('birth', DateType::class, ['format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration('The date of your birth', 'To whish your Birthday, of course !!'))
+            ->add('birth', DateType::class, ['widget' => 'choice', 'format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration('The date of your birth', 'To whish your Birthday, of course !!'))
             ->add('wish', ChoiceType::class, ['choices' => ['A real Binioufous !!' => 'Binioufous', 'A Binioufous, but I cannot come to the rehearsals...' => 'Member', 'A big Fan !!' => 'Simple']], $this->getConfiguration('You want to be', 'the place you have in the team'))
             ->add('picture', FileType::class, [
                 'label' => 'A picture of you (jpeg)',

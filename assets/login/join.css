@@ -1,0 +1,137 @@
+/* Avant : .login/.join en texte nu (or/rouge) posé sur les 2 pans du mur 3D
+   (vert à gauche, rouge à droite, cf. join.js), sans fond propre. Sur le pan
+   rouge, le texte rouge de .join devenait illisible (~1:1, contraste WCAG).
+   Ici : vrais boutons pilule avec leur propre fond (indépendants de la
+   couleur du mur derrière), couples texte/fond choisis pour >= 7:1 (AAA) :
+   - .login : fond --bb-gold, texte --bb-ink   (9.81:1)
+   - .join  : fond --bb-red-dark, texte --bb-white (8.56:1)
+   width auto + padding (pas de largeur fixe en px) : le bouton s'adapte à
+   la longueur du texte quelle que soit la langue (fr/en/br), contrairement
+   à l'ancien width:150px qui donnait un pavé de hover mal ajusté dès que la
+   traduction dépassait la largeur prévue. */
+.login, .join {
+    position: absolute;
+    z-index: 900;
+    top: 50%;
+    padding: 0.6rem 1.75rem;
+    border-radius: 50px;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s ease;
+}
+.login h1,
+.join h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    font-size: 1.5rem;
+}
+.login {
+    left: 25%;
+    transform: translate(-50%, -50%);
+    background: var(--bb-gold);
+    color: var(--bb-ink);
+}
+.join {
+    left: 75%;
+    transform: translate(-50%, -50%);
+    background: var(--bb-red-dark);
+    color: var(--bb-white);
+}
+/* :hover/:focus-visible gardent la même transform de base (translate) pour
+   rester centrés, scale ajouté en plus plutôt qu'un changement de couleur :
+   évite de devoir revalider une nouvelle paire de contrastes, et l'agrandi
+   reste lisible à toutes les langues vu que le bouton se dimensionne déjà
+   sur son texte.
+   color réaffirmé ici (pas juste hérité de .login/.join) : la règle
+   générique "a:hover { color: var(--bb-green-mid) }" (assets/main/app.css)
+   a une spécificité plus forte que .login/.join seuls (élément+pseudo-
+   classe > classe simple) et prenait le dessus au survol, vert sur
+   --bb-red-dark ne tenant qu'1.26:1. */
+.login:hover,
+.login:focus-visible {
+    transform: translate(-50%, -50%) scale(1.06);
+    color: var(--bb-ink);
+}
+.join:hover,
+.join:focus-visible {
+    transform: translate(-50%, -50%) scale(1.06);
+    color: var(--bb-white);
+}
+.login:focus-visible,
+.join:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Avant : centrage en top/left:50% + margin-top/margin-left en px fixes,
+   calculés une fois pour une taille de popup qui ne correspondait déjà pas
+   à la taille réelle (440px de large, margin-left:-170px au lieu de -220px
+   : 50px de décalage constant) et qui de toute façon dérive dès que le
+   contenu change de hauteur (langue, message d'erreur affiché ou non).
+   transform: translate(-50%,-50%) se recalcule sur la taille réelle du
+   popup à chaque rendu, correct dans tous les cas plutôt qu'une seule
+   fois à l'oeil. */
+#joinForm, #loginForm {
+    position: absolute;
+    z-index: 900;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bb-red);
+    width: 440px;
+    max-width: 90vw;
+    text-align: center;
+    /* Texte blanc plutôt que --bb-gold hérité de la règle "form" globale :
+       or sur rouge tient 3.24:1 (sous le minimum AA 4.5:1 pour du texte
+       normal), blanc sur rouge tient 6.07:1. */
+    color: var(--bb-white);
+}
+#loginForm {
+    background: var(--bb-green-mid);
+}
+/* .text-yellow (assets/main/app.css) fixe sa propre couleur directement sur
+   les <a> qu'elle cible (join/launch.html.twig) : l'héritage du blanc posé
+   sur #joinForm/#loginForm ne s'applique qu'aux éléments qui n'ont pas leur
+   propre règle de couleur, donc sans cette surcharge ciblée le doré-sur-
+   rouge (3.24:1) restait sur ces liens précis malgré le formulaire passé
+   en blanc autour. */
+#joinForm .text-yellow,
+#loginForm .text-yellow {
+    color: var(--bb-white);
+}
+
+/* Sous 700px : icône seule, comme la navbar principale (assets/main/app.css,
+   même technique sr-only) : les 2 pastilles texte+icône se chevauchaient
+   sur petit écran (position:absolute à 25%/75%, pas assez de place pour
+   les 2 côte à côte une fois le texte ajouté à l'icône). Bouton rond
+   compact plutôt qu'une pilule, le texte reste lisible par les lecteurs
+   d'écran. */
+@media (max-width: 700px) {
+    .login, .join {
+        padding: 0;
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+    }
+    .login h1,
+    .join h1 {
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+    .login h1 span,
+    .join h1 span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+}
