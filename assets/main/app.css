@@ -1,3 +1,13 @@
+:root {
+    --bb-gold: #F2B233;
+    --bb-gold-pale: #FBDB7C;
+    --bb-green-deep: #0F352C;
+    --bb-green-mid: #1F6652;
+    --bb-red: #BC2727;
+    --bb-ink: #16140F;
+    --bb-white: #FFFFFF;
+}
+
 body {
     background-color: #F2B233;
 }
@@ -265,17 +275,161 @@ a.join:hover {
     width: 100%;
 }
 
+/* Badge rond du bouton hamburger, façon peau de caisse claire */
+.navbar-toggler {
+    position: relative;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 54px;
+    height: 54px;
+    background: var(--bb-gold);
+    border: 3px solid var(--bb-ink);
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.navbar-toggler:hover {
+    transform: scale(1.06);
+}
+.navbar-toggler[aria-expanded="true"] {
+    background: var(--bb-green-mid);
+    border-color: var(--bb-gold);
+}
+@media (prefers-reduced-motion: reduce) {
+    .navbar-toggler {
+        transition: none;
+    }
+}
+
 .navbar-collapse {
-    top: 10%;
-    left: 10%;
-    background: #fbdb7c;
-    border: 5px solid #1f6652;
-    padding: 5% 10%;
-    width: 80%;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90%, 440px);
+    max-height: 82vh;
+    overflow-y: auto;
+    background: var(--bb-green-mid);
+    border: 3px solid var(--bb-gold);
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    padding: 2.5rem 2rem;
     position: fixed;
     z-index: 1000;
     text-align: center;
 }
+
+/* Liens de la navbar principale : or sur vert, jamais de rouge sur vert.
+   Neutralise aussi l'ancienne règle globale "li.nav-item:hover" (fond rouge)
+   plus bas dans ce fichier, qui sinon transparaissait derrière le lien au survol. */
+.navbar-collapse .navbar-nav .nav-item {
+    background: transparent;
+    border-radius: 0;
+}
+.navbar-collapse .navbar-nav .nav-item + .nav-item {
+    border-top: 1px solid rgba(242, 178, 51, 0.25);
+}
+.navbar-collapse .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: 8px;
+    background: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.navbar-collapse .nav-link i {
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--bb-gold-pale);
+    transition: color 0.15s ease;
+}
+.navbar-collapse .nav-link h2 {
+    margin: 0;
+    font-family: "Bungee", "Arial Black", sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--bb-gold-pale);
+}
+.navbar-collapse .nav-link:hover,
+.navbar-collapse .nav-link:focus-visible,
+.navbar-collapse li.nav-item.active .nav-link {
+    background: var(--bb-gold);
+}
+.navbar-collapse .nav-link:hover i,
+.navbar-collapse .nav-link:hover h2,
+.navbar-collapse .nav-link:focus-visible i,
+.navbar-collapse .nav-link:focus-visible h2,
+.navbar-collapse li.nav-item.active .nav-link i,
+.navbar-collapse li.nav-item.active .nav-link h2 {
+    color: var(--bb-green-deep);
+}
+.navbar-collapse .nav-link:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Sur téléphone : uniquement les icônes, le libellé reste lisible par les
+   lecteurs d'écran (technique sr-only) mais n'est plus affiché à l'écran. */
+@media (max-width: 576px) {
+    .navbar-collapse .nav-link i {
+        font-size: 1.5rem;
+    }
+    .navbar-collapse .nav-link h2 {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+}
+
+/* Sélecteur de langue : 3 liens simples, pas de <select> (chrome natif du
+   navigateur non stylable, cause du rendu incohérent avec le reste). */
+.navbar-collapse .lang-switcher {
+    margin-top: 0;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(242, 178, 51, 0.25);
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.navbar-collapse .lang-link {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--bb-gold-pale);
+    border: 1px solid transparent;
+}
+.navbar-collapse .lang-link:hover,
+.navbar-collapse .lang-link:focus-visible {
+    border-color: var(--bb-gold-pale);
+}
+.navbar-collapse .lang-link.active {
+    background: var(--bb-gold);
+    color: var(--bb-green-deep);
+}
+
+.navbar-collapse .navbar-text {
+    display: block;
+    margin-top: 1.5rem;
+    font-style: italic;
+    color: var(--bb-gold-pale);
+    opacity: 0.85;
+}
+
 .navbar-admin {
     width: 100%;
     z-index: 1000;
@@ -283,9 +437,12 @@ a.join:hover {
 }
 
 .navbar .navbar-toggler svg {
-    width: 50px;
-    height: 50px;
-    color: white;
+    width: 24px;
+    height: 24px;
+    color: var(--bb-ink);
+}
+.navbar-toggler[aria-expanded="true"] svg {
+    color: var(--bb-gold);
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
@@ -302,10 +459,6 @@ li.nav-item.active, li.nav-item:hover,
 .navbar-dark .navbar-nav .nav-link {
     color: #1f6652;
     background: #BC2727;
-}
-
-.navbar-text {
-    color: #00000070;
 }
 
 #miniSite {
