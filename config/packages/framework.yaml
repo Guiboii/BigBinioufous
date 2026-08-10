@@ -1,7 +1,12 @@
 framework:
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
-    #http_method_override: true
+    # Nécessaire pour les formulaires de suppression (_method=DELETE en champ
+    # caché, cf. music/_delete_form.html.twig et event/_delete_form.html.twig) :
+    # sans ça, désactivé par défaut sur cette version de Symfony, ces boutons
+    # répondaient 405 Method Not Allowed (repéré en testant la suppression
+    # d'un Event le 2026-08-10, mais touche aussi le bouton Track existant).
+    http_method_override: true
 
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.

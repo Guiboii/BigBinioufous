@@ -1,0 +1,13 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'event.edit_title'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'event.edit_heading'|trans }}</h1>
+
+    {{ include('event/_form.html.twig', {button_label: 'event.update_submit'}) }}
+
+    <a href="{{ path('event_index') }}">{{ 'event.back_to_list'|trans }}</a>
+</div>
+{% endblock %}

@@ -13,6 +13,7 @@
 /vendor/
 /public/uploads/music/
 /public/uploads/pictures/
+/public/uploads/events/
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###

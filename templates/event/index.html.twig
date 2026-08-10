@@ -1,0 +1,44 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'event.index_heading'|trans }}{% endblock %}
+
+{% block body %}
+
+<div class="container mt-2">
+    <div class="container mt-2">
+        <h3>{{ 'event.index_heading'|trans }}</h3>
+
+        <a href="{{ path('event_new') }}" class="btn btn-green mb-3">{{ 'event.add_new'|trans }}</a>
+
+        {% if events is empty %}
+            <p><em>{{ 'event.no_events'|trans }}</em></p>
+        {% else %}
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>{{ 'event.field_date'|trans }}</th>
+                        <th>{{ 'event.field_title'|trans }}</th>
+                        <th>{{ 'event.field_type'|trans }}</th>
+                        <th>{{ 'event.field_location'|trans }}</th>
+                        <th>{{ 'Actions'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td>{{ event.date|date(event.date|date('H:i') == '00:00' ? 'd/m/Y' : 'd/m/Y H:i') }}</td>
+                            <td>{{ event.title }}</td>
+                            <td>{{ ('event.type_' ~ event.type)|trans }}</td>
+                            <td>{{ event.location }}</td>
+                            <td>
+                                <a href="{{ path('event_edit', {id: event.id}) }}" class="btn btn-green"><i class="fas fa-pen"></i></a>
+                                {{ include('event/_delete_form.html.twig', {event: event}) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 import 'jquery';
 import 'bootstrap';
+import './schedule.css';
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -27,8 +28,123 @@ var green = 0x1f6652;
 var white = 0xffffff;
 var black = 0x000000;
 
-init();
-animate();
+// .is-mobile posée par templates/schedule/index.html.twig avant le 1er
+// rendu (même pattern que /music et /story) : scène 3D illisible en petit,
+// on ne l'initialise même pas, le contenu (schedule.css) reste affiché en
+// flux normal.
+if (!document.documentElement.classList.contains('is-mobile')) {
+  init();
+  animate();
+}
+
+// Indépendant du 3D (comme Player.js sur /music) : tourne dans les deux
+// modes, desktop et mobile.
+initMiniCalendar();
+
+function initMiniCalendar() {
+  var grid = document.getElementById('mini-calendar-grid');
+  var title = document.querySelector('.mini-calendar__title');
+  var dataEl = document.getElementById('schedule-events-data');
+  var labelsEl = document.getElementById('schedule-month-labels');
+  if (!grid || !title || !dataEl || !labelsEl) {
+    return;
+  }
+
+  var eventsByDate = JSON.parse(dataEl.textContent || '{}');
+  var monthLabels = JSON.parse(labelsEl.textContent || '{}');
+  var eventMonths = Object.keys(eventsByDate)
+    .map(function (d) {
+      return d.slice(0, 7);
+    })
+    .sort();
+
+  var today = new Date();
+  var todayStr = toDateKey(today);
+  var current = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  // Si l'URL pointe déjà sur un mois précis (#month-09, lien envoyé par
+  // quelqu'un, retour en arrière du navigateur...), ouvrir directement
+  // dessus plutôt que de revenir au mois du jour.
+  var hashMatch = location.hash.match(/^#month-(\d{2})$/);
+  if (hashMatch) {
+    var hashMonth = eventMonths.filter(function (m) {
+      return m.slice(5, 7) === hashMatch[1];
+    })[0];
+    if (hashMonth) {
+      var hashParts = hashMonth.split('-').map(Number);
+      current = new Date(hashParts[0], hashParts[1] - 1, 1);
+    }
+  } else if (eventMonths.indexOf(toDateKey(current).slice(0, 7)) === -1) {
+    // Sinon, si le mois courant n'a aucun événement mais qu'il y en a plus
+    // tard, ouvrir directement dessus plutôt que sur une grille vide
+    // (comportement "agenda pro" classique).
+    var nextMonthWithEvents = eventMonths.filter(function (m) {
+      return m >= toDateKey(current).slice(0, 7);
+    })[0];
+    if (nextMonthWithEvents) {
+      var parts = nextMonthWithEvents.split('-').map(Number);
+      current = new Date(parts[0], parts[1] - 1, 1);
+    }
+  }
+
+  function pad(n) {
+    return n < 10 ? '0' + n : String(n);
+  }
+
+  function toDateKey(date) {
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+  }
+
+  function render() {
+    var year = current.getFullYear();
+    var month = current.getMonth();
+    var monthKey = pad(month + 1);
+
+    title.textContent = (monthLabels[monthKey] || monthKey) + ' ' + year;
+
+    grid.innerHTML = '';
+
+    var firstDay = new Date(year, month, 1);
+    var startOffset = (firstDay.getDay() + 6) % 7; // lundi = 0, comme l'entête L M M J V S D
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (var i = 0; i < startOffset; i++) {
+      var empty = document.createElement('span');
+      empty.className = 'mini-calendar__day mini-calendar__day--empty';
+      grid.appendChild(empty);
+    }
+
+    for (var d = 1; d <= daysInMonth; d++) {
+      var dateKey = year + '-' + monthKey + '-' + pad(d);
+      var hasEvents = Object.prototype.hasOwnProperty.call(eventsByDate, dateKey);
+      var cell = document.createElement(hasEvents ? 'a' : 'span');
+      cell.className = 'mini-calendar__day';
+      cell.textContent = String(d);
+
+      if (dateKey === todayStr) {
+        cell.classList.add('mini-calendar__day--today');
+      }
+      if (hasEvents) {
+        cell.classList.add('mini-calendar__day--event');
+        cell.href = '#month-' + monthKey;
+        cell.title = eventsByDate[dateKey].join(', ');
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  document.querySelector('[data-nav="prev"]').addEventListener('click', function () {
+    current = new Date(current.getFullYear(), current.getMonth() - 1, 1);
+    render();
+  });
+  document.querySelector('[data-nav="next"]').addEventListener('click', function () {
+    current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
+    render();
+  });
+
+  render();
+}
 
 function init() {
   canvas = document.querySelector('#c');
@@ -62,17 +178,6 @@ function init() {
 
   // room
   roomGeo(20, 10, 2);
-
-  // flyer right
-  var texture = new THREE.TextureLoader().load(window.BB_ASSETS['schedule/flyer002.png']);
-  var flyerRight = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(6, 8),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture }),
-  );
-  flyerRight.position.set(9.9, 4.5, 0);
-  flyerRight.rotateY(-Math.PI / 2);
-  flyerRight.name = 'schedule';
-  //scene.add(flyerRight);
 
   // flyer back
   var video = document.getElementById('video1');
@@ -218,8 +323,6 @@ function raycast(e, touch = false) {
       }
     } else if (object.name === 'joinUS') {
       location.href = '/join';
-    } else if (object.name === 'disco') {
-      location.href = '/';
     }
   }
 }

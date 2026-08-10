@@ -29,4 +29,13 @@ class ApplicationType extends AbstractType
             ],
         ], $options);
     }
+
+    /**
+     * Pour les options de champ qui ne passent pas par getConfiguration()
+     * (ex. FileType::label, messages de contrainte).
+     */
+    protected function trans(string $key): string
+    {
+        return $this->translator->trans($key);
+    }
 }
