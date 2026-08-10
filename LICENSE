@@ -1,3 +1,11 @@
-TODO: choisir et compléter la licence de ce projet.
+Copyright (c) 2026 Association Binioufous. Tous droits réservés.
 
-(composer.json déclare "proprietary" et package.json déclare "UNLICENSED" pour l'instant, à trancher et harmoniser ici.)
+Ce logiciel et l'ensemble des fichiers de ce dépôt (code source, assets,
+modèles 3D, contenus) sont la propriété de l'association Binioufous.
+
+Aucune partie de ce dépôt ne peut être copiée, modifiée, distribuée,
+sous-licenciée ou utilisée, en tout ou partie, sans l'autorisation écrite
+préalable de l'association Binioufous.
+
+Cette licence correspond aux déclarations "proprietary" (composer.json) et
+"UNLICENSED" (package.json) déjà présentes dans ce dépôt.
