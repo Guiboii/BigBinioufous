@@ -1,98 +1,85 @@
-{% extends 'base.html.twig' %}
-{% block importmap %}
-    {{ importmap('app') }}
-    <link rel="stylesheet" href="{{ asset('story/story.css') }}">
-{% endblock %}
-
-{% block title %}
-    {{ 'story.title'|trans }}
-{% endblock %}
-
-{% block header %}
-    <nav class="mini navbar navbar-dark">
-
-        <ul class="nav nav-pills">
-            <li class="nav-item">
-                <a class="nav-link" href="#intro">{{ 'story.nav_intro'|trans }}</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#cki">{{ 'story.nav_who'|trans }}</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#ckoi">{{ 'story.nav_what'|trans }}</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#prq">{{ 'story.nav_why'|trans }}</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#contact">{{ 'story.nav_contact'|trans }}</a>
-            </li>
-        </ul>
-
-    </nav>
-
-{% endblock %}
-
-{% block body %}
-
-    <div data-spy="scroll" data-target="#navbar-example2" data-offset="0">
-        <div>
-            <h4 id="intro">{{ 'story.nav_intro'|trans }}</h4>
-            <br>
-            <p>{{ 'story.intro'|trans }}</p>
-            <h3 id="cki">
-                <br>
-                <br>
-                {{ 'story.who_title'|trans }}</h3>
-            <h4>{{ 'story.who_ages_title'|trans }}</h4>
-            <p>{{ 'story.who_ages_text'|trans }}</p>
-            <h4>{{ 'story.who_instruments_title'|trans }}</h4>
-            <p>{{ 'story.who_instruments_text'|trans }}</p>
-            <h4>{{ 'story.who_level_title'|trans }}</h4>
-            <p>{{ 'story.who_level_text'|trans|raw }}</p>
-            <h4>{{ 'story.who_no_sheet_title'|trans }}</h4>
-            <p>{{ 'story.who_no_sheet_text'|trans }}</p>
-            <h3 id="ckoi">
-                <br>
-                <br>
-                {{ 'story.what_title'|trans }}</h3>
-            <p>{{ 'story.what_intro_text'|trans }}</p>
-            <p>{{ 'story.what_oboe_text'|trans }}</p>
-            <p>{{ 'story.what_instrument_text'|trans }}</p>
-            <h4>{{ 'story.history_title'|trans|raw }}</h4>
-            <p>{{ 'story.history_ok'|trans }}</p>
-            <p>{{ 'story.history_text'|trans }}</p>
-            <h3 id="prq">
-                <br>
-                <br>
-                {{ 'story.why_title'|trans }}</h3>
-            <h4>{{ 'story.why_party_title'|trans }}</h4>
-            <p>{{ 'story.why_party_text'|trans }}</p>
-            <li>{{ 'story.why_li_concert'|trans }}</li>
-            <li>{{ 'story.why_li_teacher'|trans }}</li>
-            <li>{{ 'story.why_li_school'|trans }}</li>
-            <li>{{ 'story.why_li_clarinet'|trans }}</li>
-            <br>
-            <p>{{ 'story.why_outro'|trans }}</p>
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ 'story.title'|trans }}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('story/minisite.css') }}">
+    </head>
+    <body>
+        <div class="term-titlebar">
+            BINIOUFOUS.SYS<span class="term-cursor">_</span>
         </div>
-        <form id="contact">
+        <nav class="term-nav" aria-label="{{ 'story.title'|trans }}">
+            <a href="#intro">{{ 'story.nav_intro'|trans }}</a>
+            <a href="#qui">{{ 'story.nav_who'|trans }}</a>
+            <a href="#quoi">{{ 'story.nav_what'|trans }}</a>
+            <a href="#pourquoi">{{ 'story.nav_why'|trans }}</a>
+            <a href="#contact">{{ 'story.nav_contact'|trans }}</a>
+        </nav>
 
-            <h4>{{ 'contact.title'|trans }}</h4>
-            <div class="form-group">
-                <label for="exampleFormControlInput1">{{ 'contact.name_label'|trans }}</label>
-                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="John Doe">
-            </div>
-            <div class="form-group">
-                <label for="exampleFormControlSelect1">{{ 'contact.email_label'|trans }}</label>
-                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
-            </div>
+        <main>
+            <section id="intro">
+                <h1>{{ 'story.nav_intro'|trans }}</h1>
+                <p>{{ 'story.intro'|trans }}</p>
+            </section>
 
-            <div class="form-group">
-                <label for="exampleFormControlTextarea1">{{ 'contact.message_label'|trans }}</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"></textarea>
-            </div>
-            <button type="button" class="btn btn-dark">{{ 'contact.submit'|trans }}</button>
-        </form>
-    </div>
+            <section id="qui">
+                <h2>{{ 'story.who_title'|trans }}</h2>
+                <h3>{{ 'story.who_ages_title'|trans }}</h3>
+                <p>{{ 'story.who_ages_text'|trans }}</p>
+                <h3>{{ 'story.who_instruments_title'|trans }}</h3>
+                <p>{{ 'story.who_instruments_text'|trans }}</p>
+                <h3>{{ 'story.who_level_title'|trans }}</h3>
+                <p>{{ 'story.who_level_text'|trans|raw }}</p>
+                <h3>{{ 'story.who_no_sheet_title'|trans }}</h3>
+                <p>{{ 'story.who_no_sheet_text'|trans }}</p>
+            </section>
 
-{% endblock %}
+            <section id="quoi">
+                <h2>{{ 'story.what_title'|trans }}</h2>
+                <p>{{ 'story.what_intro_text'|trans }}</p>
+                <p>{{ 'story.what_oboe_text'|trans }}</p>
+                <p>{{ 'story.what_instrument_text'|trans }}</p>
+                <h3>{{ 'story.history_title'|trans|raw }}</h3>
+                <p>{{ 'story.history_ok'|trans }}</p>
+                <p>{{ 'story.history_text'|trans }}</p>
+            </section>
+
+            <section id="pourquoi">
+                <h2>{{ 'story.why_title'|trans }}</h2>
+                <h3>{{ 'story.why_party_title'|trans }}</h3>
+                <p>{{ 'story.why_party_text'|trans }}</p>
+                <ul>
+                    <li>{{ 'story.why_li_concert'|trans }}</li>
+                    <li>{{ 'story.why_li_teacher'|trans }}</li>
+                    <li>{{ 'story.why_li_school'|trans }}</li>
+                    <li>{{ 'story.why_li_clarinet'|trans }}</li>
+                </ul>
+                <p>{{ 'story.why_outro'|trans }}</p>
+            </section>
+
+            <section id="contact">
+                <h2>{{ 'contact.title'|trans }}</h2>
+                <form class="term-form" id="minisite-contact-form">
+                    <div class="term-field">
+                        <label for="minisite-contact-name">{{ 'contact.name_label'|trans }}</label>
+                        <input type="text" id="minisite-contact-name" name="name" placeholder="John Doe">
+                    </div>
+                    <div class="term-field">
+                        <label for="minisite-contact-email">{{ 'contact.email_label'|trans }}</label>
+                        <input type="email" id="minisite-contact-email" name="email" placeholder="name@example.com">
+                    </div>
+                    <div class="term-field">
+                        <label for="minisite-contact-message">{{ 'contact.message_label'|trans }}</label>
+                        <textarea id="minisite-contact-message" name="message" rows="3"></textarea>
+                    </div>
+                    <button type="button" class="term-submit">{{ 'contact.submit'|trans }}</button>
+                </form>
+            </section>
+        </main>
+    </body>
+</html>

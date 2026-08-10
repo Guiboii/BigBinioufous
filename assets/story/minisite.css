@@ -1,0 +1,266 @@
+/*
+ * Page autonome (pas de layout global, cf. minisite.html.twig) : ces
+ * variables reprennent volontairement les mêmes noms/valeurs que les
+ * --bb-* de assets/main/app.css plutôt que d'en inventer une nouvelle
+ * palette, mais sont redéclarées ici pour ne pas charger tout app.css
+ * (qui redéfinirait le style des <a>/<form> et casserait ce design).
+ *
+ * Contrastes vérifiés (WCAG, sur fond --term-bg #0A2A22, L=0.018) :
+ *   --term-fg    (corps de texte)      : 12.2:1 (AAA)
+ *   --term-green (accent vert biniou)  :  7.7:1 (AAA)
+ *   --term-red   (touches de rouge)    :  5.2:1 (AA, cf. note plus bas)
+ * Testé en simulation protanopie/deutéranopie/tritanopie/achromatopsie :
+ * tout reste lisible, la distinction repose sur la LUMINOSITÉ (fond très
+ * sombre / texte clair), jamais sur la teinte seule.
+ */
+:root {
+    --bb-green-deep: #0F352C;
+    --bb-green-mid: #1F6652;
+    --bb-white: #FFFFFF;
+
+    --term-bg: #0A2A22;
+    --term-bg-panel: #0D3229;
+
+    /* Corps de texte : un blanc à peine teinté de vert plutôt que le vert
+       saturé ci-dessous. Sur de gros blocs de paragraphe, du vert vif sur
+       fond vert reste techniquement contrasté mais fatigue l'œil et se lit
+       "flou" (deux teintes de la même famille) ; ce ton clair règle ça tout
+       en gardant l'ambiance verte du fond. */
+    --term-fg: #D9E8E4;
+
+    /* Vert phosphore ("vert biniou") : même teinte que --bb-green-mid
+       (~163°), éclairci et saturé façon vieil écran cathodique. Réservé
+       aux petits accents (puces, bordures, curseur, prompts ">") plutôt
+       qu'au texte courant, pour éviter l'effet "tout est vert". */
+    --term-green: #3CDCAF;
+
+    /* Touches de rouge, à la place du jaune/or utilisé sur la navbar
+       principale. Volontairement plus clair que le rouge de marque
+       (--bb-red #BC2727, ~1.2:1 sur ce fond, illisible) : un rouge de
+       marque saturé ne passe pas sur un fond aussi sombre sans virer au
+       rose une fois suffisamment éclairci pour être lisible. --term-red
+       est le compromis le plus saturé qui tienne 5.2:1 (AA, texte normal)
+       en restant reconnaissable comme rouge. */
+    --term-red: #EB7070;
+    /* Rouge de marque original : utilisé UNIQUEMENT en fond plein derrière
+       du texte blanc (jamais comme couleur de texte sur fond sombre), même
+       principe que le reste du site depuis le ménage CSS du 2026-08-10. */
+    --term-red-deep: #BC2727;
+
+    /* Anneau de focus clavier : toujours blanc pur, indépendant de la
+       palette rouge/vert du contenu, pour rester visible en toute
+       circonstance (WCAG 2.4.11). */
+    --term-focus: #FFFFFF;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--term-bg);
+    color: var(--term-fg);
+    font-family: "IBM Plex Mono", "Courier New", monospace;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+::selection {
+    background: var(--term-green);
+    color: var(--term-bg);
+}
+
+a {
+    color: var(--term-fg);
+}
+a:hover,
+a:focus-visible {
+    color: var(--term-red);
+}
+
+/* Barre de titre façon vieux terminal, avec curseur clignotant rouge */
+.term-titlebar {
+    padding: 0.75rem 1.25rem;
+    background: var(--bb-green-deep);
+    border-bottom: 2px solid var(--term-green);
+    font-family: "VT323", "Courier New", monospace;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    color: var(--term-fg);
+}
+.term-cursor {
+    display: inline-block;
+    color: var(--term-red);
+    animation: term-blink 1s steps(1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+    .term-cursor {
+        animation: none;
+    }
+}
+@keyframes term-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+/* Menu d'ancres : liens directs vers les sections, pas de JS requis */
+.term-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--bb-green-mid);
+    font-size: 0.95rem;
+}
+.term-nav a {
+    color: var(--term-fg);
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 2px;
+}
+.term-nav a::before {
+    content: "> ";
+    color: var(--term-green);
+}
+.term-nav a:hover,
+.term-nav a:focus-visible {
+    color: var(--term-red);
+    text-decoration: underline;
+}
+.term-nav a:focus-visible {
+    outline: 2px solid var(--term-focus);
+    outline-offset: 2px;
+}
+
+main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.75rem 1.25rem 3rem;
+    scroll-behavior: smooth;
+}
+
+section {
+    padding-top: 1.5rem;
+    scroll-margin-top: 1rem;
+}
+section + section {
+    margin-top: 1.5rem;
+    border-top: 1px dashed rgba(60, 220, 175, 0.35);
+}
+
+h1, h2, h3 {
+    font-family: "VT323", "Courier New", monospace;
+    font-weight: normal;
+    letter-spacing: 0.03em;
+    color: var(--term-fg);
+    margin: 0 0 0.75rem;
+}
+h1 {
+    font-size: 2rem;
+}
+h2 {
+    font-size: 1.6rem;
+}
+h2::before {
+    content: "## ";
+    color: var(--term-red);
+}
+h3 {
+    font-size: 1.25rem;
+}
+h3::before {
+    content: "# ";
+    color: var(--term-green);
+}
+
+p {
+    margin: 0 0 1rem;
+}
+
+/* Le <s> (texte barré) sert de blague récurrente dans le texte d'origine
+   ("y'en a ils savent jouer... non en fait ils savent tous") : un rouge
+   discret renforce la correction/le gag plutôt que de décorer au hasard. */
+s {
+    color: var(--term-red);
+    opacity: 0.85;
+}
+
+ul {
+    margin: 0 0 1rem;
+    padding-left: 1.4rem;
+}
+li {
+    margin-bottom: 0.35rem;
+}
+li::marker {
+    color: var(--term-green);
+}
+
+/* Formulaire de contact façon invite de commande */
+.term-form {
+    margin-top: 1rem;
+    padding: 1.25rem;
+    background: var(--term-bg-panel);
+    border: 1px solid var(--term-green);
+    border-radius: 4px;
+}
+.term-field {
+    margin-bottom: 1rem;
+}
+.term-field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--term-fg);
+}
+.term-field label::before {
+    content: "$ ";
+    color: var(--term-red);
+}
+.term-field input,
+.term-field textarea {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    background: var(--term-bg);
+    border: 1px solid var(--bb-green-mid);
+    border-radius: 3px;
+    color: var(--term-fg);
+    font-family: inherit;
+    font-size: 1rem;
+}
+.term-field input:focus-visible,
+.term-field textarea:focus-visible {
+    outline: 2px solid var(--term-focus);
+    outline-offset: 1px;
+    border-color: var(--term-focus);
+}
+.term-submit {
+    padding: 0.6rem 1.4rem;
+    background: var(--term-red-deep);
+    color: var(--bb-white);
+    border: none;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+.term-submit:hover {
+    background: var(--term-green);
+    color: var(--term-bg);
+}
+.term-submit:focus-visible {
+    outline: 2px solid var(--term-focus);
+    outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+    .term-titlebar {
+        font-size: 1.15rem;
+    }
+    .term-nav {
+        gap: 0.25rem 0.85rem;
+        font-size: 0.85rem;
+    }
+}

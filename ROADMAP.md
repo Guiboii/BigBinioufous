@@ -55,6 +55,8 @@ Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : é
 - [x] Navbar principale (`templates/partials/header.html.twig`) : contraste rouge/vert historique corrigé (~1.1:1 → conforme WCAG AA), palette clarifiée (vert clair/foncé + or existants, rouge retiré du chrome interactif), icônes Remixicon, `<select>` natif remplacé par des liens (moins de mélange chrome Bootstrap/custom), icônes seules sur mobile (texte gardé en `sr-only` pour l'accessibilité)
 - [ ] Une page à la fois : lisibilité du code (Twig/PHP/JS) et lisibilité visuelle/UX
 - [x] Ordre des pages : vitrine d'abord, en commençant par **Histoire** (`templates/story/`, branche `phase5_story`)
+- [ ] Idée à creuser : rendre le texte de la page Histoire modifiable via un simple fichier Markdown plutôt que codé en dur dans `minisite.html.twig`/`translations/*.yaml`, éditable par un ou plusieurs rôles à définir (lesquels ? admin seul, ou aussi binioufous ?)
+- [ ] À un moment : audit accessibilité **global**, toutes pages confondues (pas juste page par page au fil de l'eau) : contrastes, daltonisme, navigation clavier, `alt`/labels manquants... Voir la section Accessibilité de `CLAUDE.md` pour la méthode déjà utilisée (navbar + page Histoire). Probablement à faire une fois plusieurs pages retravaillées, pour auditer d'un coup plutôt que plusieurs fois.
 
 ## Phase 6 : Pages par rôle
 
