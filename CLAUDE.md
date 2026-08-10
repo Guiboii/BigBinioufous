@@ -62,4 +62,6 @@ Historique upgrade Symfony : `5.4` → `6.4` LTS (annotations → attributs PHP,
 ## Convention de commit
 
 - Messages courts, **en français**, à l'impératif, préfixés d'un **gitmoji** : `✨` feature, `🐛` fix, `🔒️` sécurité, `👷` CI/build, `📝` doc, `♻️` refacto, `🎨` style, `✅` tests, `🔧` config, `⬆️` mise à jour de dépendance, `🔥` suppression de code/fichier.
+- `🚧` (work in progress) peut se **combiner** avec l'emoji principal (`🚧✨`, `🚧🐛`...) plutôt que le remplacer, quand un commit apporte un vrai fix/feature mais que l'ensemble (page, fonctionnalité) n'est pas encore considéré fini/validé. Utilisé sur la branche `phase5_story`.
 - Un template de commit est configuré localement (`git config commit.template` → `.gitmessage` à la racine), il s'affiche automatiquement à chaque `git commit`.
+- **Toujours attendre l'accord explicite de l'utilisatrice avant de lancer `git commit`** (sauf instruction contraire donnée dans le fil), même après une série de modifications déjà validées visuellement.

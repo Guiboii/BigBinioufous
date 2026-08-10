@@ -57,6 +57,32 @@
     box-sizing: border-box;
 }
 
+/* Scrollbar aux couleurs du terminal plutôt que la barre grise par défaut
+   du navigateur. Firefox n'a que 2 couleurs à offrir (piste/pouce), le
+   reste (WebKit : Chrome/Safari/Edge) peut être détaillé un peu plus. */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--term-green) var(--term-bg-panel);
+}
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+::-webkit-scrollbar-track {
+    background: var(--term-bg-panel);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--term-green);
+    border: 3px solid var(--term-bg-panel);
+    border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--term-red);
+}
+::-webkit-scrollbar-corner {
+    background: var(--term-bg-panel);
+}
+
 html, body {
     margin: 0;
     padding: 0;

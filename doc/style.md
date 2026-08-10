@@ -41,9 +41,15 @@ Classes maison notables (à réutiliser plutôt que recréer) :
 
 `.bg-red`, `.bg-green`, `.bg-red-light`, `.yellow-hover`, `.device-orientation` ont existé mais n'étaient référencés dans **aucun** template ni JS : supprimés le 2026-08-10 (ne pas les recréer sans vérifier qu'il y a un vrai usage).
 
-Police d'affiche **Bungee** (Google Fonts, `<link>` CDN dans `base.html.twig`, pas géré par AssetMapper) pour les libellés de la navbar publique. Le reste du site n'a pas de police custom (défauts Bootstrap/navigateur).
+Police d'affiche **Bungee** (Google Fonts, `<link>` CDN dans `base.html.twig`, pas géré par AssetMapper) pour les libellés de la navbar publique. Le reste du site n'a pas de police custom (défauts Bootstrap/navigateur), **sauf la minisite Histoire, cf. ci-dessous**.
 
 Grille : classes Bootstrap standard (`container`, `row`, `col-*`).
+
+### Cas à part : la minisite Histoire (`assets/story/minisite.css`)
+
+**Piège** : cette page a sa **propre** palette (`--term-*`), différente de `--bb-*` ci-dessus. Ne pas confondre les deux en copiant une couleur d'un fichier vers l'autre.
+
+`templates/story/minisite.html.twig` (affichée dans l'iframe `#miniSite` sur l'écran 3D de `/story`, cf. `CLAUDE.md`) n'étend pas `base.html.twig` : page HTML autonome, sans AssetMapper (CSS et police Google Fonts `VT323`/`IBM Plex Mono` chargées en `<link>` manuel dans son propre `<head>`, pas d'entry `importmap`). Design terminal rétro, variables `--term-*` déclarées dans `assets/story/minisite.css` (redéclarent volontairement certaines valeurs `--bb-*` sous les mêmes noms, cf. commentaire en tête de fichier, plutôt que de charger `app.css` en entier et risquer des collisions de style).
 
 ## JS/CSS : AssetMapper, un entry point par section
 
@@ -55,7 +61,7 @@ Pas de Webpack : `symfony/asset-mapper` (natif Symfony, zéro build Node en prod
 | `index` | `assets/mascotte/mascotte.js` | Mascotte 3D (Three.js + modèles `.gltf`) |
 | `music` | `assets/music/music.js` (+ `Player.js`) | Lecteur audio wavesurfer.js (chargé en CDN, pas par AssetMapper) |
 | `schedule` | `assets/schedule/schedule.js` | Page planning + éléments 3D |
-| `story` | `assets/story/story.js` | Page histoire + minisite |
+| `story` | `assets/story/story.js` | Page histoire (scène 3D uniquement ; la minisite affichée dedans est une page à part, hors AssetMapper, cf. plus haut) |
 | `join` | `assets/login/join.js` | Page login/register |
 
 Three.js et ses modules (`GLTFLoader`, `OrbitControls`) viennent du package npm `three` via `importmap:require`, **épinglé à `0.128.0`** (pas de libs vendorisées à la main dans `assets/libs/`, ce dossier n'existe plus).
