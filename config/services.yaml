@@ -6,6 +6,7 @@
 parameters:
     mp3: '%kernel.project_dir%/public/uploads/music'
     pictures_directory : '%kernel.project_dir%/public/uploads/pictures'
+    event_posters: '%kernel.project_dir%/public/uploads/events'
 
 services:
     # default configuration for services in *this* file

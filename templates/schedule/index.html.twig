@@ -1,65 +1,108 @@
 {% extends 'base.html.twig' %}
 
+{% block importmap %}
+    {# Même détection qu'sur /music et /story : sous 700px la scène 3D
+       (déjà peu utilisée ici, cf. schedule.css) est illisible/inutile,
+       schedule.js saute son init et le contenu reste en flux normal. #}
+    <script>
+        document.documentElement.classList.add(window.matchMedia('(max-width: 700px)').matches ? 'is-mobile' : 'is-desktop');
+    </script>
+    {{ importmap(['app', 'schedule']) }}
+{% endblock %}
+
 {% block title %}
     {{ 'schedule.title'|trans }}
 {% endblock %}
 
 {% block body %}
 
+    <p class="mobile-note">{{ 'schedule.mobile_note'|trans }}</p>
+
     <div class="scroll-wrapper schedule">
 
-        <div class="scroll" data-spy="scroll" data-target="#calendar" data-offset="0">
-            <img id="jan" src="{{ asset('schedule/flyer001.png') }}">
-            <p>{{ 'schedule.intro'|trans }}</p>
-            <h4 id="feb">@mdo</h4>
-            <img id="mar" src="{{ asset('schedule/flyer002.png') }}">
-            <h4 id="apr">{{ 'schedule.item_two'|trans }}</h4>
-            <img id="may" src="{{ asset('schedule/flyer001.png') }}">
-            <h4 id="jun">{{ 'schedule.item_three'|trans }}</h4>
+        <div class="scroll">
+            {% for monthNum, month in eventsByMonth %}
+                <div id="month-{{ monthNum }}" class="event-month">
+                    <h4>{{ ('schedule.month.' ~ month.label)|trans }}</h4>
+                    {% for item in month.events %}
+                        {% set event = item.event %}
+                        <article class="event-card event-card--{{ event.type }}">
+                            {% if event.posterFilename %}
+                                <img src="{{ asset('uploads/events/' ~ event.posterFilename) }}" alt="">
+                            {% endif %}
+                            <span class="event-type">{{ ('event.type_' ~ event.type)|trans }}</span>
+                            <h5><i class="ri-megaphone-fill" aria-hidden="true"></i> {{ event.title }}</h5>
+                            {# 00:00 = pas d'heure connue plutôt qu'une vraie heure de minuit (aucun
+                               événement ici n'en a une) : afficher juste la date évite de laisser
+                               croire à une heure précise inventée. endDate facultatif : affiché en
+                               "HH:mm-HH:mm" seulement s'il a été renseigné (ex. répétitions). #}
+                            <p class="event-date">
+                                <i class="ri-time-fill" aria-hidden="true"></i>
+                                {% if event.date|date('H:i') == '00:00' %}
+                                    {{ event.date|date('d/m/Y') }}
+                                {% elseif event.endDate %}
+                                    {{ event.date|date('d/m/Y H:i') }}-{{ event.endDate|date('H:i') }}
+                                {% else %}
+                                    {{ event.date|date('d/m/Y H:i') }}
+                                {% endif %}
+                            </p>
+                            <p class="event-location">
+                                <i class="ri-map-pin-fill" aria-hidden="true"></i>
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ event.location|url_encode }}" target="_blank" rel="noopener">{{ event.location }}</a>
+                            </p>
+                            {% if event.description %}
+                                <p class="event-description"><i class="ri-file-text-fill" aria-hidden="true"></i> {{ event.description }}</p>
+                            {% endif %}
+                            <div class="event-add-to-calendar">
+                                <span class="event-add-to-calendar__label"><i class="ri-calendar-check-fill" aria-hidden="true"></i> {{ 'event.add_to_calendar'|trans }}</span>
+                                <div class="event-add-to-calendar__buttons">
+                                    <a href="{{ item.calendarLinks.google }}" target="_blank" rel="noopener"><i class="ri-google-fill" aria-hidden="true"></i> Google</a>
+                                    <a href="{{ item.calendarLinks.outlook }}" target="_blank" rel="noopener"><i class="ri-windows-line" aria-hidden="true"></i> Outlook</a>
+                                    <a href="{{ path('event_ics', {id: event.id}) }}"><i class="ri-download-2-fill" aria-hidden="true"></i> {{ 'event.calendar_other'|trans }}</a>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-note">{{ 'schedule.no_events'|trans }}</p>
+            {% endfor %}
         </div>
 
-        <nav id="calendar" class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="#">{{ 'schedule.month_of'|trans }}</a>
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link" href="#jan">{{ 'schedule.month.jan'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#feb">{{ 'schedule.month.feb'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#mar">{{ 'schedule.month.mar'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#apr">{{ 'schedule.month.apr'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#may">{{ 'schedule.month.may'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#jun">{{ 'schedule.month.jun'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#jul">{{ 'schedule.month.jul'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#aug">{{ 'schedule.month.aug'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#sep">{{ 'schedule.month.sep'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#oct">{{ 'schedule.month.oct'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#nov">{{ 'schedule.month.nov'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#dec">{{ 'schedule.month.dec'|trans }}</a>
-                </li>
-
-            </ul>
-        </nav>
+        {# Vrai calendrier mois/jours (pas juste des pastilles par mois) :
+           grille rendue en JS (assets/schedule/schedule.js) à partir de
+           #schedule-events-data, navigable à la flèche vers n'importe quel
+           mois (pas seulement ceux qui ont des événements, contrairement
+           aux pastilles avant). Un jour cliquable (en rouge) renvoie vers
+           #month-XX dans .scroll. #}
+        <div id="calendar" class="mini-calendar">
+            <div class="mini-calendar__header">
+                <button type="button" class="mini-calendar__nav" data-nav="prev" aria-label="{{ 'schedule.prev_month'|trans }}">
+                    <i class="ri-arrow-left-s-line" aria-hidden="true"></i>
+                </button>
+                <span class="mini-calendar__title"></span>
+                <button type="button" class="mini-calendar__nav" data-nav="next" aria-label="{{ 'schedule.next_month'|trans }}">
+                    <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="mini-calendar__weekdays">
+                <span>{{ 'schedule.day.mon'|trans }}</span>
+                <span>{{ 'schedule.day.tue'|trans }}</span>
+                <span>{{ 'schedule.day.wed'|trans }}</span>
+                <span>{{ 'schedule.day.thu'|trans }}</span>
+                <span>{{ 'schedule.day.fri'|trans }}</span>
+                <span>{{ 'schedule.day.sat'|trans }}</span>
+                <span>{{ 'schedule.day.sun'|trans }}</span>
+            </div>
+            <div class="mini-calendar__grid" id="mini-calendar-grid"></div>
+        </div>
+        <script type="application/json" id="schedule-events-data">{{ eventsByDate|json_encode|raw }}</script>
+        <script type="application/json" id="schedule-month-labels">{{ {
+            '01': ('schedule.month.jan'|trans), '02': ('schedule.month.feb'|trans), '03': ('schedule.month.mar'|trans),
+            '04': ('schedule.month.apr'|trans), '05': ('schedule.month.may'|trans), '06': ('schedule.month.jun'|trans),
+            '07': ('schedule.month.jul'|trans), '08': ('schedule.month.aug'|trans), '09': ('schedule.month.sep'|trans),
+            10: ('schedule.month.oct'|trans), 11: ('schedule.month.nov'|trans), 12: ('schedule.month.dec'|trans),
+        }|json_encode|raw }}</script>
 
     </div>
 
@@ -70,8 +113,4 @@
         <canvas id="c"></canvas>
     </div>
     <video id="video1" loop="" crossorigin="anonymous" playsinline="" style="display:none" autoplay="true" muted="muted"><source src="{{ asset('story/Foryou3.mp4') }}" type="video/mp4"></video>
-{% endblock %}
-
-{% block importmap %}
-    {{ importmap(['app', 'schedule']) }}
 {% endblock %}

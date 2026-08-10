@@ -56,10 +56,19 @@ story:
 
 schedule:
     title: Planning
-    intro: "Alors au début !"
-    item_two: deux
-    item_three: trois
+    mobile_note: "Vue simplifiée pour mobile : la version complète avec le décor 3D t'attend sur ordinateur."
+    no_events: "Rien de prévu pour l'instant."
     month_of: Mois de
+    prev_month: Mois précédent
+    next_month: Mois suivant
+    day:
+        mon: LUN
+        tue: MAR
+        wed: MER
+        thu: JEU
+        fri: VEN
+        sat: SAM
+        sun: DIM
     month:
         jan: JANV
         feb: FÉVR
@@ -73,6 +82,36 @@ schedule:
         oct: OCT
         nov: NOV
         dec: DÉC
+
+event:
+    index_heading: Gestion du planning
+    add_new: Ajouter une date
+    no_events: Aucune date pour l'instant.
+    new_title: Nouvelle date
+    create_heading: Ajouter une date
+    edit_title: Modifier la date
+    edit_heading: Modifier la date
+    back_to_list: retour à la liste
+    save_submit: Enregistrer
+    update_submit: Mettre à jour
+    confirm_delete: "Tu es sûr·e de vouloir supprimer cette date ?"
+    delete: Supprimer
+    field_title: Titre
+    field_title_placeholder: "Ex. Fest-noz de la Saint-Jean"
+    field_location: Lieu
+    field_location_placeholder: "Ex. Place du marché, Rennes"
+    field_type: Type
+    type_rehearsal: Répétition
+    type_concert: Concert
+    type_other: Autre
+    field_date: Date
+    field_end_date: "Heure de fin (facultatif)"
+    field_description: Description
+    field_description_placeholder: "Facultatif"
+    field_poster: "Affiche (facultatif)"
+    poster_invalid_type: "Merci de choisir une image JPEG ou PNG valide"
+    add_to_calendar: "Ajouter à mon agenda"
+    calendar_other: "Autre (.ics)"
 
 join:
     title: "Rejoindre !!"

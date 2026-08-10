@@ -1,0 +1,6 @@
+{{ form_start(form) }}
+<div class="form-group">
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-green">{{ (button_label|default('event.save_submit'))|trans }}</button>
+</div>
+{{ form_end(form) }}

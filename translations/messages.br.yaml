@@ -58,9 +58,7 @@ story:
 
 schedule:
     title: Deiziadur
-    intro: "Neuze, da gentañ !"
-    item_two: daou
-    item_three: tri
+    mobile_note: "Gwel eeunaet evit ar pellgomz : an handelv klok gant an endro 3D a c'hortoz ac'hanout war urzhiataer."
     month_of: Miz
     month:
         jan: Gen

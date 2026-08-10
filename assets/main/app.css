@@ -469,39 +469,6 @@ li.nav-item.active, li.nav-item:hover,
     overflow-y: scroll;
 }
 
-.scroll-wrapper.schedule {
-        margin: 56px 150px;
-    position: absolute;
-    z-index: 900;
-    width: 790px;
-    height: auto;
-}
-
-.scroll-wrapper.schedule .scroll {
-    margin-left: 150px;
-    width: 414px;
-    height: 552px;
-    background: var(--bb-white);
-    overflow-y: scroll;
-    float: left;
-    display: inline-block;
-}
-
-
-._scroll-wrapper.schedule .navbar {
-    left: 50%;
-    margin-left: 100px;
-}
-
-.scroll-wrapper.schedule img {
-    width: 100%;
-    height: auto;
-}
-
-
-#calendar {
-    width: 300px;
-    float: left;
-    margin-left: 54px;
-    display: inline-block;
-}
+/* Règles de /schedule déménagées dans assets/schedule/schedule.css (même
+   convention que music.css/story.css : une page avec sa propre scène 3D
+   a son propre fichier plutôt que de grossir ce fichier partagé). */

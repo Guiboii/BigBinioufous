@@ -56,10 +56,19 @@ story:
 
 schedule:
     title: Schedule
-    intro: "So, at the beginning!"
-    item_two: two
-    item_three: three
+    mobile_note: "Simplified mobile view: the full version with the 3D scenery is waiting for you on a computer."
+    no_events: "Nothing planned yet."
     month_of: Month of
+    prev_month: Previous month
+    next_month: Next month
+    day:
+        mon: MON
+        tue: TUE
+        wed: WED
+        thu: THU
+        fri: FRI
+        sat: SAT
+        sun: SUN
     month:
         jan: JAN
         feb: FEB
@@ -73,6 +82,36 @@ schedule:
         oct: OCT
         nov: NOV
         dec: DEC
+
+event:
+    index_heading: Manage the schedule
+    add_new: Add a date
+    no_events: No dates yet.
+    new_title: New date
+    create_heading: Add a date
+    edit_title: Edit date
+    edit_heading: Edit date
+    back_to_list: back to the list
+    save_submit: Save
+    update_submit: Update
+    confirm_delete: "Are you sure you want to delete this date?"
+    delete: Delete
+    field_title: Title
+    field_title_placeholder: "E.g. Midsummer fest-noz"
+    field_location: Location
+    field_location_placeholder: "E.g. Market square, Rennes"
+    field_type: Type
+    type_rehearsal: Rehearsal
+    type_concert: Concert
+    type_other: Other
+    field_date: Date
+    field_end_date: "End time (optional)"
+    field_description: Description
+    field_description_placeholder: "Optional"
+    field_poster: "Poster (optional)"
+    poster_invalid_type: "Please upload a valid JPEG or PNG image"
+    add_to_calendar: "Add to my calendar"
+    calendar_other: "Other (.ics)"
 
 join:
     title: "Join us !!"
