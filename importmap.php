@@ -68,4 +68,8 @@ return [
     'three/examples/jsm/controls/OrbitControls.js' => [
         'version' => '0.128.0',
     ],
+    'remixicon/fonts/remixicon.css' => [
+        'version' => '4.9.1',
+        'type' => 'css',
+    ],
 ];

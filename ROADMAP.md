@@ -52,6 +52,7 @@ Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : é
 
 ## Phase 5 : Passage page par page (code + UX)
 
+- [x] Navbar principale (`templates/partials/header.html.twig`) : contraste rouge/vert historique corrigé (~1.1:1 → conforme WCAG AA), palette clarifiée (vert clair/foncé + or existants, rouge retiré du chrome interactif), icônes Remixicon, `<select>` natif remplacé par des liens (moins de mélange chrome Bootstrap/custom), icônes seules sur mobile (texte gardé en `sr-only` pour l'accessibilité)
 - [ ] Une page à la fois : lisibilité du code (Twig/PHP/JS) et lisibilité visuelle/UX
 - [ ] Ordre des pages à définir (vitrine d'abord, ou pages métier d'abord ?)
 
