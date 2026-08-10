@@ -48,7 +48,7 @@ class Event
     #[Assert\File(
         maxSize: '5000k',
         mimeTypes: ['image/jpeg', 'image/png'],
-        mimeTypesMessage: 'Merci de choisir une image JPEG ou PNG valide',
+        mimeTypesMessage: 'Please upload a valid JPEG or PNG image',
     )]
     protected $posterFile;
 
