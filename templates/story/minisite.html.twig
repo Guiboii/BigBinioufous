@@ -10,76 +10,108 @@
         <link rel="stylesheet" href="{{ asset('story/minisite.css') }}">
     </head>
     <body>
-        <div class="term-titlebar">
-            BINIOUFOUS.SYS<span class="term-cursor">_</span>
+        <div class="desktop">
+            <div class="desktop-icons" aria-hidden="true">
+                <span class="desktop-icon desktop-icon--folder"></span>
+                <span class="desktop-icon desktop-icon--trash"></span>
+            </div>
+
+            <div class="term-window">
+                <div class="term-titlebar">
+                    <span class="term-dots" aria-hidden="true">
+                        <span></span><span></span><span></span>
+                    </span>
+                    BINIOUFOUS.SYS<span class="term-cursor">_</span>
+                </div>
+                <nav class="term-nav" aria-label="{{ 'story.title'|trans }}">
+                    <a href="#intro">{{ 'story.nav_intro'|trans }}</a>
+                    <a href="#qui">{{ 'story.nav_who'|trans }}</a>
+                    <a href="#quoi">{{ 'story.nav_what'|trans }}</a>
+                    <a href="#pourquoi">{{ 'story.nav_why'|trans }}</a>
+                    <a href="#contact">{{ 'story.nav_contact'|trans }}</a>
+                </nav>
+
+                <main>
+                    <section id="intro">
+                        <h1>{{ 'story.nav_intro'|trans }}</h1>
+                        <p>{{ 'story.intro'|trans }}</p>
+                    </section>
+
+                    <section id="qui">
+                        <h2>{{ 'story.who_title'|trans }}</h2>
+                        <h3>{{ 'story.who_ages_title'|trans }}</h3>
+                        <p>{{ 'story.who_ages_text'|trans }}</p>
+                        <h3>{{ 'story.who_instruments_title'|trans }}</h3>
+                        <p>{{ 'story.who_instruments_text'|trans }}</p>
+                        <h3>{{ 'story.who_level_title'|trans }}</h3>
+                        <p>{{ 'story.who_level_text'|trans|raw }}</p>
+                        <h3>{{ 'story.who_no_sheet_title'|trans }}</h3>
+                        <p>{{ 'story.who_no_sheet_text'|trans }}</p>
+                    </section>
+
+                    <section id="quoi">
+                        <h2>{{ 'story.what_title'|trans }}</h2>
+                        <p>{{ 'story.what_intro_text'|trans }}</p>
+                        <p>{{ 'story.what_oboe_text'|trans }}</p>
+                        <p>{{ 'story.what_instrument_text'|trans }}</p>
+                        <h3>{{ 'story.history_title'|trans|raw }}</h3>
+                        <p>{{ 'story.history_ok'|trans }}</p>
+                        <p>{{ 'story.history_text'|trans }}</p>
+                    </section>
+
+                    <section id="pourquoi">
+                        <h2>{{ 'story.why_title'|trans }}</h2>
+                        <h3>{{ 'story.why_party_title'|trans }}</h3>
+                        <p>{{ 'story.why_party_text'|trans }}</p>
+                        <ul>
+                            <li>{{ 'story.why_li_concert'|trans }}</li>
+                            <li>{{ 'story.why_li_teacher'|trans }}</li>
+                            <li>{{ 'story.why_li_school'|trans }}</li>
+                            <li>{{ 'story.why_li_clarinet'|trans }}</li>
+                        </ul>
+                        <p>{{ 'story.why_outro'|trans }}</p>
+                    </section>
+
+                    <section id="contact">
+                        <h2>{{ 'contact.title'|trans }}</h2>
+                        <form class="term-form" id="minisite-contact-form">
+                            <div class="term-field">
+                                <label for="minisite-contact-name">{{ 'contact.name_label'|trans }}</label>
+                                <input type="text" id="minisite-contact-name" name="name" placeholder="John Doe">
+                            </div>
+                            <div class="term-field">
+                                <label for="minisite-contact-email">{{ 'contact.email_label'|trans }}</label>
+                                <input type="email" id="minisite-contact-email" name="email" placeholder="name@example.com">
+                            </div>
+                            <div class="term-field">
+                                <label for="minisite-contact-message">{{ 'contact.message_label'|trans }}</label>
+                                <textarea id="minisite-contact-message" name="message" rows="3"></textarea>
+                            </div>
+                            <button type="button" class="term-submit">{{ 'contact.submit'|trans }}</button>
+                        </form>
+                    </section>
+                </main>
+            </div>
+
+            <div class="taskbar">
+                <span class="taskbar-start" aria-hidden="true"></span>
+                <span class="taskbar-status" aria-hidden="true">
+                    <span class="taskbar-battery"><span class="taskbar-battery-fill"></span></span>
+                    <span class="taskbar-clock" id="taskbar-clock"></span>
+                </span>
+            </div>
         </div>
-        <nav class="term-nav" aria-label="{{ 'story.title'|trans }}">
-            <a href="#intro">{{ 'story.nav_intro'|trans }}</a>
-            <a href="#qui">{{ 'story.nav_who'|trans }}</a>
-            <a href="#quoi">{{ 'story.nav_what'|trans }}</a>
-            <a href="#pourquoi">{{ 'story.nav_why'|trans }}</a>
-            <a href="#contact">{{ 'story.nav_contact'|trans }}</a>
-        </nav>
 
-        <main>
-            <section id="intro">
-                <h1>{{ 'story.nav_intro'|trans }}</h1>
-                <p>{{ 'story.intro'|trans }}</p>
-            </section>
-
-            <section id="qui">
-                <h2>{{ 'story.who_title'|trans }}</h2>
-                <h3>{{ 'story.who_ages_title'|trans }}</h3>
-                <p>{{ 'story.who_ages_text'|trans }}</p>
-                <h3>{{ 'story.who_instruments_title'|trans }}</h3>
-                <p>{{ 'story.who_instruments_text'|trans }}</p>
-                <h3>{{ 'story.who_level_title'|trans }}</h3>
-                <p>{{ 'story.who_level_text'|trans|raw }}</p>
-                <h3>{{ 'story.who_no_sheet_title'|trans }}</h3>
-                <p>{{ 'story.who_no_sheet_text'|trans }}</p>
-            </section>
-
-            <section id="quoi">
-                <h2>{{ 'story.what_title'|trans }}</h2>
-                <p>{{ 'story.what_intro_text'|trans }}</p>
-                <p>{{ 'story.what_oboe_text'|trans }}</p>
-                <p>{{ 'story.what_instrument_text'|trans }}</p>
-                <h3>{{ 'story.history_title'|trans|raw }}</h3>
-                <p>{{ 'story.history_ok'|trans }}</p>
-                <p>{{ 'story.history_text'|trans }}</p>
-            </section>
-
-            <section id="pourquoi">
-                <h2>{{ 'story.why_title'|trans }}</h2>
-                <h3>{{ 'story.why_party_title'|trans }}</h3>
-                <p>{{ 'story.why_party_text'|trans }}</p>
-                <ul>
-                    <li>{{ 'story.why_li_concert'|trans }}</li>
-                    <li>{{ 'story.why_li_teacher'|trans }}</li>
-                    <li>{{ 'story.why_li_school'|trans }}</li>
-                    <li>{{ 'story.why_li_clarinet'|trans }}</li>
-                </ul>
-                <p>{{ 'story.why_outro'|trans }}</p>
-            </section>
-
-            <section id="contact">
-                <h2>{{ 'contact.title'|trans }}</h2>
-                <form class="term-form" id="minisite-contact-form">
-                    <div class="term-field">
-                        <label for="minisite-contact-name">{{ 'contact.name_label'|trans }}</label>
-                        <input type="text" id="minisite-contact-name" name="name" placeholder="John Doe">
-                    </div>
-                    <div class="term-field">
-                        <label for="minisite-contact-email">{{ 'contact.email_label'|trans }}</label>
-                        <input type="email" id="minisite-contact-email" name="email" placeholder="name@example.com">
-                    </div>
-                    <div class="term-field">
-                        <label for="minisite-contact-message">{{ 'contact.message_label'|trans }}</label>
-                        <textarea id="minisite-contact-message" name="message" rows="3"></textarea>
-                    </div>
-                    <button type="button" class="term-submit">{{ 'contact.submit'|trans }}</button>
-                </form>
-            </section>
-        </main>
+        <script>
+            var clockEl = document.getElementById('taskbar-clock');
+            function updateClock() {
+                var now = new Date();
+                var hh = String(now.getHours()).padStart(2, '0');
+                var mm = String(now.getMinutes()).padStart(2, '0');
+                clockEl.textContent = hh + ':' + mm;
+            }
+            updateClock();
+            setInterval(updateClock, 1000 * 15);
+        </script>
     </body>
 </html>

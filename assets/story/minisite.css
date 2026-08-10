@@ -51,6 +51,12 @@
        palette rouge/vert du contenu, pour rester visible en toute
        circonstance (WCAG 2.4.11). */
     --term-focus: #FFFFFF;
+
+    /* "Bureau" derrière la fenêtre terminal (dégradé, pas une image :
+       gratuit à ajuster, fidèle à la palette du site). */
+    --desktop-a: #163F33;
+    --desktop-b: #081D17;
+    --taskbar-bg: #06140F;
 }
 
 * {
@@ -86,6 +92,8 @@
 html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
+    overflow: hidden;
     background: var(--term-bg);
     color: var(--term-fg);
     font-family: "IBM Plex Mono", "Courier New", monospace;
@@ -98,6 +106,131 @@ html, body {
     color: var(--term-bg);
 }
 
+/* "Bureau" : le fond visible tout autour de la fenêtre terminal (~20%
+   de l'écran, la fenêtre en occupe 80%), avec quelques icônes et une
+   barre des tâches pour lire clairement "poste de travail ouvert",
+   pas juste une bordure de couleur. */
+.desktop {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2.5rem;
+    background: linear-gradient(160deg, var(--desktop-a) 0%, var(--desktop-b) 100%);
+}
+
+.desktop-icons {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    z-index: 1;
+}
+.desktop-icon {
+    display: block;
+    width: 2.25rem;
+    height: 1.9rem;
+    opacity: 0.55;
+}
+.desktop-icon--folder {
+    background: var(--term-green);
+    clip-path: polygon(0 22%, 38% 22%, 46% 4%, 100% 4%, 100% 100%, 0 100%);
+}
+.desktop-icon--trash {
+    position: relative;
+    border: 0.15rem solid var(--term-fg);
+    border-radius: 2px;
+}
+.desktop-icon--trash::before {
+    content: "";
+    position: absolute;
+    top: -0.4rem;
+    left: -0.2rem;
+    right: -0.2rem;
+    height: 0.25rem;
+    background: var(--term-fg);
+}
+
+.taskbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.85rem;
+    background: var(--taskbar-bg);
+    border-top: 1px solid var(--bb-green-mid);
+    z-index: 1;
+}
+.taskbar-start {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 3px;
+    background: var(--term-green);
+    opacity: 0.85;
+}
+.taskbar-status {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+.taskbar-battery {
+    position: relative;
+    display: inline-block;
+    width: 1.4rem;
+    height: 0.75rem;
+    border: 1.5px solid var(--term-fg);
+    border-radius: 2px;
+    opacity: 0.85;
+}
+.taskbar-battery::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -0.3rem;
+    transform: translateY(-50%);
+    width: 0.18rem;
+    height: 0.4rem;
+    background: var(--term-fg);
+    border-radius: 0 1px 1px 0;
+}
+.taskbar-battery-fill {
+    display: block;
+    height: 100%;
+    width: 82%;
+    background: var(--term-green);
+}
+.taskbar-clock {
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: var(--term-fg);
+    opacity: 0.85;
+}
+
+/* La fenêtre terminal elle-même : 80% de l'écran pour laisser voir le
+   "bureau" autour, façon fenêtre d'application plutôt que plein écran. */
+.term-window {
+    position: relative;
+    width: 80vw;
+    height: 80vh;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    background: var(--term-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+    z-index: 1;
+}
+
 a {
     color: var(--term-fg);
 }
@@ -106,16 +239,36 @@ a:focus-visible {
     color: var(--term-red);
 }
 
-/* Barre de titre façon vieux terminal, avec curseur clignotant rouge */
+/* Barre de titre façon vieux terminal, avec curseur clignotant rouge.
+   Les 3 points sont une décoration de chrome de fenêtre (pas des boutons
+   fonctionnels) : leur couleur n'a pas besoin d'être distinguée à la
+   teinte près par tout le monde, contrairement au reste de la page. */
 .term-titlebar {
-    padding: 0.75rem 1.25rem;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.6rem 1.1rem;
     background: var(--bb-green-deep);
     border-bottom: 2px solid var(--term-green);
     font-family: "VT323", "Courier New", monospace;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     letter-spacing: 0.04em;
     color: var(--term-fg);
 }
+.term-dots {
+    display: inline-flex;
+    gap: 0.4rem;
+}
+.term-dots span {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    display: inline-block;
+}
+.term-dots span:nth-child(1) { background: var(--term-red); }
+.term-dots span:nth-child(2) { background: var(--term-fg); opacity: 0.7; }
+.term-dots span:nth-child(3) { background: var(--term-green); }
 .term-cursor {
     display: inline-block;
     color: var(--term-red);
@@ -133,6 +286,7 @@ a:focus-visible {
 
 /* Menu d'ancres : liens directs vers les sections, pas de JS requis */
 .term-nav {
+    flex: 0 0 auto;
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem 1.25rem;
@@ -161,7 +315,10 @@ a:focus-visible {
 }
 
 main {
+    flex: 1 1 auto;
+    overflow-y: auto;
     max-width: 720px;
+    width: 100%;
     margin: 0 auto;
     padding: 1.75rem 1.25rem 3rem;
     scroll-behavior: smooth;
@@ -279,6 +436,26 @@ li::marker {
 .term-submit:focus-visible {
     outline: 2px solid var(--term-focus);
     outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+    /* Le bureau derrière n'a plus de sens sur petit écran (pas la place
+       de le voir) : la fenêtre prend tout l'espace, façon app plein écran. */
+    .desktop {
+        padding-bottom: 0;
+        display: block;
+    }
+    .desktop-icons,
+    .taskbar {
+        display: none;
+    }
+    .term-window {
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
 }
 
 @media (max-width: 480px) {
