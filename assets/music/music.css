@@ -2,17 +2,20 @@ iframe {
     width: 750px;
     border: none;
 }
-.overlay {
-    position: absolute;
-    top: 50%;
-    left:50%;
-    margin-top: -141px;
-    margin-left: -333px;
-    z-index: 900;
-        overflow: hidden;
-    display: block;
-    width: 642px;
-}
+/* Les 3 boîtes ci-dessous (waveform, boutons, playlist) sont positionnées en
+   position:fixed avec des left/top/width/height calculés dynamiquement en JS
+   (updateOverlayPosition() dans music.js), par vraie projection 3D->2D de
+   points ancrés sur la face avant du meuble, recalculée à chaque resize. Le
+   vw/vh utilisé avant ne suit pas une caméra en perspective dès que le ratio
+   largeur/hauteur de la fenêtre change (l'étalement horizontal du champ de
+   vision dépend du ratio, contrairement au vertical qui est fixe) : correct
+   à 1280x800/1600x900 mais décalé sur une fenêtre plus large, cf. section
+   "Cadrage d'un overlay 2D..." de CLAUDE.md. .overlay et .player-wrap ne
+   portent donc plus de positionnement : ce sont juste des conteneurs DOM,
+   leurs enfants sortent du flux via la position fixed posée en JS (chacun
+   avec son propre z-index : sans .overlay positionné pour créer un contexte
+   d'empilement commun, ses enfants fixed doivent porter le leur pour ne pas
+   se retrouver sous le <canvas> WebGL, ajouté plus tard dans le DOM). */
 
 table {
     display: block;
@@ -20,21 +23,23 @@ table {
 
 .player-wrap {
     background: transparent;
-    width: 100%;
-    height: 186px;
-    margin-left: 0;
-}
-.player-wrap .row {
-    height: 91px;
-    width: 100%;
-    background: #695044;
-    margin: 0;
 }
 
+.player-wrap .row:first-child {
+    background: #695044;
+    z-index: 900;
+}
+/* flex + align-items:center : sans ça les enfants (liens, svg, input range)
+   s'alignent sur leur baseline par défaut, très différente d'un élément à
+   l'autre (le slider en particulier partait visiblement plus haut que les
+   boutons à côté). */
 .player-wrap .row.playerButtons {
-    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    background: #695044;
     padding: 4px;
-    height: 39px;
+    box-sizing: border-box;
+    z-index: 900;
 }
 
 
@@ -45,11 +50,10 @@ table {
    longue), .members-only n'a jamais assez de contenu pour en avoir besoin. */
 .playlist-wrap {
     background: #4a3d37;
-    height: 280px;
-    width: 641px;
-    margin-top: 0;
     border: 5px solid #895b41;
+    box-sizing: border-box;
     overflow: hidden;
+    z-index: 900;
 }
 
 .playlist, .members-only {
@@ -107,6 +111,9 @@ table {
     font-size: 13px;
 }
 
+/* Bootstrap donne un fond blanc à .list-group-item par défaut, indépendamment
+   du .card qu'on n'utilise plus ici : sans le retirer, le texte doré atterrit
+   sur du blanc (~1.35:1, illisible) au lieu du marron voulu. */
 .playlist .list-group-item {
     display: flex;
     align-items: center;
@@ -114,6 +121,8 @@ table {
     padding: 0.45rem 0.4rem;
     margin-bottom: 0.15rem;
     border-radius: 4px;
+    background-color: transparent;
+    border: 0;
     color: var(--bb-gold-pale);
     text-decoration: none;
 }
@@ -140,6 +149,8 @@ table {
 .loggedinContent .list-group-item {
     display: block;
     padding: 0.4rem 0;
+    background-color: transparent;
+    border: 0;
     color: var(--bb-gold-pale);
     font-size: 13px;
 }
@@ -154,19 +165,85 @@ table {
 
 .waveW {
     width: 100%;
+    height: 100%;
 }
 
 #waveform {
     background: #4a3d37;
+    height: 100%;
+}
+/* wavesurfer.js crée un <wave> interne (overflow-x:auto, pas de classe/id)
+   pour le défilement horizontal quand on zoome (#slider) au-delà de la
+   largeur du cadre : sans ça, scrollbar grise par défaut du navigateur,
+   flèches ◄► comprises, qui jure complètement avec le thème. */
+#waveform wave {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bb-gold-pale) transparent;
+}
+#waveform wave::-webkit-scrollbar {
+    height: 8px;
+}
+#waveform wave::-webkit-scrollbar-track {
+    background: transparent;
+}
+#waveform wave::-webkit-scrollbar-thumb {
+    background: var(--bb-gold-pale);
+    border-radius: 4px;
+}
+#waveform wave::-webkit-scrollbar-thumb:hover {
+    background: var(--bb-gold);
 }
 
 #uploadNew {
     width: 35%;
 }
 
-input#slider {  
+/* Slider de zoom natif : par défaut, rendu générique gris du navigateur qui
+   ne s'intègre pas au thème, même topo que les scrollbars. */
+input#slider {
     width: 15%;
     margin-left: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: rgba(var(--bb-gold-rgb), 0.3);
+    border-radius: 2px;
+    outline: none;
+}
+input#slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bb-gold-pale);
+    border: 2px solid var(--bb-green-deep);
+    cursor: pointer;
+}
+input#slider::-moz-range-track {
+    height: 4px;
+    background: rgba(var(--bb-gold-rgb), 0.3);
+    border-radius: 2px;
+}
+input#slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bb-gold-pale);
+    border: 2px solid var(--bb-green-deep);
+    cursor: pointer;
+}
+input#slider:hover::-webkit-slider-thumb,
+input#slider:focus-visible::-webkit-slider-thumb {
+    background: var(--bb-gold);
+}
+input#slider:hover::-moz-range-thumb,
+input#slider:focus-visible::-moz-range-thumb {
+    background: var(--bb-gold);
+}
+input#slider:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: 2px;
 }
 
 #loopRegion, #uploadNew {
