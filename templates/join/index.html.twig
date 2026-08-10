@@ -4,8 +4,8 @@
 
 {% block body %}
 
-<a class="login text-yellow" href="#" role="button"><h1>{{ 'join.login_button'|trans }}</h1></a>
-<a class="join text-redwall" href="#" role="button"><h1>{{ 'join.join_button'|trans }}</h1></a>
+<a class="login" href="#" role="button"><h1><i class="ri-login-circle-fill" aria-hidden="true"></i> <span>{{ 'join.login_button'|trans }}</span></h1></a>
+<a class="join" href="#" role="button"><h1><i class="ri-user-add-fill" aria-hidden="true"></i> <span>{{ 'join.join_button'|trans }}</span></h1></a>
 
 <form action="{{ path('join') }}" id="loginForm" class="d-none" method="post">
          {{ include ('join/login.html.twig') }}
