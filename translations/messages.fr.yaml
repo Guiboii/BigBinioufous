@@ -120,8 +120,6 @@ music:
     title: Liste des morceaux
     upload: Envoyer
     loop: Boucle
-    category_disco: Disco
-    category_rock: Rock
     by: par
     no_records: aucun morceau trouvé
     voice_label: "Voix :"

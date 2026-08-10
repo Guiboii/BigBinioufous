@@ -55,68 +55,39 @@
         </div>
 
         <div class="playlist-wrap">
-            <div class="accordion float-left" id="playlist">
-                <div class="card">
-                    <div class="card-header" id="headingOne">
-                        <h2 class="mb-0">
-                            <button class="text-white bg-transparent" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                {{ 'music.category_disco'|trans }}
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#playlist">
-                        <div class="card-body">
-                            {% for track in tracks %}
-                                <a href="{{ track.trackFilename }}" class="list-group-item">
-                                    <i class="glyphicon glyphicon-play"></i>
-                                    {{ track.title }}
-                                    {{ 'music.by'|trans }}
-                                    {{ track.artist.name }}
-                                    <span class="badge">{{ track.minutes }}:{{ track.seconds }}</span>
-                                </a>
-                            {% else %}
-                                <span>{{ 'music.no_records'|trans }}</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" id="headingTwo">
-                        <h2 class="mb-0">
-                            <button class="text-white bg-transparent collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                {{ 'music.category_rock'|trans }}
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#playlist">
-                        <div class="card-body">
-
-                            {% for track in tracks %}
-                                <a href="../uploads/music/test.mp3" class="list-group-item">
-                                    <i class="glyphicon glyphicon-play"></i>
-                                    {{ track.title }}
-                                    {{ 'music.by'|trans }}
-                                    {{ track.artist.name }}
-                                    <span class="badge">{{ track.minutes }}:{{ track.seconds }}</span>
-                                </a>
-                            {% else %}
-                                <span>{{ 'music.no_records'|trans }}</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
+            {# Avant : 2 accordéons Bootstrap "Disco"/"Rock" bidons, l'entité
+               Track n'a aucun champ genre, les deux itéraient sur la même
+               liste tracks en entier (doublons garantis, et le 2e avait même
+               un href codé en dur vers un fichier de test). Une seule vraie
+               liste plutôt que deux fausses catégories. #}
+            <div class="playlist float-left" id="playlist">
+                {% for track in tracks %}
+                    <a href="{{ asset('uploads/music/' ~ track.trackFilename) }}" class="list-group-item">
+                        <svg class="bi bi-play-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 010 1.393z"/></svg>
+                        {{ track.title }}
+                        {{ 'music.by'|trans }}
+                        {{ track.artist.name }}
+                        <span class="badge">{{ track.minutes }}:{{ track.seconds }}</span>
+                    </a>
+                {% else %}
+                    <span class="empty-note">{{ 'music.no_records'|trans }}</span>
+                {% endfor %}
             </div>
 
             <div class="members-only float-left">
                 {% if app.user %}
-                    <div class="loggedinContent d-none">
+                    {# Avant : d-none codé en dur ici, jamais retiré, donc
+                       invisible même connecté·e. Le {% if app.user %}
+                       ci-dessus gère déjà la visibilité, ce d-none était
+                       redondant et faux. #}
+                    <div class="loggedinContent">
                         {% for track in tracks %}
                             <span class="list-group-item">{{ 'music.voice_label'|trans }}
                                 {{ track.artist.name }}
                                 <a href="{{ path('track_show', {id: track.id}) }}">{{ 'music.download'|trans }}</a>
                             </span>
                         {% else %}
-                            <span>{{ 'music.no_links'|trans }}</span>
+                            <span class="empty-note">{{ 'music.no_links'|trans }}</span>
                         {% endfor %}
                     </div>
                 {% else %}

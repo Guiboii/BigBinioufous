@@ -189,6 +189,10 @@ class AppFixtures extends Fixture
         }
 
         // ajout de titres
+        // Fichiers réels déjà présents dans public/uploads/music/ (pas de nouveau
+        // binaire ajouté), sinon trackFilename restait vide et aucun morceau
+        // de démo n'était jouable (cf. ROADMAP.md).
+        $demoFiles = ['Oi-Tate-A2.mp3', 'test.mpga'];
 
         for ($i = 1; $i <= 10; ++$i) {
             $track = new Track();
@@ -200,7 +204,8 @@ class AppFixtures extends Fixture
             $track->setTitle($faker->realText($maxNbChars = 30, $indexSize = 2))
                     ->setArtist($artist)
                     ->setMinutes($minutes)
-                    ->setSeconds($seconds);
+                    ->setSeconds($seconds)
+                    ->setTrackFilename($demoFiles[$i % count($demoFiles)]);
 
             $manager->persist($track);
         }
