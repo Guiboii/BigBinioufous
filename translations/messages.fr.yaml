@@ -118,6 +118,7 @@ desk:
 
 music:
     title: Liste des morceaux
+    mobile_note: "Vue simplifiée pour mobile : le lecteur complet avec le meuble 3D t'attend sur ordinateur."
     upload: Envoyer
     loop: Boucle
     by: par

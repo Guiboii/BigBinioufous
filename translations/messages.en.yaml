@@ -118,6 +118,7 @@ desk:
 
 music:
     title: Track index
+    mobile_note: "Simplified mobile view: the full player with the 3D cabinet is waiting for you on a computer."
     upload: Upload
     loop: Loop
     by: by

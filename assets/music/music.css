@@ -300,3 +300,76 @@ input#slider:focus-visible {
 button:focus {
     outline: none;
 }
+
+/* Mode mobile (<=700px, cf. le script dans music/index.html.twig qui pose
+   .is-mobile sur <html> avant le 1er rendu) : music.js saute l'init Three.js
+   dans ce cas (meuble 3D + personnage illisibles en petit), donc le lecteur
+   (Player.js, indépendant du 3D) et la playlist restent affichés tels quels
+   mais en flux normal plutôt qu'en position:fixed calculée par projection
+   3D->2D (qui n'a plus de sens sans scène 3D à projeter). Fond clair
+   --bb-gold-pale + texte --bb-ink (13.6:1, largement AAA) plutôt qu'un vert
+   sombre : sur le fond --bb-gold du body, un bandeau clair s'intègre mieux
+   qu'un pavé vert foncé qui tranche fort.
+   Le bouton hamburger (.navbar-toggler, position:fixed sans top explicite)
+   n'a pas de top posé en dur : son "static position" fallback se calcule
+   à partir du 1er contenu du flux de <body>, ici .mobile-note (piège
+   vérifié empiriquement : augmenter le margin-top de .mobile-note pousse
+   le bouton vers le bas d'autant, alors qu'ils n'ont aucun lien direct en
+   CSS). Un margin-top généreux sur .mobile-note pousserait donc aussi le
+   bouton, sans jamais réellement les désuperposer (l'écart entre les deux
+   reste ~constant). Solution : décaler la bannière horizontalement après
+   le bouton (left: ~86px, sa largeur + marge) plutôt que verticalement en
+   dessous, et garder un margin-top modeste comme sur le reste du site. */
+.mobile-note {
+    display: none;
+}
+html.is-mobile .mobile-note {
+    display: block;
+    margin: 0.75rem 1rem 0.75rem 86px;
+    padding: 0.6rem 0.8rem;
+    background: var(--bb-gold-pale);
+    color: var(--bb-ink);
+    font-size: 0.85rem;
+    font-style: italic;
+    border-radius: 4px;
+}
+
+html.is-mobile .mascotte,
+html.is-mobile .loading {
+    display: none;
+}
+
+html.is-mobile .overlay {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0.75rem;
+}
+html.is-mobile .player-wrap .row:first-child {
+    position: static;
+    width: 100%;
+    height: 91px;
+}
+html.is-mobile .player-wrap .row.playerButtons {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-wrap: wrap;
+}
+html.is-mobile .playlist-wrap {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+}
+/* 2 colonnes de 50% deviennent illisibles sous ~500px (cas du .members-only
+   vide la plupart du temps, mais .playlist doit rester lisible même seule) :
+   empilées à la place, .members-only après puisqu'elle est secondaire. */
+html.is-mobile .playlist,
+html.is-mobile .members-only {
+    display: block;
+    width: 100%;
+}
+html.is-mobile .playlist {
+    border-right: 0;
+    border-bottom: 1px solid #664c40;
+}

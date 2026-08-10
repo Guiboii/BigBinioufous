@@ -48,8 +48,14 @@ var BUTTONS_Y_BOTTOM = 3.82679;
 var PLAYLIST_Y_TOP = 3.82679;
 var PLAYLIST_Y_BOTTOM = 2.871574;
 
-init();
-animate();
+// .is-mobile posée par templates/music/index.html.twig avant le 1er rendu
+// (cf. commentaire là-bas) : sur petit écran, le meuble 3D est illisible,
+// donc on ne l'initialise même pas. Player.js (import plus haut) tourne
+// indépendamment de tout ça et reste actif dans les deux cas.
+if (!document.documentElement.classList.contains('is-mobile')) {
+  init();
+  animate();
+}
 
 function init() {
   canvas = document.querySelector('#c');

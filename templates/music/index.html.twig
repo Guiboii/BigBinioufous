@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block importmap %}
+    {# Sur petit écran, le meuble 3D + le personnage deviennent minuscules et
+       la scène mange toute la place utile : plutôt que rediriger vers une
+       autre page (cas /story, qui a un vrai contenu dupliqué en iframe),
+       music.js lit cette classe et saute entièrement l'init Three.js
+       (canvas/GLTF/resize 3D) ; le lecteur (Player.js, indépendant du 3D)
+       et la playlist restent affichés en flux normal, cf. music.css. Posée
+       avant le 1er rendu pour éviter un flash. #}
+    <script>
+        document.documentElement.classList.add(window.matchMedia('(max-width: 700px)').matches ? 'is-mobile' : 'is-desktop');
+    </script>
     {{ importmap(['app', 'music']) }}
 {% endblock %}
 
@@ -8,6 +18,8 @@
 {% endblock %}
 
 {% block body %}
+
+    <p class="mobile-note">{{ 'music.mobile_note'|trans }}</p>
 
     <div class="overlay">
         <div class="player-wrap">
