@@ -71,7 +71,7 @@ Pas de Webpack : `symfony/asset-mapper` (natif Symfony, zéro build Node en prod
 |---|---|---|
 | `app` | `assets/main/app.js` | jQuery, Bootstrap JS/CSS, Font Awesome, Remixicon, `app.css` : chargé sur **toutes** les pages |
 | `index` | `assets/mascotte/mascotte.js` | Mascotte 3D (Three.js + modèles `.gltf`) |
-| `music` | `assets/music/music.js` (+ `Player.js`) | Lecteur audio wavesurfer.js (chargé en CDN, pas par AssetMapper) |
+| `music` | `assets/music/music.js` (+ `Player.js`) | Lecteur audio wavesurfer.js **`@6.6.4` épinglé** (chargé en CDN, pas par AssetMapper) : sans version, unpkg résout la 7.x (API différente), le lecteur ne fonctionne alors plus du tout. Piège corrigé le 2026-08-10, cf. Gotchas |
 | `schedule` | `assets/schedule/schedule.js` | Page planning + éléments 3D |
 | `story` | `assets/story/story.js` | Page histoire (scène 3D uniquement ; la minisite affichée dedans est une page à part, hors AssetMapper, cf. plus haut) |
 | `join` | `assets/login/join.js` | Page login/register |
@@ -84,3 +84,4 @@ Three.js et ses modules (`GLTFLoader`, `OrbitControls`) viennent du package npm 
 - **Ne jamais superposer rouge et vert pour du texte sur un fond** (ou l'inverse) : plusieurs bugs de contraste de ce type ont été trouvés et corrigés le 2026-08-10 (navbar, boutons `.btn-red`/`.btn-green`, pills actives du planning/histoire, `.red-hover`/`.green-hover`) — un cas allait même jusqu'au texte totalement invisible (vert sur vert, couleur héritée de la règle globale `a { color: var(--bb-green-mid) }`). Si tu ajoutes un état hover/actif avec un fond rouge ou vert, mets du texte blanc (`var(--bb-white)`) ou clair, pas une autre couleur saturée de la palette.
 - Si tu ajoutes une couleur, réutilise une variable `--bb-*` existante plutôt que d'en inventer une nouvelle ; si vraiment aucune ne convient, ajoute-la au bloc `:root` de `assets/main/app.css` avec un nom `--bb-*` cohérent.
 - `templates/desk/index.html.twig` avait un bug de typo sur les noms de rôles (`ROLE_BINOUFOUS`/`ROLE_SIMPLE` au lieu de `ROLE_BINIOUFOUS`/`ROLE_Simple`) : corrigé, voir [role.md](role.md).
+- **Toute lib chargée en CDN sans version dans l'URL résout la dernière release**, pas celle avec laquelle le code a été écrit (déjà vu pour Bootstrap/Three.js via `importmap:require`, et pour wavesurfer.js en CDN : `<script src="https://unpkg.com/wavesurfer.js">` chargeait la 7.x, réécriture complète en modules ES sans l'API globale `WaveSurfer.create()` qu'utilise `Player.js`, donc le lecteur audio ne fonctionnait pas du tout). Toujours épingler une version explicite dans l'URL CDN.

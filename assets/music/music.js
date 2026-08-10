@@ -30,8 +30,32 @@ var green = 0x1f6652;
 var white = 0xffffff;
 var black = 0x000000;
 
-init();
-animate();
+// Ancrages de la face avant du meuble SoundSystem (plan quasi plat, x≈-8.406
+// dans le repère monde), mesurés une fois par raycast caméra->modèle sur un
+// rendu de référence, cf. section "Cadrage d'un overlay 2D..." de CLAUDE.md :
+// contrairement au vw/vh (qui suppose une mise à l'échelle linéaire avec la
+// fenêtre), une caméra en perspective ne projette pas ainsi dès que le ratio
+// largeur/hauteur change, d'où le décalage observé sur les fenêtres larges.
+// Reprojeter ces points 3D fixes via camera.project() à chaque resize donne
+// une position d'overlay exacte à toute taille/ratio de fenêtre.
+var PANEL_PLANE_X = -8.406;
+var PANEL_Z_LEFT = 3.298;
+var PANEL_Z_RIGHT = 0.734;
+var SCREEN_Y_TOP = 4.5625;
+var SCREEN_Y_BOTTOM = 4.19978;
+var BUTTONS_Y_TOP = 4.19978;
+var BUTTONS_Y_BOTTOM = 3.82679;
+var PLAYLIST_Y_TOP = 3.82679;
+var PLAYLIST_Y_BOTTOM = 2.871574;
+
+// .is-mobile posée par templates/music/index.html.twig avant le 1er rendu
+// (cf. commentaire là-bas) : sur petit écran, le meuble 3D est illisible,
+// donc on ne l'initialise même pas. Player.js (import plus haut) tourne
+// indépendamment de tout ça et reste actif dans les deux cas.
+if (!document.documentElement.classList.contains('is-mobile')) {
+  init();
+  animate();
+}
 
 function init() {
   canvas = document.querySelector('#c');
@@ -111,6 +135,61 @@ function init() {
   window.addEventListener('click', (e) => raycast(e));
   window.addEventListener('touchend', (e) => raycast(e, true));
   window.addEventListener('resize', onWindowResize, false);
+
+  updateOverlayPosition();
+}
+
+function projectPoint(x, y, z) {
+  var v = new THREE.Vector3(x, y, z);
+  v.project(camera);
+  return {
+    x: ((v.x + 1) / 2) * window.innerWidth,
+    y: ((1 - v.y) / 2) * window.innerHeight,
+  };
+}
+
+// yTop/yBottom : coordonnées monde (repère du plan de la face avant), pas
+// des pixels. Renvoie le rectangle écran correspondant pour la fenêtre
+// actuelle.
+function projectPanelBox(yTop, yBottom) {
+  var topLeft = projectPoint(PANEL_PLANE_X, yTop, PANEL_Z_LEFT);
+  var bottomRight = projectPoint(PANEL_PLANE_X, yBottom, PANEL_Z_RIGHT);
+  return {
+    left: topLeft.x,
+    top: topLeft.y,
+    width: bottomRight.x - topLeft.x,
+    height: bottomRight.y - topLeft.y,
+  };
+}
+
+function applyBox(el, box) {
+  if (!el) return;
+  el.style.position = 'fixed';
+  el.style.left = box.left + 'px';
+  el.style.top = box.top + 'px';
+  el.style.width = box.width + 'px';
+  el.style.height = box.height + 'px';
+}
+
+function updateOverlayPosition() {
+  // camera.matrixWorldInverse n'est recalculée que par le rendu (ou ici,
+  // explicitement) : sans ça, le premier appel (avant la 1re frame rendue
+  // par animate()) projette avec une matrice caméra encore périmée et
+  // produit des positions aberrantes.
+  camera.updateMatrixWorld();
+
+  applyBox(
+    document.querySelector('.player-wrap .row:first-child'),
+    projectPanelBox(SCREEN_Y_TOP, SCREEN_Y_BOTTOM),
+  );
+  applyBox(
+    document.querySelector('.player-wrap .row.playerButtons'),
+    projectPanelBox(BUTTONS_Y_TOP, BUTTONS_Y_BOTTOM),
+  );
+  applyBox(
+    document.querySelector('.playlist-wrap'),
+    projectPanelBox(PLAYLIST_Y_TOP, PLAYLIST_Y_BOTTOM),
+  );
 }
 
 function roomGeo(width, height, scaleY) {
@@ -185,6 +264,7 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
+  updateOverlayPosition();
 }
 
 //

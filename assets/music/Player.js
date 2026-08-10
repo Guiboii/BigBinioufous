@@ -94,11 +94,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Go to the next track on finish
   wavesurfer.on('finish', function () {
-    setCurrentSong((currentTrack + 1) % links.length);
+    if (links.length) {
+      setCurrentSong((currentTrack + 1) % links.length);
+    }
   });
 
-  // Load the first track
-  setCurrentSong(currentTrack);
+  // Load the first track (rien à charger si la playlist est vide : sans
+  // cette garde, links[0] est undefined et ça plante au chargement)
+  if (links.length) {
+    setCurrentSong(currentTrack);
+  }
 });
 
 function hasClass(elem, className) {

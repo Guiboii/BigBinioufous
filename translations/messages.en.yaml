@@ -118,19 +118,15 @@ desk:
 
 music:
     title: Track index
+    mobile_note: "Simplified mobile view: the full player with the 3D cabinet is waiting for you on a computer."
     upload: Upload
     loop: Loop
-    category_disco: Disco
-    category_rock: Rock
     by: by
     no_records: no records found
     voice_label: "Voice:"
     download: download
     no_links: no link found
-    login_email_placeholder: email to login
-    login_password_placeholder: password
-    unlock: Unlock
-    register: Register
+    members_prompt: "Members only, to unlock downloads:"
     new_title: New Track
     create_heading: Create new Track
     back_to_list: back to list
