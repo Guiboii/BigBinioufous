@@ -15,7 +15,7 @@ Membre du site. Implémente `UserInterface` (Symfony Security).
 | `nickname`, `city`, `country`, `gender`, `birth`, `picture` | string/date | Profil |
 | `slug` | string | Généré automatiquement depuis prénom+nom (`initializeSlug`, `@PrePersist`/`@PreUpdate`) |
 | `validation` | bool | Compte validé par un admin ou non |
-| `wish` | string | Rôle souhaité à l'inscription (`Administrator`, `Binioufous`, `Member`, `Simple`) |
+| `wish` | string | Rôle souhaité à l'inscription. Seulement 3 valeurs possibles en pratique (`RegistrationType`) : `Binioufous`, `Member`, `Simple`. `Administrator`/`Accountant` ne sont jamais un `wish` : ces 2 rôles s'obtiennent uniquement par promotion manuelle d'un admin, cf. [role.md](role.md) |
 | `instrument` | `Instrument` | Relation ManyToOne |
 | `roles` | `Collection<Role>` | Relation ManyToMany (côté inverse, `mappedBy="users"`) |
 | `createdAt` | datetime | Rempli automatiquement (`@PrePersist`) |

@@ -1,25 +1,63 @@
 # Rôles utilisateurs
 
-Résumé des rôles définis dans l'application (voir `src/DataFixtures/AppFixtures.php`, `src/Entity/User.php`, `config/packages/security.yaml`).
+Référence à jour (2026-08-11) de tous les rôles, de ce que chacun donne accès à faire, et de comment un compte peut cumuler plusieurs rôles. Voir aussi [security.md](security.md) pour le détail technique de `access_control`.
 
-| Rôle | Description (fixtures) | Accès / droits observés dans le code |
+## Les 6 rôles
+
+| Rôle | Description (`Role::$description` en base) | Comment on l'obtient |
 |---|---|---|
-| `ROLE_ADMIN` | Administrator | Accès à `/admin/*` (`security.yaml`). Peut valider les inscriptions (`AdminController::validUser`), attribuer les rôles Admin et Comptable (`addAdminRole`, `addAccountantRole`), voit toutes les listes d'utilisateurs (admins, comptables, binioufous, membres, simples) sur le desk, accède au menu "Songs" et "Admin". |
-| `ROLE_COMPTA` | Accountant (comptable) | Accès à une page dédiée `accountant` depuis le desk. Attribué via `AdminController::addAccountantRole`. |
-| `ROLE_BINIOUFOUS` | Binioufous (membres de l'association/groupe) | Voit la liste des Binioufous sur le desk, accès au menu "Songs". C'est l'un des deux souhaits (`wish`) possibles à l'inscription avec `ROLE_MEMBER`. |
-| `ROLE_MEMBER` | Member | Accès aux mailing-lists souscrites et aux chansons favorites sur le desk. Deuxième "souhait" possible à l'inscription. |
-| `ROLE_SIMPLE` | Simple | Accès basique : mailing-lists souscrites uniquement. Rôle par défaut pour les "simples utilisateurs" (souhait `Simple`). |
-| `ROLE_USER` | User | Rôle de base attribué automatiquement à **tout** utilisateur authentifié (`User::getRoles()` l'ajoute toujours). Donne accès à `/desk` (`security.yaml`). |
+| `ROLE_ADMIN` | Administrator | Jamais via l'inscription. Accordé manuellement par un admin (`AdminController::addAdminRole`, bouton "Faire administrateur·rice" sur `/admin/user/{slug}`). |
+| `ROLE_COMPTA` | Accountant | Jamais via l'inscription. Accordé manuellement par un admin (`AdminController::addAccountantRole`, bouton "Faire comptable"). |
+| `ROLE_BINIOUFOUS` | Binioufous | Soit choisi comme souhait (`wish`) à l'inscription puis validé par un admin, soit accordé manuellement à tout moment par un admin (`AdminController::addBinioufousRole`, bouton "Faire binioufous" sur `/admin/user/{slug}`, indépendamment du souhait d'origine). |
+| `ROLE_MEMBER` | Member | Choisi comme souhait à l'inscription, accordé à la validation par un admin. Pas de promotion manuelle dédiée (contrairement à Binioufous). |
+| `ROLE_SIMPLE` | Simple | Choisi comme souhait à l'inscription, accordé à la validation. Pas de promotion manuelle dédiée. |
+| `ROLE_USER` | User | Implicite : `User::getRoles()` l'ajoute toujours en dur, en plus des rôles réellement stockés en base. Jamais retirable (pas de bouton "poubelle" sur sa pastille, `admin/user/show.html.twig`). |
 
-## Fonctionnement général
+**Les rôles sont cumulatifs et indépendants**, pas un statut unique : un compte peut avoir `ROLE_ADMIN` + `ROLE_COMPTA` + `ROLE_BINIOUFOUS` en même temps (cas du compte `admin@admin.com` des fixtures). Il n'existe aucune hiérarchie ni exclusion en base ; la notion de "priorité" n'existe que dans l'affichage de certaines pages (voir plus bas).
 
-- Un utilisateur choisit un **souhait** (`wish`) à l'inscription : `Administrator`, `Binioufous`, `Member` ou `Simple`.
-- Tant que le compte n'est pas validé (`validation = false`), un message d'attente s'affiche sur le desk.
-- Un administrateur valide l'inscription (`/admin/{wish}/{slug}/valid`), ce qui attribue le rôle correspondant au souhait (`Role::findOneByDescription($wish)`).
-- `ROLE_ADMIN` et `ROLE_COMPTA` ne sont pas choisis à l'inscription : ils sont accordés manuellement par un admin via `/admin/setadmin/{slug}` et `/admin/setaccountant/{slug}`.
-- `ROLE_USER` est implicite et cumulé avec tous les autres rôles.
+## Qui a accès à quoi
 
-## Points d'attention relevés
+Basé sur `config/packages/security.yaml` (`access_control`, seule couche de contrôle d'accès basée sur les rôles : aucune vérification de rôle en dur dans les contrôleurs, cf. [security.md](security.md)).
 
-- ~~Incohérence de casse/orthographe entre les rôles stockés et ceux testés dans les templates~~ : corrigé dans `templates/desk/index.html.twig` (`ROLE_BINOUFOUS` → `ROLE_BINIOUFOUS`, `ROLE_SIMPLE` → `ROLE_Simple`).
-- ~~`ROLE_Simple` était le seul rôle stocké en casse mixte, tous les autres étant en MAJUSCULES (`ROLE_ADMIN`, `ROLE_COMPTA`...)~~ : corrigé le 2026-08-11, renommé en `ROLE_SIMPLE` dans `AppFixtures.php` et `templates/desk/index.html.twig` (les deux seuls endroits où la chaîne apparaissait). Fonctionnellement neutre (comparaison de chaîne exacte des deux côtés), pur alignement de convention.
+| Zone / route | Rôle(s) requis | Notes |
+|---|---|---|
+| `/` , `/story`, `/story/mini`, `/schedule`, `/schedule/event/{id}.ics` | public | Pages vitrines, aucune restriction. |
+| `/music`, `/music/{id}` (liste + fiche d'un morceau) | public | Catalogue en lecture, y compris pour un visiteur non connecté. |
+| `/music/new` (créer un morceau) | `ROLE_ADMIN` | |
+| `/music/{id}/edit` | `ROLE_ADMIN` | |
+| `/music/{id}` en `DELETE` | `ROLE_ADMIN` | |
+| `/music/{id}/voice` (ajouter/supprimer une voix sur un morceau) | `ROLE_ADMIN` | |
+| `/music/quick-upload` (dépôt rapide d'un mp3) | `ROLE_BINIOUFOUS` (ou `ROLE_ADMIN`) | |
+| `/join`, `/login`, `/logout`, `/register`, `/locale/{locale}` | public | Flux pré-connexion. |
+| `/desk`, `/desk/profile`, `/desk/update-password`, `/desk/files` (hub) | `ROLE_USER` | Donc tout compte connecté et validé ou non. Le hub `/desk/files` est **atteignable** par n'importe quel `ROLE_USER`, mais n'affiche une carte que pour les espaces auxquels le compte a vraiment accès (peut donc s'afficher vide pour un `ROLE_SIMPLE`/`ROLE_MEMBER` sans autre rôle). |
+| `/desk/files/music/*` (espace Musique : dossiers, documents, morceaux/voix favorites) | `ROLE_BINIOUFOUS` ou `ROLE_ADMIN` | Lecture et écriture (upload/suppression/déplacement/création de dossier) soumises à la **même règle**. |
+| `/desk/files/admin/*` (espace Administratif) | `ROLE_ADMIN` | |
+| `/desk/files/accounting/*` (espace Comptabilité) | `ROLE_COMPTA` ou `ROLE_ADMIN` | |
+| `/accountant` | `ROLE_COMPTA` | |
+| `/admin/*` (validation des inscriptions, promotion de rôle, fiche utilisateur, planning `/admin/event/*`) | `ROLE_ADMIN` | |
+
+## Comportement des comptes multi-rôles
+
+Deux logiques différentes cohabitent dans le projet, pas interchangeables :
+
+- **Cumul (OR)**, utilisé pour `/desk/files/*` et le hub `/desk/files` : chaque espace/carte a sa propre condition `is_granted('ROLE_X') or is_granted('ROLE_ADMIN')`, évaluée indépendamment. Un compte avec plusieurs rôles voit simplement plusieurs cartes/espaces, sans conflit possible.
+- **Priorité (une seule branche)**, utilisé sur `/desk` (`templates/desk/index.html.twig`) : un seul bloc de contenu s'affiche, celui du rôle le plus "haut" dans l'ordre admin > binioufous > membre > simple (`{% if is_granted('ROLE_ADMIN') %}...{% elseif is_granted('ROLE_BINIOUFOUS') %}...{% endif %}`). Le bloc admin contient déjà la liste des binioufous (entre autres), donc un compte admin+binioufous ne voit **pas** deux fois le contenu binioufous : c'est la branche admin, plus complète, qui l'emporte.
+
+  **Bug corrigé le 2026-08-11** : avant, ce même `/desk` bouclait sur `app.user.roles` (`{% for role in app.user.roles %}`) et évaluait le if/elseif à *chaque* rôle du compte plutôt qu'une seule fois pour le compte entier. Résultat : un compte admin+binioufous déclenchait la branche admin (qui inclut déjà la liste des binioufous) **et** la branche binioufous séparément, donc "Les Binioufous" s'affichait deux fois sur la page. Remplacé par une évaluation unique.
+
+## Comment un rôle est attribué (flux détaillé)
+
+1. **Inscription** (`/register`) : l'utilisateur·ice choisit un souhait (`User::$wish`), une des 3 valeurs `Binioufous`/`Member`/`Simple` (`RegistrationType`). Le compte est créé avec `validation = false` et **aucun rôle** (à part `ROLE_USER` implicite).
+2. **Le compte apparaît en attente** sur `/admin/valid` (`UserRepository::findUnvalids()`, filtre `validation = false`), et le membre voit un message "en attente de validation" sur son `/desk` tant que `validation` reste `false`.
+3. **Un admin ouvre la fiche** (`/admin/{wish}/{slug}/valid`, affiche souhait/instrument/pays/ville/date de naissance/date de création pour aider à la décision) et clique **Valider** : `AdminController::validUser()` attribue le rôle correspondant au souhait (`Role::findOneByDescription($wish)`) **et** passe `validation` à `true`, dans la même action.
+
+   **Bug corrigé le 2026-08-11** : avant, une case à cocher "Valider l'utilisateur ?" (non cochée par défaut) ne contrôlait en réalité que `User::$validation`, jamais l'attribution du rôle elle-même (accordée inconditionnellement au submit du formulaire, quelle que soit la case). Un admin qui cliquait "Valider" sans avoir pensé à cocher la case obtenait donc un membre avec son rôle déjà actif, mais `validation` resté à `false` : "en attente de validation" affiché indéfiniment sur son `/desk` malgré un accès déjà complet, et toujours listé comme en attente sur `/admin/valid`. La case a été retirée (`ValidRoleType`) : un seul bouton "Valider" qui fait les deux choses ensemble, sans ambiguïté.
+4. **Refuser une inscription en attente** (`admin/unvalids.html.twig`, bouton "Refuser") : `AdminController::refuseUser()` supprime purement et simplement le compte (jamais validé, pas de rôle à retirer).
+5. **Promotion manuelle** (`/admin/user/{slug}`, boutons "Faire administrateur·rice"/"Faire comptable"/"Faire binioufous", visibles seulement pour les rôles que le compte n'a pas déjà) : ajoute le rôle directement, sans passer par le souhait d'origine ni changer `validation`.
+6. **Retirer un rôle** (pastille + bouton poubelle sur `/admin/user/{slug}`, sauf `ROLE_USER` qui n'a pas de bouton) : `AdminController::removeUserRole()`.
+
+## Points d'attention
+
+- **`/music/{id}` affiche un lien "modifier" et un formulaire de suppression à tout le monde**, y compris un visiteur anonyme (`templates/music/show.html.twig`), alors que les routes `track_edit`/`track_delete` derrière sont réservées à `ROLE_ADMIN`. Cliquer dessus sans le rôle renvoie un 403, mais rien dans le template ne les masque pour les autres visiteurs. Pas corrigé (repéré pendant l'audit du 2026-08-11, hors périmètre de la demande initiale), mais à garder en tête si une passe UI/UX est faite sur `/music`.
+- Le hub `/desk/files` (voir tableau plus haut) est **atteignable** par tout `ROLE_USER`, y compris un compte qui n'a accès à aucun espace : la page s'affiche simplement sans aucune carte plutôt que de renvoyer un 403. Comportement volontaire, pas un bug.
+- `ROLE_MEMBER`/`ROLE_SIMPLE` n'ont pas de bouton de promotion manuelle dédié comme `ROLE_BINIOUFOUS` (pas de "Faire membre"/"Faire simple" sur `/admin/user/{slug}`) : ces deux rôles ne s'obtiennent aujourd'hui que via la validation du souhait d'inscription.

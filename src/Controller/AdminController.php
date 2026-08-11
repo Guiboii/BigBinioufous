@@ -128,7 +128,12 @@ class AdminController extends AbstractController
     }
 
     /**
-     * Permet de valider l'inscription.
+     * Permet de valider l'inscription : attribue le rôle correspondant au
+     * souhait (wish) choisi à l'inscription et marque le compte comme
+     * validé. Les deux se produisent ensemble au submit, pas de case à
+     * cocher séparée (cf. ValidRoleType, ancien champ retiré le 2026-08-11 :
+     * ne gouvernait que $validation, jamais l'attribution du rôle elle-même,
+     * source de confusion).
      *
      * @return Request
      */
@@ -144,6 +149,7 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->addRole($role);
+            $user->setValidation(true);
             $manager->persist($user);
             $manager->flush();
 
