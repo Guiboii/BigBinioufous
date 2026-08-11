@@ -69,6 +69,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255)]
     private $wish;
 
+    /**
+     * Numéro de carte d'adhérent·e, renseigné à l'inscription si la personne
+     * indique être déjà adhérente (cotisation HelloAsso déjà payée),
+     * vérifié manuellement par un·e admin lors de la validation du compte.
+     * Nul pour les comptes créés avant cette fonctionnalité, ou pour les
+     * personnes qui ne se déclarent pas déjà adhérentes.
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $memberCardNumber;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $picture;
 
@@ -295,6 +305,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setWish(string $wish): self
     {
         $this->wish = $wish;
+
+        return $this;
+    }
+
+    public function getMemberCardNumber(): ?string
+    {
+        return $this->memberCardNumber;
+    }
+
+    public function setMemberCardNumber(?string $memberCardNumber): self
+    {
+        $this->memberCardNumber = $memberCardNumber;
 
         return $this;
     }

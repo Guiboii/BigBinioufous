@@ -146,6 +146,16 @@ join:
     pay_subscription: "PAYER UNE COTISATION POUR UN AN"
     submit: "Rejoindre !!"
 
+register:
+    step_label: "Pour commencer :"
+    already_member_question: "Es-tu déjà adhérent·e ?"
+    already_member_hint: "As-tu déjà payé ta cotisation HelloAsso ?"
+    member_card_number: "Numéro de carte d'adhérent·e"
+    member_card_number_placeholder: "Le numéro indiqué sur ta carte ou ta confirmation HelloAsso"
+    member_card_note: "Ce numéro sera vérifié manuellement par un·e administrateur·rice au moment de valider ton inscription."
+    not_member_hint: "Pas de souci ! Deux possibilités :"
+    or_choose_simple: "Ou, si tu ne veux pas encore cotiser, choisis « Un grand fan !! » dans le champ « Tu veux être » plus bas : un profil restreint, sans cotisation."
+
 desk:
     add_picture: "Ajoute une photo !"
     hello: "Salut %nickname% !"
@@ -298,6 +308,8 @@ Country: Pays
 "(sorry for that)": "(désolé pour ça)"
 Male: Homme
 Female: Femme
+Yes: Oui
+No: Non
 "Still looking for...": "Toujours en train de chercher..."
 "First Name": Prénom
 "Your first name": Ton prénom

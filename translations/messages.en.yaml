@@ -146,6 +146,16 @@ join:
     pay_subscription: "PAY A SUBSCRIPTION FOR ONE YEAR"
     submit: "Join !!"
 
+register:
+    step_label: "To start:"
+    already_member_question: "Are you already a member?"
+    already_member_hint: "Have you already paid your HelloAsso subscription?"
+    member_card_number: "Member card number"
+    member_card_number_placeholder: "The number shown on your card or HelloAsso confirmation"
+    member_card_note: "This number will be manually checked by an administrator when your registration is validated."
+    not_member_hint: "No worries! Two options:"
+    or_choose_simple: 'Or, if you don''t want to subscribe yet, choose "A big Fan !!" in the "You want to be" field below: a restricted profile, no subscription needed.'
+
 desk:
     add_picture: "Add picture!"
     hello: "Hi %nickname% !"
@@ -291,6 +301,8 @@ Country: Country
 "(sorry for that)": "(sorry for that)"
 Male: Male
 Female: Female
+Yes: Yes
+No: No
 "Still looking for...": "Still looking for..."
 "First Name": First Name
 "Your first name": Your first name
