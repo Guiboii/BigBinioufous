@@ -11,8 +11,6 @@ class AccountantController extends AbstractController
     #[Route('/accountant', name: 'accountant')]
     public function index(): Response
     {
-        return $this->render('accountant/index.html.twig', [
-            'controller_name' => 'AccountantController',
-        ]);
+        return $this->render('accountant/index.html.twig');
     }
 }

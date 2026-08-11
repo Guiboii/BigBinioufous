@@ -20,7 +20,8 @@ nav:
     join_or_login: Join or Login
     tagline: "The craziest oboe band of the Galaxy !!"
     songs: Songs
-    admin: Admin
+    planning: Schedule
+    accountant: Accountant
     toggle: Toggle navigation
 
 contact:
@@ -197,13 +198,6 @@ music:
     player_region: Audio player
 
 Id: Id
-
-accountant:
-    title: "Hello AccountantController!"
-    placeholder_heading: "Hello %name%!"
-    placeholder_intro: "This friendly message is coming from:"
-    placeholder_controller: Your controller at
-    placeholder_template: Your template at
 
 admin:
     compta_title: Compta

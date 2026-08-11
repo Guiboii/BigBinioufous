@@ -22,7 +22,8 @@ nav:
     join_or_login: "Kevredañ pe kennaskañ"
     tagline: "Ar strollad sonerezh ar muiañ foll er Galaksi !!"
     songs: Tonioù
-    admin: Melestradurezh
+    planning: Deiziadur
+    accountant: Kontabilite
     toggle: "Diskouez/kuzhat ar merdeiñ"
 
 contact:
@@ -157,13 +158,6 @@ music:
     player_region: "C'hoarier son"
 
 Id: Id
-
-accountant:
-    title: "Salud AccountantController !"
-    placeholder_heading: "Salud %name% !"
-    placeholder_intro: "Ar gemennadenn-mañ a zeu eus :"
-    placeholder_controller: "Da c'houarner e"
-    placeholder_template: "Da patrom e"
 
 admin:
     compta_title: Kontabilite

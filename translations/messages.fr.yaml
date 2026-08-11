@@ -20,7 +20,8 @@ nav:
     join_or_login: Rejoindre ou se connecter
     tagline: "Le groupe de hautbois le plus déjanté de la Galaxie !!"
     songs: Morceaux
-    admin: Administration
+    planning: Planning
+    accountant: Comptabilité
     toggle: Basculer la navigation
 
 contact:
@@ -197,13 +198,6 @@ music:
     player_region: "Lecteur audio"
 
 Id: Id
-
-accountant:
-    title: "Bonjour AccountantController !"
-    placeholder_heading: "Bonjour %name% !"
-    placeholder_intro: "Ce message sympathique vient de :"
-    placeholder_controller: "Ton contrôleur à"
-    placeholder_template: "Ton template à"
 
 admin:
     compta_title: Compta
