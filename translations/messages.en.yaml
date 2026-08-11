@@ -211,6 +211,8 @@ admin:
     contact: Contact
     make_admin: Make this user an administrator
     make_accountant: Make this user an accountant
+    confirm_make_admin: "Make this user an administrator?"
+    confirm_make_accountant: "Make this user an accountant?"
     already_has_role: This person already has this role.
     roles: Roles
     validate: Validate

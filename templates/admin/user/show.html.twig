@@ -42,10 +42,16 @@
                 <h2>{{ 'admin.promote_section'|trans }}</h2>
                 <div class="row centered mb-4">
                     {% if 'ROLE_ADMIN' not in user.roles %}
-                        <a href="{{ path('create_admin', {slug: user.slug}) }}" class="btn btn-green mr-2">{{ 'admin.make_admin'|trans }}</a>
+                        <form method="post" action="{{ path('create_admin', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_admin'|trans|e('js') }}');" class="btn-form mr-2">
+                            <input type="hidden" name="_token" value="{{ csrf_token('create_admin' ~ user.id) }}">
+                            <button type="submit" class="btn btn-green">{{ 'admin.make_admin'|trans }}</button>
+                        </form>
                     {% endif %}
                     {% if 'ROLE_COMPTA' not in user.roles %}
-                        <a href="{{ path('create_accountant', {slug: user.slug}) }}" class="btn btn-green ml-2">{{ 'admin.make_accountant'|trans }}</a>
+                        <form method="post" action="{{ path('create_accountant', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_accountant'|trans|e('js') }}');" class="btn-form ml-2">
+                            <input type="hidden" name="_token" value="{{ csrf_token('create_accountant' ~ user.id) }}">
+                            <button type="submit" class="btn btn-green">{{ 'admin.make_accountant'|trans }}</button>
+                        </form>
                     {% endif %}
                 </div>
             {% endif %}

@@ -218,6 +218,8 @@ admin:
     contact: Contacter
     make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice"
     make_accountant: "Faire de cet utilisateur·rice un·e comptable"
+    confirm_make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice ?"
+    confirm_make_accountant: "Faire de cet utilisateur·rice un·e comptable ?"
     already_has_role: "Cette personne a déjà ce rôle."
     roles: Rôles
     validate: Valider

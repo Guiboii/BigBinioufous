@@ -4,8 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Role;
 use App\Entity\User;
-use App\Form\AddAccountantType;
-use App\Form\AddAdminType;
 use App\Form\EditUserType;
 use App\Form\ValidRoleType;
 use App\Repository\RoleRepository;
@@ -34,73 +32,49 @@ class AdminController extends AbstractController
     }
 
     /**
-     * Ajoute le rôle d'admin à un utilisateur.
+     * Ajoute le rôle d'admin à un utilisateur. Auparavant un lien vers une
+     * page de confirmation à part (formulaire sans aucun champ, juste un
+     * 2e bouton "Faire de cet utilisateur·rice un·e administrateur·rice" à
+     * recliquer) : 2 clics pour rien, retour utilisatrice du 2026-08-11.
+     * Action directe en un clic désormais, même pattern CSRF que
+     * refuseUser/removeUserRole.
      */
-    #[Route('/admin/setadmin/{slug}', name: 'create_admin')]
-    public function addAdminRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request)
+    #[Route('/admin/setadmin/{slug}', name: 'create_admin', methods: ['POST'])]
+    public function addAdminRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
     {
-        $roles = $repo->findAll();
-
-        $form = $this->createForm(AddAdminType::class, $user);
-
-        $admin = $repo->findOneByTitle('ROLE_ADMIN');
-
-        dump($admin);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user->addRole($admin);
+        if ($this->isCsrfTokenValid('create_admin'.$user->getId(), $request->request->get('_token'))) {
+            $user->addRole($repo->findOneByTitle('ROLE_ADMIN'));
             $manager->persist($user);
             $manager->flush();
 
             $this->addFlash(
                 'success',
-                'Role add with success'
+                'Rôle ajouté'
             );
-
-            return $this->redirectToRoute('desk');
         }
 
-        return $this->render('admin/user/addadmin.html.twig', [
-            'user' => $user,
-            'roles' => $roles,
-            'form' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
     }
 
     /**
-     * Ajoute le rôle de comptable à un utilisateur.
+     * Ajoute le rôle de comptable à un utilisateur. Même simplification
+     * que addAdminRole ci-dessus.
      */
-    #[Route('/admin/setaccountant/{slug}', name: 'create_accountant')]
-    public function addAccountantRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request)
+    #[Route('/admin/setaccountant/{slug}', name: 'create_accountant', methods: ['POST'])]
+    public function addAccountantRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
     {
-        $roles = $repo->findAll();
-
-        $form = $this->createForm(AddAccountantType::class, $user);
-
-        $accountant = $repo->findOneByTitle('ROLE_COMPTA');
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user->addRole($accountant);
+        if ($this->isCsrfTokenValid('create_accountant'.$user->getId(), $request->request->get('_token'))) {
+            $user->addRole($repo->findOneByTitle('ROLE_COMPTA'));
             $manager->persist($user);
             $manager->flush();
 
             $this->addFlash(
                 'success',
-                'Role add with success'
+                'Rôle ajouté'
             );
-
-            return $this->redirectToRoute('desk');
         }
 
-        return $this->render('admin/user/addaccountant.html.twig', [
-            'user' => $user,
-            'roles' => $roles,
-            'form' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
     }
 
     /**

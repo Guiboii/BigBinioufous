@@ -177,6 +177,8 @@ admin:
     contact: Darempred
     make_admin: Lakaat an implijer-mañ da velestrour
     make_accountant: Lakaat an implijer-mañ da gontour
+    confirm_make_admin: "Lakaat an implijer-mañ da velestrour ?"
+    confirm_make_accountant: "Lakaat an implijer-mañ da gontour ?"
     roles: Rolloù
     validate: Kadarnaat
     wish: C'hoant
