@@ -446,7 +446,12 @@ body.desk .role-badge {
     gap: 0.6rem;
     background: var(--bb-green-mid);
     color: var(--bb-white);
-    padding: 0.4rem 0.5rem 0.4rem 1rem;
+    /* Padding asymétrique à l'origine (moins à droite, pour "laisser la
+       place" au bouton poubelle) : ça se voit trop sur "Utilisateur·rice",
+       seule pastille sans bouton (ROLE_USER, jamais une vraie assignation
+       retirable), le bord droit paraissait plus serré que le gauche.
+       Symétrique désormais, quel que soit le contenu de la pastille. */
+    padding: 0.4rem 1rem;
     border-radius: 25px;
     font-weight: bold;
 }
