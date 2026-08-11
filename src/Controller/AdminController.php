@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Role;
 use App\Entity\User;
 use App\Form\AddAccountantType;
 use App\Form\AddAdminType;
@@ -184,5 +185,28 @@ class AdminController extends AbstractController
         }
 
         return $this->redirectToRoute('valid');
+    }
+
+    /**
+     * Retire un rôle à un utilisateur (bouton "poubelle" sur les pastilles
+     * de rôle de admin/user/show.html.twig, jusqu'ici sans action réelle
+     * derrière : type="button" sans route ni CSRF). Même pattern que
+     * refuseUser/EventController::delete.
+     */
+    #[Route('/admin/user/{slug}/role/{roleId}', name: 'user_remove_role', methods: ['DELETE'])]
+    public function removeUserRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, #[MapEntity(mapping: ['roleId' => 'id'])] Role $role, EntityManagerInterface $manager, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('remove_role'.$user->getId().$role->getId(), $request->request->get('_token'))) {
+            $user->removeRole($role);
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Rôle retiré'
+            );
+        }
+
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
     }
 }

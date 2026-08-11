@@ -198,6 +198,13 @@ music:
 
 Id: Id
 
+Administrator: "Administrateur·rice"
+Accountant: Comptable
+Binioufous: Binioufous
+Member: Membre
+Simple: Simple
+User: "Utilisateur·rice"
+
 admin:
     compta_title: Compta
     compta_hello: "Bonjour %name% !"
@@ -219,6 +226,7 @@ admin:
     edit_user_aria: "Modifier le profil de %name%"
     validate_user_aria: "Valider l'inscription de %name%"
     remove_role_aria: "Retirer le rôle « %role% »"
+    confirm_remove_role: "Retirer le rôle « %role% » ?"
     refuse: Refuser
     refuse_user_aria: "Refuser l'inscription de %name%"
     confirm_refuse: "Refuser l'inscription de %name% ? Le compte sera supprimé."

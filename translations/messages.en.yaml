@@ -219,6 +219,7 @@ admin:
     edit_user_aria: "Edit %name%'s profile"
     validate_user_aria: "Approve %name%'s registration"
     remove_role_aria: "Remove role \"%role%\""
+    confirm_remove_role: "Remove the \"%role%\" role?"
     refuse: Refuse
     refuse_user_aria: "Refuse %name%'s registration"
     confirm_refuse: "Refuse %name%'s registration? The account will be deleted."

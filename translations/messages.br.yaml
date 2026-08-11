@@ -158,6 +158,12 @@ music:
 
 Id: Id
 
+Administrator: Melestrour
+Accountant: Kontour
+Binioufous: Binioufous
+Simple: Eeun
+User: Implijer
+
 admin:
     compta_title: Kontabilite
     compta_hello: "Salud %name% !"
@@ -178,6 +184,7 @@ admin:
     edit_user_aria: "Kemmañ profil %name%"
     validate_user_aria: "Kadarnaat enskrivadur %name%"
     remove_role_aria: "Lemel ar roll « %role% »"
+    confirm_remove_role: "Lemel ar roll « %role% » ?"
     edit_profile_section: "Kemmañ ar profil"
 
 Name: Anv
