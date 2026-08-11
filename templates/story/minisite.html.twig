@@ -96,7 +96,7 @@
 
                     <section id="contact">
                         <h2>{{ 'contact.title'|trans }}</h2>
-                        <form class="term-form" id="minisite-contact-form">
+                        <form class="term-form" id="minisite-contact-form" method="post" action="{{ path('contact_submit') }}">
                             <div class="term-field">
                                 <label for="minisite-contact-name">{{ 'contact.name_label'|trans }}</label>
                                 <input type="text" id="minisite-contact-name" name="name" placeholder="John Doe">
@@ -109,7 +109,17 @@
                                 <label for="minisite-contact-message">{{ 'contact.message_label'|trans }}</label>
                                 <textarea id="minisite-contact-message" name="message" rows="3"></textarea>
                             </div>
-                            <button type="button" class="term-submit">{{ 'contact.submit'|trans }}</button>
+                            {# Honeypot anti-bot, cf. story/index.html.twig pour le même mécanisme. #}
+                            <div class="honeypot-field" aria-hidden="true">
+                                <label for="minisite-contact-website">Site web</label>
+                                <input type="text" id="minisite-contact-website" name="website" tabindex="-1" autocomplete="off">
+                            </div>
+                            <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
+                            <p class="term-field-feedback" role="status" aria-live="polite"
+                               data-sending="{{ 'contact.sending'|trans }}"
+                               data-success="{{ 'contact.success'|trans }}"
+                               data-error="{{ 'contact.error'|trans }}"></p>
+                            <button type="submit" class="term-submit">{{ 'contact.submit'|trans }}</button>
                         </form>
                     </section>
                 </main>
@@ -135,5 +145,6 @@
             updateClock();
             setInterval(updateClock, 1000 * 15);
         </script>
+        <script src="{{ asset('story/minisite-contact.js') }}"></script>
     </body>
 </html>

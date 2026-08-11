@@ -250,6 +250,39 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+var contactFeedback = contactForm.querySelector('.contact-feedback');
+var contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
+
+contactForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  contactSubmitBtn.disabled = true;
+  contactFeedback.textContent = contactFeedback.dataset.sending;
+
+  fetch(contactForm.action, {
+    method: 'POST',
+    body: new FormData(contactForm),
+    headers: { Accept: 'application/json' },
+  })
+    .then(function (response) {
+      return response.json().then(function (data) {
+        return { ok: response.ok, data: data };
+      });
+    })
+    .then(function (result) {
+      contactSubmitBtn.disabled = false;
+      if (result.ok && result.data.success) {
+        contactFeedback.textContent = contactFeedback.dataset.success;
+        contactForm.reset();
+      } else {
+        contactFeedback.textContent = contactFeedback.dataset.error;
+      }
+    })
+    .catch(function () {
+      contactSubmitBtn.disabled = false;
+      contactFeedback.textContent = contactFeedback.dataset.error;
+    });
+});
+
 function playModifierAnimation(from, fSpeed, to, tSpeed) {
   to.setLoop(THREE.LoopOnce);
   to.reset();

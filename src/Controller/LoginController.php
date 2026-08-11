@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\AccountType;
 use App\Form\PasswordUpdateType;
 use App\Form\RegistrationType;
+use App\Mailer\RegistrationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,7 +63,7 @@ class LoginController extends AbstractController
      * @return Response
      */
     #[Route('/register', name: 'register')]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, SluggerInterface $slugger)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, SluggerInterface $slugger, RegistrationMailer $registrationMailer)
     {
         $user = new User();
 
@@ -110,6 +111,12 @@ class LoginController extends AbstractController
 
             $manager->persist($user);
             $manager->flush();
+
+            if ($validation) {
+                $registrationMailer->sendAutoValidated($user);
+            } else {
+                $registrationMailer->sendPendingValidation($user);
+            }
 
             $this->addFlash(
                 'success', 'Welcome ! Log you now, your account has been created'

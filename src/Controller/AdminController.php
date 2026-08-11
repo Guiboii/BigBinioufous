@@ -6,6 +6,7 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Form\EditUserType;
 use App\Form\ValidRoleType;
+use App\Mailer\RegistrationMailer;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -112,7 +113,7 @@ class AdminController extends AbstractController
      * @return Request
      */
     #[Route('/admin/{wish}/{slug}/valid', name: 'user_valid')]
-    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, RoleRepository $repo, Request $request)
+    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, RoleRepository $repo, Request $request, RegistrationMailer $registrationMailer)
     {
         $wish = $user->getWish();
         $role = $repo->findOneByDescription($wish);
@@ -125,6 +126,8 @@ class AdminController extends AbstractController
             $user->addRole($role);
             $manager->persist($user);
             $manager->flush();
+
+            $registrationMailer->sendValidated($user);
 
             $this->addFlash(
                 'success',

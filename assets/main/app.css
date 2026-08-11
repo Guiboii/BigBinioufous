@@ -213,6 +213,18 @@ canvas {
     top: 23px;
 }
 
+/* Honeypot anti-bot : hors écran plutôt que display:none, certains bots
+   ignorent déjà display:none mais lisent quand même le champ pour le
+   remplir "au cas où" un lecteur d'écran le montre. */
+.honeypot-field {
+    position: absolute;
+    left: -9999px;
+}
+
+.contact-feedback {
+    min-height: 1.2em;
+}
+
 form {
     background: var(--bb-green-mid);
     text-align: left;
