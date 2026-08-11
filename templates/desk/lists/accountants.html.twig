@@ -4,6 +4,7 @@
         <tr>
             <th>{{ 'Name'|trans }}</th>
             <th>{{ 'Picture'|trans }}</th>
+            <th>{{ 'Country'|trans }}</th>
             <th>{{ 'City'|trans }}</th>
             <th>{{ 'Instrument'|trans }}</th>
             <th>{{ 'Actions'|trans }}</th>
@@ -29,6 +30,7 @@
                         <img src="{{ asset('uploads/pictures/' ~ accountant.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ accountant.firstname }}">
                     {% endif %}
                 </td>
+                <td>{{ accountant.country }}</td>
                 <td>{{ accountant.city }}</td>
                 <td>{{ accountant.instrument.title }}</td>
                 <td>

@@ -532,6 +532,52 @@ body.desk .table .btn-green {
     padding: 0;
 }
 
+/* Les 5 tableaux de /desk (admins/comptables/binioufous/membres/simples,
+   templates/desk/lists/*.twig) sont 5 <table> séparées avec les mêmes
+   colonnes (Nom/Photo/Pays/Ville/Instrument/Actions) : en layout auto (par
+   défaut), chaque table calcule ses largeurs de colonne indépendamment
+   selon SON propre contenu, donc la colonne "Actions" (et les autres) ne
+   tombe pas à la même position d'une table à l'autre malgré des colonnes
+   identiques (retour utilisatrice du 2026-08-11 : "action des tableaux pas
+   alignés"). table-layout: fixed + mêmes largeurs en % sur toutes forcent
+   un alignement réel colonne par colonne, plutôt qu'une coïncidence liée au
+   contenu. */
+body.desk .table {
+    table-layout: fixed;
+    width: 100%;
+}
+body.desk .table th:nth-child(1),
+body.desk .table td:nth-child(1) {
+    width: 22%;
+}
+body.desk .table th:nth-child(2),
+body.desk .table td:nth-child(2) {
+    width: 18%;
+}
+body.desk .table th:nth-child(3),
+body.desk .table td:nth-child(3) {
+    width: 16%;
+}
+body.desk .table th:nth-child(4),
+body.desk .table td:nth-child(4) {
+    width: 16%;
+}
+body.desk .table th:nth-child(5),
+body.desk .table td:nth-child(5) {
+    width: 16%;
+}
+body.desk .table th:nth-child(6),
+body.desk .table td:nth-child(6) {
+    width: 12%;
+}
+/* table-layout: fixed ne fait plus rétrécir automatiquement une colonne
+   pour un mot très long (ex. "South Georgia and the South Sandwich
+   Islands") : autorise le retour à la ligne plutôt qu'un débordement hors
+   de la cellule. */
+body.desk .table td {
+    overflow-wrap: break-word;
+}
+
 /* Texte blanc au survol (pas gold/rouge) : même bug de contraste que sur la
    navbar, ici sur les CTA "payer l'adhésion" / "s'abonner" */
 .red-hover:hover {
