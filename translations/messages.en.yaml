@@ -257,9 +257,13 @@ admin:
     make_admin: Make this user an administrator
     make_accountant: Make this user an accountant
     make_binioufous: Make this user a binioufous
+    make_member: Make this user a member
+    make_simple: Make this user a simple user
     confirm_make_admin: "Make this user an administrator?"
     confirm_make_accountant: "Make this user an accountant?"
     confirm_make_binioufous: "Make this user a binioufous?"
+    confirm_make_member: "Make this user a member?"
+    confirm_make_simple: "Make this user a simple user?"
     already_has_role: This person already has this role.
     roles: Roles
     validate: Validate

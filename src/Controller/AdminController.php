@@ -98,6 +98,40 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
     }
 
+    #[Route('/admin/setmember/{slug}', name: 'create_member', methods: ['POST'])]
+    public function addMemberRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('create_member'.$user->getId(), $request->request->get('_token'))) {
+            $user->addRole($repo->findOneByTitle('ROLE_MEMBER'));
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Rôle ajouté'
+            );
+        }
+
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
+    }
+
+    #[Route('/admin/setsimple/{slug}', name: 'create_simple', methods: ['POST'])]
+    public function addSimpleRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('create_simple'.$user->getId(), $request->request->get('_token'))) {
+            $user->addRole($repo->findOneByTitle('ROLE_SIMPLE'));
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Rôle ajouté'
+            );
+        }
+
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
+    }
+
     /**
      * Permet d'afficher un utilisateur.
      */
