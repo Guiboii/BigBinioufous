@@ -19,7 +19,7 @@ nav:
     logout: Déconnexion
     join_or_login: Rejoindre ou se connecter
     tagline: "Le groupe de hautbois le plus déjanté de la Galaxie !!"
-    songs: Morceaux
+    folders: Dossiers
     planning: Planning
     accountant: Comptabilité
     toggle: Basculer la navigation
@@ -155,7 +155,24 @@ desk:
     mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"
     favorite_songs: Morceaux favoris
     welcome_simple: "Bienvenue cher utilisateur !!"
-    favorite_songs_intro: "Choisis la ou les voix que tu joues sur chaque morceau."
+    hub_intro: "Choisis un espace de fichiers."
+    space_music: Musique
+    space_music_intro: "Morceaux, partitions, enregistrements... et choisis la ou les voix que tu joues sur chaque morceau."
+    space_admin: Administratif
+    space_admin_intro: "Comptes-rendus et documents administratifs."
+    space_accounting: Comptabilité
+    space_accounting_intro: "Relevés et documents comptables."
+    move_start: Déplacer
+    move_folder_aria: "Déplacer le dossier %name%"
+    move_document_aria: "Déplacer le document %name%"
+    move_here: "Déplacer dans « %folder% »"
+    move_here_aria: "Déplacer ici, dans %name%"
+    move_cancel: Annuler le déplacement
+    move_banner_document: "Déplacement de « %name% » : choisis un dossier de destination, ou déplace-le ici."
+    move_banner_folder: "Déplacement du dossier « %name% » : choisis un dossier de destination, ou déplace-le ici."
+    new_folder_label: "Nouveau dossier :"
+    new_folder_placeholder: "Nom du dossier"
+    new_folder_submit: Créer
     voice_playing: "(tu joues cette voix)"
     voice_played_by: "Joué par :"
     voice_no_players: "Personne ne joue cette voix pour l'instant"

@@ -21,7 +21,6 @@ nav:
     logout: Digennaskañ
     join_or_login: "Kevredañ pe kennaskañ"
     tagline: "Ar strollad sonerezh ar muiañ foll er Galaksi !!"
-    songs: Tonioù
     planning: Deiziadur
     accountant: Kontabilite
     toggle: "Diskouez/kuzhat ar merdeiñ"
@@ -115,7 +114,6 @@ desk:
     mailing_lists: "Rolloù postel out enskrivet enno"
     favorite_songs: Tonioù karetañ
     welcome_simple: "Donemat, implijer ker !!"
-    favorite_songs_intro: Setu da donioù karetañ
     change_password: Cheñch da c'her-tremen
     update_submit: Hizivaat
     update_profile: "Hizivaat da brofil !"

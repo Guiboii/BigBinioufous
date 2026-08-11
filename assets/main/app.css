@@ -9,6 +9,12 @@
     --bb-ink: #16140F;
     --bb-white: #FFFFFF;
     --bb-border-dark: #23272B;
+    /* Ombre douce partagée par toute la famille "carte" du gestionnaire de
+       fichiers (formulaire nouveau dossier, zone de dépôt, cartes du hub,
+       bannière de déplacement, panneau mobile de .navbar-admin) : un seul
+       réglage pour donner du relief cohérent à tous ces blocs plutôt que
+       des aplats de couleur juxtaposés sans hiérarchie. */
+    --bb-shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
 body {
@@ -721,6 +727,18 @@ body.desk .table .btn-green {
     z-index: 1000;
     background: var(--bb-red);
 }
+.navbar-admin .container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+/* Bouton hamburger : même badge rond que .navbar-toggler de la navbar
+   publique (assets/partials/header.html.twig), réutilisé tel quel pour
+   rester cohérent, cf. assets/main/app.js pour le JS de fermeture Escape
+   (généralisé aux 2 navbars, il n'y en a jamais qu'une seule par page). */
+.navbar-admin .navbar-toggler {
+    margin: 0.5rem 0;
+}
 /* .text-yellow (doré) sur ce fond rouge ne tenait que 3.24:1, sous le
    minimum AA (4.5:1) : repassé en blanc (6.07:1) pour ce contexte précis,
    sans toucher .text-yellow ailleurs (déjà vérifié correct sur /join). */
@@ -739,21 +757,60 @@ body.desk .table .btn-green {
     outline-offset: 2px;
     border-radius: 8px;
 }
-/* Reflow mobile : .navbar-admin n'a ni bouton hamburger ni collapse (a
-   contrario de .navbar-collapse plus haut), tous les liens restent en une
-   seule ligne flex (nowrap par défaut). En dessous de 768px les 6-7 items
-   + sélecteur de langue débordent hors écran (scroll horizontal, contenu
-   inatteignable sans le découvrir), CSS seul (flex-wrap) suffit à corriger
-   sans toucher au comportement/JS existant. */
+/* Mobile (<768px) : vrai menu repliable (bouton hamburger + panneau
+   #navbarAdminNav, pattern "disclosure" WAI-ARIA, même mécanique que
+   .navbar-toggler de la navbar publique), plutôt que l'ancien correctif
+   flex-wrap qui empilait les 8 items + sélecteur de langue en 1 seule
+   colonne remplissant tout l'écran avant même le contenu de la page
+   (retour utilisatrice 2026-08-11 : "la navbar en mode tel... la aled").
+   #navbarAdminNav n'a volontairement PAS la classe .navbar-collapse : cette
+   classe porte déjà un style de carte flottante centrée pour la navbar
+   publique (cf. .navbar-collapse plus haut dans ce fichier), pas voulu ici
+   (panneau intégré au fil de la page, pas une popup). .collapse:not(.show)
+   { display:none } et .navbar-nav { display:flex; flex-direction:column }
+   viennent déjà de bootstrap.min.css (importé dans app.js), pas besoin de
+   les répéter ici. */
 @media (max-width: 767px) {
-    .navbar-admin .navbar-nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        row-gap: 0.5rem;
-        column-gap: 0.25rem;
+    /* Panneau replié : un ton plus sombre (--bb-red-dark, 8.56:1 pour le
+       texte blanc, encore mieux que le 6.07:1 de la barre du haut) + coins
+       arrondis + ombre portée, pour qu'il se détache clairement du bouton
+       hamburger au-dessus au lieu de former un seul aplat rouge uni du haut
+       de l'écran jusqu'à "Déconnexion" (retour utilisatrice 2026-08-11).
+       Le halo rouge de 15px de .navbar-admin (padding de .container) reste
+       visible tout autour, façon cadre/passe-partout. */
+    .navbar-admin #navbarAdminNav {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.75rem 0.75rem 1.25rem;
+        background: var(--bb-red-dark);
+        border-radius: 12px;
+        box-shadow: var(--bb-shadow-soft);
     }
     .navbar-admin .nav-item.ml-auto {
         margin-left: 0 !important;
+    }
+    /* Cible tactile confortable (WCAG 2.5.8, 44px visé plutôt que le
+       minimum 24px) : chaque item prend toute la largeur du panneau. */
+    .navbar-admin .nav-link {
+        min-height: 44px;
+        padding: 0.6rem 0.5rem;
+    }
+    .navbar-admin .lang-switcher {
+        justify-content: center;
+        padding: 0.6rem 0.5rem;
+    }
+}
+@media (min-width: 768px) {
+    .navbar-admin .navbar-toggler {
+        display: none;
+    }
+    .navbar-admin .collapse {
+        display: flex !important;
+        flex: 1;
+    }
+    .navbar-admin .navbar-nav {
+        flex-direction: row;
+        align-items: center;
     }
 }
 
@@ -870,8 +927,7 @@ li.nav-item.active, li.nav-item:hover,
     margin-bottom: 1rem;
 }
 .desk-breadcrumb,
-.quick-upload-zone,
-.quick-upload-status,
+.desk-actions,
 .desk-folders,
 .desk-documents,
 .desk-empty,
@@ -880,12 +936,22 @@ li.nav-item.active, li.nav-item:hover,
 }
 
 .desk-breadcrumb {
+    color: var(--bb-ink);
+    font-weight: bold;
+}
+.desk-breadcrumb ol {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 0.3rem;
-    color: var(--bb-ink);
-    font-weight: bold;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.desk-breadcrumb li {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 .desk-breadcrumb a {
     display: inline-flex;
@@ -893,13 +959,92 @@ li.nav-item.active, li.nav-item:hover,
     gap: 0.3rem;
     color: var(--bb-green-mid);
 }
+/* Maillon courant (aria-current="page") : texte simple, pas de lien vers
+   soi-même (cf. pattern WAI-ARIA breadcrumb). Couleur --bb-ink comme le
+   reste du fil, se distingue déjà des liens verts sans artifice en plus. */
+.desk-breadcrumb [aria-current] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
 .desk-breadcrumb-sep {
     opacity: 0.6;
 }
 
+/* "Nouveau dossier" et la zone de dépôt : les 2 actions les plus probables
+   en arrivant dans un dossier, à poids visuel égal côte à côte sur desktop
+   (au lieu de l'ancien enchaînement vertical qui écrasait "Nouveau dossier"
+   sous la grande zone de dépôt), empilées sur mobile. */
+.desk-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+@media (min-width: 640px) {
+    .desk-actions {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+        align-items: stretch;
+    }
+}
+
+/* Créer un dossier : un <form> "nu" hérite malgré lui de la règle générique
+   "form" tout en haut de ce fichier (fond --bb-green-mid, bordure épaisse
+   --bb-border-dark, padding en %) tant qu'on ne l'écrase pas explicitement
+   ici : d'où le "carré blanc/vert" jugé moche/peu lisible par l'utilisatrice
+   (le <label> par-dessus, en --bb-ink, ne tenait que 2.70:1 sur ce fond
+   vert, sous le minimum AA même en gros texte, cf. calcul WCAG). Card dédiée
+   dans la même famille visuelle que .quick-upload-zone juste à côté (même
+   bordure --bb-green-mid, même fond transparent sur le doré du body, même
+   rayon/ombre) mais en trait plein plutôt que pointillé : signale
+   "champ à remplir" plutôt que "zone à déposer" tout en restant cousine
+   visuelle de la zone de dépôt, --bb-ink/--bb-gold = 9.81:1 (AAA). */
+.desk-new-folder {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background: transparent;
+    color: var(--bb-ink);
+    border: 2px solid var(--bb-green-mid);
+    border-radius: 10px;
+    box-shadow: var(--bb-shadow-soft);
+}
+.desk-new-folder label {
+    margin: 0;
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: var(--bb-ink);
+}
+.desk-new-folder-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+.desk-new-folder input[type="text"] {
+    flex: 1 1 12rem;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--bb-ink);
+    border-radius: 8px;
+    background: var(--bb-white);
+    color: var(--bb-ink);
+}
+.desk-new-folder input[type="text"]:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 1px;
+}
+/* Cible tactile confortable (44px) sur le bouton "Créer" : .btn-green n'a
+   par défaut qu'un padding réduit hérité de Bootstrap. */
+.desk-new-folder .btn-green {
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+}
+
 /* Zone de dépôt : bordure --bb-green-mid (accent d'action du reste du site,
    pas --bb-ink) sur fond doré hérité de body.desk. Focus-visible en blanc
-   épais, même traitement que .skip-link sur ce même fond. */
+   épais, même traitement que .skip-link sur ce même fond. Même ombre que
+   .desk-new-folder juste à côté, pour rester visuellement de la même
+   famille malgré le style de bordure différent (pointillé vs plein). */
 .quick-upload-zone {
     display: flex;
     align-items: center;
@@ -908,6 +1053,7 @@ li.nav-item.active, li.nav-item:hover,
     padding: 1.5rem;
     border: 2px dashed var(--bb-green-mid);
     border-radius: 10px;
+    box-shadow: var(--bb-shadow-soft);
     text-align: center;
     color: var(--bb-green-deep);
     font-weight: bold;
@@ -940,13 +1086,21 @@ li.nav-item.active, li.nav-item:hover,
     opacity: 0.7;
 }
 
+/* Enveloppe la zone de dépôt/progression/statut dans une même cellule de
+   .desk-actions : l'espacement entre elles vient du gap ci-dessous, pas de
+   marges individuelles (qui ne servaient qu'à combler l'ancien
+   enchaînement vertical de toute la page, plus nécessaire maintenant
+   qu'elles sont regroupées dans leur propre carte). */
+.desk-upload-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 /* Barre de progression rouge/jaune (couleurs de marque : navbar rouge,
    fond doré) : rayures diagonales façon "chantier", repère visuel net que
    quelque chose est activement en train de se passer, distinct du reste
    de l'UI en vert. Respecte prefers-reduced-motion (rayures statiques). */
-.quick-upload-progress {
-    margin-top: -0.75rem;
-}
 .quick-upload-progress-track {
     height: 0.9rem;
     border-radius: 999px;
@@ -1192,6 +1346,167 @@ li.nav-item.active, li.nav-item:hover,
     color: var(--bb-ink);
     font-size: 0.85rem;
     opacity: 0.8;
+}
+
+/* Bouton "Déplacer" par ligne (dossier/document) : même gabarit que
+   .desk-folder-badge .btn-red / .desk-document .btn-red juste au-dessus,
+   couleur --bb-ink (action neutre, ni positive --bb-green-mid ni
+   destructive --bb-red-dark) pour rester lisible parmi les deux autres. */
+.desk-move-start {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bb-ink);
+    color: var(--bb-white);
+}
+.desk-folder-badge .desk-move-start {
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    font-size: 0.85rem;
+}
+.desk-document .desk-move-start {
+    width: 2.25rem;
+    height: 2.25rem;
+}
+.desk-move-start:hover,
+.desk-move-start:focus-visible {
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+}
+.desk-move-start:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Cibles tactiles (WCAG 2.5.8, 44px visé comme ailleurs sur cette page,
+   cf. .navbar-admin .nav-link plus haut) pour les boutons icône seuls
+   (étoile favori, déplacer, supprimer) des pastilles dossier et des lignes
+   document : agrandies uniquement sur mobile, où le doigt remplace le
+   curseur de souris, sans changer leur gabarit compact habituel sur
+   desktop où plusieurs se suivent côte à côte. */
+@media (max-width: 576px) {
+    .desk-favorite-star {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    .desk-folder-badge .btn-red,
+    .desk-folder-badge .desk-move-start,
+    .desk-document .btn-red,
+    .desk-document .desk-move-start {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+    }
+    .desk-voice-toggle {
+        min-height: 44px;
+    }
+}
+
+/* Bannière de déplacement (mode "choisis une destination") : pleine
+   --bb-green-mid, même vert "action possible" que le reste de la page, pour
+   signaler un mode actif plutôt qu'une simple info passive. Même ombre que
+   .desk-new-folder/.quick-upload-zone (--bb-shadow-soft) : cohérence de
+   relief entre tous les blocs "action" de la page, plutôt qu'un aplat de
+   couleur isolé sans lien visuel avec le reste. */
+.desk-move-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.3rem;
+    border-radius: 10px;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    box-shadow: var(--bb-shadow-soft);
+}
+.desk-move-banner p {
+    margin: 0;
+    font-weight: bold;
+}
+.desk-move-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.desk-move-actions .btn-green {
+    background: var(--bb-white);
+    color: var(--bb-green-deep);
+}
+.desk-move-actions .btn-green:hover,
+.desk-move-actions .btn-green:focus-visible {
+    background: var(--bb-gold-pale);
+}
+.desk-move-actions .btn-link {
+    color: var(--bb-white);
+    font-weight: bold;
+    text-decoration: underline;
+}
+.desk-move-actions .btn-link:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Hub /desk/files (templates/desk/files_hub.html.twig) : une carte par
+   espace, même pastille pleine --bb-green-mid que .desk-folder-badge mais
+   en grand (c'est le contenu principal de la page, pas une action annexe).
+   Même --bb-shadow-soft que le reste de la famille "carte" du gestionnaire
+   de fichiers, pour que le hub ne semble pas venir d'une page différente. */
+.desk-spaces {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.desk-space-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    width: 12rem;
+    padding: 2rem 1rem;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    border-radius: 14px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: var(--bb-shadow-soft);
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.desk-space-card i {
+    font-size: 2.5rem;
+}
+.desk-space-card:hover,
+.desk-space-card:focus-visible {
+    background: var(--bb-green-deep);
+    color: var(--bb-white);
+    transform: translateY(-2px);
+}
+.desk-space-card:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .desk-space-card {
+        transition: none;
+    }
+}
+/* Sous 400px (1 seule colonne quoi qu'il arrive vu le gap), la carte remplit
+   la largeur disponible plutôt que de rester figée à 12rem avec un vide
+   asymétrique à côté sur les très petits écrans. */
+@media (max-width: 400px) {
+    .desk-space-card {
+        width: 100%;
+        max-width: 20rem;
+    }
 }
 
 /* Visionneuse de document (assets/desk/file-preview.js) : fond blanc plutôt

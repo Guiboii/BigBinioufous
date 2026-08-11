@@ -36,14 +36,13 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/accountant, roles: ROLE_COMPTA }
-        # Étoiler un document (préférence perso) : ouvert à tout membre,
-        # règle plus spécifique donc placée avant la restriction générale
-        # ci-dessous sur /desk/music/documents (premier match qui gagne).
-        - { path: ^/desk/music/documents/[^/]+/favorite, roles: ROLE_USER }
-        # Glisser-déposer/suppression (morceaux, documents, dossiers) sur
-        # /desk/music : réservé aux binioufous, pas juste ROLE_USER.
-        - { path: ^/desk/music/documents, roles: ROLE_BINIOUFOUS }
-        - { path: ^/desk/music/folders, roles: ROLE_BINIOUFOUS }
+        # Espaces de /desk/files (gestionnaire de fichiers façon Drive) :
+        # un rôle par espace, lecture ET écriture soumises à la même règle
+        # (contrairement à avant où la lecture de /desk/music était ouverte
+        # à tout ROLE_USER). ROLE_ADMIN a accès à tous les espaces.
+        - { path: ^/desk/files/music, roles: [ROLE_BINIOUFOUS, ROLE_ADMIN] }
+        - { path: ^/desk/files/admin, roles: ROLE_ADMIN }
+        - { path: ^/desk/files/accounting, roles: [ROLE_COMPTA, ROLE_ADMIN] }
         - { path: ^/desk, roles: ROLE_USER }
         # Gestion des morceaux/voix (écriture) réservée aux admins ; la liste
         # et la fiche d'un morceau (GET) restent publiques, non concernées.

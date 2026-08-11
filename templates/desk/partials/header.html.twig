@@ -1,43 +1,59 @@
 <header>
-    <nav class="navbar-admin navbar-expand-lg">
+    <nav class="navbar-admin navbar-expand-md" aria-label="{{ 'nav.desk'|trans }}">
         <div class="container">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="ri-home-4-fill" aria-hidden="true"></i> {{ 'nav.home'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('desk') }}"><i class="ri-user-settings-fill" aria-hidden="true"></i> {{ 'nav.desk'|trans }}</a>
-                </li>
-                {% if app.user %}
-                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_BINIOUFOUS') %}
-                        <li class="nav-item">
-                            <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="ri-music-2-fill" aria-hidden="true"></i> {{ 'nav.songs'|trans }}</a>
-                        </li>
-                    {% endif %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a href="{{ path('event_index') }}" class="nav-link text-yellow"><i class="ri-calendar-event-fill" aria-hidden="true"></i> {{ 'nav.planning'|trans }}</a>
-                        </li>
-                    {% endif %}
-                    {% if is_granted('ROLE_COMPTA') %}
-                        <li class="nav-item">
-                            <a href="{{ path('accountant') }}" class="nav-link text-yellow"><i class="ri-money-euro-circle-fill" aria-hidden="true"></i> {{ 'nav.accountant'|trans }}</a>
-                        </li>
-                    {% endif %}
-                {% endif %}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarAdminNav" aria-controls="navbarAdminNav" aria-expanded="false" aria-label="{{ 'nav.toggle'|trans }}">
+                <svg class="bi bi-list" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z" clip-rule="evenodd"/></svg>
+            </button>
 
-                <li class="nav-item lang-switcher">
-                    <a href="{{ path('app_locale', {locale: 'fr'}) }}" class="lang-link {% if app.request.locale == 'fr' %}active{% endif %}">FR</a>
-                    <a href="{{ path('app_locale', {locale: 'en'}) }}" class="lang-link {% if app.request.locale == 'en' %}active{% endif %}">EN</a>
-                    <a href="{{ path('app_locale', {locale: 'br'}) }}" class="lang-link {% if app.request.locale == 'br' %}active{% endif %}">BR</a>
-                </li>
-                <li class="nav-item ml-auto">
-                    <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="ri-user-fill" aria-hidden="true"></i> {{ 'nav.profile'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="ri-logout-box-r-fill" aria-hidden="true"></i> {{ 'nav.logout'|trans }}</a>
-                </li>
-            </ul>
+            <div class="collapse" id="navbarAdminNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="ri-home-4-fill" aria-hidden="true"></i> {{ 'nav.home'|trans }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-yellow" href="{{ path('desk') }}"><i class="ri-user-settings-fill" aria-hidden="true"></i> {{ 'nav.desk'|trans }}</a>
+                    </li>
+                    {% if app.user %}
+                        {% set canFilesMusic = is_granted('ROLE_BINIOUFOUS') or is_granted('ROLE_ADMIN') %}
+                        {% set canFilesAdmin = is_granted('ROLE_ADMIN') %}
+                        {% set canFilesAccounting = is_granted('ROLE_COMPTA') or is_granted('ROLE_ADMIN') %}
+                        {% set accessibleSpaces = (canFilesMusic ? 1 : 0) + (canFilesAdmin ? 1 : 0) + (canFilesAccounting ? 1 : 0) %}
+                        {% if accessibleSpaces > 0 %}
+                            <li class="nav-item">
+                                {# Un seul espace accessible : lien direct, pas la peine de passer par le
+                                   hub pour un choix qui n'en est pas un (retour utilisatrice 2026-08-11). #}
+                                {% if accessibleSpaces == 1 %}
+                                    <a href="{{ path('desk_files', {space: canFilesMusic ? 'music' : (canFilesAdmin ? 'admin' : 'accounting')}) }}" class="nav-link text-yellow"><i class="ri-folder-3-fill" aria-hidden="true"></i> {{ 'nav.folders'|trans }}</a>
+                                {% else %}
+                                    <a href="{{ path('desk_files_hub') }}" class="nav-link text-yellow"><i class="ri-folder-3-fill" aria-hidden="true"></i> {{ 'nav.folders'|trans }}</a>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item">
+                                <a href="{{ path('event_index') }}" class="nav-link text-yellow"><i class="ri-calendar-event-fill" aria-hidden="true"></i> {{ 'nav.planning'|trans }}</a>
+                            </li>
+                        {% endif %}
+                        {% if is_granted('ROLE_COMPTA') %}
+                            <li class="nav-item">
+                                <a href="{{ path('accountant') }}" class="nav-link text-yellow"><i class="ri-money-euro-circle-fill" aria-hidden="true"></i> {{ 'nav.accountant'|trans }}</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+
+                    <li class="nav-item lang-switcher">
+                        <a href="{{ path('app_locale', {locale: 'fr'}) }}" class="lang-link {% if app.request.locale == 'fr' %}active{% endif %}">FR</a>
+                        <a href="{{ path('app_locale', {locale: 'en'}) }}" class="lang-link {% if app.request.locale == 'en' %}active{% endif %}">EN</a>
+                        <a href="{{ path('app_locale', {locale: 'br'}) }}" class="lang-link {% if app.request.locale == 'br' %}active{% endif %}">BR</a>
+                    </li>
+                    <li class="nav-item ml-auto">
+                        <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="ri-user-fill" aria-hidden="true"></i> {{ 'nav.profile'|trans }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="ri-logout-box-r-fill" aria-hidden="true"></i> {{ 'nav.logout'|trans }}</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 </header>

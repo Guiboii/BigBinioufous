@@ -16,6 +16,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Espaces disponibles sous /desk/files/{space}, cf. Folder::SPACES. L'accès
+ * (lecture ET écriture, même règle) est géré par space dans security.yaml,
+ * pas ici : ce contrôleur ne revérifie pas les rôles, il fait confiance à
+ * access_control comme le reste du projet (DocumentController/FolderController
+ * pareil).
+ */
 class DeskController extends AbstractController
 {
     #[Route('/desk', name: 'desk')]
@@ -48,40 +55,76 @@ class DeskController extends AbstractController
     }
 
     /**
-     * Songs menus/favorite voices (racine uniquement) + navigateur de
-     * fichiers façon Drive (?folder=ID pour descendre dans un dossier).
+     * Hub "Dossiers" : cartes vers les espaces auxquels le membre connecté a
+     * accès. L'accès réel est vérifié par security.yaml sur chaque espace ;
+     * ici on ne fait qu'afficher/masquer les cartes (is_granted côté Twig),
+     * même pattern que les liens conditionnels de desk/partials/header.
      */
-    #[Route('/desk/music', name: 'deskmusic')]
-    public function favoritesSongs(Request $request, TrackRepository $trackRepository, DocumentRepository $documentRepository, FolderRepository $folderRepository)
+    #[Route('/desk/files', name: 'desk_files_hub')]
+    public function filesHub(): Response
     {
-        $folderId = $request->query->get('folder');
-        $currentFolder = $folderId ? $folderRepository->find($folderId) : null;
+        return $this->render('desk/files_hub.html.twig');
+    }
 
-        if ($folderId && !$currentFolder) {
+    /**
+     * Gestionnaire de fichiers façon Drive pour un espace donné
+     * (?folder=ID pour descendre dans un dossier). L'espace musique affiche
+     * en plus le tas "morceaux + parties favorites", uniquement à sa racine.
+     */
+    #[Route('/desk/files/{space}', name: 'desk_files', requirements: ['space' => 'music|admin|accounting'])]
+    public function files(string $space, Request $request, TrackRepository $trackRepository, DocumentRepository $documentRepository, FolderRepository $folderRepository, EntityManagerInterface $manager)
+    {
+        $root = $folderRepository->findOrCreateRoot($space, $manager);
+
+        $folderId = $request->query->get('folder');
+        $currentFolder = $folderId ? $folderRepository->find($folderId) : $root;
+
+        if (!$currentFolder || $space !== $currentFolder->getSpace()) {
             throw $this->createNotFoundException();
         }
 
         $breadcrumb = [];
         $ancestor = $currentFolder;
-        while ($ancestor) {
+        while ($ancestor && $ancestor->getParent()) {
             array_unshift($breadcrumb, $ancestor);
             $ancestor = $ancestor->getParent();
         }
 
-        return $this->render('desk/music.html.twig', [
-            'tracks' => $currentFolder ? [] : $trackRepository->findAll(),
+        $movingDocument = null;
+        if ($moveDocumentId = $request->query->get('move_document')) {
+            $candidate = $documentRepository->find($moveDocumentId);
+            if ($candidate && $space === $candidate->getFolder()->getSpace()) {
+                $movingDocument = $candidate;
+            }
+        }
+
+        $movingFolder = null;
+        if ($moveFolderId = $request->query->get('move_folder')) {
+            $candidate = $folderRepository->find($moveFolderId);
+            if ($candidate && $space === $candidate->getSpace() && $candidate->getId() !== $root->getId()) {
+                $movingFolder = $candidate;
+            }
+        }
+
+        return $this->render('desk/files.html.twig', [
+            'space' => $space,
+            'root' => $root,
+            'atRoot' => $currentFolder->getId() === $root->getId(),
+            'tracks' => ('music' === $space && $currentFolder->getId() === $root->getId()) ? $trackRepository->findAll() : [],
             'currentFolder' => $currentFolder,
             'currentFolderPath' => implode('/', array_map(static fn (Folder $f) => $f->getName(), $breadcrumb)),
             'breadcrumb' => $breadcrumb,
             'subfolders' => $folderRepository->findBy(['parent' => $currentFolder], ['name' => 'ASC']),
             'documents' => $documentRepository->findBy(['folder' => $currentFolder], ['name' => 'ASC']),
+            'movingDocument' => $movingDocument,
+            'movingFolder' => $movingFolder,
         ]);
     }
 
     /**
      * Coche/décoche la voix courante comme jouée par le membre connecté.
      */
-    #[Route('/desk/music/voice/{voiceId}/toggle', name: 'desk_voice_toggle', methods: ['POST'])]
+    #[Route('/desk/files/music/voices/{voiceId}/toggle', name: 'desk_voice_toggle', methods: ['POST'])]
     public function toggleVoice(#[MapEntity(mapping: ['voiceId' => 'id'])] Voice $voice, Request $request, EntityManagerInterface $manager): Response
     {
         if ($this->isCsrfTokenValid('toggle_voice'.$voice->getId(), $request->request->get('_token'))) {
@@ -94,6 +137,6 @@ class DeskController extends AbstractController
             $manager->flush();
         }
 
-        return $this->redirectToRoute('deskmusic');
+        return $this->redirectToRoute('desk_files', ['space' => 'music']);
     }
 }

@@ -19,7 +19,7 @@ nav:
     logout: Logout
     join_or_login: Join or Login
     tagline: "The craziest oboe band of the Galaxy !!"
-    songs: Songs
+    folders: Folders
     planning: Schedule
     accountant: Accountant
     toggle: Toggle navigation
@@ -155,7 +155,24 @@ desk:
     mailing_lists: mailing-lists you subscribed
     favorite_songs: favorite songs
     welcome_simple: "Welcome dear user !!"
-    favorite_songs_intro: "Pick the voice(s) you play on each song."
+    hub_intro: "Pick a files space."
+    space_music: Music
+    space_music_intro: "Tracks, sheet music, recordings... and pick the voice(s) you play on each song."
+    space_admin: Administrative
+    space_admin_intro: "Meeting minutes and administrative documents."
+    space_accounting: Accounting
+    space_accounting_intro: "Statements and accounting documents."
+    move_start: Move
+    move_folder_aria: "Move folder %name%"
+    move_document_aria: "Move document %name%"
+    move_here: "Move into \"%folder%\""
+    move_here_aria: "Move here, into %name%"
+    move_cancel: Cancel move
+    move_banner_document: "Moving \"%name%\": pick a destination folder, or move it here."
+    move_banner_folder: "Moving folder \"%name%\": pick a destination folder, or move it here."
+    new_folder_label: "New folder:"
+    new_folder_placeholder: "Folder name"
+    new_folder_submit: Create
     voice_playing: "(you play this voice)"
     voice_played_by: "Played by:"
     voice_no_players: "No one plays this voice yet"

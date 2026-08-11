@@ -30,6 +30,7 @@ class Document
     private $uploadedBy;
 
     #[ORM\ManyToOne(targetEntity: Folder::class, inversedBy: 'documents')]
+    #[ORM\JoinColumn(nullable: false)]
     private $folder;
 
     #[ORM\Column(type: 'datetime')]
@@ -114,7 +115,7 @@ class Document
         return $this->folder;
     }
 
-    public function setFolder(?Folder $folder): self
+    public function setFolder(Folder $folder): self
     {
         $this->folder = $folder;
 
