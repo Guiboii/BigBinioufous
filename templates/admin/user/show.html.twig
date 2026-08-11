@@ -15,7 +15,7 @@
                     {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %}</h1>
                 </div>
             </div>
-            <button class="btn btn-green">{{ 'admin.contact'|trans }}</button>
+            <button type="button" class="btn btn-green">{{ 'admin.contact'|trans }}</button>
         </div>
         <div class="container text-center">
             <table class="table table-hover">
@@ -28,24 +28,26 @@
                     {% for role in roles %}
                         <tr>
                             <td>{{ role.description }}</td>
-                            <td><a href="#" class="btn btn-red"><i class="ri-forbid-line"></i></a></td>
+                            <td><button type="button" class="btn btn-red" aria-label="{{ 'admin.remove_role_aria'|trans({'%role%': role.description}) }}"><i class="ri-forbid-line" aria-hidden="true"></i></button></td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            <div class="card card-header centered">
-            <div class="row">
-                <a href="{{ path('create_admin', {slug: user.slug}) }}" class="btn btn-red mr-2">{{ 'admin.make_admin'|trans }}</a>
-                <a href="{{ path('create_accountant', {slug: user.slug}) }}" class="btn btn-red ml-2">{{ 'admin.make_accountant'|trans }}</a>
-            </div>
-            </div>
-            <div class="card card-header centered">
-                {{ form_start(form) }}
-                {{ form_widget(form) }}
-                <div class="centered">
-                    <button type="submit" class="btn btn-green">{{ 'admin.validate'|trans }}</button>
+            <div class="card">
+                <div class="card-body row centered">
+                    <a href="{{ path('create_admin', {slug: user.slug}) }}" class="btn btn-green mr-2">{{ 'admin.make_admin'|trans }}</a>
+                    <a href="{{ path('create_accountant', {slug: user.slug}) }}" class="btn btn-green ml-2">{{ 'admin.make_accountant'|trans }}</a>
                 </div>
-                {{ form_end(form) }}
+            </div>
+            <div class="card">
+                <div class="card-body centered">
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    <div class="centered">
+                        <button type="submit" class="btn btn-green">{{ 'admin.validate'|trans }}</button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
             </div>
         </div>
     </div>

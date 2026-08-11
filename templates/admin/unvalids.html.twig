@@ -6,8 +6,8 @@
 
 <div class="container mt-2">
     <div class="container mt-2">
+        <h3>{{ 'admin.pending_requests_title'|trans }}</h3>
         <table class="table table-hover text-center">
-            <h3>{{ 'admin.pending_requests_title'|trans }}</h3>
             <thead>
                 <tr>
                     <th>{{ 'Name'|trans }}</th>
@@ -34,7 +34,7 @@
                     <td>{{ user.country }}</td>
                     <td>{{ user.city }}</td>
                     <td>{{ user.createdAt|date('d/m/Y') }}</td>
-                    <td> <a href="{{ path ('user_valid', {slug: user.slug, wish: user.wish}) }}" class="btn btn-green"><i class="ri-checkbox-circle-line"></i></a></td>
+                    <td> <a href="{{ path ('user_valid', {slug: user.slug, wish: user.wish}) }}" class="btn btn-green" aria-label="{{ 'admin.validate_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

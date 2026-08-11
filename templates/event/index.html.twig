@@ -31,7 +31,7 @@
                             <td>{{ ('event.type_' ~ event.type)|trans }}</td>
                             <td>{{ event.location }}</td>
                             <td>
-                                <a href="{{ path('event_edit', {id: event.id}) }}" class="btn btn-green"><i class="ri-edit-line"></i></a>
+                                <a href="{{ path('event_edit', {id: event.id}) }}" class="btn btn-green" aria-label="{{ 'event.edit_aria'|trans({'%title%': event.title}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
                                 {{ include('event/_delete_form.html.twig', {event: event}) }}
                             </td>
                         </tr>

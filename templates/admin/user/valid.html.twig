@@ -5,9 +5,7 @@
 {% block body %}
     <div class="container">
         <div class="row mt-4">
-            <button class="bg-yellow">
-                <a class="btn btn-red" href="{{ path ('valid') }}"><h3>{{ 'admin.back_to_lists'|trans }}</h3></a>
-            </button>
+            <a class="btn btn-red" href="{{ path ('valid') }}">{{ 'admin.back_to_lists'|trans }}</a>
             <div class="col text-center">
                 <div class="row card-header centered">
                     {% if user.picture == null %}
@@ -47,5 +45,6 @@
                 <button type="submit" class="btn btn-green">{{ 'admin.validate'|trans }}</button>
             </div>
             {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}

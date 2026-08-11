@@ -6,7 +6,13 @@
         {{ importmap('app') }}
     </head>
 
-    <body>
+    <body class="desk">
+        {# 1er élément atteignable au clavier : reste invisible jusqu'à recevoir
+           le focus (Tab), permet de sauter la navbar pour aller directement au
+           contenu principal. Même pattern que templates/base.html.twig
+           (.skip-link dans assets/main/app.css), jamais repris ici jusqu'à
+           présent. #}
+        <a class="skip-link" href="#main-content">{{ 'a11y.skip_to_content'|trans }}</a>
 
         {{ include('desk/partials/header.html.twig') }}
 
@@ -20,7 +26,9 @@
             </div>
         {% endfor %}
 
-        {% block body %}{% endblock %}
+        <main id="main-content" tabindex="-1">
+            {% block body %}{% endblock %}
+        </main>
     </body>
 
 </html>

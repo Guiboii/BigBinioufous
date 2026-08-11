@@ -15,16 +15,18 @@
                     {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %}</h1>
                 </div>
             </div>
-            <button class="btn btn-green">{{ 'admin.contact'|trans }}</button>
+            <button type="button" class="btn btn-green">{{ 'admin.contact'|trans }}</button>
         </div>
         <div class="container text-center">
-            <div class="card card-header centered">
-                {{ form_start(form) }}
-                {{ form_widget(form) }}
-                <div class="centered">
-                    <button type="submit" class="btn btn-green">{{ 'admin.make_accountant'|trans }}</button>
+            <div class="card">
+                <div class="card-body centered">
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    <div class="centered">
+                        <button type="submit" class="btn btn-green">{{ 'admin.make_accountant'|trans }}</button>
+                    </div>
+                    {{ form_end(form) }}
                 </div>
-                {{ form_end(form) }}
             </div>
         </div>
     </div>

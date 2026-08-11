@@ -122,6 +122,7 @@ event:
     poster_invalid_type: "Merci de choisir une image JPEG ou PNG valide"
     add_to_calendar: "Ajouter à mon agenda"
     calendar_other: "Autre (.ics)"
+    edit_aria: "Modifier « %title% »"
 
 join:
     title: "Rejoindre !!"
@@ -221,6 +222,9 @@ admin:
     validate: Valider
     wish: Souhait
     date_of_birth: Date de naissance
+    edit_user_aria: "Modifier le profil de %name%"
+    validate_user_aria: "Valider l'inscription de %name%"
+    remove_role_aria: "Retirer le rôle « %role% »"
 
 Name: Nom
 Picture: Photo

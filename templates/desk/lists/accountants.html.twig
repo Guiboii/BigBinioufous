@@ -1,5 +1,5 @@
+<h3>{{ 'desk.list.accountants_title'|trans }}</h3>
 <table class="table table-hover text-center">
-    <h3>{{ 'desk.list.accountants_title'|trans }}</h3>
     <thead>
         <tr>
             <th>{{ 'Name'|trans }}</th>
@@ -30,8 +30,8 @@
                 <td>{{ accountant.city }}</td>
                 <td>{{ accountant.instrument.title }}</td>
                 <td>
-                    <a href="{{ path ('user_show', {slug: accountant.slug}) }}" class="btn btn-green">
-                        <i class="ri-edit-line"></i>
+                    <a href="{{ path ('user_show', {slug: accountant.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': accountant.fullName}) }}">
+                        <i class="ri-edit-line" aria-hidden="true"></i>
                     </a>
                 </td>
             </tr>
