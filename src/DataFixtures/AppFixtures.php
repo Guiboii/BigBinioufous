@@ -44,7 +44,7 @@ class AppFixtures extends Fixture
                     ->setDescription('Member');
         $manager->persist($memberRole);
         $simpleRole = new Role();
-        $simpleRole->setTitle('ROLE_Simple')
+        $simpleRole->setTitle('ROLE_SIMPLE')
                     ->setDescription('Simple');
         $manager->persist($simpleRole);
         $userRole = new Role();

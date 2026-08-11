@@ -13,7 +13,7 @@
 Voir [role.md](role.md) pour le détail métier. En résumé technique :
 - `User::getRoles()` (contrat Symfony `UserInterface`) retourne les titres des `Role` liés en base **+ `ROLE_USER` toujours ajouté en dur**.
 - `ROLE_ADMIN`/`ROLE_COMPTA` : attribués manuellement par un admin (`/admin/setadmin/{slug}`, `/admin/setaccountant/{slug}`).
-- `ROLE_BINIOUFOUS`/`ROLE_MEMBER`/`ROLE_Simple` : attribués automatiquement lors de la validation de l'inscription (`/admin/{wish}/{slug}/valid`), en cherchant le `Role` dont la `description` correspond au `wish` choisi à l'inscription.
+- `ROLE_BINIOUFOUS`/`ROLE_MEMBER`/`ROLE_SIMPLE` : attribués automatiquement lors de la validation de l'inscription (`/admin/{wish}/{slug}/valid`), en cherchant le `Role` dont la `description` correspond au `wish` choisi à l'inscription.
 
 ## Upload / fichiers
 
