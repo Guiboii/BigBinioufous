@@ -10,8 +10,6 @@
 import 'jquery';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/js/fontawesome.min.js';
-import '@fortawesome/fontawesome-free/css/fontawesome.min.css';
 import 'remixicon/fonts/remixicon.css';
 import './app.css';
 
@@ -35,4 +33,24 @@ document.addEventListener('DOMContentLoaded', function () {
       toggler.focus();
     }
   });
+});
+
+// Bootstrap 4's "custom file" widget (form_themes: bootstrap_4_layout.html.twig
+// wraps every FileType field this way, cf. /register, /desk/profile,
+// admin/user/show.html.twig, admin/event/new+edit) really does open the
+// native file picker on click : the real <input type="file"> sits directly
+// on top of the visible label, just invisible (opacity:0), that part works.
+// What's missing is the other half of the pattern Bootstrap's own docs call
+// for : nothing updates the label's text after a file is picked, so the
+// button still reads "Browse"/"Choisir un fichier" as if nothing had
+// happened, indistinguishable at a glance from the picker never opening at
+// all. Never wired up anywhere on this project until now.
+document.addEventListener('change', function (e) {
+  if (!e.target.matches('.custom-file-input')) {
+    return;
+  }
+  var label = e.target.nextElementSibling;
+  if (label && label.classList.contains('custom-file-label') && e.target.files.length) {
+    label.textContent = e.target.files[0].name;
+  }
 });

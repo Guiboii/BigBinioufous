@@ -22,7 +22,8 @@ nav:
     join_or_login: "Kevredañ pe kennaskañ"
     tagline: "Ar strollad sonerezh ar muiañ foll er Galaksi !!"
     songs: Tonioù
-    admin: Melestradurezh
+    planning: Deiziadur
+    accountant: Kontabilite
     toggle: "Diskouez/kuzhat ar merdeiñ"
 
 contact:
@@ -110,7 +111,6 @@ desk:
     hello: "Salud %nickname% !"
     pending_validation: "Bezit pasiant !! Ret eo d'ur melestrour kadarnaat ho kont..."
     pending_count: "%count% kadarnadenn(où) o gortoz"
-    accountant_link: Kontabilite
     binioufous_heading: "Setu ar Binioufous !"
     mailing_lists: "Rolloù postel out enskrivet enno"
     favorite_songs: Tonioù karetañ
@@ -158,12 +158,11 @@ music:
 
 Id: Id
 
-accountant:
-    title: "Salud AccountantController !"
-    placeholder_heading: "Salud %name% !"
-    placeholder_intro: "Ar gemennadenn-mañ a zeu eus :"
-    placeholder_controller: "Da c'houarner e"
-    placeholder_template: "Da patrom e"
+Administrator: Melestrour
+Accountant: Kontour
+Binioufous: Binioufous
+Simple: Eeun
+User: Implijer
 
 admin:
     compta_title: Kontabilite
@@ -178,10 +177,17 @@ admin:
     contact: Darempred
     make_admin: Lakaat an implijer-mañ da velestrour
     make_accountant: Lakaat an implijer-mañ da gontour
+    confirm_make_admin: "Lakaat an implijer-mañ da velestrour ?"
+    confirm_make_accountant: "Lakaat an implijer-mañ da gontour ?"
     roles: Rolloù
     validate: Kadarnaat
     wish: C'hoant
     date_of_birth: Deiz-ha-bloaz
+    edit_user_aria: "Kemmañ profil %name%"
+    validate_user_aria: "Kadarnaat enskrivadur %name%"
+    remove_role_aria: "Lemel ar roll « %role% »"
+    confirm_remove_role: "Lemel ar roll « %role% » ?"
+    edit_profile_section: "Kemmañ ar profil"
 
 Name: Anv
 Picture: Skeudenn

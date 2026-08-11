@@ -1,15 +1,14 @@
 {% extends 'desk/base.html.twig' %}
 
-{% block title %}{{ 'accountant.title'|trans }}{% endblock %}
+{% block title %}{{ 'admin.compta_title'|trans }}{% endblock %}
 
 {% block body %}
-<div class="example-wrapper">
-    <h1>{{ 'accountant.placeholder_heading'|trans({'%name%': controller_name}) }} ✅</h1>
+<div class="container">
+    <h1>{{ 'admin.compta_hello'|trans({'%name%': app.user.fullName}) }}</h1>
 
-    {{ 'accountant.placeholder_intro'|trans }}
+    {{ 'admin.compta_welcome'|trans }}
     <ul>
-        <li>{{ 'accountant.placeholder_controller'|trans }} <code><a href="{{ '/Users/guillaumehamet/Sites/BigBinioufous/src/Controller/AccountantController.php'|file_link(0) }}">src/Controller/AccountantController.php</a></code></li>
-        <li>{{ 'accountant.placeholder_template'|trans }} <code><a href="{{ '/Users/guillaumehamet/Sites/BigBinioufous/templates/accountant/index.html.twig'|file_link(0) }}">templates/accountant/index.html.twig</a></code></li>
+        <li>{{ 'admin.compta_wip'|trans }}</li>
     </ul>
 </div>
 {% endblock %}

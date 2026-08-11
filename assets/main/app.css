@@ -76,6 +76,17 @@ body {
     color: var(--bb-white);
     background: var(--bb-red-dark);
 }
+/* Focus clavier jamais différencié du hover jusqu'ici (rien ne le stylait du
+   tout, donc focus Bootstrap par défaut sur .btn : outline:0 + halo bleu peu
+   contrasté). --bb-ink : ces boutons sont posés sur fond clair ici (fond
+   --bb-gold du body, lignes de tableau blanches, .card blanche), contrairement
+   à .login/.join (fond sombre de la scène 3D) qui utilisent du blanc :
+   ink/gold 9.81:1, ink/blanc 18.4:1 (AAA dans les deux cas). */
+.btn-red:focus-visible,
+.btn-green:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
+}
 
 /* Texte blanc (pas rouge) sur fond vert : même bug, sur les boutons "valider" */
 .btn-green {
@@ -213,6 +224,307 @@ form {
 /* .login/.join et #joinForm/#loginForm déménagés dans assets/login/join.css
    (même convention que Musique/Histoire/Planning : une page avec sa propre
    scène 3D a son propre fichier). */
+
+/* Même bug de contraste que #joinForm/#loginForm (déjà corrigé dans
+   assets/login/join.css) mais jamais vérifié ici : tout <form> "nu" (profil,
+   mot de passe, validation/promotion d'utilisateur, gestion du planning,
+   dans templates/desk|admin|event/) hérite du doré (--bb-gold) sur fond
+   --bb-green-mid de la règle "form" générique ci-dessus, 3.63:1, sous le
+   minimum AA (4.5:1) pour du texte normal (labels générés par
+   form_widget(form)). Blanc (6.82:1, AAA) plutôt que --bb-gold, comme sur
+   #joinForm/#loginForm. Scopé à body.desk (cf. templates/desk/base.html.twig)
+   pour ne pas toucher les <form> de story/music/join, hors périmètre de
+   cette passe et déjà audités/stylés séparément. */
+body.desk form {
+    color: var(--bb-white);
+}
+/* Messages d'erreur de validation (.invalid-feedback, injectés par
+   bootstrap_4_layout.html.twig quand un champ est invalide) : couleur rouge
+   Bootstrap par défaut (#dc3545) ne tient qu'1.51:1 sur ce fond vert, quasi
+   invisible. --bb-gold-pale (déjà utilisé ailleurs dans la palette, ex.
+   icônes de la navbar publique) tient 5.04:1 (AA) et reste visuellement
+   distinct du blanc des labels ; le texte de l'erreur lui-même (pas la
+   couleur seule) reste le vecteur principal de l'info pour un lecteur
+   d'écran. */
+body.desk form .invalid-feedback {
+    color: var(--bb-gold-pale);
+}
+/* .btn-green a exactement la même couleur de fond que le <form> desk/admin
+   qui le contient (--bb-green-mid des deux côtés) : le bouton "Valider"/
+   "Enregistrer" était totalement invisible, aucune limite visuelle avec le
+   fond (repéré sur admin/user/show.html.twig, addadmin.html.twig,
+   addaccountant.html.twig, valid.html.twig, desk/profile.html.twig).
+   Bordure blanche pour le détacher (6.82:1 sur --bb-green-mid, même calcul
+   que body.desk form ci-dessus) plutôt que de changer sa couleur de fond :
+   reste dans la palette rouge/vert/or déjà en place, pas de 3e teinte. */
+body.desk form .btn-green {
+    border: 2px solid var(--bb-white);
+}
+
+/* Titre de page unique et cohérent dans tout le desk/admin/event (retour
+   utilisatrice du 2026-08-11 : "aucun titre pareil", chaque page utilisait
+   un niveau différent - h1/h3/h4 - avec le style par défaut du navigateur
+   pour chaque niveau, donc une taille différente à chaque fois). Un seul
+   <h1> par page désormais (cf. templates concernés), stylé avec la police
+   d'affichage de la marque (Bungee, déjà chargée sur les pages publiques
+   via templates/base.html.twig, ajoutée à templates/desk/base.html.twig)
+   plutôt que la police système par défaut. */
+body.desk h1 {
+    font-family: "Bungee", "Arial Black", sans-serif;
+    color: var(--bb-red-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 1.6rem;
+}
+/* Sous-titres de section (ex. "Les Administrateurices" sur /desk) : h2,
+   même famille que h1 pour rester dans la même identité typographique,
+   mais plus petit et sans la couleur vive pour marquer la hiérarchie. */
+body.desk h2 {
+    font-family: "Bungee", "Arial Black", sans-serif;
+    color: var(--bb-ink);
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+}
+
+/* Un panneau encre (--bb-ink) avait été tenté ici pour remplacer le blanc
+   Bootstrap par défaut du .card (admin/user/show|addadmin|addaccountant),
+   toujours jugé "horrible" par l'utilisatrice ensuite : aucune autre page
+   du site n'a de grande surface noire, --bb-ink n'y sert qu'à du texte/un
+   petit fond (skip-link, cadre d'avatar). Les 3 templates concernés ne
+   posent plus ce wrapper .card du tout : le bouton "promouvoir" est un
+   simple bouton sur le fond doré de la page (comme "Retour aux listes"
+   juste au-dessus), et le formulaire d'édition garde sa boîte verte
+   naturelle (règle "form" générique plus bas), exactement comme sur
+   desk/profile.html.twig. */
+
+/* Même souci que ci-dessus (case verte/noire imbriquée), repéré cette fois sur les mini
+   <form> d'action (supprimer un événement, refuser une inscription :
+   uniquement des champs cachés + un bouton icône) : la règle "form"
+   générique leur collait quand même son fond vert + sa bordure épaisse
+   derrière un simple bouton, "horrible" selon l'utilisatrice une fois
+   l'icône seule (sans texte pour meubler visuellement la boîte). Remplace
+   le style="display:inline-block" qui était sur ces <form>. */
+body.desk .btn-form {
+    display: inline-block;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Message flash ("Inscription refusée", "Profil enregistré"...) jugé moche
+   par l'utilisatrice : rendu Bootstrap par défaut (fond vert pâle générique,
+   texte vert foncé), hors palette. Même logique que .card plus haut : fond
+   uni de la marque + liseré au lieu du gris/vert neutre de Bootstrap.
+   13.4:1 blanc sur --bb-green-deep (AAA). Seul alert-success existe
+   actuellement dans ce périmètre (tous les addFlash() du desk/admin sont
+   'success'), pas besoin de couvrir les autres variantes Bootstrap ici. */
+body.desk .alert-success {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bb-green-deep);
+    color: var(--bb-white);
+    border: none;
+    border-left: 5px solid var(--bb-gold);
+    border-radius: 10px;
+    font-weight: bold;
+}
+body.desk .alert-success i {
+    font-size: 1.4rem;
+    color: var(--bb-gold);
+}
+body.desk .alert-success p {
+    margin: 0;
+}
+
+/* "Ajoute une photo !" (avatar par défaut sur /desk) jugée "raplapla" par
+   l'utilisatrice : c'était un simple .btn-red étroit (largeur fit-content)
+   avec le texte qui retombait mot par mot dans la colonne .col-1 étroite
+   qui le contient. Reprend la taille de l'avatar réel qu'il remplace
+   (.avatar-medium, 64px) en zone de dépôt façon dropzone (bordure
+   pointillée) plutôt qu'un bouton texte, pour avoir la même présence
+   visuelle que la photo une fois ajoutée. */
+body.desk .add-picture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    width: 64px;
+    height: 64px;
+    padding: 0.5rem;
+    border-radius: 16px;
+    border: 3px dashed var(--bb-red-dark);
+    background: rgba(158, 0, 0, 0.08);
+    color: var(--bb-red-dark);
+    font-weight: bold;
+    font-size: 0.7rem;
+    line-height: 1.1;
+    text-align: center;
+}
+body.desk .add-picture i {
+    font-size: 1.4rem;
+}
+body.desk .add-picture:hover,
+body.desk .add-picture:focus-visible {
+    background: var(--bb-red);
+    border-color: var(--bb-white);
+    color: var(--bb-white);
+}
+
+/* Fiche utilisateur (admin/user/show|addadmin|addaccountant|valid.html.twig)
+   jugée "trop trop moche" par l'utilisatrice : en-tête refait en vrai bandeau
+   d'identité (avatar dans un cadre doré, nom + sous-titre instrument/ville,
+   actions "retour"/"contacter" en icônes plutôt qu'en gros boutons texte de
+   part et d'autre), rôles en pastilles plutôt qu'en lignes de tableau. */
+body.desk .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+body.desk .profile-identity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+/* Fond encre jugé "nul" par l'utilisatrice ("j'en veux du vert au moins"),
+   même redite du panneau noir déjà retiré ailleurs : --bb-green-mid comme
+   les pastilles de rôle juste en dessous, plutôt qu'une 2e couleur neutre
+   inventée. Blanc plutôt que doré-pâle sur ce fond (6.81:1, AAA, même
+   calcul que le texte des pastilles de rôle). */
+body.desk .profile-avatar-frame {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 3px solid var(--bb-gold);
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+body.desk .profile-avatar-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+body.desk .profile-name {
+    margin: 0;
+    text-align: left;
+}
+body.desk .profile-subtitle {
+    margin: 0.15rem 0 0;
+    color: var(--bb-ink);
+    font-weight: bold;
+    opacity: 0.75;
+}
+/* Boutons "retour"/"contacter" en icône seule dans l'en-tête : même taille
+   carrée que les boutons icône des tableaux (body.desk .table .btn-*
+   ci-dessus), répétée ici explicitement car en dehors d'un .table. */
+body.desk .profile-header > .btn-red,
+body.desk .profile-header > .btn-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+body.desk .role-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+body.desk .role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    /* Padding asymétrique à l'origine (moins à droite, pour "laisser la
+       place" au bouton poubelle) : ça se voit trop sur "Utilisateur·rice",
+       seule pastille sans bouton (ROLE_USER, jamais une vraie assignation
+       retirable), le bord droit paraissait plus serré que le gauche.
+       Symétrique désormais, quel que soit le contenu de la pastille. */
+    padding: 0.4rem 1rem;
+    border-radius: 25px;
+    font-weight: bold;
+}
+body.desk .role-badge .btn-red {
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+
+/* Scrollbar cohérente avec le reste du site (retour utilisatrice du
+   2026-08-11) : Histoire/Musique/Planning ont chacune une scrollbar
+   thématisée (cf. assets/story/minisite.css, assets/music/music.css,
+   assets/schedule/schedule.css), desk/admin/event utilisait encore la
+   scrollbar grise par défaut du navigateur. Doré pâle sur transparent,
+   même choix que Musique (déjà validé sur un fond sombre comparable aux
+   panneaux .card ci-dessus).
+   Ciblé sur html.desk plutôt que body.desk (1er essai du 2026-08-11, resté
+   sans effet visible) : la scrollbar de la fenêtre est pilotée par
+   l'élément racine <html>, pas <body>, tant que <body> n'a pas son propre
+   overflow ; assets/story/minisite.css contourne ça en stylant "*" (tous
+   les éléments d'un coup), ici la classe "desk" est posée sur <html> en
+   plus de <body> (templates/desk/base.html.twig) pour cibler précisément
+   la bonne scrollbar sans styler tout le document. */
+html.desk {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bb-gold-pale) transparent;
+    /* Sans ça, la place réservée à la scrollbar verticale n'existe que sur
+       les pages assez hautes pour vraiment défiler : la navbar (position:
+       fixed, cf. plus bas) et tout le contenu se décalaient de quelques px
+       à chaque changement de page selon qu'il y avait ou non une scrollbar,
+       repéré par l'utilisatrice le 2026-08-11. scrollbar-gutter réserve
+       cet espace en permanence, scrollbar visible ou non. */
+    scrollbar-gutter: stable;
+}
+html.desk::-webkit-scrollbar {
+    width: 10px;
+}
+html.desk::-webkit-scrollbar-track {
+    background: transparent;
+}
+html.desk::-webkit-scrollbar-thumb {
+    background-color: var(--bb-gold-pale);
+    border-radius: 8px;
+}
+html.desk::-webkit-scrollbar-thumb:hover {
+    background-color: var(--bb-gold);
+}
+
+/* Boutons icône seule (modifier/valider/retirer un rôle dans les tableaux)
+   à une taille tantôt "ronde", tantôt écrasée selon le contenu autour
+   ("les boutons ça part en couille", retour utilisatrice du 2026-08-11) :
+   taille fixe et centrage de l'icône pour que toutes les actions d'un
+   tableau se ressemblent, quel que soit le texte des colonnes voisines. */
+body.desk .table .btn-red,
+body.desk .table .btn-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+}
 
 /* Texte blanc au survol (pas gold/rouge) : même bug de contraste que sur la
    navbar, ici sur les CTA "payer l'adhésion" / "s'abonner" */
@@ -408,6 +720,89 @@ form {
     width: 100%;
     z-index: 1000;
     background: var(--bb-red);
+}
+/* .text-yellow (doré) sur ce fond rouge ne tenait que 3.24:1, sous le
+   minimum AA (4.5:1) : repassé en blanc (6.07:1) pour ce contexte précis,
+   sans toucher .text-yellow ailleurs (déjà vérifié correct sur /join). */
+.navbar-admin .text-yellow {
+    color: var(--bb-white);
+}
+/* Aucun focus visible dédié sur cette navbar jusqu'ici (contrairement à
+   .navbar-collapse .nav-link:focus-visible ci-dessus) : au clavier, le
+   focus Bootstrap par défaut sur un <a> est quasi invisible. Blanc plutôt
+   que --bb-ink (utilisé plus bas sur les boutons .btn-red/.btn-green
+   posés sur fond clair) : ici le fond est rouge, blanc/rouge tient 6.07:1
+   (même calcul que .navbar-admin .text-yellow ci-dessus), ink/rouge ne
+   tiendrait que 3.03:1. */
+.navbar-admin .nav-link:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+/* Reflow mobile : .navbar-admin n'a ni bouton hamburger ni collapse (a
+   contrario de .navbar-collapse plus haut), tous les liens restent en une
+   seule ligne flex (nowrap par défaut). En dessous de 768px les 6-7 items
+   + sélecteur de langue débordent hors écran (scroll horizontal, contenu
+   inatteignable sans le découvrir), CSS seul (flex-wrap) suffit à corriger
+   sans toucher au comportement/JS existant. */
+@media (max-width: 767px) {
+    .navbar-admin .navbar-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        row-gap: 0.5rem;
+        column-gap: 0.25rem;
+    }
+    .navbar-admin .nav-item.ml-auto {
+        margin-left: 0 !important;
+    }
+}
+
+/* Sélecteur de langue : mêmes 3 liens que .navbar-collapse ci-dessus (pas
+   de <select>, chrome natif non stylable, cf. commentaire plus haut), sur
+   fond rouge ici plutôt que vert -> blanc au lieu de doré (6.07:1, même
+   calcul que .navbar-admin .text-yellow). */
+.navbar-admin .lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 0.75rem;
+}
+.navbar-admin .lang-link {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--bb-white);
+    border: 1px solid transparent;
+}
+.navbar-admin .lang-link:hover,
+.navbar-admin .lang-link:focus-visible {
+    border-color: var(--bb-white);
+}
+.navbar-admin .lang-link.active {
+    background: var(--bb-white);
+    color: var(--bb-red-dark);
+}
+
+/* Navbar fixe en haut demandée par l'utilisatrice ("le texte passe
+   derrière"), desktop seulement : en dessous de 768px .navbar-admin peut
+   déjà occuper plusieurs lignes (cf. reflow mobile ci-dessus), la fixer en
+   plus obligerait à réserver une hauteur de contenu imprévisible en haut
+   de chaque page (grand bandeau vide ou chevauchement selon le nombre de
+   lignes). #main-content récupère un padding-top équivalent à la hauteur
+   mesurée de la navbar (cf. méthode "mesure empirique" déjà utilisée sur
+   /story et /music, CLAUDE.md) pour ne rien cacher dessous au chargement. */
+@media (min-width: 768px) {
+    .navbar-admin {
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+    body.desk main {
+        padding-top: 58px;
+    }
 }
 
 .navbar .navbar-toggler svg {

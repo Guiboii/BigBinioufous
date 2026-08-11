@@ -20,7 +20,8 @@ nav:
     join_or_login: Join or Login
     tagline: "The craziest oboe band of the Galaxy !!"
     songs: Songs
-    admin: Admin
+    planning: Schedule
+    accountant: Accountant
     toggle: Toggle navigation
 
 contact:
@@ -122,6 +123,7 @@ event:
     poster_invalid_type: "Please upload a valid JPEG or PNG image"
     add_to_calendar: "Add to my calendar"
     calendar_other: "Other (.ics)"
+    edit_aria: "Edit \"%title%\""
 
 join:
     title: "Join us !!"
@@ -149,7 +151,6 @@ desk:
     hello: "Hi %nickname% !"
     pending_validation: "Please be patient !! Your account has to be approved by an administrator..."
     pending_count: "%count% pending validation(s)"
-    accountant_link: Accountant
     binioufous_heading: "Here are the Binioufous!"
     mailing_lists: mailing-lists you subscribed
     favorite_songs: favorite songs
@@ -197,13 +198,6 @@ music:
 
 Id: Id
 
-accountant:
-    title: "Hello AccountantController!"
-    placeholder_heading: "Hello %name%!"
-    placeholder_intro: "This friendly message is coming from:"
-    placeholder_controller: Your controller at
-    placeholder_template: Your template at
-
 admin:
     compta_title: Compta
     compta_hello: "Hello %name%!"
@@ -217,10 +211,22 @@ admin:
     contact: Contact
     make_admin: Make this user an administrator
     make_accountant: Make this user an accountant
+    confirm_make_admin: "Make this user an administrator?"
+    confirm_make_accountant: "Make this user an accountant?"
+    already_has_role: This person already has this role.
     roles: Roles
     validate: Validate
     wish: Wish
     date_of_birth: Date of Birth
+    edit_user_aria: "Edit %name%'s profile"
+    validate_user_aria: "Approve %name%'s registration"
+    remove_role_aria: "Remove role \"%role%\""
+    confirm_remove_role: "Remove the \"%role%\" role?"
+    refuse: Refuse
+    refuse_user_aria: "Refuse %name%'s registration"
+    confirm_refuse: "Refuse %name%'s registration? The account will be deleted."
+    promote_section: Promote
+    edit_profile_section: Edit profile
 
 Name: Name
 Picture: Picture

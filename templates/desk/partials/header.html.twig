@@ -3,41 +3,44 @@
         <div class="container">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="fas fa-home"></i> {{ 'nav.home'|trans }}</a>
+                    <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="ri-home-4-fill" aria-hidden="true"></i> {{ 'nav.home'|trans }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('desk') }}"><i class="fas fa-desktop"></i> {{ 'nav.desk'|trans }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="far fa-user-circle"></i> {{ 'nav.profile'|trans }}</a>
+                    <a class="nav-link text-yellow" href="{{ path('desk') }}"><i class="ri-user-settings-fill" aria-hidden="true"></i> {{ 'nav.desk'|trans }}</a>
                 </li>
                 {% if app.user %}
                     {% for role in app.user.roles %}
                         {% if role == 'ROLE_ADMIN' %}
                             <li class="nav-item">
-                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> {{ 'nav.songs'|trans }}</a>
+                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="ri-music-2-fill" aria-hidden="true"></i> {{ 'nav.songs'|trans }}</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ path('event_index') }}" class="nav-link text-yellow"><i class="fas fa-chart-line"></i> {{ 'nav.admin'|trans }}</a>
+                                <a href="{{ path('event_index') }}" class="nav-link text-yellow"><i class="ri-calendar-event-fill" aria-hidden="true"></i> {{ 'nav.planning'|trans }}</a>
                             </li>
                         {% endif %}
                         {% if role == 'ROLE_BINIOUFOUS' %}
                             <li class="nav-item">
-                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="fas fa-music"></i> {{ 'nav.songs'|trans }}</a>
+                                <a href="{{ path('deskmusic') }}" class="nav-link text-yellow"><i class="ri-music-2-fill" aria-hidden="true"></i> {{ 'nav.songs'|trans }}</a>
+                            </li>
+                        {% endif %}
+                        {% if role == 'ROLE_COMPTA' %}
+                            <li class="nav-item">
+                                <a href="{{ path('accountant') }}" class="nav-link text-yellow"><i class="ri-money-euro-circle-fill" aria-hidden="true"></i> {{ 'nav.accountant'|trans }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
                 {% endif %}
 
                 <li class="nav-item lang-switcher">
-                    <select class="form-control form-control-sm" onchange="window.location.href=this.value">
-                        <option value="{{ path('app_locale', {locale: 'fr'}) }}" {% if app.request.locale == 'fr' %}selected{% endif %}>FR</option>
-                        <option value="{{ path('app_locale', {locale: 'en'}) }}" {% if app.request.locale == 'en' %}selected{% endif %}>EN</option>
-                        <option value="{{ path('app_locale', {locale: 'br'}) }}" {% if app.request.locale == 'br' %}selected{% endif %}>BR</option>
-                    </select>
+                    <a href="{{ path('app_locale', {locale: 'fr'}) }}" class="lang-link {% if app.request.locale == 'fr' %}active{% endif %}">FR</a>
+                    <a href="{{ path('app_locale', {locale: 'en'}) }}" class="lang-link {% if app.request.locale == 'en' %}active{% endif %}">EN</a>
+                    <a href="{{ path('app_locale', {locale: 'br'}) }}" class="lang-link {% if app.request.locale == 'br' %}active{% endif %}">BR</a>
                 </li>
                 <li class="nav-item ml-auto">
-                    <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> {{ 'nav.logout'|trans }}</a>
+                    <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="ri-user-fill" aria-hidden="true"></i> {{ 'nav.profile'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="ri-logout-box-r-fill" aria-hidden="true"></i> {{ 'nav.logout'|trans }}</a>
                 </li>
             </ul>
         </div>

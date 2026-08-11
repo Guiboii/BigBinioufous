@@ -7,7 +7,10 @@
     <div class="row mt-2">
         <div class="col-1">
             {% if app.user.picture == null %}
-                <a class="btn btn-red" href="{{ path('profile') }}"><i class="fas fa-portrait"></i> <em>{{ 'desk.add_picture'|trans }}</em></a>
+                <a class="add-picture" href="{{ path('profile') }}">
+                    <i class="ri-image-add-line" aria-hidden="true"></i>
+                    <em>{{ 'desk.add_picture'|trans }}</em>
+                </a>
             {% else %}
                 <img src="{{ asset('uploads/pictures/' ~ app.user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ app.user.firstname }}">
             {% endif %}
@@ -15,11 +18,11 @@
 
         <div class="col">
             <div class="row ml-4">
-                <h2>{{ 'desk.hello'|trans({'%nickname%': app.user.nickname}) }}</h2>
+                <h1>{{ 'desk.hello'|trans({'%nickname%': app.user.nickname}) }}</h1>
             </div>
             <div class="row centered">
                 {% if app.user.validation == false %}
-                    <h3>{{ 'desk.pending_validation'|trans }}</h3>
+                    <h2>{{ 'desk.pending_validation'|trans }}</h2>
                 {% endif %}
                 {% for role in app.user.roles %}
                     {% if role == 'ROLE_ADMIN' %}
@@ -41,12 +44,8 @@
                         <div class="container mt-2">
                             {{ include('/desk/lists/simples.html.twig') }}
                         </div>
-                    {% elseif role == 'ROLE_COMPTA' %}
-                        <div class="col">
-                            <a href="{{ path('accountant') }}" class="btn btn-red">{{ 'desk.accountant_link'|trans }}</a>
-                        </div>
                     {% elseif role == 'ROLE_BINIOUFOUS' %}
-                        <h3>{{ 'desk.binioufous_heading'|trans }}</h3>
+                        <h2>{{ 'desk.binioufous_heading'|trans }}</h2>
                         <div class="container mt-2">
                             {{ include('/desk/lists/binioufous.html.twig') }}
                         </div>
@@ -57,8 +56,8 @@
                         <div class="col">
                             <p>{{ 'desk.favorite_songs'|trans }}</p>
                         </div>
-                    {% elseif role == 'ROLE_Simple' %}
-                        <h3>{{ 'desk.welcome_simple'|trans }}</h3>
+                    {% elseif role == 'ROLE_SIMPLE' %}
+                        <h2>{{ 'desk.welcome_simple'|trans }}</h2>
                         <div class="col">
                             <p>{{ 'desk.mailing_lists'|trans }}</p>
                         </div>

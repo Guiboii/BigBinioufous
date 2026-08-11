@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Artist;
+use App\Entity\Event;
 use App\Entity\Instrument;
 use App\Entity\Role;
 use App\Entity\Track;
@@ -44,7 +45,7 @@ class AppFixtures extends Fixture
                     ->setDescription('Member');
         $manager->persist($memberRole);
         $simpleRole = new Role();
-        $simpleRole->setTitle('ROLE_Simple')
+        $simpleRole->setTitle('ROLE_SIMPLE')
                     ->setDescription('Simple');
         $manager->persist($simpleRole);
         $userRole = new Role();
@@ -118,6 +119,30 @@ class AppFixtures extends Fixture
                 ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
         $manager->persist($admin);
+
+        // compte admin/admin jetable demandé par l'utilisatrice le
+        // 2026-08-11 pour tester rapidement en local, à changer avant toute
+        // mise en ligne (mot de passe volontairement trivial).
+        $quickAdmin = new User();
+
+        $hash = $this->encoder->hashPassword($quickAdmin, 'admin');
+
+        $quickAdmin->setGender('unknown')
+                ->setFirstName('Admin')
+                ->setLastName('Admin')
+                ->setEmail('admin@admin.com')
+                ->setHash($hash)
+                ->setNickname('admin')
+                ->setCity('Vaulx-en-Velin')
+                ->setCountry('France')
+                ->setBirth($faker->dateTime($max = 'now'))
+                ->setValidation(true)
+                ->setWish('Administrator')
+                ->addRole($adminRole)
+                ->setInstrument($coranglais)
+                ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
+
+        $manager->persist($quickAdmin);
 
         // ajout d'utilisateurs Binioufous et membres
 
@@ -208,6 +233,45 @@ class AppFixtures extends Fixture
                     ->setTrackFilename($demoFiles[$i % count($demoFiles)]);
 
             $manager->persist($track);
+        }
+
+        // ajout du planning saison 2026-2027 (communiqué par l'utilisatrice
+        // le 2026-08-11, remplace les événements créés à la main via
+        // /admin/event et perdus lors d'un rechargement de fixtures, cf.
+        // ROADMAP.md Phase 6). Répétitions : 09:17-12:34 (horaire donné par
+        // l'utilisatrice, clin d'œil à l'exemple déjà utilisé dans
+        // ROADMAP.md pour illustrer l'heure de fin facultative). Reste des
+        // événements : heure non précisée -> 00:00, que l'affichage
+        // (ScheduleController/schedule/index.html.twig) traite déjà comme
+        // "pas d'heure" plutôt que comme minuit, donc pas d'endDate non plus.
+        $events = [
+            ['2026-09-05', 'other', 'Ze Big Journée de Rentrée', 'À préciser', null, null],
+            ['2026-09-20', 'concert', 'Pestacle', 'Maison du Canal', null, null],
+            ['2026-09-26', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+            ['2026-10-02', 'concert', 'Pestacle', 'Fête de quartier des Buers', null, null],
+            ['2026-10-17', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+            ['2026-11-21', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+            ['2026-12-12', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+            ['2027-01-23', 'other', 'Résidence d\'Hiver', 'ENM de Villeurbanne', 'Du 23 au 24 janvier.', null],
+            ['2027-02-13', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+            ['2027-03-13', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+            ['2027-04-10', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+            ['2027-05-29', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+            ['2027-06-19', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
+        ];
+
+        foreach ($events as [$date, $type, $title, $location, $description, $hours]) {
+            [$startTime, $endTime] = $hours ? explode('-', $hours) : [null, null];
+
+            $event = new Event();
+            $event->setDate(new \DateTimeImmutable($date.' '.($startTime ?? '00:00')))
+                    ->setEndDate($endTime ? new \DateTimeImmutable($date.' '.$endTime) : null)
+                    ->setType($type)
+                    ->setTitle($title)
+                    ->setLocation($location)
+                    ->setDescription($description);
+
+            $manager->persist($event);
         }
 
         $manager->flush();

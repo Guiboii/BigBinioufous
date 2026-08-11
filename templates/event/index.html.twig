@@ -6,7 +6,7 @@
 
 <div class="container mt-2">
     <div class="container mt-2">
-        <h3>{{ 'event.index_heading'|trans }}</h3>
+        <h1>{{ 'event.index_heading'|trans }}</h1>
 
         <a href="{{ path('event_new') }}" class="btn btn-green mb-3">{{ 'event.add_new'|trans }}</a>
 
@@ -31,7 +31,7 @@
                             <td>{{ ('event.type_' ~ event.type)|trans }}</td>
                             <td>{{ event.location }}</td>
                             <td>
-                                <a href="{{ path('event_edit', {id: event.id}) }}" class="btn btn-green"><i class="fas fa-pen"></i></a>
+                                <a href="{{ path('event_edit', {id: event.id}) }}" class="btn btn-green" aria-label="{{ 'event.edit_aria'|trans({'%title%': event.title}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
                                 {{ include('event/_delete_form.html.twig', {event: event}) }}
                             </td>
                         </tr>

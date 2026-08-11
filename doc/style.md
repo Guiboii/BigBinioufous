@@ -1,18 +1,19 @@
 # Frontend / style : pour s'y retrouver vite
 
-Pas de design system formalisé au sens strict, mais depuis la refonte de la navbar (2026-08-10) `assets/main/app.css` a un vrai jeu de variables de couleurs (`:root { --bb-* }`) à réutiliser. Reste un mélange **Bootstrap 4 + classes maison**, avec **trois systèmes d'icônes différents** (le vrai piège du projet, cf. ci-dessous).
+Pas de design system formalisé au sens strict, mais depuis la refonte de la navbar (2026-08-10) `assets/main/app.css` a un vrai jeu de variables de couleurs (`:root { --bb-* }`) à réutiliser. Reste un mélange **Bootstrap 4 + classes maison**, avec deux systèmes d'icônes différents (cf. ci-dessous).
 
-## Icônes : attention, il y en a TROIS systèmes
+## Icônes : deux systèmes (Font Awesome retiré le 2026-08-11)
 
 | Système | Installé comment | Utilisé où | Syntaxe |
 |---|---|---|---|
-| **Font Awesome** (`@fortawesome/fontawesome-free`) | `importmap:require`, importé en JS/CSS dans `assets/main/app.js` (`fontawesome.min.js` + `.css`), donc dispo partout où l'entry `app` est chargée (= toutes les pages) | Navbar desk/admin (`templates/desk/partials/header.html.twig`) | `<i class="fas fa-home"></i>`, `<i class="far fa-user-circle"></i>`, etc. |
-| **Remixicon** | `importmap:require remixicon/fonts/remixicon.css` (le package n'a pas de module JS, seul le fichier CSS est requis directement), importé dans `assets/main/app.js`, dispo partout comme Font Awesome | Navbar publique (`templates/partials/header.html.twig`), variante **`-fill`** (pleine, plus contrastée que `-line`) | `<i class="ri-home-4-fill"></i>`, `<i class="ri-music-2-fill"></i>`, etc. |
+| **Remixicon** | `importmap:require remixicon/fonts/remixicon.css` (le package n'a pas de module JS, seul le fichier CSS est requis directement), importé dans `assets/main/app.js`, dispo partout où l'entry `app` est chargée (= toutes les pages) | Partout : navbar publique (`templates/partials/header.html.twig`) et navbar/listes desk-admin (`templates/desk/`, `templates/admin/`, `templates/event/`), variante **`-fill`** (pleine, plus contrastée que `-line`) sur les icônes accompagnées de texte | `<i class="ri-home-4-fill" aria-hidden="true"></i>`, `<i class="ri-music-2-fill" aria-hidden="true"></i>`, etc. |
 | **Bootstrap Icons** | package **pas installé du tout** : le SVG de chaque icône a été copié-collé à la main directement dans les templates | Le burger menu du header public (`bi bi-list`), les boutons du lecteur audio (`templates/music/index.html.twig` : play/pause/stop/loop) | `<svg class="bi bi-play-fill" ...>...path...</svg>` (markup SVG brut, pas une classe qui "marche" toute seule) |
 
 **Piège** : mettre `<i class="bi bi-xxx">` ne fonctionnera pas : Bootstrap Icons n'est chargé nulle part comme police d'icônes, il faut copier le SVG complet depuis [bootstrap-icons](https://icons.getbootstrap.com/) (comme c'est déjà fait pour les icônes existantes).
 
-→ Pour une nouvelle icône : dans la navbar publique ou toute nouvelle page "vitrine", utiliser **Remixicon** (`<i class="ri-...-fill">`, catalogue sur [remixicon.com](https://remixicon.com/)), c'est le système le plus récent et le plus riche. Dans le desk/admin, rester sur **Font Awesome** (`<i class="fas fa-...">`) pour la cohérence avec l'existant. Ne touche au SVG Bootstrap Icons que si tu modifies le lecteur audio ou le burger menu.
+→ Pour une nouvelle icône : **Remixicon** (`<i class="ri-...-fill">`, catalogue sur [remixicon.com](https://remixicon.com/)) partout, y compris desk/admin depuis la migration. Ne touche au SVG Bootstrap Icons que si tu modifies le lecteur audio ou le burger menu.
+
+**Historique** : `@fortawesome/fontawesome-free` (utilisé dans le desk/admin jusqu'au 2026-08-11) n'a en réalité jamais fonctionné : seul `css/fontawesome.min.css` (styles de base : tailles, animations, calques) avait été vendorisé par `importmap:require`, sans les fichiers de style `solid.min.css`/`regular.min.css` qui contiennent le vrai mapping glyphe→caractère et le `@font-face` de la police d'icônes elle-même. Résultat : les classes `fas`/`far` existaient mais ne dessinaient rien, carré vide affiché à la place de chaque icône dans tout l'espace membre/admin. Repéré le 2026-08-11 (utilisatrice : "ya des carés vide à coté de texte dans l'espace membre"). Plutôt que compléter le vendoring Font Awesome, tout le desk/admin est passé à Remixicon (déjà installé et fonctionnel côté navbar publique) : un seul système d'icônes en moins à maintenir. La dépendance Font Awesome a été retirée d'`importmap.php` et de `assets/main/app.js`.
 
 ## CSS : `assets/main/app.css`
 

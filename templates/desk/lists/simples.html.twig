@@ -1,5 +1,5 @@
-<table class="table table-hover text-center">
-            <h3>{{ 'desk.list.simples_title'|trans }}</h3>
+<h2>{{ 'desk.list.simples_title'|trans }}</h2>
+        <table class="table table-hover text-center">
             <thead>
                 <tr>
                     <th>{{ 'Name'|trans }}</th>
@@ -13,16 +13,16 @@
             <tbody>
                 {% for simple in simples %}
                 <tr>
-                    <td>{% if simple.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %} {{ simple.fullName }} </td>
+                    <td>{% if simple.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif simple.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %} {{ simple.fullName }} </td>
                     <td>{% if simple.picture == null %}
-                        <i class="fas fa-portrait"></i> <em>{{ 'no picture'|trans }}</em>
+                        <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ simple.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ simple.firstname }}">
                     {% endif %}</td>
                     <td>{{ simple.country }}</td>
                     <td>{{ simple.city }}</td>
                     <td>{{ simple.instrument.title }}</td>
-                    <td><a href="{{ path ('user_show', {slug: simple.slug}) }}" class="btn btn-green"><i class="fas fa-user-edit"></i></a></td>
+                    <td><a href="{{ path ('user_show', {slug: simple.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': simple.fullName}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

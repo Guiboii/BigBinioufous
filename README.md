@@ -81,7 +81,7 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 ## Modèle de données
 
 - **User** : membre du site, identité (nom, prénom, email, hash de mot de passe bcrypt), profil (surnom, ville, genre, pays, date de naissance, photo, slug), statut d'inscription (`validation`, `wish` = rôle souhaité), lié à un **Instrument** et à plusieurs **Role** (relation Many-to-Many).
-- **Role** : rôle applicatif (`ROLE_ADMIN`, `ROLE_COMPTA`, `ROLE_BINIOUFOUS`, `ROLE_MEMBER`, `ROLE_Simple`, `ROLE_USER`), avec titre + description, lié à plusieurs `User`.
+- **Role** : rôle applicatif (`ROLE_ADMIN`, `ROLE_COMPTA`, `ROLE_BINIOUFOUS`, `ROLE_MEMBER`, `ROLE_SIMPLE`, `ROLE_USER`), avec titre + description, lié à plusieurs `User`.
 - **Instrument** : instrument de musique (Hautbois, Cor Anglais, Flûte, Clarinette, Tuba, Euphonium, Batterie, Cor...), lié à plusieurs `User`.
 - **Artist** : artiste, lié à plusieurs `Track`.
 - **Track** : morceau de musique (titre, durée, fichier mp3 uploadé), lié à un `Artist`.

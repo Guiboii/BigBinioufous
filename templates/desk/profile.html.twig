@@ -5,11 +5,11 @@
 {% block body %}
     <div class="container">
         <div class="container">
-            <h4>{{ 'desk.update_profile'|trans }}</h4>
+            <h1>{{ 'desk.update_profile'|trans }}</h1>
             {{ form_start(form) }}
             {{ form_widget(form) }}
-            <button type="submit" class="btn btn-primary">{{ 'desk.update_submit'|trans }}</button>
-            <a class="btn btn-secondary" href="update-password">{{ 'desk.change_password'|trans }}</a>
+            <button type="submit" class="btn btn-green">{{ 'desk.update_submit'|trans }}</button>
+            <a class="btn btn-red" href="{{ path('update-password') }}">{{ 'desk.change_password'|trans }}</a>
             {{ form_end(form) }}
         </div>
     </div>
