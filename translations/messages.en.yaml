@@ -151,7 +151,6 @@ desk:
     hello: "Hi %nickname% !"
     pending_validation: "Please be patient !! Your account has to be approved by an administrator..."
     pending_count: "%count% pending validation(s)"
-    accountant_link: Accountant
     binioufous_heading: "Here are the Binioufous!"
     mailing_lists: mailing-lists you subscribed
     favorite_songs: favorite songs
@@ -212,6 +211,7 @@ admin:
     contact: Contact
     make_admin: Make this user an administrator
     make_accountant: Make this user an accountant
+    already_has_role: This person already has this role.
     roles: Roles
     validate: Validate
     wish: Wish

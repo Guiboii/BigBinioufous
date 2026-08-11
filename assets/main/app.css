@@ -286,34 +286,18 @@ body.desk h2 {
     letter-spacing: 0.01em;
 }
 
-/* Fond blanc Bootstrap par défaut du .card jugé "dégueulasse" par
-   l'utilisatrice (seule surface neutre de toute la zone desk/admin, qui
-   n'utilise sinon que du doré/vert/rouge saturés) : remplacé par un panneau
-   encre (--bb-ink) avec un liseré doré, cohérent avec le reste de la
-   palette plutôt qu'un blanc neutre hors charte. */
-body.desk .card {
-    background: var(--bb-ink);
-    border: none;
-    border-top: 4px solid var(--bb-gold);
-    border-radius: 12px;
-}
-body.desk .card-body {
-    color: var(--bb-white);
-}
-/* Retour utilisatrice du 2026-08-11 : sur admin/user/show.html.twig, le
-   <form> (EditUserType) garde son propre fond vert + bordure épaisse
-   (règle "form" générique plus haut) une fois posé dans le panneau encre
-   ci-dessus -> une case verte dans la case noire, au lieu d'une seule forme
-   cohérente. Le formulaire reprend directement l'espace transparent du
-   panneau .card (déjà doré/encre) plutôt que de dessiner sa propre boîte ;
-   .card-body garde son padding Bootstrap habituel pour l'air autour du
-   contenu, donc padding remis à 0 ici pour ne pas le doubler. */
-body.desk .card form {
-    background: transparent;
-    border: none;
-    padding: 0;
-}
-/* Même souci que .card form ci-dessus, repéré cette fois sur les mini
+/* Un panneau encre (--bb-ink) avait été tenté ici pour remplacer le blanc
+   Bootstrap par défaut du .card (admin/user/show|addadmin|addaccountant),
+   toujours jugé "horrible" par l'utilisatrice ensuite : aucune autre page
+   du site n'a de grande surface noire, --bb-ink n'y sert qu'à du texte/un
+   petit fond (skip-link, cadre d'avatar). Les 3 templates concernés ne
+   posent plus ce wrapper .card du tout : le bouton "promouvoir" est un
+   simple bouton sur le fond doré de la page (comme "Retour aux listes"
+   juste au-dessus), et le formulaire d'édition garde sa boîte verte
+   naturelle (règle "form" générique plus bas), exactement comme sur
+   desk/profile.html.twig. */
+
+/* Même souci que ci-dessus (case verte/noire imbriquée), repéré cette fois sur les mini
    <form> d'action (supprimer un événement, refuser une inscription :
    uniquement des champs cachés + un bouton icône) : la règle "form"
    générique leur collait quand même son fond vert + sa bordure épaisse
@@ -477,20 +461,6 @@ body.desk .role-badge .btn-red {
     padding: 0;
 }
 
-/* Petite étiquette au-dessus de chaque panneau .card pour distinguer
-   "promouvoir" de "modifier le profil" d'un coup d'œil, plutôt que 2 boîtes
-   identiques sans indication de ce qu'elles contiennent. */
-body.desk .card-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--bb-gold);
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    font-size: 0.85rem;
-    padding: 0.9rem 1.25rem 0;
-}
 
 /* Scrollbar cohérente avec le reste du site (retour utilisatrice du
    2026-08-11) : Histoire/Musique/Planning ont chacune une scrollbar

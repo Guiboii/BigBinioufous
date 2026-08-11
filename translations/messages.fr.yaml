@@ -151,7 +151,6 @@ desk:
     hello: "Salut %nickname% !"
     pending_validation: "Merci de patienter !! Ton compte doit être validé par un administrateur..."
     pending_count: "%count% validation(s) en attente"
-    accountant_link: Comptabilité
     binioufous_heading: "Voici les Binioufous !"
     mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"
     favorite_songs: Morceaux favoris
@@ -210,8 +209,9 @@ admin:
     created_at: Créé le
     back_to_lists: Retour aux listes
     contact: Contacter
-    make_admin: Faire de cet utilisateur un administrateur
-    make_accountant: Faire de cet utilisateur un comptable
+    make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice"
+    make_accountant: "Faire de cet utilisateur·rice un·e comptable"
+    already_has_role: "Cette personne a déjà ce rôle."
     roles: Rôles
     validate: Valider
     wish: Souhait

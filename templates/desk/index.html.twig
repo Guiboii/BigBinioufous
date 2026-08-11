@@ -44,10 +44,6 @@
                         <div class="container mt-2">
                             {{ include('/desk/lists/simples.html.twig') }}
                         </div>
-                    {% elseif role == 'ROLE_COMPTA' %}
-                        <div class="col">
-                            <a href="{{ path('accountant') }}" class="btn btn-red">{{ 'desk.accountant_link'|trans }}</a>
-                        </div>
                     {% elseif role == 'ROLE_BINIOUFOUS' %}
                         <h2>{{ 'desk.binioufous_heading'|trans }}</h2>
                         <div class="container mt-2">

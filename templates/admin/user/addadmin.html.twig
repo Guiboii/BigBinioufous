@@ -22,17 +22,17 @@
             <button type="button" class="btn btn-green" aria-label="{{ 'admin.contact'|trans }}"><i class="ri-mail-fill" aria-hidden="true"></i></button>
         </div>
         <div class="container text-center">
-            <div class="card">
-                <div class="card-label"><i class="ri-user-star-fill" aria-hidden="true"></i> {{ 'admin.promote_section'|trans }}</div>
-                <div class="card-body centered">
-                    {{ form_start(form) }}
-                    {{ form_widget(form) }}
-                    <div class="centered">
-                        <button type="submit" class="btn btn-green">{{ 'admin.make_admin'|trans }}</button>
-                    </div>
-                    {{ form_end(form) }}
+            <h2>{{ 'admin.promote_section'|trans }}</h2>
+            {% if 'ROLE_ADMIN' in user.roles %}
+                <p>{{ 'admin.already_has_role'|trans }}</p>
+            {% else %}
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <div class="centered">
+                    <button type="submit" class="btn btn-green">{{ 'admin.make_admin'|trans }}</button>
                 </div>
-            </div>
+                {{ form_end(form) }}
+            {% endif %}
         </div>
     </div>
 {% endblock %}
