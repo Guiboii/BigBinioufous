@@ -4,21 +4,26 @@
 
 {% block body %}
     <div class="container">
-        <div class="row centered">
-            <a class="btn btn-red" href="{{ path ('desk') }}">{{ 'admin.back_to_lists'|trans }}</a>
-            <div class="col text-center">
-                <div class="row centered">
+        <div class="profile-header">
+            <a class="btn btn-red" href="{{ path ('desk') }}" aria-label="{{ 'admin.back_to_lists'|trans }}"><i class="ri-arrow-left-line" aria-hidden="true"></i></a>
+            <div class="profile-identity">
+                <div class="profile-avatar-frame">
                     {% if user.picture == null %}
-                        <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
+                        <i class="ri-image-line" aria-hidden="true"></i>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname }}">
-                    {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %}</h1>
+                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" alt=" Avatar de {{ user.firstname }}">
+                    {% endif %}
+                </div>
+                <div>
+                    <h1 class="profile-name">{{ user.fullName }} {% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %}</h1>
+                    <p class="profile-subtitle">{{ user.instrument.title }} · {{ user.city }}</p>
                 </div>
             </div>
-            <button type="button" class="btn btn-green">{{ 'admin.contact'|trans }}</button>
+            <button type="button" class="btn btn-green" aria-label="{{ 'admin.contact'|trans }}"><i class="ri-mail-fill" aria-hidden="true"></i></button>
         </div>
         <div class="container text-center">
             <div class="card">
+                <div class="card-label"><i class="ri-user-star-fill" aria-hidden="true"></i> {{ 'admin.promote_section'|trans }}</div>
                 <div class="card-body centered">
                     {{ form_start(form) }}
                     {{ form_widget(form) }}

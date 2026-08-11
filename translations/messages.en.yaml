@@ -222,6 +222,8 @@ admin:
     refuse: Refuse
     refuse_user_aria: "Refuse %name%'s registration"
     confirm_refuse: "Refuse %name%'s registration? The account will be deleted."
+    promote_section: Promote
+    edit_profile_section: Edit profile
 
 Name: Name
 Picture: Picture

@@ -179,6 +179,7 @@ admin:
     edit_user_aria: "Kemmañ profil %name%"
     validate_user_aria: "Kadarnaat enskrivadur %name%"
     remove_role_aria: "Lemel ar roll « %role% »"
+    edit_profile_section: "Kemmañ ar profil"
 
 Name: Anv
 Picture: Skeudenn

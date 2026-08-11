@@ -222,6 +222,8 @@ admin:
     refuse: Refuser
     refuse_user_aria: "Refuser l'inscription de %name%"
     confirm_refuse: "Refuser l'inscription de %name% ? Le compte sera supprimé."
+    promote_section: Promouvoir
+    edit_profile_section: Modifier le profil
 
 Name: Nom
 Picture: Photo

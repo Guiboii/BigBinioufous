@@ -327,6 +327,171 @@ body.desk .btn-form {
     padding: 0;
 }
 
+/* Message flash ("Inscription refusée", "Profil enregistré"...) jugé moche
+   par l'utilisatrice : rendu Bootstrap par défaut (fond vert pâle générique,
+   texte vert foncé), hors palette. Même logique que .card plus haut : fond
+   uni de la marque + liseré au lieu du gris/vert neutre de Bootstrap.
+   13.4:1 blanc sur --bb-green-deep (AAA). Seul alert-success existe
+   actuellement dans ce périmètre (tous les addFlash() du desk/admin sont
+   'success'), pas besoin de couvrir les autres variantes Bootstrap ici. */
+body.desk .alert-success {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bb-green-deep);
+    color: var(--bb-white);
+    border: none;
+    border-left: 5px solid var(--bb-gold);
+    border-radius: 10px;
+    font-weight: bold;
+}
+body.desk .alert-success i {
+    font-size: 1.4rem;
+    color: var(--bb-gold);
+}
+body.desk .alert-success p {
+    margin: 0;
+}
+
+/* "Ajoute une photo !" (avatar par défaut sur /desk) jugée "raplapla" par
+   l'utilisatrice : c'était un simple .btn-red étroit (largeur fit-content)
+   avec le texte qui retombait mot par mot dans la colonne .col-1 étroite
+   qui le contient. Reprend la taille de l'avatar réel qu'il remplace
+   (.avatar-medium, 64px) en zone de dépôt façon dropzone (bordure
+   pointillée) plutôt qu'un bouton texte, pour avoir la même présence
+   visuelle que la photo une fois ajoutée. */
+body.desk .add-picture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    width: 64px;
+    height: 64px;
+    padding: 0.5rem;
+    border-radius: 16px;
+    border: 3px dashed var(--bb-red-dark);
+    background: rgba(158, 0, 0, 0.08);
+    color: var(--bb-red-dark);
+    font-weight: bold;
+    font-size: 0.7rem;
+    line-height: 1.1;
+    text-align: center;
+}
+body.desk .add-picture i {
+    font-size: 1.4rem;
+}
+body.desk .add-picture:hover,
+body.desk .add-picture:focus-visible {
+    background: var(--bb-red);
+    border-color: var(--bb-white);
+    color: var(--bb-white);
+}
+
+/* Fiche utilisateur (admin/user/show|addadmin|addaccountant|valid.html.twig)
+   jugée "trop trop moche" par l'utilisatrice : en-tête refait en vrai bandeau
+   d'identité (avatar dans un cadre doré, nom + sous-titre instrument/ville,
+   actions "retour"/"contacter" en icônes plutôt qu'en gros boutons texte de
+   part et d'autre), rôles en pastilles plutôt qu'en lignes de tableau. */
+body.desk .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+body.desk .profile-identity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+body.desk .profile-avatar-frame {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 3px solid var(--bb-gold);
+    background: var(--bb-ink);
+    color: var(--bb-gold-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+body.desk .profile-avatar-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+body.desk .profile-name {
+    margin: 0;
+    text-align: left;
+}
+body.desk .profile-subtitle {
+    margin: 0.15rem 0 0;
+    color: var(--bb-ink);
+    font-weight: bold;
+    opacity: 0.75;
+}
+/* Boutons "retour"/"contacter" en icône seule dans l'en-tête : même taille
+   carrée que les boutons icône des tableaux (body.desk .table .btn-*
+   ci-dessus), répétée ici explicitement car en dehors d'un .table. */
+body.desk .profile-header > .btn-red,
+body.desk .profile-header > .btn-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+body.desk .role-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+body.desk .role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    padding: 0.4rem 0.5rem 0.4rem 1rem;
+    border-radius: 25px;
+    font-weight: bold;
+}
+body.desk .role-badge .btn-red {
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+/* Petite étiquette au-dessus de chaque panneau .card pour distinguer
+   "promouvoir" de "modifier le profil" d'un coup d'œil, plutôt que 2 boîtes
+   identiques sans indication de ce qu'elles contiennent. */
+body.desk .card-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--bb-gold);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.85rem;
+    padding: 0.9rem 1.25rem 0;
+}
+
 /* Scrollbar cohérente avec le reste du site (retour utilisatrice du
    2026-08-11) : Histoire/Musique/Planning ont chacune une scrollbar
    thématisée (cf. assets/story/minisite.css, assets/music/music.css,
@@ -344,6 +509,13 @@ body.desk .btn-form {
 html.desk {
     scrollbar-width: thin;
     scrollbar-color: var(--bb-gold-pale) transparent;
+    /* Sans ça, la place réservée à la scrollbar verticale n'existe que sur
+       les pages assez hautes pour vraiment défiler : la navbar (position:
+       fixed, cf. plus bas) et tout le contenu se décalaient de quelques px
+       à chaque changement de page selon qu'il y avait ou non une scrollbar,
+       repéré par l'utilisatrice le 2026-08-11. scrollbar-gutter réserve
+       cet espace en permanence, scrollbar visible ou non. */
+    scrollbar-gutter: stable;
 }
 html.desk::-webkit-scrollbar {
     width: 10px;
