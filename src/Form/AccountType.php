@@ -24,7 +24,7 @@ class AccountType extends ApplicationType
             ->add('gender', ChoiceType::class, ['choices' => ['Male' => 'male', 'Female' => 'female', 'Still looking for...' => 'unknown']], $this->getConfiguration('Your gender', '(sorry for that)'))
             ->add('firstName', TextType::class, $this->getConfiguration('First Name', 'Your first name'))
             ->add('lastName', TextType::class, $this->getConfiguration('Last Name', 'Your last name'))
-            ->add('birth', DateType::class, ['format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration('The date of your Birth', 'To wish your Birhtday, of course'))
+            ->add('birth', DateType::class, ['widget' => 'choice', 'format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration('The date of your Birth', 'To wish your Birhtday, of course'))
             ->add('email', EmailType::class, $this->getConfiguration('Email', 'Your email address'))
             ->add('instrument', EntityType::class, ['class' => Instrument::class, 'choice_label' => 'title'])
             ->add('city', TextType::class, $this->getConfiguration('Your city', 'The city you live in, bro !'))
