@@ -23,9 +23,9 @@
             <tbody>
                 {% for user in unvalids %}
                 <tr>
-                    <td>{% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %} {{ user.fullName }}</td>
+                    <td>{% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %} {{ user.fullName }}</td>
                     <td>{% if user.picture == null %}
-                        <i class="fas fa-portrait"></i> <em>{{ 'no picture'|trans }}</em>
+                        <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname }}">
                     {% endif %}</td>
@@ -34,7 +34,7 @@
                     <td>{{ user.country }}</td>
                     <td>{{ user.city }}</td>
                     <td>{{ user.createdAt|date('d/m/Y') }}</td>
-                    <td> <a href="{{ path ('user_valid', {slug: user.slug, wish: user.wish}) }}" class="btn btn-green"><i class="fas fa-check"></i></a></td>
+                    <td> <a href="{{ path ('user_valid', {slug: user.slug, wish: user.wish}) }}" class="btn btn-green"><i class="ri-checkbox-circle-line"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -49,16 +49,6 @@ return [
         'version' => '4.6.2',
         'type' => 'css',
     ],
-    '@fortawesome/fontawesome-free' => [
-        'version' => '7.3.1',
-    ],
-    '@fortawesome/fontawesome-free/css/fontawesome.min.css' => [
-        'version' => '7.3.1',
-        'type' => 'css',
-    ],
-    '@fortawesome/fontawesome-free/js/fontawesome.min.js' => [
-        'version' => '7.3.1',
-    ],
     'three' => [
         'version' => '0.128.0',
     ],

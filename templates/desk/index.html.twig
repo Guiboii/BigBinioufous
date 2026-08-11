@@ -7,7 +7,7 @@
     <div class="row mt-2">
         <div class="col-1">
             {% if app.user.picture == null %}
-                <a class="btn btn-red" href="{{ path('profile') }}"><i class="fas fa-portrait"></i> <em>{{ 'desk.add_picture'|trans }}</em></a>
+                <a class="btn btn-red" href="{{ path('profile') }}"><i class="ri-image-add-line" aria-hidden="true"></i> <em>{{ 'desk.add_picture'|trans }}</em></a>
             {% else %}
                 <img src="{{ asset('uploads/pictures/' ~ app.user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ app.user.firstname }}">
             {% endif %}

@@ -14,14 +14,14 @@
             <tr>
                 <td>
                     {% if member.gender == 'male' %}
-                        <i class="fas fa-male"></i>
+                        <i class="ri-men-fill" aria-hidden="true"></i>
                     {% else %}
-                        <i class="fas fa-female"></i>
+                        <i class="ri-women-fill" aria-hidden="true"></i>
                     {% endif %}
                     {{ member.fullName }}</td>
                 <td>
                     {% if member.picture == null %}
-                        <i class="fas fa-portrait"></i>
+                        <i class="ri-image-line" aria-hidden="true"></i>
                         <em>{{ 'no picture'|trans }}</em>
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ member.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ member.firstname }}">
@@ -31,7 +31,7 @@
                 <td>{{ member.instrument.title }}</td>
                 <td>
                     <a href="{{ path ('user_show', {slug: member.slug}) }}" class="btn btn-green">
-                        <i class="fas fa-user-edit"></i>
+                        <i class="ri-edit-line"></i>
                     </a>
                 </td>
             </tr>

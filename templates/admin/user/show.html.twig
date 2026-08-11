@@ -9,10 +9,10 @@
             <div class="col text-center">
                 <div class="row card-header centered">
                     {% if user.picture == null %}
-                        <i class="fas fa-portrait"></i> <em>{{ 'no picture'|trans }}</em>
+                        <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname }}">
-                    {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</h1>
+                    {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %}</h1>
                 </div>
             </div>
             <button class="btn btn-green">{{ 'admin.contact'|trans }}</button>
@@ -28,7 +28,7 @@
                     {% for role in roles %}
                         <tr>
                             <td>{{ role.description }}</td>
-                            <td><a href="#" class="btn btn-red"><i class="fas fa-ban"></i></a></td>
+                            <td><a href="#" class="btn btn-red"><i class="ri-forbid-line"></i></a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
