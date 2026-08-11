@@ -14,7 +14,7 @@
             </tr>
             <tr>
                 <th scope="row">{{ 'music.artist'|trans }}</th>
-                <td>{{ track.artist.name }}</td>
+                <td>{{ track.artist ? track.artist.name : '' }}</td>
             </tr>
             <tr>
                 <th scope="row">{{ 'Title'|trans }}</th>

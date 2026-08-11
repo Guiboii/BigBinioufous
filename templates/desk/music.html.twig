@@ -3,7 +3,172 @@
 {% block title %}{{ 'nav.music'|trans }}{% endblock %}
 
 {% block body %}
-    <div class="container row">
-        <p>{{ 'desk.favorite_songs_intro'|trans }}</p>
+    <div class="container">
+        <p class="desk-intro">{{ 'desk.favorite_songs_intro'|trans }}</p>
+
+        <nav class="desk-breadcrumb" aria-label="{{ 'desk.breadcrumb'|trans }}">
+            <a href="{{ path('deskmusic') }}"><i class="ri-hard-drive-2-fill" aria-hidden="true"></i> {{ 'desk.files_root'|trans }}</a>
+            {% for folder in breadcrumb %}
+                <i class="ri-arrow-right-s-line desk-breadcrumb-sep" aria-hidden="true"></i>
+                <a href="{{ path('deskmusic', {folder: folder.id}) }}">{{ folder.name }}</a>
+            {% endfor %}
+        </nav>
+
+        {% if is_granted('ROLE_BINIOUFOUS') %}
+            <div
+                id="quick-upload-zone"
+                class="quick-upload-zone"
+                tabindex="0"
+                role="button"
+                aria-label="{{ 'desk.quick_upload_zone'|trans }}"
+                data-document-action="{{ path('document_upload') }}"
+                data-current-path="{{ currentFolderPath }}"
+                data-token="{{ csrf_token('quick_upload') }}"
+                data-uploading="{{ 'desk.quick_upload_uploading'|trans }}"
+                data-success="{{ 'desk.quick_upload_success'|trans }}"
+                data-error="{{ 'desk.quick_upload_error'|trans }}"
+            >
+                <i class="ri-upload-cloud-2-line" aria-hidden="true"></i>
+                <span class="quick-upload-zone-label">{{ 'desk.quick_upload_zone'|trans }}</span>
+                <input type="file" id="quick-upload-input" multiple class="sr-only">
+            </div>
+            <div id="quick-upload-progress" class="quick-upload-progress" hidden>
+                <div id="quick-upload-progress-track" class="quick-upload-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="{{ 'desk.quick_upload_progress'|trans }}">
+                    <div id="quick-upload-progress-bar" class="quick-upload-progress-bar"></div>
+                </div>
+                <p id="quick-upload-progress-label" class="quick-upload-progress-label" aria-live="polite"></p>
+            </div>
+            <ul id="quick-upload-status" class="quick-upload-status" aria-live="polite"></ul>
+        {% endif %}
+
+        {% if subfolders|length > 0 %}
+            <ul class="desk-folders">
+                {% for folder in subfolders %}
+                    <li>
+                        <span class="desk-folder-badge">
+                            <a href="{{ path('deskmusic', {folder: folder.id}) }}">
+                                <i class="ri-folder-fill" aria-hidden="true"></i> {{ folder.name }}
+                            </a>
+                            {% if is_granted('ROLE_BINIOUFOUS') %}
+                                <form method="post" action="{{ path('folder_delete', {id: folder.id, folder: currentFolder ? currentFolder.id : null}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_folder'|trans({'%name%': folder.name})|e('js') }}');">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_folder' ~ folder.id) }}">
+                                    <button type="submit" class="btn btn-red" aria-label="{{ 'desk.delete_folder_aria'|trans({'%name%': folder.name}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                                </form>
+                            {% endif %}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if documents|length > 0 %}
+            <ul class="desk-documents">
+                {% for document in documents %}
+                    <li class="desk-document desk-document--{{ document.kind }}">
+                        <i class="{{ document.iconClass }} desk-document-icon" aria-hidden="true"></i>
+
+                        <div class="desk-document-main">
+                            <a href="{{ asset('uploads/documents/' ~ document.filename) }}"
+                               data-preview-kind="{{ document.kind }}"
+                               data-preview-url="{{ asset('uploads/documents/' ~ document.filename) }}"
+                               data-preview-name="{{ document.name }}">{{ document.name }}</a>
+                            <span class="desk-document-meta">
+                                .{{ document.extension }}{% if document.uploadedBy %} · {{ 'desk.document_uploaded_by'|trans }} {{ document.uploadedBy.nickname }}{% endif %}
+                            </span>
+                        </div>
+
+                        {% if document.isAudio %}
+                            {% set favorited = document.favoritedBy.contains(app.user) %}
+                            <form method="post" action="{{ path('document_favorite_toggle', {id: document.id, folder: currentFolder ? currentFolder.id : null}) }}" class="btn-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite' ~ document.id) }}">
+                                <button type="submit" class="desk-favorite-star{{ favorited ? ' active' : '' }}" aria-pressed="{{ favorited ? 'true' : 'false' }}" aria-label="{{ (favorited ? 'desk.unfavorite' : 'desk.favorite')|trans }}">
+                                    <i class="{{ favorited ? 'ri-star-fill' : 'ri-star-line' }}" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if is_granted('ROLE_BINIOUFOUS') %}
+                            <form method="post" action="{{ path('document_delete', {id: document.id, folder: currentFolder ? currentFolder.id : null}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_document'|trans|e('js') }}');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_document' ~ document.id) }}">
+                                <button type="submit" class="btn btn-red" aria-label="{{ 'music.delete'|trans }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                            </form>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if subfolders|length == 0 and documents|length == 0 %}
+            <p class="desk-empty">{{ 'desk.folder_empty'|trans }}</p>
+        {% endif %}
+
+        {% if currentFolder is null %}
+            {% for track in tracks %}
+                <div class="desk-track">
+                    <h2>{{ track.title }} {% if track.artist %}<small>{{ 'music.by'|trans }} {{ track.artist.name }}</small>{% endif %}</h2>
+
+                    <ul class="desk-voices">
+                        {% for voice in track.voices %}
+                            {% set playing = voice.users.contains(app.user) %}
+                            <li>
+                                <form method="post" action="{{ path('desk_voice_toggle', {voiceId: voice.id}) }}" class="btn-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_voice' ~ voice.id) }}">
+                                    <button type="submit" class="desk-voice-toggle{{ playing ? ' active' : '' }}" aria-pressed="{{ playing ? 'true' : 'false' }}">
+                                        {{ voice.name }}
+                                        {% if playing %}
+                                            <span class="sr-only">{{ 'desk.voice_playing'|trans }}</span>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                                {% if voice.filename %}
+                                    <a href="{{ asset('uploads/music/voices/' ~ voice.filename) }}">{{ 'music.voice_listen'|trans }}</a>
+                                {% endif %}
+                                <span class="desk-voice-players">
+                                    {% if voice.users|length > 0 %}
+                                        {{ 'desk.voice_played_by'|trans }}
+                                        {% for user in voice.users %}{{ user.nickname }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                    {% else %}
+                                        {{ 'desk.voice_no_players'|trans }}
+                                    {% endif %}
+                                </span>
+                            </li>
+                        {% else %}
+                            <li>{{ 'music.no_voices'|trans }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+                <p class="desk-empty">{{ 'music.no_records'|trans }}</p>
+            {% endfor %}
+        {% endif %}
     </div>
+
+    {% if documents|length > 0 %}
+        {# Visionneuse commune (image/pdf/audio/vidéo) : évite de forcer un
+           téléchargement juste pour regarder une photo ou un PDF, cf.
+           assets/desk/file-preview.js pour le remplissage du contenu selon
+           le type. Un seul modal partagé par tous les documents de la page. #}
+        <div id="file-preview-modal" class="file-preview-modal" hidden>
+            <div class="file-preview-backdrop" data-close></div>
+            <div class="file-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="file-preview-title">
+                <div class="file-preview-header">
+                    <h2 id="file-preview-title"></h2>
+                    <a id="file-preview-download" class="file-preview-download" download>
+                        <i class="ri-download-2-line" aria-hidden="true"></i> {{ 'desk.download'|trans }}
+                    </a>
+                    <button type="button" class="file-preview-close" data-close aria-label="{{ 'common.close'|trans }}">
+                        <i class="ri-close-line" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div id="file-preview-body" class="file-preview-body"></div>
+            </div>
+        </div>
+        <script src="{{ asset('desk/file-preview.js') }}"></script>
+    {% endif %}
+
+    {% if is_granted('ROLE_BINIOUFOUS') %}
+        <script src="{{ asset('desk/quick-upload.js') }}"></script>
+    {% endif %}
 {% endblock %}

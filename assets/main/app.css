@@ -859,3 +859,449 @@ li.nav-item.active, li.nav-item:hover,
 /* Règles de /schedule déménagées dans assets/schedule/schedule.css (même
    convention que music.css/story.css : une page avec sa propre scène 3D
    a son propre fichier plutôt que de grossir ce fichier partagé). */
+
+/* Gestionnaire de fichiers /desk/music (templates/desk/music.html.twig,
+   assets/desk/quick-upload.js) : reprend le vocabulaire déjà en place sur
+   body.desk plutôt qu'un style à part (pastilles pleines --bb-green-mid
+   comme .role-badge, pas de grand panneau --bb-ink : jugé "moche"/"nul" sur
+   .card et .profile-avatar-frame par l'utilisatrice, cf. plus haut dans ce
+   fichier). Espacement vertical commun à tous les blocs de la page. */
+.desk-intro {
+    margin-bottom: 1rem;
+}
+.desk-breadcrumb,
+.quick-upload-zone,
+.quick-upload-status,
+.desk-folders,
+.desk-documents,
+.desk-empty,
+.desk-track {
+    margin-bottom: 1.5rem;
+}
+
+.desk-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    color: var(--bb-ink);
+    font-weight: bold;
+}
+.desk-breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--bb-green-mid);
+}
+.desk-breadcrumb-sep {
+    opacity: 0.6;
+}
+
+/* Zone de dépôt : bordure --bb-green-mid (accent d'action du reste du site,
+   pas --bb-ink) sur fond doré hérité de body.desk. Focus-visible en blanc
+   épais, même traitement que .skip-link sur ce même fond. */
+.quick-upload-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.5rem;
+    border: 2px dashed var(--bb-green-mid);
+    border-radius: 10px;
+    text-align: center;
+    color: var(--bb-green-deep);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.quick-upload-zone i {
+    font-size: 1.3rem;
+}
+.quick-upload-zone:hover {
+    background: rgba(var(--bb-gold-rgb), 0.25);
+}
+.quick-upload-zone.dragover {
+    background: var(--bb-green-mid);
+    border-style: solid;
+    color: var(--bb-white);
+}
+.quick-upload-zone:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+/* Pendant l'envoi : plus de vert (état "action possible"), zone au repos
+   visuellement pour laisser toute la place à la barre de progression
+   juste en dessous. cursor "progress" plutôt que "not-allowed" : cliquer
+   ne fait rien de cassé, juste rien de plus tant que ça envoie. */
+.quick-upload-zone.uploading {
+    border-color: var(--bb-ink);
+    color: var(--bb-ink);
+    cursor: progress;
+    opacity: 0.7;
+}
+
+/* Barre de progression rouge/jaune (couleurs de marque : navbar rouge,
+   fond doré) : rayures diagonales façon "chantier", repère visuel net que
+   quelque chose est activement en train de se passer, distinct du reste
+   de l'UI en vert. Respecte prefers-reduced-motion (rayures statiques). */
+.quick-upload-progress {
+    margin-top: -0.75rem;
+}
+.quick-upload-progress-track {
+    height: 0.9rem;
+    border-radius: 999px;
+    background: var(--bb-gold-pale);
+    border: 1px solid var(--bb-ink);
+    overflow: hidden;
+}
+.quick-upload-progress-bar {
+    height: 100%;
+    width: 0;
+    background: repeating-linear-gradient(
+        135deg,
+        var(--bb-red) 0,
+        var(--bb-red) 12px,
+        var(--bb-gold) 12px,
+        var(--bb-gold) 24px
+    );
+    background-size: 34px 34px;
+    transition: width 0.2s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .quick-upload-progress-bar {
+        animation: quick-upload-stripes 1s linear infinite;
+    }
+}
+@keyframes quick-upload-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 34px 0;
+    }
+}
+.quick-upload-progress-label {
+    margin: 0.4rem 0 0;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--bb-ink);
+}
+
+.quick-upload-status {
+    list-style: none;
+    padding: 0;
+    color: var(--bb-red-dark);
+    font-weight: bold;
+}
+
+/* Dossiers : même pastille pleine --bb-green-mid que .role-badge (bouton
+   supprimer DEDANS la pastille, pas à côté dans une 2e bulle : jugé
+   "bizarre" par l'utilisatrice en 2e passe), pour rester dans le même
+   vocabulaire visuel que le reste du desk/admin. */
+.desk-folders {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+.desk-folder-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    /* Padding gauche/droite volontairement différent (1rem/1.3rem) : à
+       16px/16px pile, le bouton (disque rouge plein, aucun blanc interne)
+       paraissait plus proche du bord que l'icône dossier (glyphe avec du
+       blanc intégré avant le trait visible) alors que les 2 boîtes CSS
+       sont identiques au pixel près, cf. .role-badge un peu plus haut pour
+       un précédent similaire côté padding. Compense l'œil, pas la boîte. */
+    padding: 0.4rem 1.3rem 0.4rem 1rem;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    border-radius: 25px;
+    font-weight: bold;
+}
+.desk-folder-badge a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--bb-white);
+}
+.desk-folder-badge a:hover,
+.desk-folder-badge a:focus-visible {
+    color: var(--bb-gold-pale);
+}
+.desk-folder-badge a:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+.desk-folder-badge .btn-red {
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+/* Liste de fichiers : une icône colorée par type (repère de lecture rapide
+   dans une grosse arborescence, cf. Document::getKind()/getIconClass()),
+   nom + méta sur 2 lignes, actions à droite. Simples lignes séparées par un
+   filet plutôt qu'une carte par ligne : cohérent avec l'aversion déjà
+   actée pour les gros blocs pleins sur cette page. */
+.desk-documents {
+    list-style: none;
+    padding: 0;
+}
+.desk-document {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(var(--bb-gold-rgb), 0.6);
+}
+.desk-document:last-child {
+    border-bottom: none;
+}
+.desk-document-icon {
+    flex-shrink: 0;
+    width: 1.75rem;
+    text-align: center;
+    font-size: 1.25rem;
+    color: var(--bb-ink);
+}
+.desk-document--audio .desk-document-icon {
+    color: var(--bb-green-mid);
+}
+.desk-document--video .desk-document-icon {
+    color: var(--bb-red-dark);
+}
+.desk-document--image .desk-document-icon {
+    color: var(--bb-green-deep);
+}
+.desk-document-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.desk-document-main a {
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+.desk-document-meta {
+    color: var(--bb-ink);
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Étoile favori (documents audio) : contour par défaut, pleine + verte une
+   fois activée (même vert "positif" que .btn-green/.badge-green ailleurs,
+   pas de nouvelle teinte). */
+.desk-favorite-star {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0.2rem;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: var(--bb-ink);
+    cursor: pointer;
+}
+.desk-favorite-star.active {
+    color: var(--bb-green-mid);
+}
+.desk-favorite-star:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+/* .btn-red garde son propre focus-visible (contour encre, déjà défini plus
+   haut dans ce fichier) : pas besoin de le redéfinir ici. */
+.desk-document .btn-red {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.desk-empty {
+    color: var(--bb-ink);
+    opacity: 0.8;
+}
+
+/* Morceaux/voix (racine uniquement). Un filet au-dessus de chaque morceau
+   (sauf le 1er) pour séparer sans empiler des cartes pleines. */
+.desk-track {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(var(--bb-gold-rgb), 0.6);
+}
+.desk-track:first-of-type {
+    padding-top: 0;
+    border-top: none;
+}
+.desk-track h2 small {
+    font-family: inherit;
+    text-transform: none;
+    font-weight: normal;
+    color: var(--bb-ink);
+    opacity: 0.75;
+    letter-spacing: normal;
+}
+.desk-voices {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 1rem;
+}
+.desk-voices li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Pastille bistable : contour au repos (pas encore choisie), pleine une
+   fois activée. Même rayon/padding que .role-badge et .desk-folders a pour
+   rester dans le même vocabulaire de "pastille" partout sur cette page. */
+.desk-voice-toggle {
+    padding: 0.4rem 1rem;
+    border-radius: 25px;
+    border: 2px solid var(--bb-green-mid);
+    background: transparent;
+    color: var(--bb-green-deep);
+    font-weight: bold;
+    cursor: pointer;
+}
+.desk-voice-toggle.active {
+    background: var(--bb-green-mid);
+    border-color: var(--bb-green-mid);
+    color: var(--bb-white);
+}
+.desk-voice-toggle:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+.desk-voice-players {
+    color: var(--bb-ink);
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Visionneuse de document (assets/desk/file-preview.js) : fond blanc plutôt
+   que la palette de marque, pour ne pas fausser les couleurs d'une image/
+   d'un PDF affiché dedans. Contour ink sur focus-visible (fond clair ici,
+   pas le doré de body.desk), même logique que .btn-red/.btn-green plus
+   haut dans ce fichier. */
+/* [hidden] : la règle display:flex ci-dessous a la même spécificité que le
+   [hidden] { display: none } par défaut du navigateur, et les règles
+   d'origine "author" (ce fichier) l'emportent sur celles d'origine "user
+   agent" même à spécificité égale : sans ce override explicite, le modal
+   restait affiché malgré l'attribut hidden posé par assets/desk/
+   file-preview.js. */
+.file-preview-modal[hidden] {
+    display: none;
+}
+.file-preview-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+.file-preview-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(22, 20, 15, 0.85);
+}
+.file-preview-dialog {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    max-height: 100%;
+    background: var(--bb-white);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+.file-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--bb-red);
+    color: var(--bb-white);
+}
+.file-preview-header h2 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--bb-white);
+    overflow-wrap: anywhere;
+}
+.file-preview-download,
+.file-preview-close {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: var(--bb-white);
+    font-weight: bold;
+    cursor: pointer;
+}
+.file-preview-close {
+    font-size: 1.3rem;
+    padding: 0.2rem;
+}
+.file-preview-download:hover,
+.file-preview-close:hover {
+    color: var(--bb-gold-pale);
+}
+.file-preview-download:focus-visible,
+.file-preview-close:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+.file-preview-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow: auto;
+    background: var(--bb-ink);
+}
+.file-preview-body img {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+}
+.file-preview-body iframe {
+    width: 100%;
+    height: 75vh;
+    border: none;
+    background: var(--bb-white);
+}
+.file-preview-body audio {
+    width: 100%;
+}
+.file-preview-body video {
+    max-width: 100%;
+    max-height: 75vh;
+}

@@ -78,6 +78,27 @@ class AdminController extends AbstractController
     }
 
     /**
+     * Ajoute le rôle binioufous à un utilisateur. Même pattern que
+     * addAdminRole/addAccountantRole ci-dessus.
+     */
+    #[Route('/admin/setbinioufous/{slug}', name: 'create_binioufous', methods: ['POST'])]
+    public function addBinioufousRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('create_binioufous'.$user->getId(), $request->request->get('_token'))) {
+            $user->addRole($repo->findOneByTitle('ROLE_BINIOUFOUS'));
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Rôle ajouté'
+            );
+        }
+
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
+    }
+
+    /**
      * Permet d'afficher un utilisateur.
      */
     #[Route('/admin/user/{slug}', name: 'user_show')]

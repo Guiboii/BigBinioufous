@@ -116,6 +116,11 @@ Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : é
 
 - [ ] Une par une, sur une base stabilisée
 - [ ] Import/rendu de Markdown pour le texte de la page Histoire, plutôt que codé en dur dans `minisite.html.twig`/`translations/*.yaml`. Éditable par un ou plusieurs rôles à définir (lesquels ? admin seul, ou aussi binioufous ?)
+- [ ] Remplacer les usages de Google :
+    - [ ] Espace adhérent avec accès aux morceaux (avec la possibilité de choisir ses parties favorites, comme ça on peut aussi retrouver globalement qui joue quelle partie)
+    - [ ] Espace administratif pour les membres du conseil et du bureau avec les CR, les documents administratifs, un outil de prise de note en ligne (mais pas nécessairement collaboratif)
+    - [ ] Espace compta avec un accès aux relevés uploadés, la possibilité de produire des devis et des factures et de faire le suivi de trésorerie (journal des dépenses et des recettes)
+    - [ ] Dans l'espace adhérent, un service de covoiturage pour les dates éloignées
 
 ## Déjà fait
 

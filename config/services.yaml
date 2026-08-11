@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     mp3: '%kernel.project_dir%/public/uploads/music'
+    voices_directory: '%kernel.project_dir%/public/uploads/music/voices'
+    documents_directory: '%kernel.project_dir%/public/uploads/documents'
     pictures_directory : '%kernel.project_dir%/public/uploads/pictures'
     event_posters: '%kernel.project_dir%/public/uploads/events'
 

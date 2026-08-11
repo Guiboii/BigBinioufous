@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -56,6 +57,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'users')]
     private $roles;
 
+    #[ORM\ManyToMany(targetEntity: Voice::class, mappedBy: 'users')]
+    private $voices;
+
+    #[ORM\ManyToMany(targetEntity: Document::class, mappedBy: 'favoritedBy')]
+    private $favoriteDocuments;
+
     #[ORM\Column(type: 'boolean')]
     private $validation;
 
@@ -101,6 +108,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->voices = new ArrayCollection();
+        $this->favoriteDocuments = new ArrayCollection();
     }
 
     public function getFullName()
@@ -334,6 +343,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Voice[]
+     */
+    public function getVoices(): Collection
+    {
+        return $this->voices;
+    }
+
+    public function addVoice(Voice $voice): self
+    {
+        if (!$this->voices->contains($voice)) {
+            $this->voices[] = $voice;
+            $voice->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVoice(Voice $voice): self
+    {
+        if ($this->voices->removeElement($voice)) {
+            $voice->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Document[]
+     */
+    public function getFavoriteDocuments(): Collection
+    {
+        return $this->favoriteDocuments;
+    }
+
+    public function addFavoriteDocument(Document $document): self
+    {
+        if (!$this->favoriteDocuments->contains($document)) {
+            $this->favoriteDocuments[] = $document;
+            $document->addFavoritedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteDocument(Document $document): self
+    {
+        if ($this->favoriteDocuments->removeElement($document)) {
+            $document->removeFavoritedBy($this);
+        }
 
         return $this;
     }
