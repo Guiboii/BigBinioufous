@@ -24,45 +24,51 @@
                 {% if app.user.validation == false %}
                     <h2>{{ 'desk.pending_validation'|trans }}</h2>
                 {% endif %}
-                {% for role in app.user.roles %}
-                    {% if role == 'ROLE_ADMIN' %}
-                        <div class="col">
-                            <a href="{{ path('valid') }}" class="btn btn-red">{{ 'desk.pending_count'|trans({'%count%': unvalids|length}) }}</a>
-                        </div>
-                        <div class="container mt-2">
-                            {{ include('/desk/lists/admins.html.twig') }}
-                        </div>
-                        <div class="container mt-2">
-                            {{ include('/desk/lists/accountants.html.twig') }}
-                        </div>
-                        <div class="container mt-2">
-                            {{ include('/desk/lists/binioufous.html.twig') }}
-                        </div>
-                        <div class="container mt-2">
-                            {{ include('/desk/lists/members.html.twig') }}
-                        </div>
-                        <div class="container mt-2">
-                            {{ include('/desk/lists/simples.html.twig') }}
-                        </div>
-                    {% elseif role == 'ROLE_BINIOUFOUS' %}
-                        <h2>{{ 'desk.binioufous_heading'|trans }}</h2>
-                        <div class="container mt-2">
-                            {{ include('/desk/lists/binioufous.html.twig') }}
-                        </div>
-                    {% elseif role == 'ROLE_MEMBER' %}
-                        <div class="col">
-                            <p>{{ 'desk.mailing_lists'|trans }}</p>
-                        </div>
-                        <div class="col">
-                            <p>{{ 'desk.favorite_songs'|trans }}</p>
-                        </div>
-                    {% elseif role == 'ROLE_SIMPLE' %}
-                        <h2>{{ 'desk.welcome_simple'|trans }}</h2>
-                        <div class="col">
-                            <p>{{ 'desk.mailing_lists'|trans }}</p>
-                        </div>
-                    {% endif %}
-                {% endfor %}
+                {# Un seul bloc, pas un par rôle : un compte qui cumule ROLE_ADMIN
+                   et ROLE_BINIOUFOUS (ex. admin qui est aussi binioufous) voyait
+                   avant la section "Les Binioufous" deux fois (la boucle
+                   {% for role in app.user.roles %} évaluait le if/elseif
+                   séparément pour CHAQUE rôle du compte, donc ROLE_ADMIN ET
+                   ROLE_BINIOUFOUS déclenchaient chacun leur branche). Priorité
+                   décroissante (admin > binioufous > membre > simple), une
+                   seule branche rendue, celle du rôle le plus "haut". #}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="col">
+                        <a href="{{ path('valid') }}" class="btn btn-red">{{ 'desk.pending_count'|trans({'%count%': unvalids|length}) }}</a>
+                    </div>
+                    <div class="container mt-2">
+                        {{ include('/desk/lists/admins.html.twig') }}
+                    </div>
+                    <div class="container mt-2">
+                        {{ include('/desk/lists/accountants.html.twig') }}
+                    </div>
+                    <div class="container mt-2">
+                        {{ include('/desk/lists/binioufous.html.twig') }}
+                    </div>
+                    <div class="container mt-2">
+                        {{ include('/desk/lists/members.html.twig') }}
+                    </div>
+                    <div class="container mt-2">
+                        {{ include('/desk/lists/simples.html.twig') }}
+                    </div>
+                {% elseif is_granted('ROLE_BINIOUFOUS') %}
+                    <h2>{{ 'desk.binioufous_heading'|trans }}</h2>
+                    <div class="container mt-2">
+                        {{ include('/desk/lists/binioufous.html.twig') }}
+                    </div>
+                {% elseif is_granted('ROLE_MEMBER') %}
+                    <div class="col">
+                        <p>{{ 'desk.mailing_lists'|trans }}</p>
+                    </div>
+                    <div class="col">
+                        <p>{{ 'desk.favorite_songs'|trans }}</p>
+                    </div>
+                {% elseif is_granted('ROLE_SIMPLE') %}
+                    <h2>{{ 'desk.welcome_simple'|trans }}</h2>
+                    <div class="col">
+                        <p>{{ 'desk.mailing_lists'|trans }}</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

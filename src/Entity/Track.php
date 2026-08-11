@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -34,6 +36,14 @@ class Track
         mimeTypesMessage: 'Please upload a valid mp3',
     )]
     protected $trackFile;
+
+    #[ORM\OneToMany(targetEntity: Voice::class, mappedBy: 'track', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private $voices;
+
+    public function __construct()
+    {
+        $this->voices = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -96,6 +106,35 @@ class Track
     public function setSeconds(int $seconds): self
     {
         $this->seconds = $seconds;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Voice[]
+     */
+    public function getVoices(): Collection
+    {
+        return $this->voices;
+    }
+
+    public function addVoice(Voice $voice): self
+    {
+        if (!$this->voices->contains($voice)) {
+            $this->voices[] = $voice;
+            $voice->setTrack($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVoice(Voice $voice): self
+    {
+        if ($this->voices->removeElement($voice)) {
+            if ($voice->getTrack() === $this) {
+                $voice->setTrack(null);
+            }
+        }
 
         return $this;
     }

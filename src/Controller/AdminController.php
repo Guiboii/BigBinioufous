@@ -78,6 +78,61 @@ class AdminController extends AbstractController
     }
 
     /**
+     * Ajoute le rôle binioufous à un utilisateur. Même pattern que
+     * addAdminRole/addAccountantRole ci-dessus.
+     */
+    #[Route('/admin/setbinioufous/{slug}', name: 'create_binioufous', methods: ['POST'])]
+    public function addBinioufousRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('create_binioufous'.$user->getId(), $request->request->get('_token'))) {
+            $user->addRole($repo->findOneByTitle('ROLE_BINIOUFOUS'));
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Rôle ajouté'
+            );
+        }
+
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
+    }
+
+    #[Route('/admin/setmember/{slug}', name: 'create_member', methods: ['POST'])]
+    public function addMemberRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('create_member'.$user->getId(), $request->request->get('_token'))) {
+            $user->addRole($repo->findOneByTitle('ROLE_MEMBER'));
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Rôle ajouté'
+            );
+        }
+
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
+    }
+
+    #[Route('/admin/setsimple/{slug}', name: 'create_simple', methods: ['POST'])]
+    public function addSimpleRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('create_simple'.$user->getId(), $request->request->get('_token'))) {
+            $user->addRole($repo->findOneByTitle('ROLE_SIMPLE'));
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Rôle ajouté'
+            );
+        }
+
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
+    }
+
+    /**
      * Permet d'afficher un utilisateur.
      */
     #[Route('/admin/user/{slug}', name: 'user_show')]
@@ -107,7 +162,12 @@ class AdminController extends AbstractController
     }
 
     /**
-     * Permet de valider l'inscription.
+     * Permet de valider l'inscription : attribue le rôle correspondant au
+     * souhait (wish) choisi à l'inscription et marque le compte comme
+     * validé. Les deux se produisent ensemble au submit, pas de case à
+     * cocher séparée (cf. ValidRoleType, ancien champ retiré le 2026-08-11 :
+     * ne gouvernait que $validation, jamais l'attribution du rôle elle-même,
+     * source de confusion).
      *
      * @return Request
      */
@@ -123,6 +183,7 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->addRole($role);
+            $user->setValidation(true);
             $manager->persist($user);
             $manager->flush();
 

@@ -1,0 +1,242 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ ('desk.space_' ~ space)|trans }}{% endblock %}
+
+{% block body %}
+    {% set moving = movingDocument or movingFolder %}
+    {% set moveParams = {} %}
+    {% if movingDocument %}{% set moveParams = moveParams|merge({move_document: movingDocument.id}) %}{% endif %}
+    {% if movingFolder %}{% set moveParams = moveParams|merge({move_folder: movingFolder.id}) %}{% endif %}
+
+    <div class="container">
+        <h1>{{ ('desk.space_' ~ space)|trans }}</h1>
+        <p class="desk-intro">{{ ('desk.space_' ~ space ~ '_intro')|trans }}</p>
+
+        {# Pattern WAI-ARIA "Breadcrumb" (https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/) :
+           nav étiqueté + liste ordonnée de liens, le dernier maillon (page
+           courante) n'est pas un lien vers lui-même mais du texte avec
+           aria-current="page". #}
+        <nav class="desk-breadcrumb" aria-label="{{ 'desk.breadcrumb'|trans }}">
+            <ol>
+                <li>
+                    {% if atRoot %}
+                        <span aria-current="page"><i class="ri-hard-drive-2-fill" aria-hidden="true"></i> {{ 'desk.files_root'|trans }}</span>
+                    {% else %}
+                        <a href="{{ path('desk_files', {space: space}|merge(moveParams)) }}"><i class="ri-hard-drive-2-fill" aria-hidden="true"></i> {{ 'desk.files_root'|trans }}</a>
+                    {% endif %}
+                </li>
+                {% for folder in breadcrumb %}
+                    <li>
+                        <i class="ri-arrow-right-s-line desk-breadcrumb-sep" aria-hidden="true"></i>
+                        {% if loop.last %}
+                            <span aria-current="page">{{ folder.name }}</span>
+                        {% else %}
+                            <a href="{{ path('desk_files', {space: space, folder: folder.id}|merge(moveParams)) }}">{{ folder.name }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
+        </nav>
+
+        {% if moving %}
+            <div class="desk-move-banner" role="status">
+                <p>
+                    {% if movingDocument %}
+                        {{ 'desk.move_banner_document'|trans({'%name%': movingDocument.name}) }}
+                    {% else %}
+                        {{ 'desk.move_banner_folder'|trans({'%name%': movingFolder.name}) }}
+                    {% endif %}
+                </p>
+                <div class="desk-move-actions">
+                    <form method="post" action="{{ path(movingDocument ? 'document_move' : 'folder_move', {space: space, id: movingDocument ? movingDocument.id : movingFolder.id}) }}" class="btn-form">
+                        <input type="hidden" name="target" value="{{ currentFolder.id }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token((movingDocument ? 'move_document' : 'move_folder') ~ (movingDocument ? movingDocument.id : movingFolder.id)) }}">
+                        <button type="submit" class="btn btn-green"><i class="ri-folder-transfer-line" aria-hidden="true"></i> {{ 'desk.move_here'|trans({'%folder%': currentFolder.name}) }}</button>
+                    </form>
+                    <a href="{{ path('desk_files', {space: space, folder: currentFolder.id}) }}" class="btn-link">{{ 'desk.move_cancel'|trans }}</a>
+                </div>
+            </div>
+        {% else %}
+            {# .desk-actions regroupe les 2 actions les plus probables en arrivant
+               dans un dossier (créer un dossier / déposer des fichiers), à poids
+               visuel égal côte à côte plutôt qu'un enchaînement vertical qui
+               écrasait "Nouveau dossier" sous la grande zone de dépôt. #}
+            <div class="desk-actions">
+                <form method="post" action="{{ path('folder_create', {space: space}) }}" class="desk-new-folder">
+                    <label for="new-folder-name">{{ 'desk.new_folder_label'|trans }}</label>
+                    <div class="desk-new-folder-row">
+                        <input type="text" id="new-folder-name" name="name" placeholder="{{ 'desk.new_folder_placeholder'|trans }}" required maxlength="255">
+                        <input type="hidden" name="parent" value="{{ currentFolder.id }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('create_folder' ~ currentFolder.id) }}">
+                        <button type="submit" class="btn btn-green"><i class="ri-folder-add-line" aria-hidden="true"></i> {{ 'desk.new_folder_submit'|trans }}</button>
+                    </div>
+                </form>
+
+                <div class="desk-upload-card">
+                    <div
+                        id="quick-upload-zone"
+                        class="quick-upload-zone"
+                        tabindex="0"
+                        role="button"
+                        aria-label="{{ 'desk.quick_upload_zone'|trans }}"
+                        data-document-action="{{ path('document_upload', {space: space}) }}"
+                        data-current-path="{{ currentFolderPath }}"
+                        data-token="{{ csrf_token('quick_upload') }}"
+                        data-uploading="{{ 'desk.quick_upload_uploading'|trans }}"
+                        data-success="{{ 'desk.quick_upload_success'|trans }}"
+                        data-error="{{ 'desk.quick_upload_error'|trans }}"
+                    >
+                        <i class="ri-upload-cloud-2-line" aria-hidden="true"></i>
+                        <span class="quick-upload-zone-label">{{ 'desk.quick_upload_zone'|trans }}</span>
+                        <input type="file" id="quick-upload-input" multiple class="sr-only">
+                    </div>
+                    <div id="quick-upload-progress" class="quick-upload-progress" hidden>
+                        <div id="quick-upload-progress-track" class="quick-upload-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="{{ 'desk.quick_upload_progress'|trans }}">
+                            <div id="quick-upload-progress-bar" class="quick-upload-progress-bar"></div>
+                        </div>
+                        <p id="quick-upload-progress-label" class="quick-upload-progress-label" aria-live="polite"></p>
+                    </div>
+                    <ul id="quick-upload-status" class="quick-upload-status" aria-live="polite"></ul>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if subfolders|length > 0 %}
+            <ul class="desk-folders">
+                {% for folder in subfolders %}
+                    <li>
+                        <span class="desk-folder-badge">
+                            <a href="{{ path('desk_files', {space: space, folder: folder.id}|merge(moveParams)) }}">
+                                <i class="ri-folder-fill" aria-hidden="true"></i> {{ folder.name }}
+                            </a>
+                            {% if moving %}
+                                <form method="post" action="{{ path(movingDocument ? 'document_move' : 'folder_move', {space: space, id: movingDocument ? movingDocument.id : movingFolder.id}) }}" class="btn-form">
+                                    <input type="hidden" name="target" value="{{ folder.id }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token((movingDocument ? 'move_document' : 'move_folder') ~ (movingDocument ? movingDocument.id : movingFolder.id)) }}">
+                                    <button type="submit" class="btn btn-green" aria-label="{{ 'desk.move_here_aria'|trans({'%name%': folder.name}) }}"><i class="ri-folder-transfer-line" aria-hidden="true"></i></button>
+                                </form>
+                            {% else %}
+                                <a href="{{ path('desk_files', {space: space, folder: currentFolder.id, move_folder: folder.id}) }}" class="desk-move-start" aria-label="{{ 'desk.move_folder_aria'|trans({'%name%': folder.name}) }}"><i class="ri-drag-move-2-line" aria-hidden="true"></i></a>
+                                <form method="post" action="{{ path('folder_delete', {space: space, id: folder.id, folder: currentFolder.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_folder'|trans({'%name%': folder.name})|e('js') }}');">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_folder' ~ folder.id) }}">
+                                    <button type="submit" class="btn btn-red" aria-label="{{ 'desk.delete_folder_aria'|trans({'%name%': folder.name}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                                </form>
+                            {% endif %}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if documents|length > 0 %}
+            <ul class="desk-documents">
+                {% for document in documents %}
+                    <li class="desk-document desk-document--{{ document.kind }}">
+                        <i class="{{ document.iconClass }} desk-document-icon" aria-hidden="true"></i>
+
+                        <div class="desk-document-main">
+                            <a href="{{ asset('uploads/documents/' ~ document.filename) }}"
+                               data-preview-kind="{{ document.kind }}"
+                               data-preview-url="{{ asset('uploads/documents/' ~ document.filename) }}"
+                               data-preview-name="{{ document.name }}">{{ document.name }}</a>
+                            <span class="desk-document-meta">
+                                .{{ document.extension }}{% if document.uploadedBy %} · {{ 'desk.document_uploaded_by'|trans }} {{ document.uploadedBy.nickname }}{% endif %}
+                            </span>
+                        </div>
+
+                        {% if document.isAudio %}
+                            {% set favorited = document.favoritedBy.contains(app.user) %}
+                            <form method="post" action="{{ path('document_favorite_toggle', {space: space, id: document.id, folder: currentFolder.id}) }}" class="btn-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_favorite' ~ document.id) }}">
+                                <button type="submit" class="desk-favorite-star{{ favorited ? ' active' : '' }}" aria-pressed="{{ favorited ? 'true' : 'false' }}" aria-label="{{ (favorited ? 'desk.unfavorite' : 'desk.favorite')|trans }}">
+                                    <i class="{{ favorited ? 'ri-star-fill' : 'ri-star-line' }}" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if not moving %}
+                            <a href="{{ path('desk_files', {space: space, folder: currentFolder.id, move_document: document.id}) }}" class="desk-move-start" aria-label="{{ 'desk.move_document_aria'|trans({'%name%': document.name}) }}"><i class="ri-drag-move-2-line" aria-hidden="true"></i></a>
+                            <form method="post" action="{{ path('document_delete', {space: space, id: document.id, folder: currentFolder.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_document'|trans|e('js') }}');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_document' ~ document.id) }}">
+                                <button type="submit" class="btn btn-red" aria-label="{{ 'music.delete'|trans }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                            </form>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if subfolders|length == 0 and documents|length == 0 %}
+            <p class="desk-empty">{{ 'desk.folder_empty'|trans }}</p>
+        {% endif %}
+
+        {% if 'music' == space and atRoot %}
+            {% for track in tracks %}
+                <div class="desk-track">
+                    <h2>{{ track.title }} {% if track.artist %}<small>{{ 'music.by'|trans }} {{ track.artist.name }}</small>{% endif %}</h2>
+
+                    <ul class="desk-voices">
+                        {% for voice in track.voices %}
+                            {% set playing = voice.users.contains(app.user) %}
+                            <li>
+                                <form method="post" action="{{ path('desk_voice_toggle', {voiceId: voice.id}) }}" class="btn-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_voice' ~ voice.id) }}">
+                                    <button type="submit" class="desk-voice-toggle{{ playing ? ' active' : '' }}" aria-pressed="{{ playing ? 'true' : 'false' }}">
+                                        {{ voice.name }}
+                                        {% if playing %}
+                                            <span class="sr-only">{{ 'desk.voice_playing'|trans }}</span>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                                {% if voice.filename %}
+                                    <a href="{{ asset('uploads/music/voices/' ~ voice.filename) }}">{{ 'music.voice_listen'|trans }}</a>
+                                {% endif %}
+                                <span class="desk-voice-players">
+                                    {% if voice.users|length > 0 %}
+                                        {{ 'desk.voice_played_by'|trans }}
+                                        {% for user in voice.users %}{{ user.nickname }}{% if not loop.last %}, {% endif %}{% endfor %}
+                                    {% else %}
+                                        {{ 'desk.voice_no_players'|trans }}
+                                    {% endif %}
+                                </span>
+                            </li>
+                        {% else %}
+                            <li>{{ 'music.no_voices'|trans }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+                <p class="desk-empty">{{ 'music.no_records'|trans }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {% if documents|length > 0 %}
+        {# Visionneuse commune (image/pdf/audio/vidéo) : évite de forcer un
+           téléchargement juste pour regarder une photo ou un PDF, cf.
+           assets/desk/file-preview.js pour le remplissage du contenu selon
+           le type. Un seul modal partagé par tous les documents de la page. #}
+        <div id="file-preview-modal" class="file-preview-modal" hidden>
+            <div class="file-preview-backdrop" data-close></div>
+            <div class="file-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="file-preview-title">
+                <div class="file-preview-header">
+                    <h2 id="file-preview-title"></h2>
+                    <a id="file-preview-download" class="file-preview-download" download>
+                        <i class="ri-download-2-line" aria-hidden="true"></i> {{ 'desk.download'|trans }}
+                    </a>
+                    <button type="button" class="file-preview-close" data-close aria-label="{{ 'common.close'|trans }}">
+                        <i class="ri-close-line" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div id="file-preview-body" class="file-preview-body"></div>
+            </div>
+        </div>
+        <script src="{{ asset('desk/file-preview.js') }}"></script>
+    {% endif %}
+
+    {% if not moving %}
+        <script src="{{ asset('desk/quick-upload.js') }}"></script>
+    {% endif %}
+{% endblock %}

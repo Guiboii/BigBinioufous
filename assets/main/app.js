@@ -14,16 +14,23 @@ import 'remixicon/fonts/remixicon.css';
 import './app.css';
 
 // Bootstrap 4's collapse plugin (used for the navbar toggler) doesn't close
-// on Escape by default. The collapsed menu is styled as a centered overlay
-// card (cf. .navbar-collapse in app.css), so it reads visually like a modal :
-// Escape should close it too, with focus sent back to the toggler button.
-// Toggling the 'show' class + aria-expanded directly (rather than going
-// through jQuery/Bootstrap's collapse('hide') API) keeps this independent
-// from whether jQuery is exposed as a global by the AssetMapper build.
+// on Escape by default. The collapsed menu reads visually like a modal/panel
+// (cf. .navbar-collapse in app.css for the public nav, .navbar-admin's own
+// panel for the desk/admin nav) : Escape should close it too, with focus
+// sent back to the toggler button. Toggling the 'show' class + aria-expanded
+// directly (rather than going through jQuery/Bootstrap's collapse('hide')
+// API) keeps this independent from whether jQuery is exposed as a global by
+// the AssetMapper build.
+// Reads the toggler's own data-target rather than hardcoding an id : the
+// public nav (#navbarText) and the desk/admin nav (#navbarAdminNav) share
+// this same script, only one of the two is ever present on a given page.
 document.addEventListener('DOMContentLoaded', function () {
   var toggler = document.querySelector('.navbar-toggler');
-  var menu = document.getElementById('navbarText');
-  if (!toggler || !menu) {
+  if (!toggler) {
+    return;
+  }
+  var menu = document.querySelector(toggler.getAttribute('data-target'));
+  if (!menu) {
     return;
   }
   document.addEventListener('keydown', function (e) {

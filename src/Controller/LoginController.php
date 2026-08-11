@@ -79,6 +79,14 @@ class LoginController extends AbstractController
                 $validation = true;
             }
 
+            // memberCardNumber n'a de sens que si "Es-tu déjà adhérent·e ?"
+            // vaut "yes" : le champ étant affiché/masqué côté JS, on nettoie
+            // ici au cas où une valeur aurait quand même été soumise (JS
+            // désactivé, ou manipulation directe du formulaire).
+            if ('yes' !== $form->get('alreadyMember')->getData()) {
+                $user->setMemberCardNumber(null);
+            }
+
             /** @var UploadedFile $brochureFile */
             $pictureFile = $form->get('picture')->getData();
 

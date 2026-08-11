@@ -4,6 +4,7 @@
                 <tr>
                     <th>{{ 'Name'|trans }}</th>
                     <th>{{ 'Picture'|trans }}</th>
+                    <th>{{ 'Country'|trans }}</th>
                     <th>{{ 'City'|trans }}</th>
                     <th>{{ 'Instrument'|trans }}</th>
                     <th>{{ 'Actions'|trans }}</th>
@@ -18,6 +19,7 @@
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ binioufou.firstname }}">
                     {% endif %}</td>
+                    <td>{{ binioufou.country }}</td>
                     <td>{{ binioufou.city }}</td>
                     <td>{{ binioufou.instrument.title }}</td>
                     <td><a href="{{ path ('user_show', {slug: binioufou.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': binioufou.fullName}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a></td>

@@ -106,6 +106,48 @@
     color: var(--bb-white);
 }
 
+/* Composant réutilisable form-dialog : en-tête + contenu. */
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.dialog-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    flex: 1;
+}
+
+/* Bouton fermer : amélioration a11y (focus-visible clair). */
+.dialog-header .close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1;
+    padding: 0;
+    color: inherit;
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+}
+
+.dialog-header .close:hover,
+.dialog-header .close:focus-visible {
+    transform: scale(1.2);
+}
+
+.dialog-header .close:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
 /* Sous 700px : icône seule, comme la navbar principale (assets/main/app.css,
    même technique sr-only) : les 2 pastilles texte+icône se chevauchaient
    sur petit écran (position:absolute à 25%/75%, pas assez de place pour
@@ -132,5 +174,15 @@
         clip: rect(0, 0, 0, 0);
         white-space: nowrap;
         border: 0;
+    }
+
+    .dialog-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .dialog-header h2 {
+        font-size: 1.2rem;
     }
 }

@@ -1,51 +1,57 @@
 # Contrôleurs & routes
 
-Toutes les routes sont déclarées en attributs PHP natifs `#[Route]` directement sur les méthodes (pas de fichier `routes.yaml` central). Migré depuis les annotations `@Route` lors de l'upgrade Symfony 6.4 (retrait de `sensio/framework-extra-bundle`, cf. `ROADMAP.md` Phase 2).
+Toutes les routes sont déclarées en attributs PHP natifs `#[Route]` directement sur les méthodes (pas de fichier `routes.yaml` central). Aucun contrôleur ne vérifie de rôle en dur (`denyAccessUnlessGranted`/`#[IsGranted]`) : tout le contrôle d'accès passe par `access_control` dans `config/packages/security.yaml`, détaillé ici route par route. Voir [security.md](security.md) et [role.md](role.md) pour la vue d'ensemble par rôle plutôt que par contrôleur.
 
-## `HomeController`
-- `GET /` (`home`) : page d'accueil.
+## `HomeController`, `StoryController`, `ScheduleController`
+- `GET /` (`home`), `GET /story` (`story`), `GET /story/mini` (`minisite`), `GET /schedule` (`schedule`), `GET /schedule/event/{id}.ics` (`event_ics`) : pages vitrines + export agenda, tous publics.
 
-## `StoryController`
-- `GET /story` (`story`) : page histoire de l'association.
-- `GET /story/mini` (`minisite`) : minisite (scène 3D).
+## `LoginController`
+- `GET /join` (`join`) : page de connexion/inscription. `login_path`/`check_path` de `security.yaml` pointent tous les deux ici.
+- `GET /login` (`login`) : redirige vers `/join`, route legacy jamais utilisée par le vrai flux de connexion.
+- `/logout` (`logout`) : géré entièrement par le firewall Symfony.
+- `/register` (`register`) : inscription (`RegistrationType`). Si `wish == 'Simple'`, `validation = true` automatiquement ; sinon en attente d'un admin (cf. [role.md](role.md)). Upload de la photo de profil (jpeg) si fournie.
+- `/desk/profile` (`profile`) : édition du profil connecté (`AccountType`), upload photo. `ROLE_USER` (`^/desk`).
+- `/desk/update-password` (`update-password`) : changement de mot de passe (`PasswordUpdateType`/`PasswordUpdate`), vérifie l'ancien hash avec `password_verify`. `ROLE_USER`.
 
-## `ScheduleController`
-- `GET /schedule` (`schedule`) : page planning.
-
-## `LoginController` (`src/Controller/LoginController.php`)
-- `GET /join` (`join`) : page de connexion/inscription (SPA-like, affiche l'erreur d'auth éventuelle).
-- `GET /login` (`login`) : redirige vers `/join` (route jamais utilisée par le vrai flux de connexion, `security.yaml` pointe `login_path`/`check_path` vers `join`). Rendait `join/login.html.twig` en document autonome jusqu'au 2026-08-10 ; devenu impossible une fois ce template allégé en simple fragment inclus dans `join/index.html.twig` (cf. `ROADMAP.md` Phase 5, entrée "Audit accessibilité global").
-- `/logout` (`logout`) : géré entièrement par le firewall Symfony (méthode vide, jamais exécutée).
-- `/register` (`register`) : inscription (`RegistrationType`) :
-  - si `wish == 'Simple'` → `validation = true` automatiquement, sinon en attente d'un admin.
-  - upload de la photo de profil (jpeg) si fournie.
-- `/desk/profile` (`profile`) : édition du profil connecté (`AccountType`), upload photo.
-- `/desk/update-password` (`update-password`) : changement de mot de passe (`PasswordUpdateType` / entité `PasswordUpdate`), vérifie l'ancien hash avec `password_verify`.
-
-⚠️ Bug existant : dans `updatePassword`, si `password_verify` échoue (mauvais ancien mot de passe), le bloc `if` est **vide** : aucun message d'erreur n'est affiché, ça retombe juste sur le formulaire silencieusement.
+⚠️ Bug existant : dans `updatePassword`, si `password_verify` échoue (mauvais ancien mot de passe), le bloc `if` est **vide** : aucun message d'erreur affiché, retombe silencieusement sur le formulaire.
 
 ## `DeskController`
-- `GET /desk` (`desk`) : tableau de bord : liste des rôles, des inscriptions non validées, et des utilisateurs groupés par rôle (admins, comptables, binioufous, membres, simples) via des méthodes dédiées de `UserRepository` (`findAdmins`, `findAccountants`, etc.).
-- `GET /desk/music` (`deskmusic`) : page "favoris/playlist" (statique pour l'instant, pas de logique).
+- `GET /desk` (`desk`) : tableau de bord, contenu différent par rôle (cf. [role.md](role.md), section "comportement multi-rôles"). `ROLE_USER`.
+- `GET /desk/files` (`desk_files_hub`) : hub vers les espaces de fichiers accessibles. `ROLE_USER` (mais n'affiche une carte que pour les rôles qui donnent vraiment accès à un espace).
+- `GET /desk/files/{space}` (`desk_files`, `space` = `music|admin|accounting`) : navigateur de fichiers façon Drive pour l'espace donné (dossiers + documents +, pour `music` uniquement à sa racine, morceaux/voix favorites). `ROLE_BINIOUFOUS`/`ROLE_ADMIN` (music), `ROLE_ADMIN` (admin), `ROLE_COMPTA`/`ROLE_ADMIN` (accounting), via des règles `^/desk/files/{space}` dédiées.
+- `POST /desk/files/music/voices/{voiceId}/toggle` (`desk_voice_toggle`) : coche/décoche la voix jouée par le membre connecté. Même règle que l'espace Musique (`^/desk/files/music`).
 
-## `AdminController` (accès `ROLE_ADMIN` via `security.yaml`)
-- `GET /admin/valid` (`valid`) : liste des inscriptions en attente de validation.
-- `/admin/{wish}/{slug}/valid` (`user_valid`) : valide un utilisateur : retrouve le `Role` correspondant au `wish` (`Role::description`) et l'attribue.
-- `/admin/setadmin/{slug}` (`create_admin`) : attribue `ROLE_ADMIN` à un utilisateur (formulaire `AddAdminType`, vide : sert juste de confirmation).
-- `/admin/setaccountant/{slug}` (`create_accountant`) : idem pour `ROLE_COMPTA`.
-- `/admin/user/{slug}` (`user_show`) : fiche + édition d'un utilisateur (`EditUserType`).
+## `FolderController` (préfixe `/desk/files/{space}/folders`)
+- `POST` (`folder_create`), `DELETE /{id}` (`folder_delete`), `POST /{id}/move` (`folder_move`) : mêmes règles d'accès que `desk_files` pour l'espace concerné (lecture et écriture soumises à la même règle). `folder_move` refuse un déplacement dans le dossier lui-même ou un de ses descendants (`FolderRepository::isSelfOrDescendantOf`).
+
+## `DocumentController` (préfixe `/desk/files/{space}/documents`)
+- `POST` (`document_upload`), `DELETE /{id}` (`document_delete`), `POST /{id}/favorite` (`document_favorite_toggle`), `POST /{id}/move` (`document_move`) : mêmes règles d'accès que l'espace concerné.
+
+## `AdminController` (tout sous `ROLE_ADMIN` via `^/admin`)
+- `GET /admin/valid` (`valid`) : liste des inscriptions en attente (`validation = false`).
+- `/admin/{wish}/{slug}/valid` (`user_valid`) : valide un utilisateur (retrouve le `Role` correspondant au `wish`, l'attribue, passe `validation` à `true`). Formulaire `ValidRoleType`, aujourd'hui sans champ (juste un bouton de confirmation, cf. [forms.md](forms.md)).
+- `POST /admin/user/{slug}/refuse` (`user_refuse`) : refuse une inscription en attente = supprime le compte.
+- `POST /admin/setadmin/{slug}` (`create_admin`), `POST /admin/setaccountant/{slug}` (`create_accountant`), `POST /admin/setbinioufous/{slug}` (`create_binioufous`) : promotion manuelle en un clic (CSRF direct, pas de `FormType`), indépendante du `wish` d'origine.
+- `GET|POST /admin/user/{slug}` (`user_show`) : fiche + édition d'un utilisateur (`EditUserType`), affiche les boutons de promotion ci-dessus pour les rôles manquants.
+- `DELETE /admin/user/{slug}/role/{roleId}` (`user_remove_role`) : retire un rôle (sauf `ROLE_USER`, jamais proposé).
+
+## `EventController` (préfixe `/admin/event`, `ROLE_ADMIN` via `^/admin`)
+- `GET /` (`event_index`), `GET|POST /new` (`event_new`), `GET|POST /{id}/edit` (`event_edit`), `DELETE /{id}` (`event_delete`) : CRUD du planning affiché publiquement sur `/schedule`.
 
 ## `AccountantController`
-- `GET /accountant` (`accountant`) : espace comptabilité (statique, pas encore de logique métier).
+- `GET /accountant` (`accountant`) : espace comptabilité. `ROLE_COMPTA` (`^/accountant`).
 
-## `TrackController` (préfixe `/music`)
-- `GET /music/` (`music`) : liste des morceaux.
-- `GET|POST /music/new` (`track_new`) : création + upload mp3.
-- `GET /music/{id}` (`track_show`) : détail d'un morceau.
-- `GET|POST /music/{id}/edit` (`track_edit`) : édition.
-- `DELETE /music/{id}` (`track_delete`) : suppression (protégée par token CSRF `delete{id}`).
+## `TrackController` (préfixe `/music`, catalogue public)
+- `GET /` (`music`), `GET /{id}` (`track_show`) : liste + détail d'un morceau, publics (y compris anonyme).
+- `GET|POST /new` (`track_new`) : `ROLE_ADMIN` (`^/music/new`).
+- `POST /quick-upload` (`track_quick_upload`) : dépôt rapide d'un mp3. `ROLE_BINIOUFOUS`/`ROLE_ADMIN` (`^/music/quick-upload`).
+- `GET|POST /{id}/edit` (`track_edit`) : `ROLE_ADMIN` (`^/music/[^/]+/edit`).
+- `DELETE /{id}` (`track_delete`) : `ROLE_ADMIN` (`^/music` en méthode `DELETE`).
 
-## Points d'attention transverses
+⚠️ `templates/music/show.html.twig` affiche le lien "modifier" et le formulaire de suppression à **tout le monde**, y compris un visiteur anonyme, alors que les routes derrière sont `ROLE_ADMIN`. Pas de 403 caché, juste un lien qui échoue si on n'a pas le rôle. Voir [role.md](role.md), section "Points d'attention".
 
-- Aucun contrôleur (à part la config `security.yaml`) ne vérifie explicitement les rôles avec `$this->denyAccessUnlessGranted(...)` ou `@IsGranted` : le contrôle d'accès repose uniquement sur `access_control` dans `security.yaml` (`/admin/*` → `ROLE_ADMIN`, `/desk/*` → `ROLE_USER`). Donc `/music/*` et `/accountant` ne sont **pas** protégés par un rôle particulier au niveau routing.
-- `AccountantController` et `AdminController::index` référencent des routes/vues qui ne vérifient pas non plus `ROLE_COMPTA` : la page `accountant` est juste `/accountant`, accessible à tout utilisateur connecté (`ROLE_USER` suffit puisqu'elle n'est pas sous `/admin`).
+## `VoiceController` (préfixe `/music/{trackId}/voice`)
+- `POST` (`voice_new`), `DELETE /{voiceId}` (`voice_delete`) : ajoute/retire une voix (partie instrumentale) sur un morceau. `ROLE_ADMIN` (`^/music/[^/]+/voice`). À ne pas confondre avec `desk_voice_toggle` (`DeskController`) : ici on gère les voix elles-mêmes (nom, fichier audio), là-bas un membre choisit juste la ou les voix qu'il joue.
+
+## `LocaleController`
+- `GET /locale/{locale}` (`app_locale`) : change la langue, public.

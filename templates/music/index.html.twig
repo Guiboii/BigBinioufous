@@ -33,8 +33,7 @@
             </div>
             <div
                 class="row playerButtons" role="region" aria-label="{{ 'music.player_region'|trans }}">
-                {# <a href="{{ path('track_new') }}">Upload</a> #}
-                {% if app.user %}
+                {% if is_granted('ROLE_ADMIN') %}
                     <a id="uploadNew" href="new">
                         <span id="upload">
                             <svg class="bi bi-circle-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="8"/></svg>
@@ -89,8 +88,10 @@
                     <a href="{{ asset('uploads/music/' ~ track.trackFilename) }}" class="list-group-item">
                         <svg class="bi bi-play-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 010 1.393z"/></svg>
                         {{ track.title }}
-                        {{ 'music.by'|trans }}
-                        {{ track.artist.name }}
+                        {% if track.artist %}
+                            {{ 'music.by'|trans }}
+                            {{ track.artist.name }}
+                        {% endif %}
                         <span class="badge">{{ track.minutes }}:{{ track.seconds }}</span>
                     </a>
                 {% else %}
@@ -107,7 +108,7 @@
                     <div class="loggedinContent">
                         {% for track in tracks %}
                             <span class="list-group-item">{{ 'music.voice_label'|trans }}
-                                {{ track.artist.name }}
+                                {{ track.artist ? track.artist.name : '' }}
                                 <a href="{{ path('track_show', {id: track.id}) }}">{{ 'music.download'|trans }}</a>
                             </span>
                         {% else %}
@@ -115,17 +116,23 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    {# Pas de formulaire de connexion ad hoc ici : à terme, un
-                       composant popup de connexion réutilisable (cf. ROADMAP.md),
-                       en attendant on renvoie vers la vraie page /join. #}
-                    <p class="members-prompt">
-                        {{ 'music.members_prompt'|trans }}
-                        <a href="{{ path('join') }}">{{ 'nav.join_or_login'|trans }}</a>
-                    </p>
+                    <div class="members-prompt">
+                        <p>{{ 'music.members_prompt'|trans }}</p>
+                        <button type="button" id="musicLoginTrigger" class="btn btn-primary">
+                            {{ 'nav.join_or_login'|trans }}
+                        </button>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
+
+    {{ include('components/form-dialog.html.twig', {
+        id: 'musicLoginForm',
+        action: path('join'),
+        title: 'join.login_title',
+        content: include('join/_login-generic.html.twig'),
+    }) }}
 
     <div class="loading" id="js-loader" aria-hidden="true">
         <div class="loader"></div>

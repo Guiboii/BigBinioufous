@@ -19,7 +19,7 @@ nav:
     logout: Déconnexion
     join_or_login: Rejoindre ou se connecter
     tagline: "Le groupe de hautbois le plus déjanté de la Galaxie !!"
-    songs: Morceaux
+    folders: Dossiers
     planning: Planning
     accountant: Comptabilité
     toggle: Basculer la navigation
@@ -146,6 +146,16 @@ join:
     pay_subscription: "PAYER UNE COTISATION POUR UN AN"
     submit: "Rejoindre !!"
 
+register:
+    step_label: "Pour commencer :"
+    already_member_question: "Es-tu déjà adhérent·e ?"
+    already_member_hint: "As-tu déjà payé ta cotisation HelloAsso ?"
+    member_card_number: "Numéro de carte d'adhérent·e"
+    member_card_number_placeholder: "Le numéro indiqué sur ta carte ou ta confirmation HelloAsso"
+    member_card_note: "Ce numéro sera vérifié manuellement par un·e administrateur·rice au moment de valider ton inscription."
+    not_member_hint: "Pas de souci ! Deux possibilités :"
+    or_choose_simple: "Ou, si tu ne veux pas encore cotiser, choisis « Un grand fan !! » dans le champ « Tu veux être » plus bas : un profil restreint, sans cotisation."
+
 desk:
     add_picture: "Ajoute une photo !"
     hello: "Salut %nickname% !"
@@ -155,7 +165,43 @@ desk:
     mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"
     favorite_songs: Morceaux favoris
     welcome_simple: "Bienvenue cher utilisateur !!"
-    favorite_songs_intro: Voici tes morceaux favoris
+    hub_intro: "Choisis un espace de fichiers."
+    space_music: Musique
+    space_music_intro: "Morceaux, partitions, enregistrements... et choisis la ou les voix que tu joues sur chaque morceau."
+    space_admin: Administratif
+    space_admin_intro: "Comptes-rendus et documents administratifs."
+    space_accounting: Comptabilité
+    space_accounting_intro: "Relevés et documents comptables."
+    move_start: Déplacer
+    move_folder_aria: "Déplacer le dossier %name%"
+    move_document_aria: "Déplacer le document %name%"
+    move_here: "Déplacer dans « %folder% »"
+    move_here_aria: "Déplacer ici, dans %name%"
+    move_cancel: Annuler le déplacement
+    move_banner_document: "Déplacement de « %name% » : choisis un dossier de destination, ou déplace-le ici."
+    move_banner_folder: "Déplacement du dossier « %name% » : choisis un dossier de destination, ou déplace-le ici."
+    new_folder_label: "Nouveau dossier :"
+    new_folder_placeholder: "Nom du dossier"
+    new_folder_submit: Créer
+    voice_playing: "(tu joues cette voix)"
+    voice_played_by: "Joué par :"
+    voice_no_players: "Personne ne joue cette voix pour l'instant"
+    quick_upload_zone: "Glisse tes fichiers ici (mp3, vidéo, pdf, photo), ou clique pour en choisir"
+    quick_upload_uploading: envoi en cours...
+    quick_upload_progress: "Progression de l'envoi"
+    download: Télécharger
+    confirm_delete_folder: "Supprimer le dossier « %name% » et tout ce qu'il contient ?"
+    delete_folder_aria: "Supprimer le dossier %name%"
+    quick_upload_success: ajouté !
+    quick_upload_error: "échec, réessaie"
+    documents_heading: Documents
+    document_uploaded_by: "déposé par"
+    confirm_delete_document: "Tu es sûr·e de vouloir supprimer ce document ?"
+    breadcrumb: "Fil d'Ariane des dossiers"
+    files_root: Fichiers
+    folder_empty: "Ce dossier est vide."
+    favorite: Mettre en favori
+    unfavorite: Retirer des favoris
     change_password: Changer ton mot de passe
     update_submit: Mettre à jour
     update_profile: "Mets à jour ton profil !"
@@ -195,6 +241,15 @@ music:
     pause_label: "Mettre en pause"
     stop_label: Arrêter
     player_region: "Lecteur audio"
+    voices_heading: Voix
+    no_voices: "Aucune voix pour l'instant"
+    voice_listen: écouter
+    voice_add_submit: Ajouter la voix
+    voice_name: Nom de la voix
+    voice_name_placeholder: "ex. Hautbois 1"
+    voice_file: "Fichier audio de la voix (mp3, facultatif)"
+    invalid_mp3: "Merci d'envoyer un fichier mp3 valide"
+    confirm_delete_voice: "Tu es sûr·e de vouloir supprimer cette voix ?"
 
 Id: Id
 
@@ -218,8 +273,14 @@ admin:
     contact: Contacter
     make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice"
     make_accountant: "Faire de cet utilisateur·rice un·e comptable"
+    make_binioufous: "Faire de cet utilisateur·rice un·e binioufous"
+    make_member: "Faire de cet utilisateur·rice un·e membre"
+    make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice"
     confirm_make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice ?"
     confirm_make_accountant: "Faire de cet utilisateur·rice un·e comptable ?"
+    confirm_make_binioufous: "Faire de cet utilisateur·rice un·e binioufous ?"
+    confirm_make_member: "Faire de cet utilisateur·rice un·e membre ?"
+    confirm_make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice ?"
     already_has_role: "Cette personne a déjà ce rôle."
     roles: Rôles
     validate: Valider
@@ -247,6 +308,8 @@ Country: Pays
 "(sorry for that)": "(désolé pour ça)"
 Male: Homme
 Female: Femme
+Yes: Oui
+No: Non
 "Still looking for...": "Toujours en train de chercher..."
 "First Name": Prénom
 "Your first name": Ton prénom
@@ -282,7 +345,6 @@ Password: "Mot de passe"
 "Insert your password": "Saisis ton mot de passe"
 "New password": "Nouveau mot de passe"
 "Confirm password": "Confirme le mot de passe"
-"Valider l'utilisateur?": "Valider l'utilisateur ?"
 Title: Titre
 "title of the file": "titre du morceau"
 Minutes: Minutes

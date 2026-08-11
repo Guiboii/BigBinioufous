@@ -309,3 +309,41 @@ function render() {
 
   renderer.render(scene, camera);
 }
+
+// Gestion de la popup de connexion (réutilise le composant form-dialog)
+var loginTrigger = document.getElementById('musicLoginTrigger');
+var loginForm = document.getElementById('musicLoginForm');
+
+if (loginTrigger && loginForm) {
+  function getFocusable(container) {
+    return Array.prototype.slice
+      .call(container.querySelectorAll('input, textarea, select, button, a[href]'))
+      .filter(function (el) {
+        return !el.disabled && el.offsetParent !== null;
+      });
+  }
+
+  loginTrigger.addEventListener('click', function () {
+    loginForm.classList.remove('d-none');
+    var focusable = getFocusable(loginForm);
+    if (focusable.length) {
+      focusable[0].focus();
+    }
+  });
+
+  var closeBtn = loginForm.querySelector('.close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+      loginForm.classList.add('d-none');
+      loginTrigger.focus();
+    });
+  }
+
+  // Fermeture à l'Échap
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !loginForm.classList.contains('d-none')) {
+      loginForm.classList.add('d-none');
+      loginTrigger.focus();
+    }
+  });
+}

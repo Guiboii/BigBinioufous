@@ -14,6 +14,7 @@
 /public/uploads/music/
 /public/uploads/pictures/
 /public/uploads/events/
+/public/uploads/documents/
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###

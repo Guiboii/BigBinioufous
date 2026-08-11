@@ -31,6 +31,7 @@
                             <th>{{ 'City'|trans }}</th>
                             <th>{{ 'admin.date_of_birth'|trans }}</th>
                             <th>{{ 'admin.created_at'|trans }}</th>
+                            <th>{{ 'register.member_card_number'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,6 +42,12 @@
                             <td>{{ user.city }}</td>
                             <td>{{ user.birth|date('d/m/Y') }}</td>
                             <td>{{ user.createdAt|date('d/m/Y') }}</td>
+                            {# Numéro à vérifier manuellement (pas d'API HelloAsso
+                               disponible pour valider en direct, cf. RegistrationType).
+                               Vide = la personne s'est déclarée non-adhérente à
+                               l'inscription (wish Simple probable, ou une inscription
+                               antérieure à cette fonctionnalité). #}
+                            <td>{{ user.memberCardNumber ?: '-' }}</td>
                         </tr>
                     </tbody>
                 </table>

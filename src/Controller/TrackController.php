@@ -3,10 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Track;
+use App\Entity\Voice;
 use App\Form\TrackType;
+use App\Form\VoiceType;
 use App\Repository\TrackRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -59,6 +63,53 @@ class TrackController extends AbstractController
         ]);
     }
 
+    /**
+     * Dépose glisser-déposer : un fichier = un morceau créé directement
+     * (titre = nom de fichier, durée lue côté JS via l'API Audio, artiste
+     * laissé vide). À corriger ensuite via track_edit si besoin.
+     */
+    #[Route('/quick-upload', name: 'track_quick_upload', methods: ['POST'])]
+    public function quickUpload(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger): JsonResponse
+    {
+        if (!$this->isCsrfTokenValid('quick_upload', $request->request->get('_token'))) {
+            return $this->json(['error' => 'invalid_token'], 403);
+        }
+
+        $file = $request->files->get('file');
+        $title = trim((string) $request->request->get('title'));
+        $minutes = (int) $request->request->get('minutes');
+        $seconds = (int) $request->request->get('seconds');
+
+        if (!$file || '' === $title) {
+            return $this->json(['error' => 'invalid_input'], 400);
+        }
+
+        if (!\in_array($file->getMimeType(), ['audio/mp3', 'audio/mpeg'], true)) {
+            return $this->json(['error' => 'invalid_mimetype'], 400);
+        }
+
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+        try {
+            $file->move($this->getParameter('mp3'), $newFilename);
+        } catch (FileException $e) {
+            return $this->json(['error' => 'upload_failed'], 500);
+        }
+
+        $track = new Track();
+        $track->setTitle($title)
+            ->setMinutes($minutes)
+            ->setSeconds($seconds)
+            ->setTrackFilename($newFilename);
+
+        $manager->persist($track);
+        $manager->flush();
+
+        return $this->json(['success' => true, 'id' => $track->getId()]);
+    }
+
     #[Route('/{id}', name: 'track_show', methods: ['GET'])]
     public function show(Track $track): Response
     {
@@ -79,9 +130,15 @@ class TrackController extends AbstractController
             return $this->redirectToRoute('music');
         }
 
+        $voiceForm = $this->createForm(VoiceType::class, new Voice(), [
+            'action' => $this->generateUrl('voice_new', ['trackId' => $track->getId()]),
+            'method' => 'POST',
+        ]);
+
         return $this->render('music/edit.html.twig', [
             'track' => $track,
             'form' => $form->createView(),
+            'voiceForm' => $voiceForm->createView(),
         ]);
     }
 

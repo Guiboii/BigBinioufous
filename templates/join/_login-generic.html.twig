@@ -1,31 +1,27 @@
-{# Fragment inclus dans join/index.html.twig via le composant form-dialog.
-   Contient les champs du formulaire de connexion (pas la structure form/dialog). #}
-{% if hasError %}
-    <div class="alert alert-danger" role="alert" aria-live="polite">
-        {{ 'join.login_error'|trans }}
-    </div>
-{% endif %}
+{# Fragment générique du formulaire de connexion, réutilisable partout.
+   Contrairement à join/login.html.twig, ce fragment n'affiche jamais
+   de message d'erreur (car celui-ci n'a sense que sur /join après une
+   tentative de connexion échouée). #}
 
 <div class="form-group">
-    <label for="email">{{ 'Email'|trans }}</label>
+    <label for="login-email">{{ 'Email'|trans }}</label>
     <input
         type="email"
         name="_username"
-        id="email"
+        id="login-email"
         class="form-control"
         placeholder="{{ 'join.email_placeholder'|trans }}"
         autocomplete="email"
         required
-        value="{{ username }}"
     >
 </div>
 
 <div class="form-group">
-    <label for="password">{{ 'Password'|trans }}</label>
+    <label for="login-password">{{ 'Password'|trans }}</label>
     <input
         type="password"
         name="_password"
-        id="password"
+        id="login-password"
         placeholder="{{ 'join.password_placeholder'|trans }}"
         class="form-control"
         autocomplete="current-password"

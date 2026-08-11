@@ -19,7 +19,7 @@ nav:
     logout: Logout
     join_or_login: Join or Login
     tagline: "The craziest oboe band of the Galaxy !!"
-    songs: Songs
+    folders: Folders
     planning: Schedule
     accountant: Accountant
     toggle: Toggle navigation
@@ -146,6 +146,16 @@ join:
     pay_subscription: "PAY A SUBSCRIPTION FOR ONE YEAR"
     submit: "Join !!"
 
+register:
+    step_label: "To start:"
+    already_member_question: "Are you already a member?"
+    already_member_hint: "Have you already paid your HelloAsso subscription?"
+    member_card_number: "Member card number"
+    member_card_number_placeholder: "The number shown on your card or HelloAsso confirmation"
+    member_card_note: "This number will be manually checked by an administrator when your registration is validated."
+    not_member_hint: "No worries! Two options:"
+    or_choose_simple: 'Or, if you don''t want to subscribe yet, choose "A big Fan !!" in the "You want to be" field below: a restricted profile, no subscription needed.'
+
 desk:
     add_picture: "Add picture!"
     hello: "Hi %nickname% !"
@@ -155,7 +165,43 @@ desk:
     mailing_lists: mailing-lists you subscribed
     favorite_songs: favorite songs
     welcome_simple: "Welcome dear user !!"
-    favorite_songs_intro: here are your favorite songs
+    hub_intro: "Pick a files space."
+    space_music: Music
+    space_music_intro: "Tracks, sheet music, recordings... and pick the voice(s) you play on each song."
+    space_admin: Administrative
+    space_admin_intro: "Meeting minutes and administrative documents."
+    space_accounting: Accounting
+    space_accounting_intro: "Statements and accounting documents."
+    move_start: Move
+    move_folder_aria: "Move folder %name%"
+    move_document_aria: "Move document %name%"
+    move_here: "Move into \"%folder%\""
+    move_here_aria: "Move here, into %name%"
+    move_cancel: Cancel move
+    move_banner_document: "Moving \"%name%\": pick a destination folder, or move it here."
+    move_banner_folder: "Moving folder \"%name%\": pick a destination folder, or move it here."
+    new_folder_label: "New folder:"
+    new_folder_placeholder: "Folder name"
+    new_folder_submit: Create
+    voice_playing: "(you play this voice)"
+    voice_played_by: "Played by:"
+    voice_no_players: "No one plays this voice yet"
+    quick_upload_zone: "Drop your files here (mp3, video, pdf, photo), or click to choose"
+    quick_upload_uploading: uploading...
+    quick_upload_progress: "Upload progress"
+    download: Download
+    confirm_delete_folder: "Delete the folder \"%name%\" and everything inside it?"
+    delete_folder_aria: "Delete folder %name%"
+    quick_upload_success: added!
+    quick_upload_error: "failed, try again"
+    documents_heading: Documents
+    document_uploaded_by: "uploaded by"
+    confirm_delete_document: "Are you sure you want to delete this document?"
+    breadcrumb: "Folder breadcrumb"
+    files_root: Files
+    folder_empty: "This folder is empty."
+    favorite: Add to favorites
+    unfavorite: Remove from favorites
     change_password: Change your password
     update_submit: Update
     update_profile: "Update your profile !"
@@ -195,6 +241,15 @@ music:
     pause_label: Pause
     stop_label: Stop
     player_region: Audio player
+    voices_heading: Voices
+    no_voices: "No voice yet"
+    voice_listen: listen
+    voice_add_submit: Add voice
+    voice_name: Voice name
+    voice_name_placeholder: "e.g. Oboe 1"
+    voice_file: "Voice audio file (mp3, optional)"
+    invalid_mp3: "Please upload a valid mp3 file"
+    confirm_delete_voice: "Are you sure you want to delete this voice?"
 
 Id: Id
 
@@ -211,8 +266,14 @@ admin:
     contact: Contact
     make_admin: Make this user an administrator
     make_accountant: Make this user an accountant
+    make_binioufous: Make this user a binioufous
+    make_member: Make this user a member
+    make_simple: Make this user a simple user
     confirm_make_admin: "Make this user an administrator?"
     confirm_make_accountant: "Make this user an accountant?"
+    confirm_make_binioufous: "Make this user a binioufous?"
+    confirm_make_member: "Make this user a member?"
+    confirm_make_simple: "Make this user a simple user?"
     already_has_role: This person already has this role.
     roles: Roles
     validate: Validate
@@ -240,6 +301,8 @@ Country: Country
 "(sorry for that)": "(sorry for that)"
 Male: Male
 Female: Female
+Yes: Yes
+No: No
 "Still looking for...": "Still looking for..."
 "First Name": First Name
 "Your first name": Your first name
@@ -275,7 +338,6 @@ Password: Password
 "Insert your password": Insert your password
 "New password": New password
 "Confirm password": Confirm password
-"Valider l'utilisateur?": "Validate the user?"
 Title: Title
 "title of the file": title of the file
 Minutes: Minutes
