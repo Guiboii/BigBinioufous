@@ -225,6 +225,9 @@ admin:
     edit_user_aria: "Modifier le profil de %name%"
     validate_user_aria: "Valider l'inscription de %name%"
     remove_role_aria: "Retirer le rôle « %role% »"
+    refuse: Refuser
+    refuse_user_aria: "Refuser l'inscription de %name%"
+    confirm_refuse: "Refuser l'inscription de %name% ? Le compte sera supprimé."
 
 Name: Nom
 Picture: Photo

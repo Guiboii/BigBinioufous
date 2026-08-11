@@ -164,4 +164,25 @@ class AdminController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    /**
+     * Permet de refuser une inscription en attente (supprime le compte,
+     * il n'a jamais été validé). Même pattern CSRF/method-override que
+     * EventController::delete.
+     */
+    #[Route('/admin/user/{slug}/refuse', name: 'user_refuse', methods: ['DELETE'])]
+    public function refuseUser(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('refuse'.$user->getId(), $request->request->get('_token'))) {
+            $manager->remove($user);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Inscription refusée'
+            );
+        }
+
+        return $this->redirectToRoute('valid');
+    }
 }

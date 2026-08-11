@@ -15,11 +15,11 @@
 
         <div class="col">
             <div class="row ml-4">
-                <h2>{{ 'desk.hello'|trans({'%nickname%': app.user.nickname}) }}</h2>
+                <h1>{{ 'desk.hello'|trans({'%nickname%': app.user.nickname}) }}</h1>
             </div>
             <div class="row centered">
                 {% if app.user.validation == false %}
-                    <h3>{{ 'desk.pending_validation'|trans }}</h3>
+                    <h2>{{ 'desk.pending_validation'|trans }}</h2>
                 {% endif %}
                 {% for role in app.user.roles %}
                     {% if role == 'ROLE_ADMIN' %}
@@ -46,7 +46,7 @@
                             <a href="{{ path('accountant') }}" class="btn btn-red">{{ 'desk.accountant_link'|trans }}</a>
                         </div>
                     {% elseif role == 'ROLE_BINIOUFOUS' %}
-                        <h3>{{ 'desk.binioufous_heading'|trans }}</h3>
+                        <h2>{{ 'desk.binioufous_heading'|trans }}</h2>
                         <div class="container mt-2">
                             {{ include('/desk/lists/binioufous.html.twig') }}
                         </div>
@@ -58,7 +58,7 @@
                             <p>{{ 'desk.favorite_songs'|trans }}</p>
                         </div>
                     {% elseif role == 'ROLE_SIMPLE' %}
-                        <h3>{{ 'desk.welcome_simple'|trans }}</h3>
+                        <h2>{{ 'desk.welcome_simple'|trans }}</h2>
                         <div class="col">
                             <p>{{ 'desk.mailing_lists'|trans }}</p>
                         </div>

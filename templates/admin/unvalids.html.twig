@@ -6,7 +6,7 @@
 
 <div class="container mt-2">
     <div class="container mt-2">
-        <h3>{{ 'admin.pending_requests_title'|trans }}</h3>
+        <h1>{{ 'admin.pending_requests_title'|trans }}</h1>
         <table class="table table-hover text-center">
             <thead>
                 <tr>
@@ -34,7 +34,14 @@
                     <td>{{ user.country }}</td>
                     <td>{{ user.city }}</td>
                     <td>{{ user.createdAt|date('d/m/Y') }}</td>
-                    <td> <a href="{{ path ('user_valid', {slug: user.slug, wish: user.wish}) }}" class="btn btn-green" aria-label="{{ 'admin.validate_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></a></td>
+                    <td>
+                        <a href="{{ path ('user_valid', {slug: user.slug, wish: user.wish}) }}" class="btn btn-green" aria-label="{{ 'admin.validate_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></a>
+                        <form method="post" action="{{ path('user_refuse', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_refuse'|trans({'%name%': user.fullName})|e('js') }}');" class="btn-form">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('refuse' ~ user.id) }}">
+                            <button type="submit" class="btn btn-red" aria-label="{{ 'admin.refuse_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-close-circle-line" aria-hidden="true"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

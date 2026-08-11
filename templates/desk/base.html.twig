@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
+<html lang="{{ app.request.locale }}" class="desk">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Binioufous!{% endblock %}</title>
         {{ importmap('app') }}
+        {# Police d'affichage de la marque (Bungee), déjà chargée sur les pages
+           publiques (templates/base.html.twig) : reprise ici pour les titres
+           du desk/admin (body.desk h1/h2, assets/main/app.css), jamais faite
+           jusqu'au 2026-08-11. #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
     </head>
 
     <body class="desk">

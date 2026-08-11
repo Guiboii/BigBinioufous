@@ -261,6 +261,119 @@ body.desk form .btn-green {
     border: 2px solid var(--bb-white);
 }
 
+/* Titre de page unique et cohérent dans tout le desk/admin/event (retour
+   utilisatrice du 2026-08-11 : "aucun titre pareil", chaque page utilisait
+   un niveau différent - h1/h3/h4 - avec le style par défaut du navigateur
+   pour chaque niveau, donc une taille différente à chaque fois). Un seul
+   <h1> par page désormais (cf. templates concernés), stylé avec la police
+   d'affichage de la marque (Bungee, déjà chargée sur les pages publiques
+   via templates/base.html.twig, ajoutée à templates/desk/base.html.twig)
+   plutôt que la police système par défaut. */
+body.desk h1 {
+    font-family: "Bungee", "Arial Black", sans-serif;
+    color: var(--bb-red-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 1.6rem;
+}
+/* Sous-titres de section (ex. "Les Administrateurices" sur /desk) : h2,
+   même famille que h1 pour rester dans la même identité typographique,
+   mais plus petit et sans la couleur vive pour marquer la hiérarchie. */
+body.desk h2 {
+    font-family: "Bungee", "Arial Black", sans-serif;
+    color: var(--bb-ink);
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+}
+
+/* Fond blanc Bootstrap par défaut du .card jugé "dégueulasse" par
+   l'utilisatrice (seule surface neutre de toute la zone desk/admin, qui
+   n'utilise sinon que du doré/vert/rouge saturés) : remplacé par un panneau
+   encre (--bb-ink) avec un liseré doré, cohérent avec le reste de la
+   palette plutôt qu'un blanc neutre hors charte. */
+body.desk .card {
+    background: var(--bb-ink);
+    border: none;
+    border-top: 4px solid var(--bb-gold);
+    border-radius: 12px;
+}
+body.desk .card-body {
+    color: var(--bb-white);
+}
+/* Retour utilisatrice du 2026-08-11 : sur admin/user/show.html.twig, le
+   <form> (EditUserType) garde son propre fond vert + bordure épaisse
+   (règle "form" générique plus haut) une fois posé dans le panneau encre
+   ci-dessus -> une case verte dans la case noire, au lieu d'une seule forme
+   cohérente. Le formulaire reprend directement l'espace transparent du
+   panneau .card (déjà doré/encre) plutôt que de dessiner sa propre boîte ;
+   .card-body garde son padding Bootstrap habituel pour l'air autour du
+   contenu, donc padding remis à 0 ici pour ne pas le doubler. */
+body.desk .card form {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+/* Même souci que .card form ci-dessus, repéré cette fois sur les mini
+   <form> d'action (supprimer un événement, refuser une inscription :
+   uniquement des champs cachés + un bouton icône) : la règle "form"
+   générique leur collait quand même son fond vert + sa bordure épaisse
+   derrière un simple bouton, "horrible" selon l'utilisatrice une fois
+   l'icône seule (sans texte pour meubler visuellement la boîte). Remplace
+   le style="display:inline-block" qui était sur ces <form>. */
+body.desk .btn-form {
+    display: inline-block;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Scrollbar cohérente avec le reste du site (retour utilisatrice du
+   2026-08-11) : Histoire/Musique/Planning ont chacune une scrollbar
+   thématisée (cf. assets/story/minisite.css, assets/music/music.css,
+   assets/schedule/schedule.css), desk/admin/event utilisait encore la
+   scrollbar grise par défaut du navigateur. Doré pâle sur transparent,
+   même choix que Musique (déjà validé sur un fond sombre comparable aux
+   panneaux .card ci-dessus).
+   Ciblé sur html.desk plutôt que body.desk (1er essai du 2026-08-11, resté
+   sans effet visible) : la scrollbar de la fenêtre est pilotée par
+   l'élément racine <html>, pas <body>, tant que <body> n'a pas son propre
+   overflow ; assets/story/minisite.css contourne ça en stylant "*" (tous
+   les éléments d'un coup), ici la classe "desk" est posée sur <html> en
+   plus de <body> (templates/desk/base.html.twig) pour cibler précisément
+   la bonne scrollbar sans styler tout le document. */
+html.desk {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bb-gold-pale) transparent;
+}
+html.desk::-webkit-scrollbar {
+    width: 10px;
+}
+html.desk::-webkit-scrollbar-track {
+    background: transparent;
+}
+html.desk::-webkit-scrollbar-thumb {
+    background-color: var(--bb-gold-pale);
+    border-radius: 8px;
+}
+html.desk::-webkit-scrollbar-thumb:hover {
+    background-color: var(--bb-gold);
+}
+
+/* Boutons icône seule (modifier/valider/retirer un rôle dans les tableaux)
+   à une taille tantôt "ronde", tantôt écrasée selon le contenu autour
+   ("les boutons ça part en couille", retour utilisatrice du 2026-08-11) :
+   taille fixe et centrage de l'icône pour que toutes les actions d'un
+   tableau se ressemblent, quel que soit le texte des colonnes voisines. */
+body.desk .table .btn-red,
+body.desk .table .btn-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+}
+
 /* Texte blanc au survol (pas gold/rouge) : même bug de contraste que sur la
    navbar, ici sur les CTA "payer l'adhésion" / "s'abonner" */
 .red-hover:hover {
@@ -489,6 +602,54 @@ body.desk form .btn-green {
     }
     .navbar-admin .nav-item.ml-auto {
         margin-left: 0 !important;
+    }
+}
+
+/* Sélecteur de langue : mêmes 3 liens que .navbar-collapse ci-dessus (pas
+   de <select>, chrome natif non stylable, cf. commentaire plus haut), sur
+   fond rouge ici plutôt que vert -> blanc au lieu de doré (6.07:1, même
+   calcul que .navbar-admin .text-yellow). */
+.navbar-admin .lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 0.75rem;
+}
+.navbar-admin .lang-link {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--bb-white);
+    border: 1px solid transparent;
+}
+.navbar-admin .lang-link:hover,
+.navbar-admin .lang-link:focus-visible {
+    border-color: var(--bb-white);
+}
+.navbar-admin .lang-link.active {
+    background: var(--bb-white);
+    color: var(--bb-red-dark);
+}
+
+/* Navbar fixe en haut demandée par l'utilisatrice ("le texte passe
+   derrière"), desktop seulement : en dessous de 768px .navbar-admin peut
+   déjà occuper plusieurs lignes (cf. reflow mobile ci-dessus), la fixer en
+   plus obligerait à réserver une hauteur de contenu imprévisible en haut
+   de chaque page (grand bandeau vide ou chevauchement selon le nombre de
+   lignes). #main-content récupère un padding-top équivalent à la hauteur
+   mesurée de la navbar (cf. méthode "mesure empirique" déjà utilisée sur
+   /story et /music, CLAUDE.md) pour ne rien cacher dessous au chargement. */
+@media (min-width: 768px) {
+    .navbar-admin {
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+    body.desk main {
+        padding-top: 58px;
     }
 }
 
