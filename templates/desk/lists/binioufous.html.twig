@@ -12,7 +12,7 @@
             <tbody>
                 {% for binioufou in binioufous %}
                 <tr>
-                    <td>{% if binioufou.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %} {{ binioufou.fullName }}</td>
+                    <td>{% if binioufou.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif binioufou.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %} {{ binioufou.fullName }}</td>
                     <td>{% if binioufou.picture == null %}
                         <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}

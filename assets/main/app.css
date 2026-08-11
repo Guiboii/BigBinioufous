@@ -391,13 +391,18 @@ body.desk .profile-identity {
     flex: 1;
     min-width: 0;
 }
+/* Fond encre jugé "nul" par l'utilisatrice ("j'en veux du vert au moins"),
+   même redite du panneau noir déjà retiré ailleurs : --bb-green-mid comme
+   les pastilles de rôle juste en dessous, plutôt qu'une 2e couleur neutre
+   inventée. Blanc plutôt que doré-pâle sur ce fond (6.81:1, AAA, même
+   calcul que le texte des pastilles de rôle). */
 body.desk .profile-avatar-frame {
     width: 72px;
     height: 72px;
     border-radius: 50%;
     border: 3px solid var(--bb-gold);
-    background: var(--bb-ink);
-    color: var(--bb-gold-pale);
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
     display: flex;
     align-items: center;
     justify-content: center;

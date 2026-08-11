@@ -15,8 +15,10 @@
                 <td>
                     {% if member.gender == 'male' %}
                         <i class="ri-men-fill" aria-hidden="true"></i>
-                    {% else %}
+                    {% elseif member.gender == 'female' %}
                         <i class="ri-women-fill" aria-hidden="true"></i>
+                    {% else %}
+                        <i class="ri-genderless-fill" aria-hidden="true"></i>
                     {% endif %}
                     {{ member.fullName }}</td>
                 <td>

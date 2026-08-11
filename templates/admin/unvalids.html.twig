@@ -23,7 +23,7 @@
             <tbody>
                 {% for user in unvalids %}
                 <tr>
-                    <td>{% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %} {{ user.fullName }}</td>
+                    <td>{% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif user.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %} {{ user.fullName }}</td>
                     <td>{% if user.picture == null %}
                         <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}

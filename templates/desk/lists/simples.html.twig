@@ -13,7 +13,7 @@
             <tbody>
                 {% for simple in simples %}
                 <tr>
-                    <td>{% if simple.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% else %}<i class="ri-women-fill" aria-hidden="true"></i>{% endif %} {{ simple.fullName }} </td>
+                    <td>{% if simple.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif simple.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %} {{ simple.fullName }} </td>
                     <td>{% if simple.picture == null %}
                         <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}
