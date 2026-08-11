@@ -116,17 +116,23 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    {# Pas de formulaire de connexion ad hoc ici : à terme, un
-                       composant popup de connexion réutilisable (cf. ROADMAP.md),
-                       en attendant on renvoie vers la vraie page /join. #}
-                    <p class="members-prompt">
-                        {{ 'music.members_prompt'|trans }}
-                        <a href="{{ path('join') }}">{{ 'nav.join_or_login'|trans }}</a>
-                    </p>
+                    <div class="members-prompt">
+                        <p>{{ 'music.members_prompt'|trans }}</p>
+                        <button type="button" id="musicLoginTrigger" class="btn btn-primary">
+                            {{ 'nav.join_or_login'|trans }}
+                        </button>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
+
+    {{ include('components/form-dialog.html.twig', {
+        id: 'musicLoginForm',
+        action: path('join'),
+        title: 'join.login_title',
+        content: include('join/_login-generic.html.twig'),
+    }) }}
 
     <div class="loading" id="js-loader" aria-hidden="true">
         <div class="loader"></div>
