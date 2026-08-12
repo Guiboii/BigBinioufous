@@ -3,7 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Binioufous!{% endblock %}</title>
-        {{ importmap('app') }}
+        {% block importmap %}
+            {{ importmap('app') }}
+        {% endblock %}
         {# Police d'affichage de la marque (Bungee), déjà chargée sur les pages
            publiques (templates/base.html.twig) : reprise ici pour les titres
            du desk/admin (body.desk h1/h2, assets/main/app.css), jamais faite

@@ -1,0 +1,65 @@
+<?php
+
+namespace App\DataFixtures;
+
+/**
+ * Contenu Markdown initial des sections de la page Histoire, repris de
+ * l'ancien contenu codé en dur (translations/messages.fr.yaml, clés
+ * story.*) lors du passage à un contenu éditable en base (StorySection).
+ * Les <s> HTML d'origine deviennent des ~~texte~~ (strikethrough Markdown).
+ * Utilisé par AppFixtures.php pour survivre à un futur `fixtures:load`
+ * (cf. le bug déjà rencontré sur les dates du planning, ROADMAP.md Phase 6).
+ * A aussi servi, une seule fois, à peupler la base locale déjà existante via
+ * une commande jetable (app:seed-story-sections, supprimée après usage).
+ */
+class StorySectionSeedData
+{
+    /** @var array<int, array{0: string, 1: string}> */
+    public const SECTIONS = [
+        1 => ['Intro', <<<'MD'
+            Bienvenue sur le site des Binioufous, la bande de hautbois (mais pas que…) la plus déjantée de la galaxie !! Tu trouveras ici toutes les informations qui nous concernent, pi même si tu veux tu peux nous laisser des messages comme ça on est content 🙂
+            MD],
+        2 => ['Alors les Binioufous, c\'est qui…', <<<'MD'
+            ### Des jeunes, pi des vieux
+
+            Des Binioufous y'en a de tous les âges et de tous les niveaux j'ai envie de dire. Y'a des enfants, des ados, des adultes, des jeunes-vieux, des vieux-jeunes, des middle-age, des médians. Bon c'est vrai ils ont tous à voir avec une école de musique… On a encore pas vu de Binioufous autodidacte, paf, le gars il se Binioufizze direct, comme ça ! Bah en fait, c'est parce qu'on t'attend, pâ !!
+
+            ### Des hautbois, pi des autres
+
+            Bon bah pour la grosse majorité on joue du hautbois, hein ! On peut pas le cacher. Mais y'a aussi des tubas, des bassons, des percus… C'est vrai qu'on aime bien jouer fort, mais en même temps, vu nos instruments, bah c'est pas non plus trop violent… Alors on aime bien tout jouer aussi, autant les tubes du moment que ceux d'antan, comme on dit. Parfois c'est des tubes connus, mais des fois ils sont bien connus que de nous, parce qu'on n'utilise pas de partition, donc on les répète souvent pour les apprendre, pâ…
+
+            ### Des novices, pi des pros, rien que des Binioufous !
+
+            Bah oui, des novices, pi des pros. On est comme ça aux Binioufous, on mélange. Alors y'en a des qui viennent de grandes écoles fort réputées de Lyon qui sont sur des collines, y'en a qui viennent de 'tites écoles riquiqui comme ça, y'en a ils viennent de loooooiiiiiin, y'en a ils viennent à pied tellement ils sont proches, y'en a ils viennent en vélo, d'autres en bus. Des fois y'en a ils viennent pas, carrément. ~~Alors y'en a ils savent jouer, y'en a ils apprennent,~~ non en fait ils savent tous jouer et ils apprennent tous. Faut leur demander mais je crois que c'est pour ça qu'ils viennent.
+
+            ### De l'oralité, pi du son
+
+            Bah oui, oralité. C'est comme ça aux Binioufous, y'a pas de partition ! Bah justement, ça nous permet de jouer partout, pi de regarder le public droit dans les yeux, schtack comme ça là. Tu fixes bien, pi tu souffles, pi tu souffles… Tu déhanches, pi tu bouges de d'là de d'ci. T'façon t'es pas bloqué derrière ton pupitre, pi t'oublies jamais tes partitions. Ça fait qu'ton cartable est moins lourd.
+            MD],
+        3 => ['Les Binioufous, c\'est une bande de hautbois, mais pas du tout…', <<<'MD'
+            Alors au début, c'est juste pour se marrer : on reprend en bande de hautbois des thèmes populaires connus (pas au sens petit bonhomme en mousse, hein) plutôt genre, ABBA, StarWars, BeeGees. Ouais bon des trucs de vieux, ok, mais ça fait toujours autant swinguer n'empêche !!
+
+            Et pi quand même, parce qu'on est aussi une grosse majorité de hautboïstes (mais on est content quand d'autres instruments nous rejoignent), c'est pour montrer qu'on peut aussi s'amuser et jouer du hautbois comme des oufs. On doit bien reconnaître que si on s'imagine souvent les hautboïstes comme des gens un peu coincés, c'est qu'il doit bien y avoir une raison (enfin, quand on se les imagine…).
+
+            Parce qu'il faut bien admettre (et nous le déplorons tellement), notre cher hautbois (et en fait les tubas et bassons qui nous accompagnent aussi) restent des instruments très lointains dans l'imaginaire collectif. C'est sans doute dû au fait qu'il n'occupe pas beaucoup l'espace public. Alors on sort, on joue n'importe où, n'importe quand (ou presque) et on SOUFFLE FORT !!
+
+            ### Tu veux connaître la vraie histoire ~~d'une Bande de hautbois~~ des Binioufous ?
+
+            OK,
+
+            Il était une fois un musicien-enseignant qui s'appelait Guiboï. Un jour il arriva dans une école de musique aux alentours de Lyon. Il découvrit alors, parmi la foule des élèves, quatre qui étaient en deuxième cycle. Deux filles et deux garçons. Alors il leur proposa de se regrouper et de jouer des morceaux ensemble. Quoi ? mais que pourrions-nous jouer cher professeur ? Eh bien, je ne sais pas moi, par exemple des morceaux que vous aimez bien, que vous pourriez interpréter dans la rue et même que les gens qui passent les connaîtraient ! Et voilà, c'était parti. Alors bien sûr le groupe s'est agrandi. Au fil du temps d'autres instrumentistes sont venus étoffer l'ensemble. Aujourd'hui les Binioufous rassemblent une bonne vingtaine de personnes, selon les estimations et les projets… Mais si tu veux vraiment savoir qui sont les Binioufous ? consulte l'onglet Les Binioufous, c'est qui ?
+            MD],
+        4 => ['Les Binioufous, pour quoi faire ?', <<<'MD'
+            ### La fête pardi !!
+
+            Comme on le disait, nous sommes une grosse majorité de hautboïstes. On aime faire la fête et partager notre passion pour ces instruments qu'on appelle « rares » (nous on dit « beaux »). Nous ne sommes pas obtus et acceptons bien la présence d'autres instrumentistes (même si nous avons du mal à comprendre tous ces gens qui jouent des instruments moins beaux que les nôtres…). Nous souhaitons partager notre répertoire, nos arrangements et notre folie. Donc :
+
+            - tu as envie de faire la fête et tu souhaites organiser un concert fou et très original ? On vient jouer facilement dans la région Rhône-Alpes, il faut en discuter s'il faut voyager plus loin.
+            - tu es musicien(ne)-enseignant(e) et tu cherches un petit grain de folie à transmettre à tes élèves ? On t'envoie nos fichiers son (jamais de partition, foi de Binioufous), tu repiques avec tes élèves, vous jouez les morceaux Binioufous, on vient jouer avec vous _cerise sur le gâteau_ !
+            - tu es prof, directeur(trice), élu(e) à la culture et en manque d'animation pour ta future année ? On s'organise, comme précédemment on t'envoie nos fichiers et on intervient une, deux, trois fois (ou plus) dans l'année directement avec ton public et on met le feu (façon de parler, hein !!).
+            - tu es clarinettiste ? On te propose des cours de hautbois !!
+
+            Si tu ne sais toujours pas quoi faire avec les Binioufous, envoie-nous un message, ce sera toujours ça de fait !!
+            MD],
+    ];
+}

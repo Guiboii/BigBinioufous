@@ -122,7 +122,12 @@ Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : é
 ## Phase 7 : Nouvelles fonctionnalités
 
 - [ ] Une par une, sur une base stabilisée
-- [ ] Import/rendu de Markdown pour le texte de la page Histoire, plutôt que codé en dur dans `minisite.html.twig`/`translations/*.yaml`. Éditable par un ou plusieurs rôles à définir (lesquels ? admin seul, ou aussi binioufous ?)
+- [x] Import/rendu de Markdown pour le texte de la page Histoire (branche `phase7_story_markdown`), plutôt que codé en dur dans `minisite.html.twig`/`translations/*.yaml`. Éditable par ROLE_ADMIN uniquement (décidé le 2026-08-12). Entité `StorySection` (titre, slug, contenu Markdown, position), CRUD `/admin/story` : nombre de sections et ordre libres, réordonnancement par boutons monter/descendre plutôt qu'un glisser-déposer (non atteignable au clavier, même choix que le gestionnaire de fichiers). Rendu via `twig/markdown-extra` + `league/commonmark` (extension GFM pour le strikethrough, `~~texte~~` remplace les `<s>` en dur d'origine).
+    - Éditeur : EasyMDE (barre d'outils réduite au strict nécessaire, aperçu affiché en permanence à côté plutôt qu'à activer), pour rester simple à des rédacteur·ices non-informaticien·nes plutôt qu'un textarea Markdown brut.
+    - Contenu existant (Intro/Qui/Quoi/Pourquoi) repris dans une migration écrite à la main (`doctrine:migrations` toujours cassé sur cette base, cf. Phase 5) et dans `AppFixtures.php` (`StorySectionSeedData`) pour survivre à un futur `fixtures:load`.
+    - Français uniquement pour l'instant (décidé avec l'utilisatrice) : en/br gardent le titre de page et la note mobile, mais plus le contenu des 4 sections d'origine, les clés `story.*` correspondantes retirées des 3 fichiers de traduction.
+    - Nav "façon terminal" (`@intro`, `@cki ?`...) abandonnée au profit du titre complet de chaque section dans le menu d'ancres : un seul champ à remplir par section plutôt que titre + label de nav séparés.
+    - Retour utilisatrice le jour même : colonne de texte du terminal trop étroite sur grand écran (beaucoup d'espace vide à gauche/à droite), `main` élargi (`max-width` 720px → 1000px, padding latéral 1.25rem → 3rem, `assets/story/minisite.css`).
 - [ ] Remplacer les usages de Google :
     - [x] Espace adhérent avec accès aux morceaux (avec la possibilité de choisir ses parties favorites, comme ça on peut aussi retrouver globalement qui joue quelle partie)
     - [ ] Espace administratif pour les membres du conseil et du bureau avec les CR, les documents administratifs, un outil de prise de note en ligne (mais pas nécessairement collaboratif) : le stockage de fichiers existe (cf. ci-dessous), reste l'outil de prise de note

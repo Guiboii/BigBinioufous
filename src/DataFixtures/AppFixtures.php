@@ -6,8 +6,10 @@ use App\Entity\Artist;
 use App\Entity\Event;
 use App\Entity\Instrument;
 use App\Entity\Role;
+use App\Entity\StorySection;
 use App\Entity\Track;
 use App\Entity\User;
+use Cocur\Slugify\Slugify;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -272,6 +274,20 @@ class AppFixtures extends Fixture
                     ->setDescription($description);
 
             $manager->persist($event);
+        }
+
+        // Contenu initial de la page Histoire (StorySection, éditable
+        // ensuite par ROLE_ADMIN sur /admin/story), même contenu que la
+        // commande ponctuelle app:seed-story-sections utilisée pour la
+        // migration d'une base déjà en prod : cf. StorySectionSeedData.
+        $slugify = new Slugify();
+        foreach (StorySectionSeedData::SECTIONS as $position => [$title, $content]) {
+            $section = new StorySection();
+            $section->setTitle($title)
+                ->setSlug($slugify->slugify($title))
+                ->setContent($content)
+                ->setPosition($position);
+            $manager->persist($section);
         }
 
         $manager->flush();

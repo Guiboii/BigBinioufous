@@ -272,6 +272,68 @@ body.desk form .btn-green {
     border: 2px solid var(--bb-white);
 }
 
+/* Aide-mémoire Markdown du formulaire de section Histoire
+   (templates/story_section/_form.html.twig) : le <form> parent est déjà en
+   texte blanc sur fond --bb-green-mid (body.desk form ci-dessus, 6.82:1),
+   l'encart se distingue par un fond plus sombre superposé plutôt qu'une
+   nouvelle teinte. --bb-gold-pale sur ce fond composité tient 8.35:1 (AAA,
+   calcul de luminance relative). */
+.markdown-help {
+    margin-bottom: 1rem;
+    padding: 0.85rem 1rem;
+    background: rgba(0, 0, 0, 0.18);
+    border-left: 4px solid var(--bb-gold);
+    border-radius: 6px;
+}
+.markdown-help-title {
+    margin: 0 0 0.5rem;
+    font-weight: bold;
+}
+.markdown-help ul {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+.markdown-help li {
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+}
+.markdown-help code {
+    padding: 0.1rem 0.35rem;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 4px;
+    color: var(--bb-gold-pale);
+    font-family: "Courier New", monospace;
+}
+
+/* Barre d'outils EasyMDE (story-admin.js) : la lib ne fixe aucun fond sur
+   .editor-toolbar (hérite donc du vert du <form> générique, body.desk form
+   ci-dessus) ni de couleur sur ses boutons (noir par défaut du navigateur,
+   ~3:1 sur ce fond, sous AA). Fond assombri façon "barre d'outils" distincte
+   du form (--bb-green-deep, 13.4:1 avec le blanc, même calcul que les
+   usages existants de cette paire plus haut dans ce fichier), icônes en
+   blanc. Survol/état actif en --bb-green-mid + bordure blanche plutôt qu'un
+   fond quasi blanc par défaut de la lib, qui aurait rendu l'icône blanche
+   invisible dessus. */
+.editor-toolbar {
+    background: var(--bb-green-deep);
+    border-color: var(--bb-green-mid);
+}
+.editor-toolbar button {
+    color: var(--bb-white);
+}
+.editor-toolbar button:hover,
+.editor-toolbar button.active {
+    background: var(--bb-green-mid);
+    border-color: var(--bb-white);
+}
+.editor-toolbar i.separator {
+    border-left-color: var(--bb-white);
+    opacity: 0.4;
+}
+.editor-preview {
+    color: var(--bb-ink);
+}
+
 /* Titre de page unique et cohérent dans tout le desk/admin/event (retour
    utilisatrice du 2026-08-11 : "aucun titre pareil", chaque page utilisait
    un niveau différent - h1/h3/h4 - avec le style par défaut du navigateur

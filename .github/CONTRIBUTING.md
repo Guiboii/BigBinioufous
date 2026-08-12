@@ -12,6 +12,6 @@ Voir le [README](../README.md) pour l'installation complète (PHP, Node, base de
 
 ## Contributeurs
 
-- **Guillaume** ([@Guiboii](https://github.com/Guiboii)) : développement initial (backend Symfony, frontend, mise en place du projet)
+- **Guillaume Hamet** ([@Guiboii](https://github.com/Guiboii)) : développement initial (backend Symfony, frontend, mise en place du projet)
 - **Marine Gonnord** ([@MarineG404](https://github.com/MarineG404)) : remise à niveau 2026 (CI/CD, migration dépendances, nettoyage, nouvelles fonctionnalités)
 - **Fabien Soudière** : début du projet, modèles 3D (mascotte, décors) sous `assets/mascotte/`, `assets/story/`, `assets/schedule/`, `assets/music/`.
