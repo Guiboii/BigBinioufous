@@ -144,7 +144,7 @@ join:
     login_submit: "Connexion !"
     registration_title: Inscription
     registration_heading: "Allez, inscris-toi !!"
-    registration_warning: "L'inscription doit être validée par un administrateur !!"
+    registration_warning: "L'inscription doit être validée par un·e administrateur·rice !!"
     registration_notice: "Sache que tu dois payer une cotisation pour devenir un vrai Binioufous, ou si tu veux juste utiliser nos partitions pour jouer de la musique à plusieurs voix"
     pay_subscription: "PAYER UNE COTISATION POUR UN AN"
     submit: "Rejoindre !!"
@@ -162,7 +162,7 @@ register:
 desk:
     add_picture: "Ajoute une photo !"
     hello: "Salut %nickname% !"
-    pending_validation: "Merci de patienter !! Ton compte doit être validé par un administrateur..."
+    pending_validation: "Merci de patienter !! Ton compte doit être validé par un·e administrateur·rice..."
     pending_count: "%count% validation(s) en attente"
     binioufous_heading: "Voici les Binioufous !"
     mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"

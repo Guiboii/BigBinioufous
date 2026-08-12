@@ -5,19 +5,26 @@
 {% block body %}
 
 <div class="container">
-    <div class="row ml-4 centered">
-        {# Avant : <h4> ici, aucun <h1> ailleurs sur la page (saut direct de
-           rien à h4). Cette rubrique est le vrai titre de la page /register :
-           <h1>, en gardant les classes visuelles (badge) inchangées. #}
-        <span class="badge badge-green mt-4">
-            <h1>{{ 'join.registration_heading'|trans }}</h1>
-        </span>
-        <div class="text-green text-center mt-4">
-            {# .text-red était une classe fantôme (jamais définie en CSS,
-               cf. assets/main/app.css) : le texte héritait donc du vert du
-               conteneur parent au lieu du rouge voulu. .text-redwall est la
-               vraie classe existante pour ce rouge. #}
-            <p class="text-redwall">{{ 'join.registration_warning'|trans }}</p>
+    {# Avant : <span class="badge badge-green"><h1>...</h1></span> (un <h1>,
+       élément de bloc, imbriqué dans un <span> en ligne : nesting HTML
+       invalide) + avertissement/notice en texte nu (.text-redwall/aucune
+       classe) posés directement sur le fond --bb-gold du body, sans rapport
+       visuel avec la carte "Es-tu déjà adhérent·e ?" juste en dessous (déjà
+       dans le langage carte ink+gold du reste du site) : "pas dans le thème
+       du tout" (retour utilisatrice 2026-08-12). Titre simple en Bungee
+       (même identité que le reste du site, cf. body.desk h1/.navbar-collapse
+       h2 dans app.css) et avertissement + notice regroupés dans une carte
+       ink+gold (.registration-notice, même langage que .already-member-step
+       juste en dessous) pour que le haut de page forme un seul ensemble
+       cohérent plutôt que 2 styles qui se suivent sans lien. #}
+    <div class="registration-header">
+        <h1 class="text-green">{{ 'join.registration_heading'|trans }}</h1>
+    </div>
+
+    <div class="registration-notice">
+        <i class="ri-error-warning-fill" aria-hidden="true"></i>
+        <div class="registration-notice-content">
+            <p class="registration-notice-warning">{{ 'join.registration_warning'|trans }}</p>
             <p>{{ 'join.registration_notice'|trans }}</p>
         </div>
     </div>

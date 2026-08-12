@@ -55,10 +55,6 @@ body {
     max-height: 64px;
 }
 
-.badge-green {
-    color: var(--bb-gold);
-    background-color: var(--bb-green-mid);
-}
 /* Avant : --bb-gold sur --bb-red ne tenait que 3.24:1, sous le minimum AA
    (4.5:1), seul usage de cette classe (bouton "Payer une cotisation",
    templates/join/registration.html.twig). Blanc (6.07:1, AA), même
@@ -121,21 +117,20 @@ body {
     justify-content: center;
 }
 
-/* .text-green/.text-redwall : seul usage actuel, join/registration.html.twig,
-   posés directement sur le fond --bb-gold du body (pas sur .navbar-collapse/
-   #loginForm/#joinForm où --bb-green-mid/--bb-red sont par ailleurs déjà bien
-   contrastés). L'ancienne couleur (--bb-green-vivid, retirée : plus aucun
-   usage une fois .text-green corrigé) sur --bb-gold ne tenait que 2.77:1, --bb-red
-   3.23:1 : sous le minimum AA (4.5:1 texte normal). Variantes plus sombres
-   déjà présentes dans la palette (:root) plutôt qu'une nouvelle teinte :
-   --bb-green-deep tient 7.15:1 (AAA), --bb-red-dark 4.56:1 (AA, tout juste :
-   la palette n'a pas de rouge plus sombre sans dénaturer la couleur de
-   marque au point de la rendre méconnaissable). */
+/* .text-green : utilitaire de couleur posé directement sur le fond
+   --bb-gold du body (headers de pages publiques, liens "retour" d'admin...),
+   pas sur .navbar-collapse/#loginForm/#joinForm où --bb-green-mid/--bb-red
+   sont par ailleurs déjà bien contrastés. L'ancienne couleur
+   (--bb-green-vivid, retirée : plus aucun usage une fois .text-green
+   corrigé) sur --bb-gold ne tenait que 2.77:1, sous le minimum AA (4.5:1
+   texte normal) : --bb-green-deep, déjà présent dans la palette (:root),
+   tient 7.15:1 (AAA).
+   .text-redwall (--bb-red-dark sur --bb-gold, 4.56:1 AA) retiré : plus
+   aucun usage une fois l'avertissement de /register passé dans une carte
+   ink+gold (.registration-notice) au lieu du fond doré du body directement,
+   cf. join/registration.html.twig. */
 .text-green {
     color: var(--bb-green-deep);
-}
-.text-redwall {
-    color: var(--bb-red-dark);
 }
 .text-yellow {
     color: var(--bb-gold);
@@ -1743,14 +1738,80 @@ li.nav-item.active, li.nav-item:hover,
     color: var(--bb-gold-pale);
 }
 
+/* En-tête de /register (h1 en Bungee, .text-green déjà défini plus haut
+   dans ce fichier : 7.15:1 sur --bb-gold, AAA). Remplace l'ancien
+   <span class="badge badge-green"><h1>, cf. commentaire dans le template. */
+.registration-header {
+    text-align: center;
+    margin: 2rem auto 1.5rem;
+}
+.registration-header h1 {
+    display: inline-block;
+    margin: 0;
+    font-family: "Bungee", "Arial Black", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 1.8rem;
+}
+
+/* Avertissement (validation admin obligatoire) + rappel cotisation : avant
+   en .text-redwall/texte nu sur le fond --bb-gold du body (cf. template).
+   1er jet en --bb-ink (carte "noire"), jugé trop éloigné de l'identité
+   verte/dorée du site par l'utilisatrice ("dénature trop", 2026-08-12) :
+   --bb-green-deep à la place (déjà utilisé ailleurs pour ce même rôle de
+   fond de carte/panneau sombre, ex. .alert-success, .editor-toolbar plus
+   bas dans ce fichier), liseré doré inchangé (déjà la paire couleur la
+   plus utilisée du site, navbar/boutons). --bb-red/--bb-red-dark ne
+   tiennent que 3.03:1/2.15:1 sur ce fond (sous AA 4.5:1) : pas de rouge
+   ici non plus, gras + icône (ri-error-warning-fill) portent la
+   distinction "avertissement" plutôt que la seule teinte ; texte blanc,
+   13.4:1 (AAA, même calcul que .editor-toolbar plus bas). Même structure
+   icône + contenu que .already-member-followup juste en dessous (classe
+   dédiée : contenu différent, pas de fieldset ici). */
+.registration-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--bb-green-deep);
+    border: 2px solid var(--bb-gold);
+    border-radius: 12px;
+    box-shadow: var(--bb-shadow-soft);
+    padding: 1.25rem 1.5rem;
+    margin: 0 auto 2rem;
+    max-width: 560px;
+    text-align: left;
+    color: var(--bb-white);
+}
+.registration-notice > i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--bb-gold);
+}
+.registration-notice-warning {
+    font-weight: bold;
+    margin: 0 0 0.5rem;
+}
+.registration-notice p:last-child {
+    /* --bb-gold-pale sur --bb-green-deep : 9.9:1 (AAA), distingue ce 2e
+       paragraphe (info secondaire) du 1er (avertissement, blanc) sans
+       dépendre uniquement du gras. */
+    margin: 0;
+    color: var(--bb-gold-pale);
+}
+
 /* Question "Es-tu déjà adhérent·e ?" en tête de /register (cf. ROADMAP.md,
    "Flux d'inscription à clarifier"). 1er jet (radios nues dans le flux
    normal du formulaire) jugé "pas beau et pas clair" par l'utilisatrice :
-   reconstruit en carte détachée du reste du formulaire (fond --bb-ink +
-   liseré doré, même traitement que .card en body.desk/admin.html.twig)
-   pour vraiment ressortir comme LA question à traiter en premier. */
+   reconstruit en carte détachée du reste du formulaire (liseré doré, même
+   traitement que .card en body.desk/admin.html.twig) pour vraiment
+   ressortir comme LA question à traiter en premier. Fond --bb-ink
+   d'origine remplacé par --bb-green-deep (retour utilisatrice 2026-08-12,
+   "dénature trop" : cf. .registration-notice juste au-dessus, même
+   changement/mêmes ratios de contraste, pour que les 2 cartes de la page
+   restent cohérentes entre elles). */
 .already-member-step {
-    background: var(--bb-ink);
+    background: var(--bb-green-deep);
     border: 2px solid var(--bb-gold);
     border-radius: 12px;
     box-shadow: var(--bb-shadow-soft);
@@ -1868,6 +1929,4 @@ li.nav-item.active, li.nav-item:hover,
 .not-member-help-box p:first-child {
     color: var(--bb-white);
     margin-top: 0;
-}
-    max-height: 75vh;
 }
