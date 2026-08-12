@@ -49,21 +49,21 @@
                     <div class="col">
                         <a href="{{ path('valid') }}" class="btn btn-red">{{ 'desk.pending_count'|trans({'%count%': unvalids|length}) }}</a>
                     </div>
-                    <div class="container mt-2">
+                    <div class="mt-2">
                         {{ include('/desk/lists/admins.html.twig') }}
                     </div>
-                    <div class="container mt-2">
+                    <div class="mt-2">
                         {{ include('/desk/lists/accountants.html.twig') }}
                     </div>
-                    <div class="container mt-2">
+                    <div class="mt-2">
                         {{ include('/desk/lists/binioufous.html.twig') }}
                     </div>
-                    <div class="container mt-2">
+                    <div class="mt-2">
                         {{ include('/desk/lists/simples.html.twig') }}
                     </div>
                 {% elseif is_granted('ROLE_BINIOUFOUS') %}
                     <h2>{{ 'desk.binioufous_heading'|trans }}</h2>
-                    <div class="container mt-2">
+                    <div class="mt-2">
                         {{ include('/desk/lists/binioufous.html.twig') }}
                     </div>
                 {% else %}

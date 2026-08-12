@@ -155,11 +155,11 @@ canvas {
     width: 100px;
     height: 100px;
     position: absolute;
-    top: 50%; 
+    top: 50%;
     left: 50%;
     margin-left: -50px;
     margin-top: -50px;
-    
+
 }
 .isloaded .loader {
     height: 0;
@@ -1124,6 +1124,18 @@ body.desk .table td {
     body.desk main {
         padding-top: 58px;
     }
+}
+
+/* Bootstrap 4 .container plafonne à 1140px et centre : sur un grand écran
+   (>1200px), ça laisse une marge vide énorme des deux côtés (retour
+   utilisatrice 2026-08-12, "trop de marge sur les côtés" sur toutes les
+   pages /desk). Spécificité 0,0,2,0 (body.desk .container) > la media
+   query 0,0,1,0 de Bootstrap, donc cette règle gagne à toutes les tailles
+   sans avoir à dupliquer les breakpoints : le gutter (15px) et les
+   max-width en dessous de 1200px restent ceux de Bootstrap, seul le
+   plafond du plus grand breakpoint est relevé. */
+body.desk .container {
+    max-width: 1400px;
 }
 
 .navbar .navbar-toggler svg {
