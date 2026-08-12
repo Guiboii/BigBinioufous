@@ -30,4 +30,23 @@ class EventRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * Pour /schedule (public) : hors connexion, seuls les concerts sont
+     * publics, répétitions/autres réservés aux comptes connectés (n'importe
+     * quel rôle). Les admins gardent une vue complète via
+     * findAllOrderedByDate() sur /admin/event, indépendante de ce filtre.
+     *
+     * @return Event[]
+     */
+    public function findVisibleOrderedByDate(bool $includeAllTypes): array
+    {
+        $qb = $this->createQueryBuilder('e')->orderBy('e.date', 'ASC');
+
+        if (!$includeAllTypes) {
+            $qb->andWhere('e.type = :type')->setParameter('type', 'concert');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

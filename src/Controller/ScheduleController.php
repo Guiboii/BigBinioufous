@@ -6,6 +6,7 @@ use App\Entity\Event;
 use App\Repository\EventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ScheduleController extends AbstractController
@@ -21,7 +22,7 @@ class ScheduleController extends AbstractController
     {
         $eventsByMonth = [];
         $eventsByDate = [];
-        foreach ($eventRepository->findAllOrderedByDate() as $event) {
+        foreach ($eventRepository->findVisibleOrderedByDate(null !== $this->getUser()) as $event) {
             $monthNum = $event->getDate()->format('m');
             $eventsByMonth[$monthNum]['label'] = self::MONTH_KEYS[$monthNum];
             $eventsByMonth[$monthNum]['events'][] = [
@@ -50,6 +51,8 @@ class ScheduleController extends AbstractController
     #[Route('/schedule/event/{id}.ics', name: 'event_ics', methods: ['GET'])]
     public function ics(Event $event): Response
     {
+        $this->denyAccessUnlessVisible($event);
+
         $start = $event->getDate();
         // 00:00 = aucune heure connue pour cet événement (pas une vraie
         // heure de minuit) : événement "journée entière" en iCalendar
@@ -128,6 +131,21 @@ class ScheduleController extends AbstractController
         $outlook = 'https://outlook.live.com/calendar/0/deeplink/compose?'.http_build_query($outlookParams);
 
         return ['google' => $google, 'outlook' => $outlook];
+    }
+
+    /**
+     * Même règle de visibilité que EventRepository::findVisibleOrderedByDate()
+     * pour la page /schedule, mais appliquée ici à un accès direct par id
+     * (route event_ics) : sans ça, un événement caché sur la page publique
+     * (répétition/autre, hors connexion) restait quand même récupérable en
+     * devinant/connaissant son id. 404 plutôt que 403 pour ne pas confirmer
+     * qu'un événement existe à cet id.
+     */
+    private function denyAccessUnlessVisible(Event $event): void
+    {
+        if ('concert' !== $event->getType() && null === $this->getUser()) {
+            throw new NotFoundHttpException();
+        }
     }
 
     /**
