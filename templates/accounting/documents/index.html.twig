@@ -1,0 +1,53 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'accounting.tab_documents'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'desk.space_accounting'|trans }}</h1>
+
+    {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'documents'}) }}
+
+    <div class="desk-actions">
+        <a href="{{ path('accounting_document_new', {type: 'quote'}) }}" class="btn btn-green">{{ 'accounting.new_quote'|trans }}</a>
+        <a href="{{ path('accounting_document_new', {type: 'invoice'}) }}" class="btn btn-green">{{ 'accounting.new_invoice'|trans }}</a>
+    </div>
+
+    {% if documents is empty %}
+        <p><em>{{ 'accounting.no_documents'|trans }}</em></p>
+    {% else %}
+        <table class="table table-hover text-center">
+            <thead>
+                <tr>
+                    <th>{{ 'accounting.field_reference'|trans }}</th>
+                    <th>{{ 'accounting.field_type'|trans }}</th>
+                    <th>{{ 'accounting.field_date'|trans }}</th>
+                    <th>{{ 'accounting.field_client_name'|trans }}</th>
+                    <th>{{ 'accounting.field_total'|trans }}</th>
+                    <th>{{ 'Actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for document in documents %}
+                    <tr>
+                        <td>{{ document.reference }}</td>
+                        <td>{{ ('accounting.type_' ~ document.type)|trans }}</td>
+                        <td>{{ document.date|date('d/m/Y') }}</td>
+                        <td>{{ document.clientName }}</td>
+                        <td>{{ document.total|number_format(2, ',', ' ') }}&nbsp;€</td>
+                        <td>
+                            <a href="{{ path('accounting_document_show', {id: document.id}) }}" class="btn btn-green" aria-label="{{ 'accounting.view_aria'|trans({'%reference%': document.reference}) }}"><i class="ri-eye-line" aria-hidden="true"></i></a>
+                            <a href="{{ path('accounting_document_edit', {id: document.id}) }}" class="btn btn-green" aria-label="{{ 'accounting.edit_aria'|trans({'%reference%': document.reference}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
+                            <form method="post" action="{{ path('accounting_document_delete', {id: document.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'accounting.confirm_delete_document'|trans({'%reference%': document.reference})|e('js') }}');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_accounting_document' ~ document.id) }}">
+                                <button type="submit" class="btn btn-red" aria-label="{{ 'accounting.delete_aria'|trans({'%reference%': document.reference}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

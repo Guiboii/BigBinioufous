@@ -42,11 +42,6 @@
                                 <a href="{{ path('story_section_index') }}" class="nav-link text-yellow"{% if currentRoute == 'story_section_index' %} aria-current="page"{% endif %}><i class="ri-book-open-fill" aria-hidden="true"></i> {{ 'nav.story'|trans }}</a>
                             </li>
                         {% endif %}
-                        {% if is_granted('ROLE_COMPTA') %}
-                            <li class="nav-item">
-                                <a href="{{ path('accountant') }}" class="nav-link text-yellow"{% if currentRoute == 'accountant' %} aria-current="page"{% endif %}><i class="ri-money-euro-circle-fill" aria-hidden="true"></i> {{ 'nav.accountant'|trans }}</a>
-                            </li>
-                        {% endif %}
                     {% endif %}
 
                     <li class="nav-item lang-switcher">

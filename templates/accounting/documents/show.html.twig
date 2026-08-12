@@ -1,0 +1,86 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ document.reference }}{% endblock %}
+
+{% block importmap %}
+    {{ importmap('app') }}
+    <link rel="stylesheet" href="{{ asset('accounting/document-print.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container mt-2 no-print">
+    {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'documents'}) }}
+
+    <div class="desk-actions mb-3">
+        <button type="button" onclick="window.print()" class="btn btn-green"><i class="ri-printer-fill" aria-hidden="true"></i> {{ 'accounting.print'|trans }}</button>
+        <a href="{{ path('accounting_document_edit', {id: document.id}) }}" class="btn btn-green"><i class="ri-edit-line" aria-hidden="true"></i> {{ 'accounting.edit'|trans }}</a>
+        <a href="{{ path('accounting_documents_index') }}" class="btn btn-link">{{ 'accounting.back_to_list'|trans }}</a>
+    </div>
+</div>
+
+{# Mise en page calquée sur les modèles PDF de référence (cf. todoCompta.md),
+   pensée pour être imprimée/enregistrée en PDF depuis le navigateur (bouton
+   ci-dessus), cf. assets/accounting/document-print.css pour le détail des
+   règles d'impression (@media print). #}
+<div class="document-print">
+    <header class="document-print-header">
+        <img src="{{ asset('accounting/logo.png') }}" alt="Les Binioufous" class="document-print-logo">
+        <div class="document-print-title">
+            <h1>{{ ('accounting.type_' ~ document.type)|trans|upper }}</h1>
+            <p>{{ 'accounting.field_reference'|trans }} {{ document.reference }}</p>
+            <p>{{ 'accounting.field_date'|trans }} : {{ document.date|date('d/m/Y') }}</p>
+        </div>
+    </header>
+
+    <div class="document-print-parties">
+        <div class="document-print-us">
+            <p><strong>Association les Binioufous</strong></p>
+            <p>13, rue Jean Racine</p>
+            <p>binioufous@gmail.com</p>
+            <p>SIRET : 833 809 098 00027</p>
+
+            <div class="document-print-correspondent">
+                <p><strong>{{ 'accounting.field_correspondent'|trans }} :</strong></p>
+                <p>{{ document.correspondentName }}</p>
+                {% if document.correspondentEmail %}<p>{{ document.correspondentEmail }}</p>{% endif %}
+                {% if document.correspondentPhone %}<p>{{ document.correspondentPhone }}</p>{% endif %}
+            </div>
+        </div>
+
+        <div class="document-print-client">
+            <p><strong>{{ 'accounting.field_client_name'|trans }} :</strong></p>
+            <p>{{ document.clientName }}</p>
+            <p><strong>{{ 'accounting.field_client_address'|trans }} :</strong></p>
+            <p class="document-print-address">{{ document.clientAddress|nl2br }}</p>
+            {% if document.clientContact %}<p><strong>{{ 'accounting.field_client_contact'|trans }} :</strong> {{ document.clientContact }}</p>{% endif %}
+        </div>
+    </div>
+
+    <table class="document-print-lines">
+        <thead>
+            <tr>
+                <th>{{ 'accounting.field_line_label'|trans }}</th>
+                <th>{{ 'accounting.field_line_unit_price'|trans }}</th>
+                <th>{{ 'accounting.field_line_quantity'|trans }}</th>
+                <th>{{ 'accounting.field_line_cost'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in document.lines %}
+                <tr>
+                    <td>{{ line.label }}</td>
+                    <td>{{ line.unitPrice|number_format(2, ',', ' ') }}&nbsp;€</td>
+                    <td>{{ line.quantity }}</td>
+                    <td>{{ line.cost|number_format(2, ',', ' ') }}&nbsp;€</td>
+                </tr>
+            {% endfor %}
+            <tr class="document-print-total-row">
+                <td colspan="3">{{ 'accounting.field_total'|trans|upper }}</td>
+                <td>{{ document.total|number_format(2, ',', ' ') }}&nbsp;€</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p class="document-print-vat">{{ 'accounting.vat_mention'|trans }}</p>
+</div>
+{% endblock %}

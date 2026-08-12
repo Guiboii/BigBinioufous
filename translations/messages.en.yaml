@@ -21,7 +21,6 @@ nav:
     tagline: "The craziest oboe band of the Galaxy !!"
     folders: Folders
     planning: Schedule
-    accountant: Accountant
     toggle: Toggle navigation
 
 contact:
@@ -282,13 +281,66 @@ music:
     invalid_mp3: "Please upload a valid mp3 file"
     confirm_delete_voice: "Are you sure you want to delete this voice?"
 
+accounting:
+    tabs_label: "Accounting section navigation"
+    tab_files: Statements
+    tab_documents: "Quotes & Invoices"
+    tab_treasury: Treasury
+    new_quote: New quote
+    new_invoice: New invoice
+    no_documents: "No quote or invoice yet."
+    field_reference: Reference
+    field_type: Type
+    field_date: Date
+    field_client_name: "Client name"
+    field_client_name_placeholder: "E.g. Conservatoire de Musique"
+    field_client_address: "Client address"
+    field_client_address_placeholder: "Full address"
+    field_client_contact: Contact
+    field_client_contact_placeholder: Optional
+    field_correspondent_name: Correspondent
+    field_correspondent_email: "Correspondent's email"
+    field_correspondent_phone: "Correspondent's phone"
+    field_correspondent: Correspondent
+    field_total: Total
+    field_line_label: Description
+    field_line_label_placeholder: "E.g. Concert on May 12th"
+    field_line_unit_price: "Unit cost"
+    field_line_quantity: Quantity
+    field_line_cost: Cost
+    type_quote: Quote
+    type_invoice: Invoice
+    view_aria: "View « %reference% »"
+    edit_aria: "Edit « %reference% »"
+    edit: Edit
+    print: Print
+    confirm_delete_document: "Delete « %reference% »?"
+    delete_aria: "Delete « %reference% »"
+    edit_document: "Edit « %reference% »"
+    lines_heading: Lines
+    add_line: "Add a line"
+    remove_line_aria: "Remove this line"
+    save_document: Save
+    back_to_list: "back to the list"
+    vat_mention: "VAT not applicable, article 293 B of the French tax code"
+    balance: "Treasury balance"
+    new_entry: "New entry"
+    no_entries: "No entry yet."
+    field_entry_type: Type
+    field_entry_label: Label
+    field_entry_label_placeholder: "E.g. Sheet music purchase"
+    field_entry_category: Category
+    field_entry_category_placeholder: Optional
+    field_entry_amount: Amount
+    entry_type_income: Income
+    entry_type_expense: Expense
+    confirm_delete_entry: "Delete this entry?"
+    delete_entry_aria: "Delete this entry"
+    save_entry: Save
+
 Id: Id
 
 admin:
-    compta_title: Compta
-    compta_hello: "Hello %name%!"
-    compta_welcome: "Welcome to the accountant's page !!"
-    compta_wip: OK, little work here before using it
     validation_title: Validation
     pending_requests_title: Pending validation requests
     wished_role: Wished role

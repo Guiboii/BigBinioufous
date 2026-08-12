@@ -22,7 +22,6 @@ nav:
     join_or_login: "Kevredañ pe kennaskañ"
     tagline: "Ar strollad sonerezh ar muiañ foll er Galaksi !!"
     planning: Deiziadur
-    accountant: Kontabilite
     toggle: "Diskouez/kuzhat ar merdeiñ"
 
 contact:
@@ -118,6 +117,63 @@ music:
     stop_label: Paouez
     player_region: "C'hoarier son"
 
+accounting:
+    tabs_label: "Merdeiñ e rannad ar gontabilite"
+    tab_files: Teulioù
+    tab_documents: "Prizioù & Fakturioù"
+    tab_treasury: Arc'hant
+    new_quote: Priz nevez
+    new_invoice: Faktur nevez
+    no_documents: "Priz na faktur ebet c'hoazh."
+    field_reference: Niverenn
+    field_type: Doare
+    field_date: Deiziad
+    field_client_name: "Anv ar c'homandour"
+    field_client_name_placeholder: "Da skouer : Konservatoar Sonerezh"
+    field_client_address: "Chomlec'h ar c'homandour"
+    field_client_address_placeholder: "Chomlec'h klok"
+    field_client_contact: Darempred
+    field_client_contact_placeholder: Diret
+    field_correspondent_name: Kannad
+    field_correspondent_email: "Postel ar c'hannad"
+    field_correspondent_phone: "Pellgomz ar c'hannad"
+    field_correspondent: Kannad
+    field_total: Sammad
+    field_line_label: Displegadenn
+    field_line_label_placeholder: "Da skouer : Konsert d'an 12 a viz Mae"
+    field_line_unit_price: Priz-unan
+    field_line_quantity: Kementad
+    field_line_cost: Priz
+    type_quote: Priz
+    type_invoice: Faktur
+    view_aria: "Gwelout « %reference% »"
+    edit_aria: "Kemmañ « %reference% »"
+    edit: Kemmañ
+    print: Moullañ
+    confirm_delete_document: "Dilemel « %reference% » ?"
+    delete_aria: "Dilemel « %reference% »"
+    edit_document: "Kemmañ « %reference% »"
+    lines_heading: Linennoù
+    add_line: "Ouzhpennañ ul linenn"
+    remove_line_aria: "Dilemel al linenn-mañ"
+    save_document: Enrollañ
+    back_to_list: "distro d'ar roll"
+    vat_mention: "TVA n'eo ket arveret, pennad 293 B eus ar CGI"
+    balance: "Soubl an arc'hant"
+    new_entry: "Enskrivadenn nevez"
+    no_entries: "Enskrivadenn ebet c'hoazh."
+    field_entry_type: Doare
+    field_entry_label: Titl
+    field_entry_label_placeholder: "Da skouer : Prenañ notennoù"
+    field_entry_category: Rummad
+    field_entry_category_placeholder: Diret
+    field_entry_amount: Sammad
+    entry_type_income: Antre
+    entry_type_expense: Diverzh
+    confirm_delete_entry: "Dilemel an enskrivadenn-mañ ?"
+    delete_entry_aria: "Dilemel an enskrivadenn-mañ"
+    save_entry: Enrollañ
+
 Id: Id
 
 Administrator: Melestrour
@@ -125,10 +181,6 @@ Accountant: Kontour
 Binioufous: Binioufous
 
 admin:
-    compta_title: Kontabilite
-    compta_hello: "Salud %name% !"
-    compta_welcome: "Donemat war bajenn ar gontabilite !!"
-    compta_wip: "Mat eo, un tammig labour c'hoazh a-raok implij anezhi"
     validation_title: Kadarnadenn
     pending_requests_title: Goulennoù kadarnadenn o gortoz
     wished_role: Roll c'hoantet

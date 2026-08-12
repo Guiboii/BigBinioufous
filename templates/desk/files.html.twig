@@ -12,6 +12,10 @@
         <h1>{{ ('desk.space_' ~ space)|trans }}</h1>
         <p class="desk-intro">{{ ('desk.space_' ~ space ~ '_intro')|trans }}</p>
 
+        {% if 'accounting' == space %}
+            {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'files'}) }}
+        {% endif %}
+
         {# Pattern WAI-ARIA "Breadcrumb" (https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/) :
            nav étiqueté + liste ordonnée de liens, le dernier maillon (page
            courante) n'est pas un lien vers lui-même mais du texte avec

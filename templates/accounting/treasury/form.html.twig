@@ -1,0 +1,20 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'accounting.new_entry'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'accounting.new_entry'|trans }}</h1>
+
+    {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'treasury'}) }}
+
+    {{ form_start(form) }}
+    <div class="form-group">
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-green">{{ 'accounting.save_entry'|trans }}</button>
+    </div>
+    {{ form_end(form) }}
+
+    <a href="{{ path('accounting_treasury_index') }}" class="text-green">{{ 'accounting.back_to_list'|trans }}</a>
+</div>
+{% endblock %}

@@ -1,0 +1,137 @@
+/* Mise en page du devis/facture imprimable (templates/accounting/documents/
+   show.html.twig), calquée sur les modèles PDF de référence (todoCompta.md) :
+   noir sur blanc, sobre, pensée pour tenir sur une page A4 imprimée depuis
+   le navigateur (bouton "Imprimer" -> window.print()), pas pour matcher le
+   thème doré/vert du reste du site (illisible imprimé, gourmand en encre).
+   Chargée uniquement sur cette page (pas dans app.css), cf. les règles
+   @media print ci-dessous qui masquent aussi la navbar/les messages flash
+   communs à tout /desk (rendus par desk/base.html.twig, hors du contrôle de
+   ce template). */
+
+.document-print {
+    max-width: 210mm;
+    margin: 0 auto 2rem;
+    padding: 15mm;
+    background: #ffffff;
+    color: #16140f;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.document-print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.document-print-logo {
+    max-height: 90px;
+    width: auto;
+}
+.document-print-title {
+    text-align: right;
+}
+.document-print-title h1 {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+}
+.document-print-title p {
+    margin: 0.2rem 0 0;
+}
+
+.document-print-parties {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.document-print-us,
+.document-print-client {
+    flex: 1 1 16rem;
+}
+.document-print-us p,
+.document-print-client p {
+    margin: 0 0 0.3rem;
+}
+.document-print-address {
+    white-space: pre-line;
+}
+.document-print-correspondent {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid #16140f;
+}
+
+.document-print-lines {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+.document-print-lines th,
+.document-print-lines td {
+    border: 1px solid #16140f;
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+}
+.document-print-lines th {
+    background: #f2b233;
+}
+.document-print-lines td:not(:first-child),
+.document-print-lines th:not(:first-child) {
+    text-align: right;
+    white-space: nowrap;
+}
+.document-print-total-row {
+    font-weight: bold;
+}
+
+.document-print-vat {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Marge de page explicite : sans elle, le haut du document (logo + titre
+   DEVIS/FACTURE, tous deux sur la même ligne d'en-tête) pouvait se retrouver
+   collé au bord physique de la page selon les réglages "Marges" du dialogue
+   d'impression du navigateur (ex. "Aucune"), rogné par la zone non
+   imprimable du papier/du moteur PDF (retour utilisatrice : "ça coupe en
+   haut le logo et la partie facture"). @page force une marge cohérente
+   quel que soit ce réglage, plutôt que de compter sur padding:0 + les
+   marges par défaut du navigateur. */
+@page {
+    size: A4;
+    margin: 15mm 12mm;
+}
+
+@media print {
+    body {
+        background: #ffffff;
+    }
+    /* body > header (pas juste "header") : la navbar du site
+       (templates/desk/partials/header.html.twig) est bien un <header> enfant
+       direct de <body>, mais le <header class="document-print-header"> du
+       devis/facture lui-même (logo + titre) l'est aussi comme élément HTML.
+       Un sélecteur "header" nu masquait donc les deux à la fois, faisant
+       disparaître entièrement le logo et le titre DEVIS/FACTURE à
+       l'impression au lieu de juste cacher la navbar (retour utilisatrice :
+       "devienis tjr casser en haut", confirmé par export PDF Playwright :
+       la section n'apparaissait plus du tout, pas juste rognée). */
+    body > header,
+    .skip-link,
+    .alert,
+    .no-print {
+        display: none !important;
+    }
+    .document-print {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        max-width: none;
+    }
+    .document-print-header {
+        break-inside: avoid;
+    }
+}

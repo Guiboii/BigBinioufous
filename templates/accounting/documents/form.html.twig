@@ -1,0 +1,52 @@
+{% extends 'desk/base.html.twig' %}
+
+{% set isNew = document.id is null %}
+{% set typeLabel = ('accounting.type_' ~ document.type)|trans %}
+{% set heading = isNew ? ('accounting.new_' ~ document.type)|trans : ('accounting.edit_document'|trans({'%reference%': document.reference})) %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ heading }}</h1>
+
+    {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'documents'}) }}
+
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_row(form.date) }}
+            {{ form_row(form.clientName) }}
+            {{ form_row(form.clientAddress) }}
+            {{ form_row(form.clientContact) }}
+            {{ form_row(form.correspondentName) }}
+            {{ form_row(form.correspondentEmail) }}
+            {{ form_row(form.correspondentPhone) }}
+        </div>
+
+        <h2>{{ 'accounting.lines_heading'|trans }}</h2>
+        <div
+            id="accounting-document-lines"
+            data-prototype="{{ form_widget(form.lines.vars.prototype)|e('html_attr') }}"
+            data-index="{{ form.lines|length }}"
+        >
+            {% for line in form.lines %}
+                <div class="accounting-line-row" data-line-row>
+                    {{ form_row(line.label) }}
+                    {{ form_row(line.unitPrice) }}
+                    {{ form_row(line.quantity) }}
+                    <button type="button" class="btn btn-red" data-remove-line aria-label="{{ 'accounting.remove_line_aria'|trans }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="accounting-add-line" class="btn btn-green mb-3" data-remove-label="{{ 'accounting.remove_line_aria'|trans }}">{{ 'accounting.add_line'|trans }}</button>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-green">{{ 'accounting.save_document'|trans }}</button>
+        </div>
+    {{ form_end(form) }}
+
+    <a href="{{ path('accounting_documents_index') }}" class="text-green">{{ 'accounting.back_to_list'|trans }}</a>
+</div>
+
+<script src="{{ asset('accounting/document-lines.js') }}"></script>
+{% endblock %}

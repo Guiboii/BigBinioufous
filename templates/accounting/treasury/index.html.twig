@@ -1,0 +1,54 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'accounting.tab_treasury'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'accounting.tab_treasury'|trans }}</h1>
+
+    {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'treasury'}) }}
+
+    <p class="accounting-balance{{ balance < 0 ? ' negative' : '' }}">
+        {{ 'accounting.balance'|trans }} : <strong>{{ balance|number_format(2, ',', ' ') }}&nbsp;€</strong>
+    </p>
+
+    <a href="{{ path('accounting_treasury_new') }}" class="btn btn-green mb-3">{{ 'accounting.new_entry'|trans }}</a>
+
+    {% if entries is empty %}
+        <p><em>{{ 'accounting.no_entries'|trans }}</em></p>
+    {% else %}
+        <table class="table table-hover text-center">
+            <thead>
+                <tr>
+                    <th>{{ 'accounting.field_date'|trans }}</th>
+                    <th>{{ 'accounting.field_entry_type'|trans }}</th>
+                    <th>{{ 'accounting.field_entry_label'|trans }}</th>
+                    <th>{{ 'accounting.field_entry_category'|trans }}</th>
+                    <th>{{ 'accounting.field_entry_amount'|trans }}</th>
+                    <th>{{ 'Actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.date|date('d/m/Y') }}</td>
+                        <td>{{ (entry.income ? 'accounting.entry_type_income' : 'accounting.entry_type_expense')|trans }}</td>
+                        <td>{{ entry.label }}</td>
+                        <td>{{ entry.category ?: '-' }}</td>
+                        <td class="{{ entry.income ? 'accounting-income' : 'accounting-expense' }}">
+                            {{ entry.income ? '+' : '−' }}{{ entry.amount|number_format(2, ',', ' ') }}&nbsp;€
+                        </td>
+                        <td>
+                            <form method="post" action="{{ path('accounting_treasury_delete', {id: entry.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'accounting.confirm_delete_entry'|trans|e('js') }}');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_ledger_entry' ~ entry.id) }}">
+                                <button type="submit" class="btn btn-red" aria-label="{{ 'accounting.delete_entry_aria'|trans }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

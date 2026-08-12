@@ -21,7 +21,6 @@ nav:
     tagline: "Le groupe de hautbois le plus déjanté de la Galaxie !!"
     folders: Dossiers
     planning: Planning
-    accountant: Comptabilité
     toggle: Basculer la navigation
 
 contact:
@@ -284,6 +283,63 @@ music:
     invalid_mp3: "Merci d'envoyer un fichier mp3 valide"
     confirm_delete_voice: "Tu es sûr·e de vouloir supprimer cette voix ?"
 
+accounting:
+    tabs_label: "Navigation de l'espace Comptabilité"
+    tab_files: Relevés
+    tab_documents: "Devis & Factures"
+    tab_treasury: Trésorerie
+    new_quote: Nouveau devis
+    new_invoice: Nouvelle facture
+    no_documents: "Aucun devis ni facture pour l'instant."
+    field_reference: Référence
+    field_type: Type
+    field_date: Date
+    field_client_name: "Nom du commanditaire"
+    field_client_name_placeholder: "Ex. Conservatoire de Musique"
+    field_client_address: "Adresse du commanditaire"
+    field_client_address_placeholder: "Adresse complète"
+    field_client_contact: Contact
+    field_client_contact_placeholder: Facultatif
+    field_correspondent_name: Correspondant
+    field_correspondent_email: "Email du correspondant"
+    field_correspondent_phone: "Téléphone du correspondant"
+    field_correspondent: Correspondant
+    field_total: Total
+    field_line_label: Désignation
+    field_line_label_placeholder: "Ex. Concert du 12 mai"
+    field_line_unit_price: "Coût unitaire"
+    field_line_quantity: Quantité
+    field_line_cost: Coût
+    type_quote: Devis
+    type_invoice: Facture
+    view_aria: "Voir « %reference% »"
+    edit_aria: "Modifier « %reference% »"
+    edit: Modifier
+    print: Imprimer
+    confirm_delete_document: "Supprimer « %reference% » ?"
+    delete_aria: "Supprimer « %reference% »"
+    edit_document: "Modifier « %reference% »"
+    lines_heading: Lignes
+    add_line: "Ajouter une ligne"
+    remove_line_aria: "Retirer cette ligne"
+    save_document: Enregistrer
+    back_to_list: "retour à la liste"
+    vat_mention: "TVA non applicable, article 293 B du CGI"
+    balance: "Solde de trésorerie"
+    new_entry: "Nouvelle écriture"
+    no_entries: "Aucune écriture pour l'instant."
+    field_entry_type: Type
+    field_entry_label: Libellé
+    field_entry_label_placeholder: "Ex. Achat de partitions"
+    field_entry_category: Catégorie
+    field_entry_category_placeholder: Facultatif
+    field_entry_amount: Montant
+    entry_type_income: Recette
+    entry_type_expense: Dépense
+    confirm_delete_entry: "Supprimer cette écriture ?"
+    delete_entry_aria: "Supprimer cette écriture"
+    save_entry: Enregistrer
+
 Id: Id
 
 Administrator: "Administrateur·rice"
@@ -291,10 +347,6 @@ Accountant: Comptable
 Binioufous: Binioufous
 
 admin:
-    compta_title: Compta
-    compta_hello: "Bonjour %name% !"
-    compta_welcome: "Bienvenue sur la page comptabilité !!"
-    compta_wip: "OK, encore un peu de travail avant de pouvoir s'en servir"
     validation_title: Validation
     pending_requests_title: Demandes de validation en attente
     wished_role: Rôle souhaité

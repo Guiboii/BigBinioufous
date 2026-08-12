@@ -2086,3 +2086,77 @@ li.nav-item.active, li.nav-item:hover,
     color: var(--bb-white);
     margin-top: 0;
 }
+
+/* Espace Comptabilité (fusion de l'ancien /accountant dans
+   /desk/files/accounting, cf. ROADMAP.md "Espace compta") : sous-navigation
+   Relevés/Devis & Factures/Trésorerie, solde de trésorerie, lignes de
+   devis/facture ajoutées dynamiquement (assets/accounting/document-lines.js). */
+.accounting-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+.accounting-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    border-radius: 25px;
+    font-weight: bold;
+}
+.accounting-tab:hover,
+.accounting-tab.active {
+    background: var(--bb-green-deep);
+    color: var(--bb-white);
+}
+.accounting-tab:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
+}
+
+.accounting-balance {
+    font-size: 1.3rem;
+    color: var(--bb-ink);
+    margin-bottom: 1rem;
+}
+.accounting-balance.negative strong {
+    color: var(--bb-red-dark);
+}
+/* --bb-green-mid/--bb-red-dark (fond blanc de .table) tiennent respectivement
+   6.81:1 et 8.56:1 sur blanc (AAA, calcul de luminance relative) : la couleur
+   ne fait que renforcer le signe +/− déjà présent devant le montant, qui
+   reste le vecteur principal de l'info pour un lecteur d'écran. */
+.accounting-income {
+    color: var(--bb-green-mid);
+    font-weight: bold;
+}
+.accounting-expense {
+    color: var(--bb-red-dark);
+    font-weight: bold;
+}
+
+/* Lignes de prestation du formulaire devis/facture : label/prix/quantité
+   côte à côte sur desktop (empilés sur mobile, comme le reste des formulaires
+   du site), bouton de suppression aligné sur la hauteur des champs plutôt
+   que sur leur label. */
+.accounting-line-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+.accounting-line-row .form-group {
+    margin-bottom: 0;
+}
+.accounting-line-row .form-group:first-child {
+    flex: 3 1 12rem;
+}
+.accounting-line-row .form-group:not(:first-child) {
+    flex: 1 1 6rem;
+}
