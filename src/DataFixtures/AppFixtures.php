@@ -99,6 +99,14 @@ class AppFixtures extends Fixture
         $manager->persist($cor);
         $instruments[] = $cor;
 
+        // "Autre" (champ facultatif User::$otherInstrumentDetail sur le
+        // profil pour préciser lequel, cf. AccountType) : volontairement
+        // pas ajouté à $instruments ci-dessus, pas de sens de le tirer au
+        // sort dans les fixtures aléatoires plus bas.
+        $autre = new Instrument();
+        $autre->setTitle('Autre');
+        $manager->persist($autre);
+
         // ajout du Super Admin
 
         $admin = new User();

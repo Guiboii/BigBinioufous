@@ -7,6 +7,25 @@
         <div class="container">
             <h1>{{ 'desk.update_profile'|trans }}</h1>
             {{ form_start(form) }}
+
+            {# Carte "Es-tu déjà adhérent·e ?" (déménagée depuis /register le
+               2026-08-12, "plus besoin du numéro" : cf. User::$claimsMembership,
+               purement déclaratif, un·e admin vérifie la cotisation par ses
+               propres moyens puis bascule le rôle via le toggle Membre/Pas
+               membre). Réutilise .already-member-step/.already-member-toggle
+               (assets/main/app.css), déjà en vert (--bb-green-deep) depuis la
+               refonte de /register, pour rester cohérent sur toute la page. #}
+            <div class="already-member-step">
+                {{ form_label(form.claimsMembership) }}
+                <p class="already-member-hint">{{ 'profile.claims_membership_hint'|trans }}</p>
+                <div class="already-member-toggle">
+                    {{ form_widget(form.claimsMembership) }}
+                </div>
+            </div>
+
+            {# Reste du formulaire (identité/instrument/photo, tous facultatifs
+               sauf pseudo/email) : form_widget(form) rend automatiquement tout
+               ce qui n'a pas déjà été rendu individuellement ci-dessus. #}
             {{ form_widget(form) }}
             <button type="submit" class="btn btn-green">{{ 'desk.update_submit'|trans }}</button>
             <a class="btn btn-red" href="{{ path('update-password') }}">{{ 'desk.change_password'|trans }}</a>

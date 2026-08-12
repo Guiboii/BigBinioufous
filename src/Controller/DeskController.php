@@ -138,6 +138,20 @@ class DeskController extends AbstractController
                 $voice->removeUser($user);
             } else {
                 $voice->addUser($user);
+
+                // Rappel demandé par l'utilisatrice (2026-08-12, cf.
+                // ROADMAP.md "Facilitons l'inscription") : l'instrument est
+                // facultatif depuis la simplification de l'inscription,
+                // mais mettre une voix en favori sans l'avoir renseigné
+                // laisse l'information incomplète (qui joue quelle partie).
+                // Seulement au moment d'AJOUTER un favori, pas d'en retirer
+                // un (pas la peine de relancer le rappel à ce moment-là).
+                if (!$user->getInstrument()) {
+                    $this->addFlash(
+                        'info',
+                        'N\'oublie pas de renseigner ton instrument sur ton profil, pour qu\'on sache qui joue quoi !'
+                    );
+                }
             }
             $manager->flush();
         }

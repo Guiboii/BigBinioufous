@@ -15,39 +15,69 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
+/**
+ * Même champs qu'AccountType (profil self-service), utilisé par
+ * AdminController::showUser() pour l'édition côté admin. Champs facultatifs
+ * en miroir (cf. AccountType pour le détail).
+ */
 class EditUserType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nickname', TextType::class, $this->getConfiguration('Your nickname', "Your artist's name"))
-            ->add('gender', ChoiceType::class, ['choices' => ['Male' => 'male', 'Female' => 'female', 'Still looking for...' => 'unknown']], $this->getConfiguration('Your gender', '(sorry for that)'))
-            ->add('firstName', TextType::class, $this->getConfiguration('First Name', 'Your first name'))
-            ->add('lastName', TextType::class, $this->getConfiguration('Last Name', 'Your last name'))
-            ->add('birth', DateType::class, ['widget' => 'choice', 'format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')], $this->getConfiguration('The date of your Birth', 'To wish your Birhtday, of course'))
-            ->add('email', EmailType::class, $this->getConfiguration('Email', 'Your email address'))
-            ->add('instrument', EntityType::class, ['class' => Instrument::class, 'choice_label' => 'title'])
-            ->add('city', TextType::class, $this->getConfiguration('Your city', 'The city you live in, bro !'))
-            ->add('country', CountryType::class, $this->getConfiguration('Your country', 'choose your country'))
-            ->add('picture', FileType::class, [
-                'label' => 'A picture of you (jpg)',
-
-                // unmapped means that this field is not associated to any entity property
-                'mapped' => false,
-
-                // make it optional so you don't have to re-upload the PDF file
-                // every time you edit the Product details
+            ->add('nickname', TextType::class, $this->getConfiguration('register.field_username', 'register.field_username_placeholder'))
+            ->add('email', EmailType::class, $this->getConfiguration('register.field_email', 'register.field_email_placeholder'))
+            ->add('firstName', TextType::class, $this->getConfiguration('profile.field_first_name', 'profile.field_first_name_placeholder', ['required' => false]))
+            ->add('lastName', TextType::class, $this->getConfiguration('profile.field_last_name', 'profile.field_last_name_placeholder', ['required' => false]))
+            ->add('gender', ChoiceType::class, array_merge(
+                $this->getConfiguration('profile.field_gender', ''),
+                [
+                    'required' => false,
+                    'placeholder' => 'profile.field_gender_placeholder',
+                    'choices' => [
+                        $this->trans('profile.gender_male') => 'male',
+                        $this->trans('profile.gender_female') => 'female',
+                        $this->trans('profile.gender_unknown') => 'unknown',
+                    ],
+                ]
+            ))
+            ->add('birth', DateType::class, array_merge(
+                $this->getConfiguration('profile.field_birth', ''),
+                ['required' => false, 'widget' => 'choice', 'format' => 'dd-MM-yyyy', 'years' => range('1940', '2015')]
+            ))
+            ->add('instrument', EntityType::class, [
+                'class' => Instrument::class,
+                'choice_label' => 'title',
+                'label' => $this->trans('profile.field_instrument'),
                 'required' => false,
-
-                // unmapped fields can't define their validation using annotations
-                // in the associated entity, so you can use the PHP constraint classes
+                'placeholder' => 'profile.field_instrument_placeholder',
+            ])
+            ->add('otherInstrumentDetail', TextType::class, $this->getConfiguration('profile.field_other_instrument', 'profile.field_other_instrument_placeholder', ['required' => false]))
+            ->add('city', TextType::class, $this->getConfiguration('profile.field_city', 'profile.field_city_placeholder', ['required' => false]))
+            ->add('country', CountryType::class, array_merge(
+                $this->getConfiguration('profile.field_country', ''),
+                ['required' => false, 'placeholder' => 'profile.field_country_placeholder']
+            ))
+            ->add('claimsMembership', ChoiceType::class, [
+                'label' => $this->trans('profile.claims_membership_question'),
+                'required' => true,
+                'expanded' => true,
+                'choices' => [
+                    $this->trans('profile.claims_membership_yes') => true,
+                    $this->trans('profile.claims_membership_no') => false,
+                ],
+            ])
+            ->add('picture', FileType::class, [
+                'label' => $this->trans('profile.field_picture'),
+                'mapped' => false,
+                'required' => false,
                 'constraints' => [
                     new File(
                         [
                             'mimeTypes' => [
                                 'image/jpeg',
                             ],
-                            'mimeTypesMessage' => 'Please upload a valid JPEG document',
+                            'mimeTypesMessage' => $this->trans('profile.picture_invalid_type'),
                         ]
                     ),
                 ],

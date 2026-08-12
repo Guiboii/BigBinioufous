@@ -158,14 +158,34 @@ register:
     field_password_placeholder: "Choisis un mot de passe"
     field_password_confirm: "Confirmation du mot de passe"
     field_password_confirm_placeholder: "Retape le même mot de passe"
-    step_label: "Pour commencer :"
-    already_member_question: "Es-tu déjà adhérent·e ?"
-    already_member_hint: "As-tu déjà payé ta cotisation HelloAsso ?"
-    member_card_number: "Numéro de carte d'adhérent·e"
-    member_card_number_placeholder: "Le numéro indiqué sur ta carte ou ta confirmation HelloAsso"
-    member_card_note: "Ce numéro sera vérifié manuellement par un·e administrateur·rice au moment de valider ton inscription."
-    not_member_hint: "Pas de souci ! Deux possibilités :"
-    or_choose_simple: "Ou, si tu ne veux pas encore cotiser, choisis « Un grand fan !! » dans le champ « Tu veux être » plus bas : un profil restreint, sans cotisation."
+
+profile:
+    field_first_name: Prénom
+    field_first_name_placeholder: "Facultatif"
+    field_last_name: Nom
+    field_last_name_placeholder: "Facultatif"
+    field_gender: Genre
+    field_gender_placeholder: "Facultatif"
+    gender_male: Homme
+    gender_female: Femme
+    gender_unknown: "Je préfère ne pas répondre"
+    field_birth: "Date de naissance"
+    field_instrument: Instrument
+    field_instrument_placeholder: "Facultatif, à choisir plus tard si tu préfères"
+    field_other_instrument: "Si « Autre » : lequel ?"
+    field_other_instrument_placeholder: "Précise ton instrument"
+    field_city: Ville
+    field_city_placeholder: "Facultatif"
+    field_country: Pays
+    field_country_placeholder: "Facultatif"
+    field_picture: "Une photo de toi (jpeg)"
+    picture_invalid_type: "Merci de choisir une image JPEG valide"
+    # Carte "adhésion" (déménagée depuis /register le 2026-08-12, "plus
+    # besoin du numéro" : cf. User::$claimsMembership, purement déclaratif).
+    claims_membership_question: "Es-tu déjà adhérent·e ?"
+    claims_membership_yes: "Oui, il me semble"
+    claims_membership_no: Non
+    claims_membership_hint: "Un·e admin vérifiera ta cotisation HelloAsso de son côté."
 
 desk:
     add_picture: "Ajoute une photo !"

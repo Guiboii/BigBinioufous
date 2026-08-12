@@ -158,14 +158,32 @@ register:
     field_password_placeholder: "Choose a password"
     field_password_confirm: "Confirm password"
     field_password_confirm_placeholder: "Type the same password again"
-    step_label: "To start:"
-    already_member_question: "Are you already a member?"
-    already_member_hint: "Have you already paid your HelloAsso subscription?"
-    member_card_number: "Member card number"
-    member_card_number_placeholder: "The number shown on your card or HelloAsso confirmation"
-    member_card_note: "This number will be manually checked by an administrator when your registration is validated."
-    not_member_hint: "No worries! Two options:"
-    or_choose_simple: 'Or, if you don''t want to subscribe yet, choose "A big Fan !!" in the "You want to be" field below: a restricted profile, no subscription needed.'
+
+profile:
+    field_first_name: First name
+    field_first_name_placeholder: Optional
+    field_last_name: Last name
+    field_last_name_placeholder: Optional
+    field_gender: Gender
+    field_gender_placeholder: Optional
+    gender_male: Male
+    gender_female: Female
+    gender_unknown: "I'd rather not say"
+    field_birth: Date of birth
+    field_instrument: Instrument
+    field_instrument_placeholder: "Optional, you can choose it later"
+    field_other_instrument: "If \"Other\": which one?"
+    field_other_instrument_placeholder: "Tell us your instrument"
+    field_city: City
+    field_city_placeholder: Optional
+    field_country: Country
+    field_country_placeholder: Optional
+    field_picture: "A picture of you (jpeg)"
+    picture_invalid_type: "Please choose a valid JPEG image"
+    claims_membership_question: "Are you already a member?"
+    claims_membership_yes: "Yes, I think so"
+    claims_membership_no: No
+    claims_membership_hint: "An admin will check your HelloAsso subscription on their end."
 
 desk:
     add_picture: "Add picture!"

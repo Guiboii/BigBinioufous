@@ -110,6 +110,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(targetEntity: Instrument::class, inversedBy: 'users')]
     private $instrument;
 
+    /**
+     * Précision libre quand $instrument pointe vers l'entrée "Autre"
+     * (cf. AppFixtures.php), sans quoi cette information serait perdue.
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $otherInstrumentDetail;
+
     #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
@@ -389,6 +396,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setInstrument(?Instrument $instrument): self
     {
         $this->instrument = $instrument;
+
+        return $this;
+    }
+
+    public function getOtherInstrumentDetail(): ?string
+    {
+        return $this->otherInstrumentDetail;
+    }
+
+    public function setOtherInstrumentDetail(?string $otherInstrumentDetail): self
+    {
+        $this->otherInstrumentDetail = $otherInstrumentDetail;
 
         return $this;
     }
