@@ -25,17 +25,21 @@
         </div>
 
         <h2>{{ 'admin.current_roles_title'|trans }}</h2>
+        {# Plus de garde "role.title != 'ROLE_USER'" ici : ROLE_USER est
+           implicite (User::getRoles() l'ajoute en dur, jamais stocké en
+           base), il n'a jamais de ligne correspondante dans `roles` depuis
+           le retrait de sa ligne Role cosmétique (cf. ROADMAP.md "Rôles
+           legacy et implicite nettoyés", 2026-08-12) : cette boucle ne
+           contient donc plus que des rôles réellement retirables. #}
         <div class="role-pills">
             {% for role in roles %}
                 <span class="role-badge">
                     {{ role.description|trans }}
-                    {% if role.title != 'ROLE_USER' %}
-                        <form method="post" action="{{ path('user_remove_role', {slug: user.slug, roleId: role.id}) }}" onsubmit="return confirm('{{ 'admin.confirm_remove_role'|trans({'%role%': role.description|trans})|e('js') }}');" class="btn-form">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="_token" value="{{ csrf_token('remove_role' ~ user.id ~ role.id) }}">
-                            <button type="submit" class="btn btn-red" aria-label="{{ 'admin.remove_role_aria'|trans({'%role%': role.description|trans}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
-                        </form>
-                    {% endif %}
+                    <form method="post" action="{{ path('user_remove_role', {slug: user.slug, roleId: role.id}) }}" onsubmit="return confirm('{{ 'admin.confirm_remove_role'|trans({'%role%': role.description|trans})|e('js') }}');" class="btn-form">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('remove_role' ~ user.id ~ role.id) }}">
+                        <button type="submit" class="btn btn-red" aria-label="{{ 'admin.remove_role_aria'|trans({'%role%': role.description|trans}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                    </form>
                 </span>
             {% endfor %}
         </div>

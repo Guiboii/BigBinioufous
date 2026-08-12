@@ -31,11 +31,13 @@ class DeskController extends AbstractController
         // Liste "Les Membres" (ROLE_MEMBER) retirée de cette page le
         // 2026-08-12 : rôle jamais attribué par le toggle Membre/Pas membre
         // (ROLE_BINIOUFOUS, cf. ROADMAP.md "Facilitons l'inscription"),
-        // gardait juste des comptes historiques
-        // ne débloquant aucune permission propre dans le code, confusion
-        // repérée par l'utilisatrice ("pour moi membre, ben c'est
-        // binioufous !"). UserRepository::findMembers() reste utilisable
-        // si besoin de retrouver ces comptes autrement un jour.
+        // gardait juste des comptes historiques ne débloquant aucune
+        // permission propre dans le code, confusion repérée par
+        // l'utilisatrice ("pour moi membre, ben c'est binioufous !").
+        // ROLE_MEMBER supprimé entièrement le même jour (cf. ROADMAP.md
+        // "Rôles legacy et implicite nettoyés", migration
+        // Version20260812180000) : UserRepository::findMembers() retiré,
+        // plus aucun compte ne peut l'avoir.
         $roles = $repo->findAll($manager, $repo);
         $unvalids = $repoUser->findUnvalids($manager, $repoUser);
 

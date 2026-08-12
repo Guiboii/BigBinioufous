@@ -198,7 +198,6 @@ desk:
     pending_review_cta: "Compléter mon profil"
     binioufous_heading: "Voici les Binioufous !"
     mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"
-    favorite_songs: Morceaux favoris
     welcome_simple: "Bienvenue cher utilisateur !!"
     hub_intro: "Choisis un espace de fichiers."
     space_music: Musique
@@ -290,8 +289,6 @@ Id: Id
 Administrator: "Administrateur·rice"
 Accountant: Comptable
 Binioufous: Binioufous
-Member: Membre
-User: "Utilisateur·rice"
 
 admin:
     compta_title: Compta

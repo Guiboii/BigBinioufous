@@ -39,11 +39,17 @@ security:
         # Espaces de /desk/files (gestionnaire de fichiers façon Drive) :
         # un rôle par espace, lecture ET écriture soumises à la même règle
         # (contrairement à avant où la lecture de /desk/music était ouverte
-        # à tout ROLE_USER). ROLE_ADMIN a accès à tous les espaces.
+        # à tout compte connecté). ROLE_ADMIN a accès à tous les espaces.
         - { path: ^/desk/files/music, roles: [ROLE_BINIOUFOUS, ROLE_ADMIN] }
         - { path: ^/desk/files/admin, roles: ROLE_ADMIN }
         - { path: ^/desk/files/accounting, roles: [ROLE_COMPTA, ROLE_ADMIN] }
-        - { path: ^/desk, roles: ROLE_USER }
+        # Le reste de /desk n'exige aucun rôle métier particulier, juste
+        # d'être connecté : IS_AUTHENTICATED_FULLY (attribut Symfony natif,
+        # évalué sur le token d'authentification, pas sur un rôle) plutôt
+        # qu'un ROLE_USER maison qu'il aurait fallu injecter en dur dans
+        # User::getRoles() rien que pour ça (retiré le 2026-08-12, cf.
+        # ROADMAP.md "ROLE_USER retiré").
+        - { path: ^/desk, roles: IS_AUTHENTICATED_FULLY }
         # Gestion des morceaux/voix (écriture) réservée aux admins ; la liste
         # et la fiche d'un morceau (GET) restent publiques, non concernées.
         - { path: ^/music/new, roles: ROLE_ADMIN }

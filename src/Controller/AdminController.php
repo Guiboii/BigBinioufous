@@ -114,10 +114,11 @@ class AdminController extends AbstractController
      * ROLE_BINIOUFOUS fait une vraie différence (accès aux partitions/voix).
      * ROLE_SIMPLE fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles fusionnés",
      * 2026-08-12) : "pas membre" n'est plus un rôle à assigner, juste
-     * l'absence de ROLE_BINIOUFOUS. ROLE_MEMBER reste en base pour les
-     * comptes qui l'ont déjà (plus aucun moyen de l'attribuer désormais,
-     * create_member retiré le 2026-08-12), mais n'est plus jamais attribué
-     * par cette action.
+     * l'absence de ROLE_BINIOUFOUS. ROLE_MEMBER supprimé le même jour (cf.
+     * ROADMAP.md "Rôles legacy et implicite nettoyés", migration
+     * Version20260812180000) : plus aucun moyen de l'attribuer
+     * (create_member retiré le 2026-08-12) ni aucun compte ne pouvant
+     * encore l'avoir.
      */
     #[Route('/admin/user/{slug}/toggle-membership', name: 'user_toggle_membership', methods: ['POST'])]
     public function toggleMembership(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response

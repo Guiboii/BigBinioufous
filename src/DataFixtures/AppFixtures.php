@@ -42,17 +42,19 @@ class AppFixtures extends Fixture
         $binioufousRole->setTitle('ROLE_BINIOUFOUS')
                     ->setDescription('Binioufous');
         $manager->persist($binioufousRole);
-        // Pas de ROLE_MEMBER ni ROLE_SIMPLE ici : ROLE_MEMBER retiré des
-        // attributions possibles (cf. AdminController::toggleMembership,
-        // "Rôles simplifiés"), ROLE_SIMPLE fusionné avec ROLE_USER (cf.
-        // ROADMAP.md "Rôles fusionnés", 2026-08-12, migration
-        // Version20260812170000 qui nettoie les comptes de prod qui
-        // l'avaient déjà). Aucune raison d'en fabriquer un jamais utilisé
-        // dans des fixtures fraîches.
-        $userRole = new Role();
-        $userRole->setTitle('ROLE_USER')
-                    ->setDescription('User');
-        $manager->persist($userRole);
+        // Pas de ROLE_MEMBER, ROLE_SIMPLE, ni ROLE_USER ici : ROLE_MEMBER
+        // retiré des attributions possibles puis supprimé entièrement le
+        // 2026-08-12 (cf. AdminController::toggleMembership, "Rôles
+        // simplifiés"/"Rôles legacy et implicite nettoyés"), ROLE_SIMPLE
+        // fusionné avec ROLE_USER le même jour (cf. ROADMAP.md "Rôles
+        // fusionnés"). ROLE_USER est implicite (User::getRoles() l'ajoute
+        // en dur, jamais stocké en base) : une ligne Role "ROLE_USER"
+        // existait ici avant, jamais assignée à personne (aucun
+        // ->addRole() dessus), uniquement pour faire apparaître une
+        // pastille "User" cosmétique sur les fiches admin. Retirée (cf.
+        // migration Version20260812180000 qui nettoie aussi cette ligne
+        // sur les bases existantes) : aucune raison de recréer une donnée
+        // qui ne sert à rien fonctionnellement.
 
         // création des instruments
 

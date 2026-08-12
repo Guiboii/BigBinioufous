@@ -67,17 +67,6 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findMembers($roleMember)
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('r.id = :val')
-            ->leftJoin('u.roles', 'r')
-            ->setParameter('val', $roleMember)
-            ->orderBy('u.lastName', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
     /**
      * "Simple" n'est plus un rôle stocké en base (fusionné avec ROLE_USER,
      * cf. ROADMAP.md "Rôles fusionnés") : un·e simple utilisateur·rice est

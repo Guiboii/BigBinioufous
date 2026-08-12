@@ -223,15 +223,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Pas de ROLE_USER ajouté en dur ici (retiré le 2026-08-12, cf.
+     * ROADMAP.md "ROLE_USER retiré") : /desk n'exige plus qu'un compte
+     * connecté (access_control roles: IS_AUTHENTICATED_FULLY), pas un rôle
+     * particulier. Un compte sans aucun rôle métier renvoie simplement un
+     * tableau vide, ce qui suffit à Symfony (l'authentification et les
+     * rôles sont deux choses distinctes pour l'AuthorizationChecker).
+     */
     public function getRoles(): array
     {
-        $roles = $this->roles->map(function ($role) {
+        return $this->roles->map(function ($role) {
             return $role->getTitle();
         })->toArray();
-
-        $roles[] = 'ROLE_USER';
-
-        return $roles;
     }
 
     public function getPassword(): ?string
