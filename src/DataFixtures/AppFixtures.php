@@ -42,10 +42,11 @@ class AppFixtures extends Fixture
         $binioufousRole->setTitle('ROLE_BINIOUFOUS')
                     ->setDescription('Binioufous');
         $manager->persist($binioufousRole);
-        $memberRole = new Role();
-        $memberRole->setTitle('ROLE_MEMBER')
-                    ->setDescription('Member');
-        $manager->persist($memberRole);
+        // Pas de ROLE_MEMBER ici : rôle retiré des attributions possibles
+        // (cf. AdminController::toggleMembership, "Rôles simplifiés"), ne
+        // reste en base que pour d'éventuels comptes de prod qui l'avaient
+        // déjà. Aucune raison d'en fabriquer un jamais utilisé dans des
+        // fixtures fraîches.
         $simpleRole = new Role();
         $simpleRole->setTitle('ROLE_SIMPLE')
                     ->setDescription('Simple');

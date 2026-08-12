@@ -40,6 +40,10 @@ return [
         'path' => './assets/desk/story-admin.js',
         'entrypoint' => true,
     ],
+    'avatar-preview' => [
+        'path' => './assets/desk/avatar-preview.js',
+        'entrypoint' => true,
+    ],
     'jquery' => [
         'version' => '3.6.0',
     ],

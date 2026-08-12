@@ -183,6 +183,7 @@ class LoginController extends AbstractController
 
         return $this->render('desk/profile.html.twig', [
             'form' => $form->createView(),
+            'user' => $user,
         ]);
     }
 

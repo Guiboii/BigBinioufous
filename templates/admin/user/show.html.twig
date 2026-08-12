@@ -2,6 +2,8 @@
 
 {% block title %}{{ user.fullname }}{% endblock %}
 
+{% block importmap %}{{ importmap(['app', 'avatar-preview']) }}{% endblock %}
+
 {% block body %}
     <div class="container">
         <div class="profile-header">
@@ -22,6 +24,7 @@
             <button type="button" class="btn btn-green" aria-label="{{ 'admin.contact'|trans }}"><i class="ri-mail-fill" aria-hidden="true"></i></button>
         </div>
 
+        <h2>{{ 'admin.current_roles_title'|trans }}</h2>
         <div class="role-pills">
             {% for role in roles %}
                 <span class="role-badge">
@@ -38,44 +41,38 @@
         </div>
 
         <div class="container text-center">
-            {% if 'ROLE_ADMIN' not in user.roles or 'ROLE_COMPTA' not in user.roles or 'ROLE_BINIOUFOUS' not in user.roles or 'ROLE_MEMBER' not in user.roles or 'ROLE_SIMPLE' not in user.roles %}
+            {% if 'ROLE_ADMIN' not in user.roles or 'ROLE_COMPTA' not in user.roles or 'ROLE_BINIOUFOUS' not in user.roles or 'ROLE_SIMPLE' not in user.roles %}
                 <h2>{{ 'admin.promote_section'|trans }}</h2>
-                <div class="row centered mb-4">
+                <div class="promote-pills">
                     {% if 'ROLE_ADMIN' not in user.roles %}
-                        <form method="post" action="{{ path('create_admin', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_admin'|trans|e('js') }}');" class="btn-form mr-2">
+                        <form method="post" action="{{ path('create_admin', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_admin'|trans|e('js') }}');" class="btn-form">
                             <input type="hidden" name="_token" value="{{ csrf_token('create_admin' ~ user.id) }}">
-                            <button type="submit" class="btn btn-green">{{ 'admin.make_admin'|trans }}</button>
+                            <button type="submit" class="btn btn-green" aria-label="{{ 'admin.make_admin'|trans }}"><i class="ri-add-line" aria-hidden="true"></i> {{ 'Administrator'|trans }}</button>
                         </form>
                     {% endif %}
                     {% if 'ROLE_COMPTA' not in user.roles %}
-                        <form method="post" action="{{ path('create_accountant', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_accountant'|trans|e('js') }}');" class="btn-form ml-2">
+                        <form method="post" action="{{ path('create_accountant', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_accountant'|trans|e('js') }}');" class="btn-form">
                             <input type="hidden" name="_token" value="{{ csrf_token('create_accountant' ~ user.id) }}">
-                            <button type="submit" class="btn btn-green">{{ 'admin.make_accountant'|trans }}</button>
+                            <button type="submit" class="btn btn-green" aria-label="{{ 'admin.make_accountant'|trans }}"><i class="ri-add-line" aria-hidden="true"></i> {{ 'Accountant'|trans }}</button>
                         </form>
                     {% endif %}
                     {% if 'ROLE_BINIOUFOUS' not in user.roles %}
-                        <form method="post" action="{{ path('create_binioufous', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_binioufous'|trans|e('js') }}');" class="btn-form ml-2">
+                        <form method="post" action="{{ path('create_binioufous', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_binioufous'|trans|e('js') }}');" class="btn-form">
                             <input type="hidden" name="_token" value="{{ csrf_token('create_binioufous' ~ user.id) }}">
-                            <button type="submit" class="btn btn-green">{{ 'admin.make_binioufous'|trans }}</button>
-                        </form>
-                    {% endif %}
-                    {% if 'ROLE_MEMBER' not in user.roles %}
-                        <form method="post" action="{{ path('create_member', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_member'|trans|e('js') }}');" class="btn-form ml-2">
-                            <input type="hidden" name="_token" value="{{ csrf_token('create_member' ~ user.id) }}">
-                            <button type="submit" class="btn btn-green">{{ 'admin.make_member'|trans }}</button>
+                            <button type="submit" class="btn btn-green" aria-label="{{ 'admin.make_binioufous'|trans }}"><i class="ri-add-line" aria-hidden="true"></i> {{ 'Binioufous'|trans }}</button>
                         </form>
                     {% endif %}
                     {% if 'ROLE_SIMPLE' not in user.roles %}
-                        <form method="post" action="{{ path('create_simple', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_simple'|trans|e('js') }}');" class="btn-form ml-2">
+                        <form method="post" action="{{ path('create_simple', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_simple'|trans|e('js') }}');" class="btn-form">
                             <input type="hidden" name="_token" value="{{ csrf_token('create_simple' ~ user.id) }}">
-                            <button type="submit" class="btn btn-green">{{ 'admin.make_simple'|trans }}</button>
+                            <button type="submit" class="btn btn-green" aria-label="{{ 'admin.make_simple'|trans }}"><i class="ri-add-line" aria-hidden="true"></i> {{ 'Simple'|trans }}</button>
                         </form>
                     {% endif %}
                 </div>
             {% endif %}
             <h2>{{ 'admin.edit_profile_section'|trans }}</h2>
             {{ form_start(form) }}
-            {{ form_widget(form) }}
+            {{ include('desk/_user_form_fields.html.twig', {form: form, user: user}) }}
             <div class="centered">
                 <button type="submit" class="btn btn-green">{{ 'admin.validate'|trans }}</button>
             </div>

@@ -8,7 +8,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,17 +15,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
 /**
- * Même champs qu'AccountType (profil self-service), utilisé par
- * AdminController::showUser() pour l'édition côté admin. Champs facultatifs
- * en miroir (cf. AccountType pour le détail).
+ * Mêmes champs qu'AccountType (profil self-service), utilisé par
+ * AdminController::showUser() pour l'édition côté admin, sauf nickname/email
+ * (identifiants de connexion) et claimsMembership : pas de raison qu'un·e
+ * admin puisse changer l'identifiant de connexion de quelqu'un d'autre en
+ * éditant son profil (retour utilisatrice 2026-08-12), affichés en lecture
+ * seule côté template (templates/desk/_user_form_fields.html.twig) à la
+ * place.
  */
 class EditUserType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nickname', TextType::class, $this->getConfiguration('register.field_username', 'register.field_username_placeholder'))
-            ->add('email', EmailType::class, $this->getConfiguration('register.field_email', 'register.field_email_placeholder'))
             ->add('firstName', TextType::class, $this->getConfiguration('profile.field_first_name', 'profile.field_first_name_placeholder', ['required' => false]))
             ->add('lastName', TextType::class, $this->getConfiguration('profile.field_last_name', 'profile.field_last_name_placeholder', ['required' => false]))
             ->add('gender', ChoiceType::class, array_merge(
@@ -58,15 +59,14 @@ class EditUserType extends ApplicationType
                 $this->getConfiguration('profile.field_country', ''),
                 ['required' => false, 'placeholder' => 'profile.field_country_placeholder']
             ))
-            ->add('claimsMembership', ChoiceType::class, [
-                'label' => $this->trans('profile.claims_membership_question'),
-                'required' => true,
-                'expanded' => true,
-                'choices' => [
-                    $this->trans('profile.claims_membership_yes') => true,
-                    $this->trans('profile.claims_membership_no') => false,
-                ],
-            ])
+            // Pas de claimsMembership ici, contrairement à AccountType : la
+            // question "Es-tu déjà adhérent·e ?" est écrite à la 2e personne,
+            // adressée au membre lui-même sur son propre profil, ça n'a pas
+            // de sens affiché à un·e admin qui édite le profil de quelqu'un
+            // d'autre. L'admin vérifie la cotisation par ses propres moyens
+            // (HelloAsso) puis bascule le rôle via le toggle Membre/Pas
+            // membre, sans passer par ce champ (retour utilisatrice
+            // 2026-08-12).
             ->add('picture', FileType::class, [
                 'label' => $this->trans('profile.field_picture'),
                 'mapped' => false,

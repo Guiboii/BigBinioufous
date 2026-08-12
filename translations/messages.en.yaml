@@ -179,6 +179,9 @@ profile:
     field_country: Country
     field_country_placeholder: Optional
     field_picture: "A picture of you (jpeg)"
+    change_picture: "Change picture"
+    section_about: You
+    section_instrument: "Your instrument"
     picture_invalid_type: "Please choose a valid JPEG image"
     claims_membership_question: "Are you already a member?"
     claims_membership_yes: "Yes, I think so"
@@ -296,12 +299,10 @@ admin:
     make_admin: Make this user an administrator
     make_accountant: Make this user an accountant
     make_binioufous: Make this user a binioufous
-    make_member: Make this user a member
     make_simple: Make this user a simple user
     confirm_make_admin: "Make this user an administrator?"
     confirm_make_accountant: "Make this user an accountant?"
     confirm_make_binioufous: "Make this user a binioufous?"
-    confirm_make_member: "Make this user a member?"
     confirm_make_simple: "Make this user a simple user?"
     toggle_to_member_aria: "Make %name% a Member"
     confirm_toggle_to_member: "Make %name% a Member (grants access to sheet music)?"
@@ -319,7 +320,8 @@ admin:
     refuse: Refuse
     refuse_user_aria: "Refuse %name%'s registration"
     confirm_refuse: "Refuse %name%'s registration? The account will be deleted."
-    promote_section: Promote
+    current_roles_title: Current roles
+    promote_section: Add a role
     edit_profile_section: Edit profile
 
 Name: Name

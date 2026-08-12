@@ -180,6 +180,9 @@ profile:
     field_country_placeholder: "Facultatif"
     field_picture: "Une photo de toi (jpeg)"
     picture_invalid_type: "Merci de choisir une image JPEG valide"
+    change_picture: "Changer la photo"
+    section_about: Toi
+    section_instrument: "Ton instrument"
     # Carte "adhésion" (déménagée depuis /register le 2026-08-12, "plus
     # besoin du numéro" : cf. User::$claimsMembership, purement déclaratif).
     claims_membership_question: "Es-tu déjà adhérent·e ?"
@@ -305,12 +308,10 @@ admin:
     make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice"
     make_accountant: "Faire de cet utilisateur·rice un·e comptable"
     make_binioufous: "Faire de cet utilisateur·rice un·e binioufous"
-    make_member: "Faire de cet utilisateur·rice un·e membre"
     make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice"
     confirm_make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice ?"
     confirm_make_accountant: "Faire de cet utilisateur·rice un·e comptable ?"
     confirm_make_binioufous: "Faire de cet utilisateur·rice un·e binioufous ?"
-    confirm_make_member: "Faire de cet utilisateur·rice un·e membre ?"
     confirm_make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice ?"
     # Toggle Membre/Pas membre (2026-08-12, simplification des rôles, cf.
     # ROADMAP.md) : ROLE_BINIOUFOUS <-> ROLE_SIMPLE en un clic depuis les
@@ -332,7 +333,8 @@ admin:
     refuse: Refuser
     refuse_user_aria: "Refuser l'inscription de %name%"
     confirm_refuse: "Refuser l'inscription de %name% ? Le compte sera supprimé."
-    promote_section: Promouvoir
+    current_roles_title: "Rôles actuels"
+    promote_section: "Ajouter un rôle"
     edit_profile_section: Modifier le profil
 
 Name: Nom

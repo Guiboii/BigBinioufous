@@ -101,23 +101,6 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
     }
 
-    #[Route('/admin/setmember/{slug}', name: 'create_member', methods: ['POST'])]
-    public function addMemberRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
-    {
-        if ($this->isCsrfTokenValid('create_member'.$user->getId(), $request->request->get('_token'))) {
-            $user->addRole($repo->findOneByTitle('ROLE_MEMBER'));
-            $manager->persist($user);
-            $manager->flush();
-
-            $this->addFlash(
-                'success',
-                'Rôle ajouté'
-            );
-        }
-
-        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
-    }
-
     #[Route('/admin/setsimple/{slug}', name: 'create_simple', methods: ['POST'])]
     public function addSimpleRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
     {
@@ -139,16 +122,17 @@ class AdminController extends AbstractController
      * Bascule ROLE_SIMPLE <-> ROLE_BINIOUFOUS en un clic, directement
      * depuis les listes desk (templates/desk/lists/simples.html.twig et
      * binioufous.html.twig) plutôt que de passer par la fiche détaillée de
-     * chaque utilisateur·ice. Remplace les 5 boutons de promotion
-     * individuels (create_admin/create_accountant/create_binioufous/
-     * create_member/create_simple, gardés tels quels sur la fiche
-     * admin/user/show.html.twig pour les rôles admin/comptable, hors scope
-     * ici) pour ce cas précis : simplification des rôles décidée le
-     * 2026-08-12 (cf. ROADMAP.md), ROLE_MEMBER n'ayant jamais débloqué de
-     * permission propre dans le code (absent de security.yaml), seul
-     * ROLE_BINIOUFOUS fait une vraie différence (accès aux partitions/voix).
-     * ROLE_MEMBER reste en base pour les comptes qui l'ont déjà, mais n'est
-     * plus jamais attribué par cette action.
+     * chaque utilisateur·ice. Remplace les boutons de promotion individuels
+     * (create_admin/create_accountant/create_binioufous/create_simple,
+     * gardés tels quels sur la fiche admin/user/show.html.twig pour les
+     * rôles admin/comptable, hors scope ici) pour ce cas précis :
+     * simplification des rôles décidée le 2026-08-12 (cf. ROADMAP.md),
+     * ROLE_MEMBER n'ayant jamais débloqué de permission propre dans le code
+     * (absent de security.yaml), seul ROLE_BINIOUFOUS fait une vraie
+     * différence (accès aux partitions/voix). ROLE_MEMBER reste en base pour
+     * les comptes qui l'ont déjà (plus aucun moyen de l'attribuer désormais,
+     * create_member retiré le 2026-08-12), mais n'est plus jamais attribué
+     * par cette action.
      */
     #[Route('/admin/user/{slug}/toggle-membership', name: 'user_toggle_membership', methods: ['POST'])]
     public function toggleMembership(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
