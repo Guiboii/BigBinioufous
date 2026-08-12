@@ -32,7 +32,7 @@
                 </td>
                 <td>{{ admin.country }}</td>
                 <td>{{ admin.city }}</td>
-                <td>{{ admin.instrument.title }}</td>
+                <td>{{ admin.instrument ? admin.instrument.title : '-' }}</td>
                 <td>
                     <a href="{{ path ('user_show', {slug: admin.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': admin.fullName}) }}">
                         <i class="ri-edit-line" aria-hidden="true"></i>

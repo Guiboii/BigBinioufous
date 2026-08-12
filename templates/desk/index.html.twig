@@ -21,9 +21,10 @@
                 <h1>{{ 'desk.hello'|trans({'%nickname%': app.user.nickname}) }}</h1>
             </div>
             <div class="row centered">
-                {% if app.user.validation == false %}
-                    <h2>{{ 'desk.pending_validation'|trans }}</h2>
-                {% endif %}
+                {# Le bandeau "compte en attente de validation" qui vivait ici
+                   est devenu inatteignable : UserChecker (src/Security/) bloque
+                   désormais la connexion elle-même tant que le compte n'est
+                   pas validé, on ne peut plus arriver sur /desk sans l'être. #}
                 {# Un seul bloc, pas un par rôle : un compte qui cumule ROLE_ADMIN
                    et ROLE_BINIOUFOUS (ex. admin qui est aussi binioufous) voyait
                    avant la section "Les Binioufous" deux fois (la boucle
@@ -44,9 +45,6 @@
                     </div>
                     <div class="container mt-2">
                         {{ include('/desk/lists/binioufous.html.twig') }}
-                    </div>
-                    <div class="container mt-2">
-                        {{ include('/desk/lists/members.html.twig') }}
                     </div>
                     <div class="container mt-2">
                         {{ include('/desk/lists/simples.html.twig') }}

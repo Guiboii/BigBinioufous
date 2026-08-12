@@ -115,7 +115,6 @@ class AppFixtures extends Fixture
                 ->setCountry('France')
                 ->setBirth($faker->dateTime($max = 'now'))
                 ->setValidation(true)
-                ->setWish('Administrator')
                 ->addRole($adminRole)
                 ->setInstrument($coranglais)
                 ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
@@ -139,15 +138,17 @@ class AppFixtures extends Fixture
                 ->setCountry('France')
                 ->setBirth($faker->dateTime($max = 'now'))
                 ->setValidation(true)
-                ->setWish('Administrator')
                 ->addRole($adminRole)
                 ->setInstrument($coranglais)
                 ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
         $manager->persist($quickAdmin);
 
-        // ajout d'utilisateurs Binioufous et membres
-
+        // Comptes en attente de validation admin (inscription simplifiée
+        // depuis le 2026-08-12 : plus de wish choisi à l'inscription, le
+        // rôle est décidé après coup via le toggle "Membre"/"Pas membre",
+        // décorrélé de cette validation). Sert à peupler la liste des
+        // inscriptions en attente (/admin/valid).
         for ($i = 1; $i <= 20; ++$i) {
             $user = new User();
 
@@ -155,9 +156,6 @@ class AppFixtures extends Fixture
 
             $genders = ['male', 'female'];
             $gender = $faker->randomElement($genders);
-
-            $wishes = ['Binioufous', 'Member'];
-            $wish = $faker->randomElement($wishes);
 
             $user->setGender($gender)
                     ->setFirstName($faker->firstName($gender))
@@ -169,13 +167,14 @@ class AppFixtures extends Fixture
                     ->setCountry($faker->country)
                     ->setBirth($faker->dateTime($max = 'now'))
                     ->setValidation(false)
-                    ->setWish($wish)
                     ->setInstrument($faker->randomElement($instruments))
                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
             $manager->persist($user);
         }
-        // ajout de simples utilisateurs
+        // ajout de simples utilisateurs (déjà validés, ROLE_SIMPLE : sert à
+        // peupler la liste desk/lists/simples.html.twig pour tester le
+        // toggle "Passer Membre").
 
         for ($i = 1; $i <= 10; ++$i) {
             $user = new User();
@@ -195,7 +194,6 @@ class AppFixtures extends Fixture
                     ->setCountry($faker->country)
                     ->setBirth($faker->dateTime($max = 'now'))
                     ->setValidation(true)
-                    ->setWish('Simple')
                     ->addRole($simpleRole)
                     ->setInstrument($faker->randomElement($instruments))
                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));

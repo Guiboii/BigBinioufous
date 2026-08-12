@@ -21,12 +21,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank(message: "This field couldn't be empty")]
+    /**
+     * Facultatif depuis la simplification de l'inscription (2026-08-12,
+     * cf. ROADMAP.md) : plus demandé à l'inscription (juste email/pseudo/
+     * mot de passe), à compléter plus tard sur /desk/profile si la personne
+     * le souhaite. Jamais rendu obligatoire même sur le profil ("pas
+     * forcément", retour utilisatrice).
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $firstName;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    #[Assert\NotBlank(message: "This field couldn't be empty")]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $lastName;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -39,19 +44,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\EqualTo(propertyPath: 'hash', message: 'you made a mistake')]
     public $passwordConfirm;
 
+    /**
+     * Pseudo choisi à l'inscription (avec email/mot de passe, seul
+     * identifiant en plus de l'email) : reste obligatoire, contrairement
+     * aux champs facultatifs ci-dessous.
+     */
     #[ORM\Column(type: 'string', length: 255)]
     private $nickname;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $city;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $gender;
 
-    #[ORM\Column(type: 'date')]
+    #[ORM\Column(type: 'date', nullable: true)]
     private $birth;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $country;
 
     #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'users')]
@@ -63,19 +73,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Document::class, mappedBy: 'favoritedBy')]
     private $favoriteDocuments;
 
+    /**
+     * Compte accepté par un·e admin (accès de base au site). Décorrélé du
+     * rôle (ROLE_SIMPLE/ROLE_BINIOUFOUS, cf. claimsMembership ci-dessous et
+     * le toggle "Membre"/"Pas membre" côté admin) depuis la simplification
+     * de l'inscription : avant, le champ wish (retiré) déterminait à la
+     * fois le rôle ET si la validation était automatique.
+     */
     #[ORM\Column(type: 'boolean')]
     private $validation;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $wish;
-
     /**
-     * Numéro de carte d'adhérent·e, renseigné à l'inscription si la personne
-     * indique être déjà adhérente (cotisation HelloAsso déjà payée),
-     * vérifié manuellement par un·e admin lors de la validation du compte.
-     * Nul pour les comptes créés avant cette fonctionnalité, ou pour les
-     * personnes qui ne se déclarent pas déjà adhérentes.
+     * Déclaration facultative sur /desk/profile ("Oui, il me semble") :
+     * la personne pense être à jour de cotisation HelloAsso. Purement
+     * informatif, ne donne aucun accès automatiquement : un·e admin
+     * vérifie la cotisation par ses propres moyens (HelloAsso n'a pas
+     * d'API pour vérifier en direct) puis bascule le rôle via le toggle
+     * "Membre"/"Pas membre". Remplace l'ancien memberCardNumber
+     * (numéro de carte, retiré du formulaire : "plus besoin du numéro",
+     * retour utilisatrice 2026-08-12) ; colonne member_card_number
+     * laissée en base pour ne pas perdre les données déjà saisies, mais
+     * plus utilisée dans aucun formulaire.
      */
+    #[ORM\Column(type: 'boolean')]
+    private $claimsMembership = false;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $memberCardNumber;
 
@@ -92,7 +114,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $createdAt;
 
     /**
-     * Permet d'initialiser le slug.
+     * Permet d'initialiser le slug. Basé sur le pseudo (nickname) plutôt
+     * que prénom/nom : depuis la simplification de l'inscription, ces
+     * derniers sont facultatifs et vides à la création du compte (juste
+     * email/pseudo/mot de passe), le pseudo est la seule donnée d'identité
+     * garantie présente à ce stade.
      */
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
@@ -100,7 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (empty($this->slug)) {
             $slugify = new Slugify();
-            $this->slug = $slugify->slugify($this->firstName.' '.$this->lastName);
+            $this->slug = $slugify->slugify($this->nickname ?: trim($this->firstName.' '.$this->lastName));
         }
     }
 
@@ -122,9 +148,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->favoriteDocuments = new ArrayCollection();
     }
 
+    /**
+     * Repli sur le pseudo si prénom/nom ne sont pas renseignés (facultatifs
+     * depuis la simplification de l'inscription) : évite d'afficher juste
+     * un espace vide partout où ce nom "complet" est utilisé (listes admin,
+     * profil...).
+     */
     public function getFullName()
     {
-        return "{$this->firstName} {$this->lastName}";
+        if (empty($this->firstName) && empty($this->lastName)) {
+            return $this->nickname;
+        }
+
+        return trim("{$this->firstName} {$this->lastName}");
     }
 
     public function getId(): ?int
@@ -137,7 +173,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -149,7 +185,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -222,7 +258,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->city;
     }
 
-    public function setCity(string $city): self
+    public function setCity(?string $city): self
     {
         $this->city = $city;
 
@@ -234,7 +270,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->gender;
     }
 
-    public function setGender(string $gender): self
+    public function setGender(?string $gender): self
     {
         $this->gender = $gender;
 
@@ -246,7 +282,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->birth;
     }
 
-    public function setBirth(\DateTimeInterface $birth): self
+    public function setBirth(?\DateTimeInterface $birth): self
     {
         $this->birth = $birth;
 
@@ -258,7 +294,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->country;
     }
 
-    public function setCountry(string $country): self
+    public function setCountry(?string $country): self
     {
         $this->country = $country;
 
@@ -297,14 +333,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getWish(): ?string
+    public function getClaimsMembership(): bool
     {
-        return $this->wish;
+        return $this->claimsMembership;
     }
 
-    public function setWish(string $wish): self
+    public function setClaimsMembership(bool $claimsMembership): self
     {
-        $this->wish = $wish;
+        $this->claimsMembership = $claimsMembership;
 
         return $this;
     }

@@ -16,7 +16,7 @@
                 </div>
                 <div>
                     <h1 class="profile-name">{{ user.fullName }} {% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif user.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %}</h1>
-                    <p class="profile-subtitle">{{ user.instrument.title }} · {{ user.city }}</p>
+                    <p class="profile-subtitle">{{ user.instrument ? user.instrument.title : '-' }} · {{ user.city|default('-') }}</p>
                 </div>
             </div>
             <button type="button" class="btn btn-green" aria-label="{{ 'admin.contact'|trans }}"><i class="ri-mail-fill" aria-hidden="true"></i></button>

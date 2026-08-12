@@ -8,11 +8,16 @@ use App\Form\AccountType;
 use App\Form\PasswordUpdateType;
 use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -57,12 +62,18 @@ class LoginController extends AbstractController
     }
 
     /**
-     * to register.
+     * Inscription simplifiée (2026-08-12, cf. ROADMAP.md) : juste pseudo/
+     * email/mot de passe (RegistrationType). Le compte n'est jamais validé
+     * automatiquement (avant : "Simple" auto-validé selon le souhait wish,
+     * retiré) : chaque inscription attend une validation manuelle par un·e
+     * admin, quel que soit le profil, cf. AdminController::index()/
+     * validUser(). Identité/instrument/adhésion se complètent après coup
+     * sur /desk/profile.
      *
      * @return Response
      */
     #[Route('/register', name: 'register')]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, SluggerInterface $slugger)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, MailerInterface $mailer, LoggerInterface $logger, #[Autowire(param: 'admin_notification_email')] string $adminNotificationEmail)
     {
         $user = new User();
 
@@ -71,56 +82,17 @@ class LoginController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // valid simple user automatically
-
-            $validation = false;
-            $userole = $form->get('wish')->getData();
-            if ('Simple' == $userole) {
-                $validation = true;
-            }
-
-            // memberCardNumber n'a de sens que si "Es-tu déjà adhérent·e ?"
-            // vaut "yes" : le champ étant affiché/masqué côté JS, on nettoie
-            // ici au cas où une valeur aurait quand même été soumise (JS
-            // désactivé, ou manipulation directe du formulaire).
-            if ('yes' !== $form->get('alreadyMember')->getData()) {
-                $user->setMemberCardNumber(null);
-            }
-
-            /** @var UploadedFile $brochureFile */
-            $pictureFile = $form->get('picture')->getData();
-
-            $newFilename = null;
-
-            // this condition is needed because the 'brochure' field is not required
-            // so the PDF file must be processed only when a file is uploaded
-            if ($pictureFile) {
-                $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
-
-                // Move the file to the directory where brochures are stored
-                try {
-                    $pictureFile->move(
-                        $this->getParameter('pictures_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
-                }
-            }
-
             $hash = $encoder->hashPassword($user, $user->getHash());
-            $user->setHash($hash)
-                    ->setValidation($validation)
-                    ->setPicture($newFilename);
+            $user->setHash($hash)->setValidation(false);
 
             $manager->persist($user);
             $manager->flush();
 
+            $this->notifyAdminsOfNewRegistration($mailer, $logger, $adminNotificationEmail, $user);
+
             $this->addFlash(
-                'success', 'Welcome ! Log you now, your account has been created'
+                'success',
+                'Ton compte a été créé ! Tu recevras un mail une fois qu\'il aura été accepté par un·e admin. On a prévenu l\'équipe.'
             );
 
             return $this->redirectToRoute('join');
@@ -129,6 +101,36 @@ class LoginController extends AbstractController
         return $this->render('join/registration.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * Squelette d'envoi de mail (demande explicite de l'utilisatrice,
+     * 2026-08-12 : "mets le squelette, le reste on verra après") :
+     * MAILER_DSN n'est pas encore configuré en prod (cf. ROADMAP.md "Emails
+     * fonctionnels", bloqué sans accès mail), donc rien ne part réellement
+     * pour l'instant. Erreur attrapée et loguée (pas silencieuse) plutôt que
+     * laissée remonter : ne doit jamais faire échouer l'inscription
+     * elle-même, déjà enregistrée en base à ce stade. admin_notification_email
+     * (config/services.yaml) est un placeholder à remplacer par la vraie
+     * adresse une fois le mail configuré.
+     */
+    private function notifyAdminsOfNewRegistration(MailerInterface $mailer, LoggerInterface $logger, string $adminNotificationEmail, User $user): void
+    {
+        try {
+            $email = (new Email())
+                ->to($adminNotificationEmail)
+                ->subject('Nouvelle inscription en attente : '.$user->getNickname())
+                ->text(sprintf(
+                    "%s (%s) vient de s'inscrire et attend une validation.\n\nValider ou refuser : %s",
+                    $user->getNickname(),
+                    $user->getEmail(),
+                    $this->generateUrl('valid', [], UrlGeneratorInterface::ABSOLUTE_URL)
+                ));
+
+            $mailer->send($email);
+        } catch (\Throwable $e) {
+            $logger->error('Échec de l\'envoi du mail de notification d\'inscription : '.$e->getMessage(), ['exception' => $e]);
+        }
     }
 
     /**

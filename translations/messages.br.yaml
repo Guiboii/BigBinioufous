@@ -75,7 +75,6 @@ join:
 desk:
     add_picture: "Lakaat ur skeudenn !"
     hello: "Salud %nickname% !"
-    pending_validation: "Bezit pasiant !! Ret eo d'ur melestrour kadarnaat ho kont..."
     pending_count: "%count% kadarnadenn(où) o gortoz"
     binioufous_heading: "Setu ar Binioufous !"
     mailing_lists: "Rolloù postel out enskrivet enno"
@@ -88,7 +87,6 @@ desk:
         admins_title: Ar Velestrourien
         accountants_title: Ar Gontourien
         binioufous_title: Ar Binioufous
-        members_title: An Izili
         simples_title: An implijerien eeun
 
 music:

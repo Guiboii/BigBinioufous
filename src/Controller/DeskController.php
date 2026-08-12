@@ -28,19 +28,25 @@ class DeskController extends AbstractController
     #[Route('/desk', name: 'desk')]
     public function index(EntityManagerInterface $manager, RoleRepository $repo, UserRepository $repoUser)
     {
+        // Liste "Les Membres" (ROLE_MEMBER) retirée de cette page le
+        // 2026-08-12 : rôle jamais attribué par le nouveau toggle Membre/
+        // Pas membre (ROLE_SIMPLE <-> ROLE_BINIOUFOUS, cf. ROADMAP.md
+        // "Facilitons l'inscription"), gardait juste des comptes historiques
+        // ne débloquant aucune permission propre dans le code, confusion
+        // repérée par l'utilisatrice ("pour moi membre, ben c'est
+        // binioufous !"). UserRepository::findMembers() reste utilisable
+        // si besoin de retrouver ces comptes autrement un jour.
         $roles = $repo->findAll($manager, $repo);
         $unvalids = $repoUser->findUnvalids($manager, $repoUser);
 
         $roleAdmin = $repo->findOneByDescription('Administrator');
         $roleAccountant = $repo->findOneByDescription('Accountant');
         $roleBinioufous = $repo->findOneByDescription('Binioufous');
-        $roleMember = $repo->findOneByDescription('Member');
         $roleSimple = $repo->findOneByDescription('Simple');
 
         $admins = $repoUser->findAdmins($roleAdmin);
         $accountants = $repoUser->findAccountants($roleAccountant);
         $binioufous = $repoUser->findBinioufous($roleBinioufous);
-        $members = $repoUser->findMembers($roleMember);
         $simples = $repoUser->findSimples($roleSimple);
 
         return $this->render('desk/index.html.twig', [
@@ -49,7 +55,6 @@ class DeskController extends AbstractController
             'admins' => $admins,
             'accountants' => $accountants,
             'binioufous' => $binioufous,
-            'members' => $members,
             'simples' => $simples,
         ]);
     }

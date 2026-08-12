@@ -145,11 +145,24 @@ join:
     registration_title: Inscription
     registration_heading: "Allez, inscris-toi !!"
     registration_warning: "L'inscription doit être validée par un·e administrateur·rice !!"
-    registration_notice: "Sache que tu dois payer une cotisation pour devenir un vrai Binioufous, ou si tu veux juste utiliser nos partitions pour jouer de la musique à plusieurs voix"
+    registration_notice: "Tu pourras compléter ton profil (prénom, instrument, adhésion...) une fois ton compte accepté."
     pay_subscription: "PAYER UNE COTISATION POUR UN AN"
     submit: "Rejoindre !!"
 
 register:
+    # Clé du message d'erreur de connexion (UserChecker) pour un compte pas
+    # encore validé : pas encore affichée distinctement (join/login.html.twig
+    # montre le même message générique "Il y a une erreur..." pour toute
+    # erreur de connexion, cf. join.login_error), gardée prête si besoin.
+    pending_login_error: "Ton compte n'a pas encore été validé par un·e admin."
+    field_username: Pseudo
+    field_username_placeholder: "Ton pseudo (visible des autres membres)"
+    field_email: Email
+    field_email_placeholder: "Ton adresse email"
+    field_password: Mot de passe
+    field_password_placeholder: "Choisis un mot de passe"
+    field_password_confirm: "Confirmation du mot de passe"
+    field_password_confirm_placeholder: "Retape le même mot de passe"
     step_label: "Pour commencer :"
     already_member_question: "Es-tu déjà adhérent·e ?"
     already_member_hint: "As-tu déjà payé ta cotisation HelloAsso ?"
@@ -162,7 +175,6 @@ register:
 desk:
     add_picture: "Ajoute une photo !"
     hello: "Salut %nickname% !"
-    pending_validation: "Merci de patienter !! Ton compte doit être validé par un·e administrateur·rice..."
     pending_count: "%count% validation(s) en attente"
     binioufous_heading: "Voici les Binioufous !"
     mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"
@@ -212,7 +224,6 @@ desk:
         admins_title: Les Administrateurices
         accountants_title: Les Comptables
         binioufous_title: Les Binioufous
-        members_title: Les Membres
         simples_title: Les simples utilisateurs
 
 music:
@@ -284,6 +295,14 @@ admin:
     confirm_make_binioufous: "Faire de cet utilisateur·rice un·e binioufous ?"
     confirm_make_member: "Faire de cet utilisateur·rice un·e membre ?"
     confirm_make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice ?"
+    # Toggle Membre/Pas membre (2026-08-12, simplification des rôles, cf.
+    # ROADMAP.md) : ROLE_BINIOUFOUS <-> ROLE_SIMPLE en un clic depuis les
+    # listes desk, distinct des boutons de promotion ci-dessus (fiche
+    # détaillée, rôles admin/comptable/binioufous/membre/simple séparés).
+    toggle_to_member_aria: "Passer %name% Membre"
+    confirm_toggle_to_member: "Passer %name% Membre (accès aux partitions) ?"
+    toggle_to_simple_aria: "Repasser %name% Pas membre"
+    confirm_toggle_to_simple: "Retirer le statut Membre de %name% ?"
     already_has_role: "Cette personne a déjà ce rôle."
     roles: Rôles
     validate: Valider

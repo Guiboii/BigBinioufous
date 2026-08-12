@@ -19,11 +19,17 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    /**
+     * Triait avant par wish (retiré le 2026-08-12, cf. ROADMAP.md
+     * "Facilitons l'inscription") : par date d'inscription désormais (la
+     * plus ancienne d'abord), déjà affichée en colonne sur
+     * admin/unvalids.html.twig.
+     */
     public function findUnvalids()
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.validation = false')
-            ->orderBy('a.wish', 'ASC')
+            ->orderBy('a.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
     }
