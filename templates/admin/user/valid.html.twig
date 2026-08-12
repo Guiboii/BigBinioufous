@@ -16,38 +16,35 @@
                 </div>
                 <div>
                     <h1 class="profile-name">{{ user.fullName }} {% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif user.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %}</h1>
-                    <p class="profile-subtitle">{{ user.instrument.title }} · {{ user.city }}</p>
+                    <p class="profile-subtitle">{{ user.instrument ? user.instrument.title : '-' }} · {{ user.city|default('-') }}</p>
                 </div>
             </div>
         </div>
+        {# wish/numéro de carte retirés (inscription simplifiée, plus rien à
+           vérifier ici à ce stade : cf. AdminController::validUser(), le
+           rôle Membre/Pas membre se décide après coup via le toggle sur les
+           listes desk). Prénom/nom/instrument/pays/ville/naissance
+           facultatifs depuis la même simplification, tous affichés avec un
+           repli "-" plutôt que de planter sur une valeur absente. #}
         <div class="row mt-4">
             <div class="col text-center">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>{{ 'admin.wish'|trans }}</th>
                             <th>{{ 'Instrument'|trans }}</th>
                             <th>{{ 'Country'|trans }}</th>
                             <th>{{ 'City'|trans }}</th>
                             <th>{{ 'admin.date_of_birth'|trans }}</th>
                             <th>{{ 'admin.created_at'|trans }}</th>
-                            <th>{{ 'register.member_card_number'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ user.wish }}</td>
-                            <td>{{ user.instrument.title }}</td>
-                            <td>{{ user.country }}</td>
-                            <td>{{ user.city }}</td>
-                            <td>{{ user.birth|date('d/m/Y') }}</td>
+                            <td>{{ user.instrument ? user.instrument.title : '-' }}</td>
+                            <td>{{ user.country|default('-') }}</td>
+                            <td>{{ user.city|default('-') }}</td>
+                            <td>{{ user.birth ? user.birth|date('d/m/Y') : '-' }}</td>
                             <td>{{ user.createdAt|date('d/m/Y') }}</td>
-                            {# Numéro à vérifier manuellement (pas d'API HelloAsso
-                               disponible pour valider en direct, cf. RegistrationType).
-                               Vide = la personne s'est déclarée non-adhérente à
-                               l'inscription (wish Simple probable, ou une inscription
-                               antérieure à cette fonctionnalité). #}
-                            <td>{{ user.memberCardNumber ?: '-' }}</td>
                         </tr>
                     </tbody>
                 </table>

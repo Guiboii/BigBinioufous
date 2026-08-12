@@ -42,18 +42,19 @@ class AppFixtures extends Fixture
         $binioufousRole->setTitle('ROLE_BINIOUFOUS')
                     ->setDescription('Binioufous');
         $manager->persist($binioufousRole);
-        $memberRole = new Role();
-        $memberRole->setTitle('ROLE_MEMBER')
-                    ->setDescription('Member');
-        $manager->persist($memberRole);
-        $simpleRole = new Role();
-        $simpleRole->setTitle('ROLE_SIMPLE')
-                    ->setDescription('Simple');
-        $manager->persist($simpleRole);
-        $userRole = new Role();
-        $userRole->setTitle('ROLE_USER')
-                    ->setDescription('User');
-        $manager->persist($userRole);
+        // Pas de ROLE_MEMBER, ROLE_SIMPLE, ni ROLE_USER ici : ROLE_MEMBER
+        // retiré des attributions possibles puis supprimé entièrement le
+        // 2026-08-12 (cf. AdminController::toggleMembership, "Rôles
+        // simplifiés"/"Rôles legacy et implicite nettoyés"), ROLE_SIMPLE
+        // fusionné avec ROLE_USER le même jour (cf. ROADMAP.md "Rôles
+        // fusionnés"). ROLE_USER est implicite (User::getRoles() l'ajoute
+        // en dur, jamais stocké en base) : une ligne Role "ROLE_USER"
+        // existait ici avant, jamais assignée à personne (aucun
+        // ->addRole() dessus), uniquement pour faire apparaître une
+        // pastille "User" cosmétique sur les fiches admin. Retirée (cf.
+        // migration Version20260812180000 qui nettoie aussi cette ligne
+        // sur les bases existantes) : aucune raison de recréer une donnée
+        // qui ne sert à rien fonctionnellement.
 
         // création des instruments
 
@@ -99,6 +100,14 @@ class AppFixtures extends Fixture
         $manager->persist($cor);
         $instruments[] = $cor;
 
+        // "Autre" (champ facultatif User::$otherInstrumentDetail sur le
+        // profil pour préciser lequel, cf. AccountType) : volontairement
+        // pas ajouté à $instruments ci-dessus, pas de sens de le tirer au
+        // sort dans les fixtures aléatoires plus bas.
+        $autre = new Instrument();
+        $autre->setTitle('Autre');
+        $manager->persist($autre);
+
         // ajout du Super Admin
 
         $admin = new User();
@@ -115,7 +124,6 @@ class AppFixtures extends Fixture
                 ->setCountry('France')
                 ->setBirth($faker->dateTime($max = 'now'))
                 ->setValidation(true)
-                ->setWish('Administrator')
                 ->addRole($adminRole)
                 ->setInstrument($coranglais)
                 ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
@@ -139,15 +147,17 @@ class AppFixtures extends Fixture
                 ->setCountry('France')
                 ->setBirth($faker->dateTime($max = 'now'))
                 ->setValidation(true)
-                ->setWish('Administrator')
                 ->addRole($adminRole)
                 ->setInstrument($coranglais)
                 ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
         $manager->persist($quickAdmin);
 
-        // ajout d'utilisateurs Binioufous et membres
-
+        // Comptes en attente de validation admin (inscription simplifiée
+        // depuis le 2026-08-12 : plus de wish choisi à l'inscription, le
+        // rôle est décidé après coup via le toggle "Membre"/"Pas membre",
+        // décorrélé de cette validation). Sert à peupler la liste des
+        // inscriptions en attente (/admin/valid).
         for ($i = 1; $i <= 20; ++$i) {
             $user = new User();
 
@@ -155,9 +165,6 @@ class AppFixtures extends Fixture
 
             $genders = ['male', 'female'];
             $gender = $faker->randomElement($genders);
-
-            $wishes = ['Binioufous', 'Member'];
-            $wish = $faker->randomElement($wishes);
 
             $user->setGender($gender)
                     ->setFirstName($faker->firstName($gender))
@@ -169,13 +176,15 @@ class AppFixtures extends Fixture
                     ->setCountry($faker->country)
                     ->setBirth($faker->dateTime($max = 'now'))
                     ->setValidation(false)
-                    ->setWish($wish)
                     ->setInstrument($faker->randomElement($instruments))
                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 
             $manager->persist($user);
         }
-        // ajout de simples utilisateurs
+        // ajout de simples utilisateurs (validés, sans rôle métier : "simple"
+        // n'est plus un rôle à assigner, cf. ROADMAP.md "Rôles fusionnés")
+        // pour peupler la liste desk/lists/simples.html.twig et tester le
+        // toggle "Passer Membre".
 
         for ($i = 1; $i <= 10; ++$i) {
             $user = new User();
@@ -195,8 +204,6 @@ class AppFixtures extends Fixture
                     ->setCountry($faker->country)
                     ->setBirth($faker->dateTime($max = 'now'))
                     ->setValidation(true)
-                    ->setWish('Simple')
-                    ->addRole($simpleRole)
                     ->setInstrument($faker->randomElement($instruments))
                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 

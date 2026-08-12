@@ -10,14 +10,14 @@ Toutes les routes sont déclarées en attributs PHP natifs `#[Route]` directemen
 - `GET /login` (`login`) : redirige vers `/join`, route legacy jamais utilisée par le vrai flux de connexion.
 - `/logout` (`logout`) : géré entièrement par le firewall Symfony.
 - `/register` (`register`) : inscription (`RegistrationType`). Si `wish == 'Simple'`, `validation = true` automatiquement ; sinon en attente d'un admin (cf. [role.md](role.md)). Upload de la photo de profil (jpeg) si fournie.
-- `/desk/profile` (`profile`) : édition du profil connecté (`AccountType`), upload photo. `ROLE_USER` (`^/desk`).
-- `/desk/update-password` (`update-password`) : changement de mot de passe (`PasswordUpdateType`/`PasswordUpdate`), vérifie l'ancien hash avec `password_verify`. `ROLE_USER`.
+- `/desk/profile` (`profile`) : édition du profil connecté (`AccountType`), upload photo. `IS_AUTHENTICATED_FULLY` (`^/desk`).
+- `/desk/update-password` (`update-password`) : changement de mot de passe (`PasswordUpdateType`/`PasswordUpdate`), vérifie l'ancien hash avec `password_verify`. `IS_AUTHENTICATED_FULLY`.
 
 ⚠️ Bug existant : dans `updatePassword`, si `password_verify` échoue (mauvais ancien mot de passe), le bloc `if` est **vide** : aucun message d'erreur affiché, retombe silencieusement sur le formulaire.
 
 ## `DeskController`
-- `GET /desk` (`desk`) : tableau de bord, contenu différent par rôle (cf. [role.md](role.md), section "comportement multi-rôles"). `ROLE_USER`.
-- `GET /desk/files` (`desk_files_hub`) : hub vers les espaces de fichiers accessibles. `ROLE_USER` (mais n'affiche une carte que pour les rôles qui donnent vraiment accès à un espace).
+- `GET /desk` (`desk`) : tableau de bord, contenu différent par rôle (cf. [role.md](role.md), section "comportement multi-rôles"). `IS_AUTHENTICATED_FULLY`.
+- `GET /desk/files` (`desk_files_hub`) : hub vers les espaces de fichiers accessibles. `IS_AUTHENTICATED_FULLY` (mais n'affiche une carte que pour les rôles qui donnent vraiment accès à un espace).
 - `GET /desk/files/{space}` (`desk_files`, `space` = `music|admin|accounting`) : navigateur de fichiers façon Drive pour l'espace donné (dossiers + documents +, pour `music` uniquement à sa racine, morceaux/voix favorites). `ROLE_BINIOUFOUS`/`ROLE_ADMIN` (music), `ROLE_ADMIN` (admin), `ROLE_COMPTA`/`ROLE_ADMIN` (accounting), via des règles `^/desk/files/{space}` dédiées.
 - `POST /desk/files/music/voices/{voiceId}/toggle` (`desk_voice_toggle`) : coche/décoche la voix jouée par le membre connecté. Même règle que l'espace Musique (`^/desk/files/music`).
 
@@ -33,7 +33,7 @@ Toutes les routes sont déclarées en attributs PHP natifs `#[Route]` directemen
 - `POST /admin/user/{slug}/refuse` (`user_refuse`) : refuse une inscription en attente = supprime le compte.
 - `POST /admin/setadmin/{slug}` (`create_admin`), `POST /admin/setaccountant/{slug}` (`create_accountant`), `POST /admin/setbinioufous/{slug}` (`create_binioufous`) : promotion manuelle en un clic (CSRF direct, pas de `FormType`), indépendante du `wish` d'origine.
 - `GET|POST /admin/user/{slug}` (`user_show`) : fiche + édition d'un utilisateur (`EditUserType`), affiche les boutons de promotion ci-dessus pour les rôles manquants.
-- `DELETE /admin/user/{slug}/role/{roleId}` (`user_remove_role`) : retire un rôle (sauf `ROLE_USER`, jamais proposé).
+- `DELETE /admin/user/{slug}/role/{roleId}` (`user_remove_role`) : retire un rôle. Plus aucune exception à documenter depuis le 2026-08-12 : `ROLE_USER` n'existe plus du tout (ni ligne en base, ni injection en dur dans `User::getRoles()`), la liste des rôles d'un compte ne contient donc plus que des rôles réellement retirables.
 
 ## `EventController` (préfixe `/admin/event`, `ROLE_ADMIN` via `^/admin`)
 - `GET /` (`event_index`), `GET|POST /new` (`event_new`), `GET|POST /{id}/edit` (`event_edit`), `DELETE /{id}` (`event_delete`) : CRUD du planning affiché publiquement sur `/schedule`.

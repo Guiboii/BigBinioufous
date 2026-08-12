@@ -19,11 +19,17 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    /**
+     * Triait avant par wish (retiré le 2026-08-12, cf. ROADMAP.md
+     * "Facilitons l'inscription") : par date d'inscription désormais (la
+     * plus ancienne d'abord), déjà affichée en colonne sur
+     * admin/unvalids.html.twig.
+     */
     public function findUnvalids()
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.validation = false')
-            ->orderBy('a.wish', 'ASC')
+            ->orderBy('a.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -61,23 +67,22 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findMembers($roleMember)
+    /**
+     * "Simple" n'est plus un rôle stocké en base (fusionné avec ROLE_USER,
+     * cf. ROADMAP.md "Rôles fusionnés") : un·e simple utilisateur·rice est
+     * désormais défini comme "validé·e, sans ROLE_BINIOUFOUS", plutôt que par
+     * un rôle explicite à assigner/retirer.
+     */
+    public function findSimples()
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('r.id = :val')
-            ->leftJoin('u.roles', 'r')
-            ->setParameter('val', $roleMember)
-            ->orderBy('u.lastName', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findSimples($roleSimple)
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('r.id = :val')
-            ->leftJoin('u.roles', 'r')
-            ->setParameter('val', $roleSimple)
+            ->andWhere('u.validation = true')
+            ->andWhere('u.id NOT IN (
+                SELECT u2.id FROM App\Entity\User u2
+                JOIN u2.roles r2
+                WHERE r2.title = :binioufous
+            )')
+            ->setParameter('binioufous', 'ROLE_BINIOUFOUS')
             ->orderBy('u.lastName', 'ASC')
             ->getQuery()
             ->getResult();

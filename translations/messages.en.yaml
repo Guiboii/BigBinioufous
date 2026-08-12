@@ -145,28 +145,57 @@ join:
     registration_title: Registration
     registration_heading: "Go ahead and register !!"
     registration_warning: "The registration has to be approved by an administrator !!"
-    registration_notice: "Please notice that you must pay a subscription, to become a real Binioufous or if you just want to use our folders to play music with separate voices"
+    registration_notice: "You'll be able to complete your profile (first name, instrument, membership...) once your account is accepted."
     pay_subscription: "PAY A SUBSCRIPTION FOR ONE YEAR"
     submit: "Join !!"
 
 register:
-    step_label: "To start:"
-    already_member_question: "Are you already a member?"
-    already_member_hint: "Have you already paid your HelloAsso subscription?"
-    member_card_number: "Member card number"
-    member_card_number_placeholder: "The number shown on your card or HelloAsso confirmation"
-    member_card_note: "This number will be manually checked by an administrator when your registration is validated."
-    not_member_hint: "No worries! Two options:"
-    or_choose_simple: 'Or, if you don''t want to subscribe yet, choose "A big Fan !!" in the "You want to be" field below: a restricted profile, no subscription needed.'
+    field_username: Username
+    field_username_placeholder: "Your username (visible to other members)"
+    field_email: Email
+    field_email_placeholder: "Your email address"
+    field_password: Password
+    field_password_placeholder: "Choose a password"
+    field_password_confirm: "Confirm password"
+    field_password_confirm_placeholder: "Type the same password again"
+
+profile:
+    field_first_name: First name
+    field_first_name_placeholder: Optional
+    field_last_name: Last name
+    field_last_name_placeholder: Optional
+    field_gender: Gender
+    field_gender_placeholder: Optional
+    gender_male: Male
+    gender_female: Female
+    gender_unknown: "I'd rather not say"
+    field_birth: Date of birth
+    field_instrument: Instrument
+    field_instrument_placeholder: "Optional, you can choose it later"
+    field_other_instrument: "If \"Other\": which one?"
+    field_other_instrument_placeholder: "Tell us your instrument"
+    field_city: City
+    field_city_placeholder: Optional
+    field_country: Country
+    field_country_placeholder: Optional
+    field_picture: "A picture of you (jpeg)"
+    change_picture: "Change picture"
+    section_about: You
+    section_instrument: "Your instrument"
+    picture_invalid_type: "Please choose a valid JPEG image"
+    claims_membership_question: "Are you already a member?"
+    claims_membership_yes: "Yes, I think so"
+    claims_membership_no: No
+    claims_membership_hint: "An admin will check your HelloAsso subscription on their end."
 
 desk:
     add_picture: "Add picture!"
     hello: "Hi %nickname% !"
-    pending_validation: "Please be patient !! Your account has to be approved by an administrator..."
     pending_count: "%count% pending validation(s)"
+    pending_review: "Your account is being reviewed by an admin. In the meantime, you can already fill in your profile!"
+    pending_review_cta: "Complete my profile"
     binioufous_heading: "Here are the Binioufous!"
     mailing_lists: mailing-lists you subscribed
-    favorite_songs: favorite songs
     welcome_simple: "Welcome dear user !!"
     hub_intro: "Pick a files space."
     space_music: Music
@@ -212,7 +241,6 @@ desk:
         admins_title: Administrators
         accountants_title: Accountants
         binioufous_title: The Binioufous
-        members_title: Members
         simples_title: Simple users
 
 music:
@@ -270,13 +298,13 @@ admin:
     make_admin: Make this user an administrator
     make_accountant: Make this user an accountant
     make_binioufous: Make this user a binioufous
-    make_member: Make this user a member
-    make_simple: Make this user a simple user
     confirm_make_admin: "Make this user an administrator?"
     confirm_make_accountant: "Make this user an accountant?"
     confirm_make_binioufous: "Make this user a binioufous?"
-    confirm_make_member: "Make this user a member?"
-    confirm_make_simple: "Make this user a simple user?"
+    toggle_to_member_aria: "Make %name% a Member"
+    confirm_toggle_to_member: "Make %name% a Member (grants access to sheet music)?"
+    toggle_to_simple_aria: "Make %name% not a Member anymore"
+    confirm_toggle_to_simple: "Remove Member status from %name%?"
     already_has_role: This person already has this role.
     roles: Roles
     validate: Validate
@@ -289,7 +317,8 @@ admin:
     refuse: Refuse
     refuse_user_aria: "Refuse %name%'s registration"
     confirm_refuse: "Refuse %name%'s registration? The account will be deleted."
-    promote_section: Promote
+    current_roles_title: Current roles
+    promote_section: Add a role
     edit_profile_section: Edit profile
 
 Name: Name

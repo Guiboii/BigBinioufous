@@ -465,6 +465,7 @@ body.desk .profile-identity {
    inventée. Blanc plutôt que doré-pâle sur ce fond (6.81:1, AAA, même
    calcul que le texte des pastilles de rôle). */
 body.desk .profile-avatar-frame {
+    position: relative;
     width: 72px;
     height: 72px;
     border-radius: 50%;
@@ -482,6 +483,67 @@ body.desk .profile-avatar-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Variante "grande" du même cadre, utilisée dans le formulaire d'édition
+   (templates/desk/_user_form_fields.html.twig, partagé /desk/profile et
+   admin/user/show) : la photo devient l'élément central de la page ("avec la
+   photo à gauche", retour utilisatrice 2026-08-12), pas juste un médaillon
+   d'identification comme sur le bandeau .profile-header ci-dessus. */
+body.desk .profile-avatar-frame-lg {
+    width: 128px;
+    height: 128px;
+    font-size: 2.5rem;
+}
+/* Badge appareil photo, purement décoratif (pointer-events: none) : le vrai
+   déclencheur cliquable est le champ fichier natif juste en dessous, étiré
+   sur tout le cadre (.custom-file), le badge n'affiche que l'affordance
+   visuelle "on peut cliquer ici pour changer la photo". */
+body.desk .profile-avatar-edit {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    background: var(--bb-gold);
+    color: var(--bb-ink);
+    border: 2px solid var(--bb-green-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    pointer-events: none;
+}
+/* Champ fichier natif (form_widget(form.picture)) étiré en couche invisible
+   sur tout le cadre plutôt qu'en petit input Bootstrap classique : toute la
+   photo devient une zone cliquable, cohérent avec le badge appareil photo
+   posé dessus. Étiquette Bootstrap auto-générée (.custom-file-label, texte
+   vide ici, aucun placeholder configuré sur le champ) masquée : le vrai nom
+   accessible du champ vient du form_label rendu en sr-only juste avant dans
+   le template, pas de cette étiquette-doublon. */
+body.desk .profile-avatar-frame .custom-file {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+body.desk .profile-avatar-frame .custom-file-input {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+body.desk .profile-avatar-frame .custom-file-label {
+    display: none;
+}
+/* Anneau de focus clavier dédié (blanc pur, cf. doc/accessibilité du
+   CLAUDE.md) porté par le cadre entier plutôt que par le champ fichier
+   lui-même (invisible, opacity: 0) : sans ça, un focus clavier sur ce champ
+   ne se voyait nulle part. */
+body.desk .profile-avatar-frame:focus-within {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 3px;
 }
 body.desk .profile-name {
     margin: 0;
@@ -539,6 +601,82 @@ body.desk .role-badge .btn-red {
     padding: 0;
 }
 
+/* Bloc de champs partagé /desk/profile + admin/user/show
+   (templates/desk/_user_form_fields.html.twig) : "photo à gauche, infos à
+   droite" (retour utilisatrice 2026-08-12) pour la ligne d'identité de base
+   (pseudo/email), puis groupes de champs en dessous en cartes (même liseré
+   doré/fond --bb-green-deep que .already-member-step, pour rester cohérent
+   avec la seule autre carte déjà présente sur cette page). */
+body.desk .profile-form-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+body.desk .profile-form-header-fields {
+    flex: 1;
+    min-width: 220px;
+}
+body.desk .profile-field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0 1.5rem;
+}
+/* Les form-group Bootstrap ont déjà leur propre marge basse : évite un
+   double espacement avec le "gap" de la grille ci-dessus. */
+body.desk .profile-field-grid .form-group {
+    margin-bottom: 1rem;
+}
+/* Pseudo/email en lecture seule côté admin (EditUserType n'a plus ces
+   champs, cf. templates/desk/_user_form_fields.html.twig) : même rythme
+   visuel qu'un form-group (label + valeur) sans être un vrai champ. */
+body.desk .profile-readonly-field {
+    margin: 0 0 1rem;
+}
+body.desk .profile-readonly-field strong {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+body.desk .profile-form-card {
+    background: var(--bb-green-deep);
+    border: 2px solid var(--bb-gold);
+    border-radius: 12px;
+    box-shadow: var(--bb-shadow-soft);
+    padding: 1.5rem;
+    margin: 0 0 1.5rem;
+}
+/* body.desk h2 par défaut (--bb-ink, pensé pour les titres de section sur
+   fond clair) illisible sur ce fond vert foncé : blanc, même paire déjà
+   utilisée ailleurs sur --bb-green-deep (13.4:1, AAA). */
+body.desk .profile-form-card h2 {
+    color: var(--bb-white);
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+}
+
+/* Rôles à ajouter (admin/user/show.html.twig) : remplace 5 gros boutons
+   texte pleine phrase ("Faire de cet utilisateur·rice un·e administrateur·
+   rice") par des pastilles courtes (même langage visuel que .role-badge
+   juste au-dessus, pour qu'un·e admin associe visuellement "rôle actuel" et
+   "rôle à ajouter"), la phrase complète reste portée par aria-label/confirm
+   pour l'accessibilité. Demande "niveau admin ça soit simple à comprendre",
+   2026-08-12. */
+body.desk .promote-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+body.desk .promote-pills .btn-green {
+    border-radius: 25px;
+    padding: 0.45rem 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
 
 /* Scrollbar cohérente avec le reste du site (retour utilisatrice du
    2026-08-11) : Histoire/Musique/Planning ont chacune une scrollbar

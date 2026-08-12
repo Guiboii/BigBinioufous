@@ -28,20 +28,30 @@ class DeskController extends AbstractController
     #[Route('/desk', name: 'desk')]
     public function index(EntityManagerInterface $manager, RoleRepository $repo, UserRepository $repoUser)
     {
+        // Liste "Les Membres" (ROLE_MEMBER) retirée de cette page le
+        // 2026-08-12 : rôle jamais attribué par le toggle Membre/Pas membre
+        // (ROLE_BINIOUFOUS, cf. ROADMAP.md "Facilitons l'inscription"),
+        // gardait juste des comptes historiques ne débloquant aucune
+        // permission propre dans le code, confusion repérée par
+        // l'utilisatrice ("pour moi membre, ben c'est binioufous !").
+        // ROLE_MEMBER supprimé entièrement le même jour (cf. ROADMAP.md
+        // "Rôles legacy et implicite nettoyés", migration
+        // Version20260812180000) : UserRepository::findMembers() retiré,
+        // plus aucun compte ne peut l'avoir.
         $roles = $repo->findAll($manager, $repo);
         $unvalids = $repoUser->findUnvalids($manager, $repoUser);
 
         $roleAdmin = $repo->findOneByDescription('Administrator');
         $roleAccountant = $repo->findOneByDescription('Accountant');
         $roleBinioufous = $repo->findOneByDescription('Binioufous');
-        $roleMember = $repo->findOneByDescription('Member');
-        $roleSimple = $repo->findOneByDescription('Simple');
 
         $admins = $repoUser->findAdmins($roleAdmin);
         $accountants = $repoUser->findAccountants($roleAccountant);
         $binioufous = $repoUser->findBinioufous($roleBinioufous);
-        $members = $repoUser->findMembers($roleMember);
-        $simples = $repoUser->findSimples($roleSimple);
+        // ROLE_SIMPLE fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles
+        // fusionnés") : plus de rôle à passer, "simple" = validé sans
+        // ROLE_BINIOUFOUS.
+        $simples = $repoUser->findSimples();
 
         return $this->render('desk/index.html.twig', [
             'roles' => $roles,
@@ -49,7 +59,6 @@ class DeskController extends AbstractController
             'admins' => $admins,
             'accountants' => $accountants,
             'binioufous' => $binioufous,
-            'members' => $members,
             'simples' => $simples,
         ]);
     }
@@ -133,6 +142,20 @@ class DeskController extends AbstractController
                 $voice->removeUser($user);
             } else {
                 $voice->addUser($user);
+
+                // Rappel demandé par l'utilisatrice (2026-08-12, cf.
+                // ROADMAP.md "Facilitons l'inscription") : l'instrument est
+                // facultatif depuis la simplification de l'inscription,
+                // mais mettre une voix en favori sans l'avoir renseigné
+                // laisse l'information incomplète (qui joue quelle partie).
+                // Seulement au moment d'AJOUTER un favori, pas d'en retirer
+                // un (pas la peine de relancer le rappel à ce moment-là).
+                if (!$user->getInstrument()) {
+                    $this->addFlash(
+                        'info',
+                        'N\'oublie pas de renseigner ton instrument sur ton profil, pour qu\'on sache qui joue quoi !'
+                    );
+                }
             }
             $manager->flush();
         }

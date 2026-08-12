@@ -9,10 +9,13 @@ use App\Form\ValidRoleType;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 
 class AdminController extends AbstractController
@@ -98,38 +101,44 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
     }
 
-    #[Route('/admin/setmember/{slug}', name: 'create_member', methods: ['POST'])]
-    public function addMemberRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
+    /**
+     * Bascule ROLE_BINIOUFOUS en un clic, directement depuis les listes desk
+     * (templates/desk/lists/simples.html.twig et binioufous.html.twig)
+     * plutôt que de passer par la fiche détaillée de chaque utilisateur·ice.
+     * Remplace les boutons de promotion individuels (create_admin/
+     * create_accountant/create_binioufous, gardés tels quels sur la fiche
+     * admin/user/show.html.twig pour les rôles admin/comptable, hors scope
+     * ici) pour ce cas précis : simplification des rôles décidée le
+     * 2026-08-12 (cf. ROADMAP.md), ROLE_MEMBER n'ayant jamais débloqué de
+     * permission propre dans le code (absent de security.yaml), seul
+     * ROLE_BINIOUFOUS fait une vraie différence (accès aux partitions/voix).
+     * ROLE_SIMPLE fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles fusionnés",
+     * 2026-08-12) : "pas membre" n'est plus un rôle à assigner, juste
+     * l'absence de ROLE_BINIOUFOUS. ROLE_MEMBER supprimé le même jour (cf.
+     * ROADMAP.md "Rôles legacy et implicite nettoyés", migration
+     * Version20260812180000) : plus aucun moyen de l'attribuer
+     * (create_member retiré le 2026-08-12) ni aucun compte ne pouvant
+     * encore l'avoir.
+     */
+    #[Route('/admin/user/{slug}/toggle-membership', name: 'user_toggle_membership', methods: ['POST'])]
+    public function toggleMembership(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
     {
-        if ($this->isCsrfTokenValid('create_member'.$user->getId(), $request->request->get('_token'))) {
-            $user->addRole($repo->findOneByTitle('ROLE_MEMBER'));
+        if ($this->isCsrfTokenValid('toggle_membership'.$user->getId(), $request->request->get('_token'))) {
+            $binioufousRole = $repo->findOneByTitle('ROLE_BINIOUFOUS');
+
+            if (\in_array('ROLE_BINIOUFOUS', $user->getRoles(), true)) {
+                $user->removeRole($binioufousRole);
+                $this->addFlash('success', $user->getFullName().' n\'est plus "Membre".');
+            } else {
+                $user->addRole($binioufousRole);
+                $this->addFlash('success', $user->getFullName().' est maintenant "Membre".');
+            }
+
             $manager->persist($user);
             $manager->flush();
-
-            $this->addFlash(
-                'success',
-                'Rôle ajouté'
-            );
         }
 
-        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
-    }
-
-    #[Route('/admin/setsimple/{slug}', name: 'create_simple', methods: ['POST'])]
-    public function addSimpleRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
-    {
-        if ($this->isCsrfTokenValid('create_simple'.$user->getId(), $request->request->get('_token'))) {
-            $user->addRole($repo->findOneByTitle('ROLE_SIMPLE'));
-            $manager->persist($user);
-            $manager->flush();
-
-            $this->addFlash(
-                'success',
-                'Rôle ajouté'
-            );
-        }
-
-        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
+        return $this->redirectToRoute('desk');
     }
 
     /**
@@ -162,30 +171,34 @@ class AdminController extends AbstractController
     }
 
     /**
-     * Permet de valider l'inscription : attribue le rôle correspondant au
-     * souhait (wish) choisi à l'inscription et marque le compte comme
-     * validé. Les deux se produisent ensemble au submit, pas de case à
-     * cocher séparée (cf. ValidRoleType, ancien champ retiré le 2026-08-11 :
-     * ne gouvernait que $validation, jamais l'attribution du rôle elle-même,
-     * source de confusion).
-     *
-     * @return Request
+     * Permet de valider l'inscription : marque le compte comme validé
+     * (accès débloqué, cf. src/Security/UserChecker.php) et prévient la
+     * personne par mail. N'attribue plus aucun rôle (avant : rôle déduit du
+     * souhait "wish" choisi à l'inscription, champ retiré le 2026-08-12,
+     * cf. ROADMAP.md "Facilitons l'inscription") : le rôle Membre/Pas
+     * membre se décide après coup, indépendamment de cette validation, via
+     * le toggle sur les listes desk (AdminController::toggleMembership()).
+     * Le bug historique ("compte validé invisible dans toutes les listes
+     * desk") qui avait fait ajouter un ROLE_SIMPLE de palier ici ne se pose
+     * plus : ROLE_SIMPLE est fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles
+     * fusionnés", 2026-08-12), UserRepository::findSimples() traite
+     * directement "validé, sans ROLE_BINIOUFOUS" sans avoir besoin d'un
+     * rôle explicite.
      */
-    #[Route('/admin/{wish}/{slug}/valid', name: 'user_valid')]
-    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, RoleRepository $repo, Request $request)
+    #[Route('/admin/{slug}/valid', name: 'user_valid')]
+    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, MailerInterface $mailer, LoggerInterface $logger, Request $request)
     {
-        $wish = $user->getWish();
-        $role = $repo->findOneByDescription($wish);
-
         $form = $this->createForm(ValidRoleType::class, $user);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->addRole($role);
             $user->setValidation(true);
+
             $manager->persist($user);
             $manager->flush();
+
+            $this->notifyUserOfAcceptance($mailer, $logger, $user);
 
             $this->addFlash(
                 'success',
@@ -199,6 +212,27 @@ class AdminController extends AbstractController
             'user' => $user,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * Squelette d'envoi de mail (même contrainte que
+     * LoginController::notifyAdminsOfNewRegistration() : MAILER_DSN pas
+     * configuré en prod, transport "null" de repli, cf.
+     * config/services.yaml). Ne doit jamais faire échouer la validation
+     * elle-même, déjà enregistrée en base à ce stade.
+     */
+    private function notifyUserOfAcceptance(MailerInterface $mailer, LoggerInterface $logger, User $user): void
+    {
+        try {
+            $email = (new Email())
+                ->to($user->getEmail())
+                ->subject('Ton compte Binioufous a été accepté !')
+                ->text(sprintf("Salut %s,\n\nTon compte a été validé, tu peux dès maintenant te connecter sur le site.\n\nÀ bientôt !", $user->getNickname()));
+
+            $mailer->send($email);
+        } catch (\Throwable $e) {
+            $logger->error('Échec de l\'envoi du mail d\'acceptation : '.$e->getMessage(), ['exception' => $e]);
+        }
     }
 
     /**

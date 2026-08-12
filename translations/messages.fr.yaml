@@ -145,28 +145,59 @@ join:
     registration_title: Inscription
     registration_heading: "Allez, inscris-toi !!"
     registration_warning: "L'inscription doit être validée par un·e administrateur·rice !!"
-    registration_notice: "Sache que tu dois payer une cotisation pour devenir un vrai Binioufous, ou si tu veux juste utiliser nos partitions pour jouer de la musique à plusieurs voix"
+    registration_notice: "Tu pourras compléter ton profil (prénom, instrument, adhésion...) une fois ton compte accepté."
     pay_subscription: "PAYER UNE COTISATION POUR UN AN"
     submit: "Rejoindre !!"
 
 register:
-    step_label: "Pour commencer :"
-    already_member_question: "Es-tu déjà adhérent·e ?"
-    already_member_hint: "As-tu déjà payé ta cotisation HelloAsso ?"
-    member_card_number: "Numéro de carte d'adhérent·e"
-    member_card_number_placeholder: "Le numéro indiqué sur ta carte ou ta confirmation HelloAsso"
-    member_card_note: "Ce numéro sera vérifié manuellement par un·e administrateur·rice au moment de valider ton inscription."
-    not_member_hint: "Pas de souci ! Deux possibilités :"
-    or_choose_simple: "Ou, si tu ne veux pas encore cotiser, choisis « Un grand fan !! » dans le champ « Tu veux être » plus bas : un profil restreint, sans cotisation."
+    field_username: Pseudo
+    field_username_placeholder: "Ton pseudo (visible des autres membres)"
+    field_email: Email
+    field_email_placeholder: "Ton adresse email"
+    field_password: Mot de passe
+    field_password_placeholder: "Choisis un mot de passe"
+    field_password_confirm: "Confirmation du mot de passe"
+    field_password_confirm_placeholder: "Retape le même mot de passe"
+
+profile:
+    field_first_name: Prénom
+    field_first_name_placeholder: "Facultatif"
+    field_last_name: Nom
+    field_last_name_placeholder: "Facultatif"
+    field_gender: Genre
+    field_gender_placeholder: "Facultatif"
+    gender_male: Homme
+    gender_female: Femme
+    gender_unknown: "Je préfère ne pas répondre"
+    field_birth: "Date de naissance"
+    field_instrument: Instrument
+    field_instrument_placeholder: "Facultatif, à choisir plus tard si tu préfères"
+    field_other_instrument: "Si « Autre » : lequel ?"
+    field_other_instrument_placeholder: "Précise ton instrument"
+    field_city: Ville
+    field_city_placeholder: "Facultatif"
+    field_country: Pays
+    field_country_placeholder: "Facultatif"
+    field_picture: "Une photo de toi (jpeg)"
+    picture_invalid_type: "Merci de choisir une image JPEG valide"
+    change_picture: "Changer la photo"
+    section_about: Toi
+    section_instrument: "Ton instrument"
+    # Carte "adhésion" (déménagée depuis /register le 2026-08-12, "plus
+    # besoin du numéro" : cf. User::$claimsMembership, purement déclaratif).
+    claims_membership_question: "Es-tu déjà adhérent·e ?"
+    claims_membership_yes: "Oui, il me semble"
+    claims_membership_no: Non
+    claims_membership_hint: "Un·e admin vérifiera ta cotisation HelloAsso de son côté."
 
 desk:
     add_picture: "Ajoute une photo !"
     hello: "Salut %nickname% !"
-    pending_validation: "Merci de patienter !! Ton compte doit être validé par un·e administrateur·rice..."
     pending_count: "%count% validation(s) en attente"
+    pending_review: "Ton compte est en cours de vérification par un·e admin. En attendant, tu peux déjà compléter ton profil !"
+    pending_review_cta: "Compléter mon profil"
     binioufous_heading: "Voici les Binioufous !"
     mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"
-    favorite_songs: Morceaux favoris
     welcome_simple: "Bienvenue cher utilisateur !!"
     hub_intro: "Choisis un espace de fichiers."
     space_music: Musique
@@ -212,7 +243,6 @@ desk:
         admins_title: Les Administrateurices
         accountants_title: Les Comptables
         binioufous_title: Les Binioufous
-        members_title: Les Membres
         simples_title: Les simples utilisateurs
 
 music:
@@ -259,9 +289,6 @@ Id: Id
 Administrator: "Administrateur·rice"
 Accountant: Comptable
 Binioufous: Binioufous
-Member: Membre
-Simple: Simple
-User: "Utilisateur·rice"
 
 admin:
     compta_title: Compta
@@ -277,13 +304,19 @@ admin:
     make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice"
     make_accountant: "Faire de cet utilisateur·rice un·e comptable"
     make_binioufous: "Faire de cet utilisateur·rice un·e binioufous"
-    make_member: "Faire de cet utilisateur·rice un·e membre"
-    make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice"
     confirm_make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice ?"
     confirm_make_accountant: "Faire de cet utilisateur·rice un·e comptable ?"
     confirm_make_binioufous: "Faire de cet utilisateur·rice un·e binioufous ?"
-    confirm_make_member: "Faire de cet utilisateur·rice un·e membre ?"
-    confirm_make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice ?"
+    # Toggle Membre/Pas membre (2026-08-12, simplification des rôles, cf.
+    # ROADMAP.md) : ROLE_BINIOUFOUS ajouté/retiré en un clic depuis les
+    # listes desk, distinct des boutons de promotion ci-dessus (fiche
+    # détaillée, rôles admin/comptable/binioufous/membre séparés). "Simple"
+    # fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles fusionnés") : plus de
+    # bouton de promotion dédié, retiré ci-dessus.
+    toggle_to_member_aria: "Passer %name% Membre"
+    confirm_toggle_to_member: "Passer %name% Membre (accès aux partitions) ?"
+    toggle_to_simple_aria: "Repasser %name% Pas membre"
+    confirm_toggle_to_simple: "Retirer le statut Membre de %name% ?"
     already_has_role: "Cette personne a déjà ce rôle."
     roles: Rôles
     validate: Valider
@@ -296,7 +329,8 @@ admin:
     refuse: Refuser
     refuse_user_aria: "Refuser l'inscription de %name%"
     confirm_refuse: "Refuser l'inscription de %name% ? Le compte sera supprimé."
-    promote_section: Promouvoir
+    current_roles_title: "Rôles actuels"
+    promote_section: "Ajouter un rôle"
     edit_profile_section: Modifier le profil
 
 Name: Nom

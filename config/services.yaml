@@ -4,11 +4,28 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    # MAILER_DSN n'est pas déclaré dans .env (commenté, cf. ROADMAP.md
+    # "Emails fonctionnels", bloqué sans accès mail) : sans valeur de repli,
+    # injecter ne serait-ce que MailerInterface fait planter tout le
+    # conteneur (EnvNotFoundException), avant même le premier appel à
+    # send(). Transport "null" officiel de Symfony (silencieux, n'envoie
+    # rien nulle part) le temps que MAILER_DSN soit configuré pour de vrai.
+    env(MAILER_DSN): 'null://null'
     mp3: '%kernel.project_dir%/public/uploads/music'
     voices_directory: '%kernel.project_dir%/public/uploads/music/voices'
     documents_directory: '%kernel.project_dir%/public/uploads/documents'
     pictures_directory : '%kernel.project_dir%/public/uploads/pictures'
     event_posters: '%kernel.project_dir%/public/uploads/events'
+
+    # Adresse prévenue par mail à chaque nouvelle inscription (squelette,
+    # cf. LoginController::notifyAdminsOfNewRegistration()) : PLACEHOLDER,
+    # à remplacer par la vraie adresse de l'équipe. Volontairement en dur
+    # plutôt que via un env var (%env(...)%) : .env est réservé aux vraies
+    # valeurs de prod que ce projet ne committe jamais, ce paramètre-ci n'a
+    # rien de secret et doit rester un placeholder visible tant que
+    # MAILER_DSN lui-même n'est pas configuré (cf. ROADMAP.md "Emails
+    # fonctionnels").
+    admin_notification_email: 'contact@binioufous.fr'
 
 services:
     # default configuration for services in *this* file

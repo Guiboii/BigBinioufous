@@ -21,8 +21,16 @@
                 <h1>{{ 'desk.hello'|trans({'%nickname%': app.user.nickname}) }}</h1>
             </div>
             <div class="row centered">
+                {# Retour utilisatrice 2026-08-12 : même pas encore validé,
+                   l'accès à /desk (et donc /desk/profile) doit rester possible
+                   pour compléter son profil en attendant. Un 1er jet
+                   (UserChecker, src/Security/) bloquait la connexion
+                   elle-même : retiré, remplacé par ce bandeau informatif. #}
                 {% if app.user.validation == false %}
-                    <h2>{{ 'desk.pending_validation'|trans }}</h2>
+                    <div class="alert alert-info">
+                        <p>{{ 'desk.pending_review'|trans }}</p>
+                        <a href="{{ path('profile') }}" class="btn btn-green">{{ 'desk.pending_review_cta'|trans }}</a>
+                    </div>
                 {% endif %}
                 {# Un seul bloc, pas un par rôle : un compte qui cumule ROLE_ADMIN
                    et ROLE_BINIOUFOUS (ex. admin qui est aussi binioufous) voyait
@@ -30,8 +38,13 @@
                    {% for role in app.user.roles %} évaluait le if/elseif
                    séparément pour CHAQUE rôle du compte, donc ROLE_ADMIN ET
                    ROLE_BINIOUFOUS déclenchaient chacun leur branche). Priorité
-                   décroissante (admin > binioufous > membre > simple), une
-                   seule branche rendue, celle du rôle le plus "haut". #}
+                   décroissante (admin > binioufous), une seule branche rendue,
+                   celle du rôle le plus "haut". Ni "membre" (ROLE_MEMBER) ni
+                   "simple" (ROLE_SIMPLE) ne sont plus des rôles à part
+                   (cf. ROADMAP.md "Rôles fusionnés"/"Rôles legacy et
+                   implicite nettoyés", 2026-08-12) : le {% else %} final
+                   couvre désormais tout compte qui ne matche aucune branche
+                   au-dessus, quel que soit son historique. #}
                 {% if is_granted('ROLE_ADMIN') %}
                     <div class="col">
                         <a href="{{ path('valid') }}" class="btn btn-red">{{ 'desk.pending_count'|trans({'%count%': unvalids|length}) }}</a>
@@ -46,9 +59,6 @@
                         {{ include('/desk/lists/binioufous.html.twig') }}
                     </div>
                     <div class="container mt-2">
-                        {{ include('/desk/lists/members.html.twig') }}
-                    </div>
-                    <div class="container mt-2">
                         {{ include('/desk/lists/simples.html.twig') }}
                     </div>
                 {% elseif is_granted('ROLE_BINIOUFOUS') %}
@@ -56,14 +66,7 @@
                     <div class="container mt-2">
                         {{ include('/desk/lists/binioufous.html.twig') }}
                     </div>
-                {% elseif is_granted('ROLE_MEMBER') %}
-                    <div class="col">
-                        <p>{{ 'desk.mailing_lists'|trans }}</p>
-                    </div>
-                    <div class="col">
-                        <p>{{ 'desk.favorite_songs'|trans }}</p>
-                    </div>
-                {% elseif is_granted('ROLE_SIMPLE') %}
+                {% else %}
                     <h2>{{ 'desk.welcome_simple'|trans }}</h2>
                     <div class="col">
                         <p>{{ 'desk.mailing_lists'|trans }}</p>

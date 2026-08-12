@@ -19,10 +19,16 @@
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ simple.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ simple.firstname }}">
                     {% endif %}</td>
-                    <td>{{ simple.country }}</td>
-                    <td>{{ simple.city }}</td>
-                    <td>{{ simple.instrument.title }}</td>
-                    <td><a href="{{ path ('user_show', {slug: simple.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': simple.fullName}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a></td>
+                    <td>{{ simple.country|default('-') }}</td>
+                    <td>{{ simple.city|default('-') }}</td>
+                    <td>{{ simple.instrument ? simple.instrument.title : '-' }}</td>
+                    <td>
+                        <a href="{{ path ('user_show', {slug: simple.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': simple.fullName}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
+                        <form method="post" action="{{ path('user_toggle_membership', {slug: simple.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_toggle_to_member'|trans({'%name%': simple.fullName})|e('js') }}');" class="btn-form">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_membership' ~ simple.id) }}">
+                            <button type="submit" class="btn btn-green" aria-label="{{ 'admin.toggle_to_member_aria'|trans({'%name%': simple.fullName}) }}"><i class="ri-vip-crown-2-line" aria-hidden="true"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -1,0 +1,73 @@
+{# Bloc de champs partagé entre /desk/profile (self-service, AccountType) et
+   admin/user/show (édition admin, EditUserType) : mêmes champs dans les deux
+   formulaires (cf. commentaire en tête d'EditUserType), même mise en page
+   "photo à gauche, infos à droite, infos en dessous" pour ne pas la dupliquer
+   2 fois (retour utilisatrice "super uxui", 2026-08-12). Attend "form" (la
+   FormView) et "user" (l'entité éditée) en contexte. #}
+<div class="profile-form-header">
+    <div class="profile-avatar-frame profile-avatar-frame-lg">
+        {% if user.picture %}
+            <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" alt="Avatar de {{ user.fullName }}">
+        {% else %}
+            <i class="ri-user-3-fill" aria-hidden="true"></i>
+        {% endif %}
+        <span class="profile-avatar-edit" aria-hidden="true"><i class="ri-camera-fill"></i></span>
+        {{ form_label(form.picture, null, {label_attr: {class: 'sr-only'}}) }}
+        {{ form_widget(form.picture) }}
+    </div>
+    <div class="profile-form-header-fields profile-field-grid">
+        {# nickname/email absents d'EditUserType (formulaire admin) : pas de
+           raison qu'un·e admin puisse changer l'identifiant de connexion de
+           quelqu'un d'autre (retour utilisatrice 2026-08-12). Affichés en
+           lecture seule à la place, pour garder l'info visible. #}
+        {% if form.nickname is defined %}
+            {{ form_row(form.nickname) }}
+            {{ form_row(form.email) }}
+        {% else %}
+            <p class="profile-readonly-field"><strong>{{ 'register.field_username'|trans }}</strong>{{ user.nickname }}</p>
+            <p class="profile-readonly-field"><strong>{{ 'register.field_email'|trans }}</strong>{{ user.email }}</p>
+        {% endif %}
+    </div>
+</div>
+{# Erreurs du champ photo affichées ici plutôt que dans le cadre rond
+   (overflow: hidden) juste au-dessus, sans quoi le message serait tronqué. #}
+{% if form.picture.vars.errors|length > 0 %}
+    <div class="invalid-feedback d-block mb-3">{{ form_errors(form.picture) }}</div>
+{% endif %}
+
+<div class="profile-form-card">
+    <h2>{{ 'profile.section_about'|trans }}</h2>
+    <div class="profile-field-grid">
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.gender) }}
+        {{ form_row(form.birth) }}
+        {{ form_row(form.city) }}
+        {{ form_row(form.country) }}
+    </div>
+</div>
+
+<div class="profile-form-card">
+    <h2>{{ 'profile.section_instrument'|trans }}</h2>
+    <div class="profile-field-grid">
+        {{ form_row(form.instrument) }}
+        {{ form_row(form.otherInstrumentDetail) }}
+    </div>
+</div>
+
+{# Carte "Es-tu déjà adhérent·e ?" (déménagée depuis /register le 2026-08-12,
+   "plus besoin du numéro" : cf. User::$claimsMembership, purement déclaratif,
+   un·e admin vérifie la cotisation par ses propres moyens puis bascule le
+   rôle via le toggle Membre/Pas membre). Uniquement sur AccountType (profil
+   self-service) : absent d'EditUserType (formulaire admin), la question
+   "Es-tu déjà adhérent·e ?" n'a pas de sens adressée à un·e admin qui édite
+   le profil de quelqu'un d'autre. #}
+{% if form.claimsMembership is defined %}
+    <div class="already-member-step">
+        {{ form_label(form.claimsMembership) }}
+        <p class="already-member-hint">{{ 'profile.claims_membership_hint'|trans }}</p>
+        <div class="already-member-toggle">
+            {{ form_widget(form.claimsMembership) }}
+        </div>
+    </div>
+{% endif %}

@@ -21,7 +21,7 @@ Membre du site. Implémente `UserInterface` (Symfony Security).
 | `createdAt` | datetime | Rempli automatiquement (`@PrePersist`) |
 
 Points clés :
-- `getRoles()` retourne les titres des `Role` liés **plus** `ROLE_USER`, toujours ajouté en dur : voir [role.md](role.md).
+- `getRoles()` retourne uniquement les titres des `Role` réellement liés (plus de `ROLE_USER` ajouté en dur depuis le 2026-08-12) : un compte sans rôle métier renvoie un tableau vide, `/desk` n'exige plus qu'un compte authentifié (`IS_AUTHENTICATED_FULLY` côté `access_control`, pas un rôle). Voir [role.md](role.md).
 - `getPassword()` retourne `hash`, `getUsername()` retourne `email` (contrat `UserInterface` de Symfony 5).
 - `getSalt()` et `eraseCredentials()` sont vides (bcrypt gère le salage, pas de credential en clair à effacer).
 

@@ -19,10 +19,16 @@
                     {% else %}
                         <img src="{{ asset('uploads/pictures/' ~ binioufou.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ binioufou.firstname }}">
                     {% endif %}</td>
-                    <td>{{ binioufou.country }}</td>
-                    <td>{{ binioufou.city }}</td>
-                    <td>{{ binioufou.instrument.title }}</td>
-                    <td><a href="{{ path ('user_show', {slug: binioufou.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': binioufou.fullName}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a></td>
+                    <td>{{ binioufou.country|default('-') }}</td>
+                    <td>{{ binioufou.city|default('-') }}</td>
+                    <td>{{ binioufou.instrument ? binioufou.instrument.title : '-' }}</td>
+                    <td>
+                        <a href="{{ path ('user_show', {slug: binioufou.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': binioufou.fullName}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
+                        <form method="post" action="{{ path('user_toggle_membership', {slug: binioufou.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_toggle_to_simple'|trans({'%name%': binioufou.fullName})|e('js') }}');" class="btn-form">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle_membership' ~ binioufou.id) }}">
+                            <button type="submit" class="btn btn-red" aria-label="{{ 'admin.toggle_to_simple_aria'|trans({'%name%': binioufou.fullName}) }}"><i class="ri-vip-crown-2-fill" aria-hidden="true"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
