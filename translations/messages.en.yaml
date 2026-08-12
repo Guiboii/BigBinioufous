@@ -182,10 +182,6 @@ profile:
     section_about: You
     section_instrument: "Your instrument"
     picture_invalid_type: "Please choose a valid JPEG image"
-    claims_membership_question: "Are you already a member?"
-    claims_membership_yes: "Yes, I think so"
-    claims_membership_no: No
-    claims_membership_hint: "An admin will check your HelloAsso subscription on their end."
 
 desk:
     add_picture: "Add picture!"

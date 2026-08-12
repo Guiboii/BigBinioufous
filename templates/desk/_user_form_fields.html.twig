@@ -54,20 +54,3 @@
         {{ form_row(form.otherInstrumentDetail) }}
     </div>
 </div>
-
-{# Carte "Es-tu déjà adhérent·e ?" (déménagée depuis /register le 2026-08-12,
-   "plus besoin du numéro" : cf. User::$claimsMembership, purement déclaratif,
-   un·e admin vérifie la cotisation par ses propres moyens puis bascule le
-   rôle via le toggle Membre/Pas membre). Uniquement sur AccountType (profil
-   self-service) : absent d'EditUserType (formulaire admin), la question
-   "Es-tu déjà adhérent·e ?" n'a pas de sens adressée à un·e admin qui édite
-   le profil de quelqu'un d'autre. #}
-{% if form.claimsMembership is defined %}
-    <div class="already-member-step">
-        {{ form_label(form.claimsMembership) }}
-        <p class="already-member-hint">{{ 'profile.claims_membership_hint'|trans }}</p>
-        <div class="already-member-toggle">
-            {{ form_widget(form.claimsMembership) }}
-        </div>
-    </div>
-{% endif %}

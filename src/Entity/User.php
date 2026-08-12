@@ -75,28 +75,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Compte accepté par un·e admin (accès de base au site). Décorrélé du
-     * rôle (ROLE_BINIOUFOUS, cf. claimsMembership ci-dessous et le toggle
-     * "Membre"/"Pas membre" côté admin) depuis la simplification
-     * de l'inscription : avant, le champ wish (retiré) déterminait à la
-     * fois le rôle ET si la validation était automatique.
+     * rôle (ROLE_BINIOUFOUS et le toggle "Membre"/"Pas membre" côté admin)
+     * depuis la simplification de l'inscription : avant, le champ wish
+     * (retiré) déterminait à la fois le rôle ET si la validation était
+     * automatique.
      */
     #[ORM\Column(type: 'boolean')]
     private $validation;
-
-    /**
-     * Déclaration facultative sur /desk/profile ("Oui, il me semble") :
-     * la personne pense être à jour de cotisation HelloAsso. Purement
-     * informatif, ne donne aucun accès automatiquement : un·e admin
-     * vérifie la cotisation par ses propres moyens (HelloAsso n'a pas
-     * d'API pour vérifier en direct) puis bascule le rôle via le toggle
-     * "Membre"/"Pas membre". Remplace l'ancien memberCardNumber
-     * (numéro de carte, retiré du formulaire : "plus besoin du numéro",
-     * retour utilisatrice 2026-08-12) ; colonne member_card_number
-     * laissée en base pour ne pas perdre les données déjà saisies, mais
-     * plus utilisée dans aucun formulaire.
-     */
-    #[ORM\Column(type: 'boolean')]
-    private $claimsMembership = false;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $memberCardNumber;
@@ -340,18 +325,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setValidation(bool $validation): self
     {
         $this->validation = $validation;
-
-        return $this;
-    }
-
-    public function getClaimsMembership(): bool
-    {
-        return $this->claimsMembership;
-    }
-
-    public function setClaimsMembership(bool $claimsMembership): self
-    {
-        $this->claimsMembership = $claimsMembership;
 
         return $this;
     }

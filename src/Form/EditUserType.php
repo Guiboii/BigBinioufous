@@ -17,11 +17,10 @@ use Symfony\Component\Validator\Constraints\File;
 /**
  * Mêmes champs qu'AccountType (profil self-service), utilisé par
  * AdminController::showUser() pour l'édition côté admin, sauf nickname/email
- * (identifiants de connexion) et claimsMembership : pas de raison qu'un·e
- * admin puisse changer l'identifiant de connexion de quelqu'un d'autre en
- * éditant son profil (retour utilisatrice 2026-08-12), affichés en lecture
- * seule côté template (templates/desk/_user_form_fields.html.twig) à la
- * place.
+ * (identifiants de connexion) : pas de raison qu'un·e admin puisse changer
+ * l'identifiant de connexion de quelqu'un d'autre en éditant son profil
+ * (retour utilisatrice 2026-08-12), affichés en lecture seule côté template
+ * (templates/desk/_user_form_fields.html.twig) à la place.
  */
 class EditUserType extends ApplicationType
 {
@@ -59,14 +58,6 @@ class EditUserType extends ApplicationType
                 $this->getConfiguration('profile.field_country', ''),
                 ['required' => false, 'placeholder' => 'profile.field_country_placeholder']
             ))
-            // Pas de claimsMembership ici, contrairement à AccountType : la
-            // question "Es-tu déjà adhérent·e ?" est écrite à la 2e personne,
-            // adressée au membre lui-même sur son propre profil, ça n'a pas
-            // de sens affiché à un·e admin qui édite le profil de quelqu'un
-            // d'autre. L'admin vérifie la cotisation par ses propres moyens
-            // (HelloAsso) puis bascule le rôle via le toggle Membre/Pas
-            // membre, sans passer par ce champ (retour utilisatrice
-            // 2026-08-12).
             ->add('picture', FileType::class, [
                 'label' => $this->trans('profile.field_picture'),
                 'mapped' => false,

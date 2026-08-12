@@ -182,12 +182,6 @@ profile:
     change_picture: "Changer la photo"
     section_about: Toi
     section_instrument: "Ton instrument"
-    # Carte "adhésion" (déménagée depuis /register le 2026-08-12, "plus
-    # besoin du numéro" : cf. User::$claimsMembership, purement déclaratif).
-    claims_membership_question: "Es-tu déjà adhérent·e ?"
-    claims_membership_yes: "Oui, il me semble"
-    claims_membership_no: Non
-    claims_membership_hint: "Un·e admin vérifiera ta cotisation HelloAsso de son côté."
 
 desk:
     add_picture: "Ajoute une photo !"

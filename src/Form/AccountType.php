@@ -58,26 +58,6 @@ class AccountType extends ApplicationType
                 $this->getConfiguration('profile.field_country', ''),
                 ['required' => false, 'placeholder' => 'profile.field_country_placeholder']
             ))
-            // Carte "Es-tu déjà adhérent·e ?" simplifiée (déménagée depuis
-            // /register, sans numéro de carte à vérifier : "plus besoin du
-            // numéro", retour utilisatrice 2026-08-12). Purement déclaratif,
-            // un·e admin vérifie la cotisation par ses propres moyens puis
-            // bascule le rôle via le toggle Membre/Pas membre.
-            ->add('claimsMembership', ChoiceType::class, [
-                'label' => $this->trans('profile.claims_membership_question'),
-                // required: true (pas facultatif comme les autres champs de
-                // cette page) : colonne booléenne NOT NULL, "pas de réponse"
-                // n'existe pas dans le modèle de données, seulement true/
-                // false. Sans ça, ChoiceType ajoute un 3e bouton radio
-                // "None" (non traduit) pour représenter cet état qui n'a
-                // pas de sens ici.
-                'required' => true,
-                'expanded' => true,
-                'choices' => [
-                    $this->trans('profile.claims_membership_yes') => true,
-                    $this->trans('profile.claims_membership_no') => false,
-                ],
-            ])
             ->add('picture', FileType::class, [
                 'label' => $this->trans('profile.field_picture'),
                 'mapped' => false,

@@ -605,8 +605,8 @@ body.desk .role-badge .btn-red {
    (templates/desk/_user_form_fields.html.twig) : "photo à gauche, infos à
    droite" (retour utilisatrice 2026-08-12) pour la ligne d'identité de base
    (pseudo/email), puis groupes de champs en dessous en cartes (même liseré
-   doré/fond --bb-green-deep que .already-member-step, pour rester cohérent
-   avec la seule autre carte déjà présente sur cette page). */
+   doré/fond --bb-green-deep que les autres cartes du site, ex.
+   .registration-notice). */
 body.desk .profile-form-header {
     display: flex;
     align-items: center;
@@ -1933,9 +1933,7 @@ li.nav-item.active, li.nav-item:hover,
    tiennent que 3.03:1/2.15:1 sur ce fond (sous AA 4.5:1) : pas de rouge
    ici non plus, gras + icône (ri-error-warning-fill) portent la
    distinction "avertissement" plutôt que la seule teinte ; texte blanc,
-   13.4:1 (AAA, même calcul que .editor-toolbar plus bas). Même structure
-   icône + contenu que .already-member-followup juste en dessous (classe
-   dédiée : contenu différent, pas de fieldset ici). */
+   13.4:1 (AAA, même calcul que .editor-toolbar plus bas). */
 .registration-notice {
     display: flex;
     align-items: flex-start;
@@ -1966,137 +1964,6 @@ li.nav-item.active, li.nav-item:hover,
        dépendre uniquement du gras. */
     margin: 0;
     color: var(--bb-gold-pale);
-}
-
-/* Question "Es-tu déjà adhérent·e ?" en tête de /register (cf. ROADMAP.md,
-   "Flux d'inscription à clarifier"). 1er jet (radios nues dans le flux
-   normal du formulaire) jugé "pas beau et pas clair" par l'utilisatrice :
-   reconstruit en carte détachée du reste du formulaire (liseré doré, même
-   traitement que .card en body.desk/admin.html.twig) pour vraiment
-   ressortir comme LA question à traiter en premier. Fond --bb-ink
-   d'origine remplacé par --bb-green-deep (retour utilisatrice 2026-08-12,
-   "dénature trop" : cf. .registration-notice juste au-dessus, même
-   changement/mêmes ratios de contraste, pour que les 2 cartes de la page
-   restent cohérentes entre elles). */
-.already-member-step {
-    background: var(--bb-green-deep);
-    border: 2px solid var(--bb-gold);
-    border-radius: 12px;
-    box-shadow: var(--bb-shadow-soft);
-    padding: 1.5rem;
-    margin: 0 auto 2rem;
-    max-width: 560px;
-    text-align: center;
-}
-.already-member-kicker {
-    margin: 0 0 0.25rem;
-    font-size: 0.85rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--bb-gold);
-}
-.already-member-fieldset {
-    border: 0;
-    padding: 0;
-    margin: 0;
-}
-.already-member-step legend {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: var(--bb-white);
-    margin: 0 0 0.5rem;
-}
-.already-member-hint {
-    color: var(--bb-gold-pale);
-    margin: 0 0 1.25rem;
-}
-
-/* Toggle Oui/Non en boutons pilule (même langage visuel que .login/.join,
-   assets/login/join.css) plutôt que des puces radio minuscules faciles à
-   manquer. Input natif gardé (focus clavier, comportement radio natif,
-   lecteur d'écran), juste rendu visuellement discret : le label devient le
-   vrai bouton visible, cliquable via son "for" même quand l'input est
-   quasi invisible. */
-.already-member-toggle {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-.already-member-toggle .form-check {
-    position: relative;
-    margin: 0;
-    padding: 0;
-}
-.already-member-toggle .form-check-input {
-    position: absolute;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    cursor: pointer;
-}
-.already-member-toggle .form-check-label {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.6rem 2rem;
-    border-radius: 50px;
-    border: 2px solid var(--bb-gold);
-    background: transparent;
-    color: var(--bb-white);
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-.already-member-toggle .form-check-input:checked + .form-check-label {
-    background: var(--bb-gold);
-    color: var(--bb-ink);
-}
-.already-member-toggle .form-check-input:focus-visible + .form-check-label {
-    outline: 3px solid var(--bb-white);
-    outline-offset: 2px;
-}
-
-/* .member-card-box/.not-member-help-box : suite directe du choix ci-dessus,
-   dans la même carte (pas 2 cartes séparées) pour rester visuellement liées
-   à la question qui les a fait apparaître. Icône + bloc de texte plutôt
-   qu'un pavé de texte plein pour scinder visuellement l'information. */
-.already-member-followup {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    text-align: left;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(242, 178, 51, 0.35);
-}
-.already-member-followup > i {
-    font-size: 1.5rem;
-    flex-shrink: 0;
-    margin-top: 0.15rem;
-}
-.member-card-box > i {
-    color: var(--bb-gold);
-}
-.not-member-help-box > i {
-    color: var(--bb-gold-pale);
-}
-.already-member-followup-content {
-    flex: 1;
-    min-width: 0;
-}
-.already-member-followup-content .form-group label {
-    color: var(--bb-white);
-}
-.already-member-note {
-    font-size: 0.9rem;
-    color: var(--bb-gold-pale);
-    margin: 0.5rem 0 0;
-}
-.not-member-help-box p:first-child {
-    color: var(--bb-white);
-    margin-top: 0;
 }
 
 /* Espace Comptabilité (fusion de l'ancien /accountant dans
