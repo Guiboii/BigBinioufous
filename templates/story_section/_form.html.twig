@@ -1,6 +1,24 @@
 {{ form_start(form) }}
 <div class="form-group">
-    {{ form_widget(form) }}
+    {{ form_row(form.title) }}
+
+    {# Aide-mémoire toujours visible (pas juste les tooltips en anglais de la
+       barre d'outils EasyMDE) : rappel de la syntaxe de base pour des
+       rédacteur·ices non-informaticien·nes. #}
+    <div class="markdown-help">
+        <p class="markdown-help-title">{{ 'story_admin.markdown_help_title'|trans }}</p>
+        <ul>
+            <li><code># Titre</code> {{ 'story_admin.markdown_help_h1'|trans }}</li>
+            <li><code>## Sous-titre</code> {{ 'story_admin.markdown_help_h2'|trans }}</li>
+            <li><code>**gras**</code> {{ 'story_admin.markdown_help_bold'|trans }} <strong>{{ 'story_admin.markdown_help_bold_example'|trans }}</strong></li>
+            <li><code>*italique*</code> {{ 'story_admin.markdown_help_italic'|trans }} <em>{{ 'story_admin.markdown_help_italic_example'|trans }}</em></li>
+            <li><code>~~barré~~</code> {{ 'story_admin.markdown_help_strike'|trans }} <del>{{ 'story_admin.markdown_help_strike_example'|trans }}</del></li>
+            <li><code>- élément</code> {{ 'story_admin.markdown_help_list'|trans }}</li>
+            <li><code>[texte](https://exemple.fr)</code> {{ 'story_admin.markdown_help_link'|trans }}</li>
+        </ul>
+    </div>
+
+    {{ form_row(form.content) }}
     <button type="submit" class="btn btn-green">{{ (button_label|default('story_admin.save_submit'))|trans }}</button>
 </div>
 {{ form_end(form) }}

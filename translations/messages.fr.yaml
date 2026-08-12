@@ -44,7 +44,18 @@ story_admin:
     field_title: Titre
     field_title_placeholder: "Ex. Qui sont les Binioufous ?"
     field_content: Contenu
-    field_content_placeholder: "Texte de la section..."
+    field_content_placeholder: "Texte de la section (aide-mémoire juste au-dessus)..."
+    markdown_help_title: "Mise en forme (facultatif) :"
+    markdown_help_h1: "en début de ligne = gros titre"
+    markdown_help_h2: "en début de ligne = titre plus petit"
+    markdown_help_bold: "="
+    markdown_help_bold_example: "gras"
+    markdown_help_italic: "="
+    markdown_help_italic_example: "italique"
+    markdown_help_strike: "="
+    markdown_help_strike_example: "barré"
+    markdown_help_list: "en début de ligne = liste à puces"
+    markdown_help_link: "= lien cliquable"
     new_title: Nouvelle section
     create_heading: Ajouter une section
     edit_title: Modifier la section

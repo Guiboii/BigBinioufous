@@ -44,7 +44,18 @@ story_admin:
     field_title: Title
     field_title_placeholder: "E.g. Who are the Binioufous?"
     field_content: Content
-    field_content_placeholder: "Section text..."
+    field_content_placeholder: "Section text (cheat sheet just above)..."
+    markdown_help_title: "Formatting (optional):"
+    markdown_help_h1: "at the start of a line = big heading"
+    markdown_help_h2: "at the start of a line = smaller heading"
+    markdown_help_bold: "="
+    markdown_help_bold_example: "bold"
+    markdown_help_italic: "="
+    markdown_help_italic_example: "italic"
+    markdown_help_strike: "="
+    markdown_help_strike_example: "strikethrough"
+    markdown_help_list: "at the start of a line = bullet list"
+    markdown_help_link: "= clickable link"
     new_title: New section
     create_heading: Add a section
     edit_title: Edit section
