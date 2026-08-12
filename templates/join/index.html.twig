@@ -15,21 +15,21 @@
 <button type="button" class="login" aria-expanded="false" aria-controls="loginForm">
     <i class="ri-login-circle-fill" aria-hidden="true"></i> <span>{{ 'join.login_button'|trans }}</span>
 </button>
-<button type="button" class="join" aria-expanded="false" aria-controls="joinForm">
+{# Avant : bouton ouvrant un popup intermédiaire (INSCRIS-TOI ICI/COTISE ICI,
+   join/launch.html.twig) qui faisait doublon avec le flux "Es-tu déjà
+   adhérent·e ?" de /register (celui-ci gère déjà les 2 cas, cotisation
+   HelloAsso incluse) et n'avait jamais eu le relookage visuel du reste du
+   popup ("le thème n'a rien à voir avec le reste", retour utilisatrice
+   2026-08-12). Vrai lien de navigation vers /register directement. #}
+<a href="{{ path('register') }}" class="join">
     <i class="ri-user-add-fill" aria-hidden="true"></i> <span>{{ 'join.join_button'|trans }}</span>
-</button>
+</a>
 
 {{ include('components/form-dialog.html.twig', {
     id: 'loginForm',
     action: path('join'),
     title: 'join.login_title',
     content: include('join/login.html.twig'),
-}) }}
-
-{{ include('components/form-dialog.html.twig', {
-    id: 'joinForm',
-    title: 'join.register_title',
-    content: include('join/launch.html.twig'),
 }) }}
 
 <div class="loading" id="js-loader" aria-hidden="true"><div class="loader"></div></div>

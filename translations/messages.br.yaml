@@ -65,10 +65,6 @@ join:
     email_placeholder: "Da imel..."
     password_placeholder: "Da c'her-tremen..."
     login_submit: "Kennaskañ !"
-    register_title: Enskrivadur
-    register_here: "!! ENSKRIV AMAÑ !!"
-    register_info: "Ma fell dit resev ar gelaouenn hag titouroù all, digor eo an hent evit netra ! Met ma fell dit tizhout hor skouerioù klevet hag holl restroù dispar, gwez e vez ar Binioufous ur gevredigezh. Ret eo paeañ ur c'houtouenn (10€ hepken ar bloaz) evit tizhout tu all al Loar, al lec'hienn dispar-mañ !!"
-    subscribe_here: "!! PAEAÑ AMAÑ !!"
     registration_title: Enskrivadur
     registration_heading: "Deus, enskriv !!"
     registration_warning: "Ret eo d'un melestrour kadarnaat an enskrivadur !!"

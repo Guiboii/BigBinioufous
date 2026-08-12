@@ -219,17 +219,21 @@ function raycast(e, touch = false) {
     } else if (object.parent.name === 'LogoB') {
       document.getElementById('loginForm').classList.remove('d-none');
     } else if (object.parent.name === 'Soucoupe') {
-      document.getElementById('joinForm').classList.remove('d-none');
+      // Avant : ouvrait le popup intermédiaire #joinForm (supprimé, cf.
+      // join/index.html.twig), même destination que le bouton "Rejoindre".
+      location.href = '/register';
     } else if (object.name === 'disco') {
       location.href = '/';
     }
   }
 }
-// show the popup forms
+// show the popup form
 //
-// Chaque popup (#joinForm/#loginForm, role="dialog" posé dans
-// join/index.html.twig) est ouverte/fermée en gardant clavier et lecteur
-// d'écran cohérents avec l'état visuel :
+// #loginForm (role="dialog" posé dans join/index.html.twig) est ouverte/
+// fermée en gardant clavier et lecteur d'écran cohérents avec l'état
+// visuel : le bouton "Rejoindre" est désormais un vrai lien vers
+// /register (plus de popup #joinForm intermédiaire, cf. commentaire dans
+// join/index.html.twig), seule la connexion reste en popup ici.
 // - le bouton déclencheur expose son état via aria-expanded
 // - à l'ouverture, le focus part sur le 1er champ du formulaire (ou le
 //   bouton fermer s'il n'y a pas de champ) plutôt que de rester sur place
@@ -238,9 +242,7 @@ function raycast(e, touch = false) {
 //   popup pendant qu'elle est ouverte (role="dialog" + aria-modal="true"
 //   sans ça ne suffit pas : rien n'empêche réellement le focus de sortir)
 
-var joinButton = document.querySelector('button.join');
 var loginButton = document.querySelector('button.login');
-var joinForm = document.getElementById('joinForm');
 var loginForm = document.getElementById('loginForm');
 
 function getFocusable(container) {
@@ -254,52 +256,37 @@ function getFocusable(container) {
 function openPopup(form, trigger) {
   form.classList.remove('d-none');
   trigger.setAttribute('aria-expanded', 'true');
-  form.dataset.trigger = trigger === joinButton ? 'join' : 'login';
   var focusable = getFocusable(form);
   if (focusable.length) {
     focusable[0].focus();
   }
 }
 
-function closePopup(form) {
+function closePopup(form, trigger) {
   form.classList.add('d-none');
-  var trigger = form.dataset.trigger === 'join' ? joinButton : loginButton;
   trigger.setAttribute('aria-expanded', 'false');
   trigger.focus();
 }
 
-function isOpen(form) {
-  return !form.classList.contains('d-none');
-}
-
-joinButton.addEventListener('click', function () {
-  openPopup(joinForm, joinButton);
-});
 loginButton.addEventListener('click', function () {
   openPopup(loginForm, loginButton);
 });
 
-// close the popups
-var closeJ = joinForm.querySelector('.close');
 var closeL = loginForm.querySelector('.close');
-closeJ.addEventListener('click', function () {
-  closePopup(joinForm);
-});
 closeL.addEventListener('click', function () {
-  closePopup(loginForm);
+  closePopup(loginForm, loginButton);
 });
 
 document.addEventListener('keydown', function (e) {
-  var openForm = isOpen(joinForm) ? joinForm : isOpen(loginForm) ? loginForm : null;
-  if (!openForm) {
+  if (loginForm.classList.contains('d-none')) {
     return;
   }
   if (e.key === 'Escape') {
-    closePopup(openForm);
+    closePopup(loginForm, loginButton);
     return;
   }
   if (e.key === 'Tab') {
-    var focusable = getFocusable(openForm);
+    var focusable = getFocusable(loginForm);
     if (!focusable.length) {
       return;
     }

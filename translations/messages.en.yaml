@@ -142,10 +142,6 @@ join:
     email_placeholder: "Your email..."
     password_placeholder: "Your password..."
     login_submit: "Log in!"
-    register_title: Register
-    register_here: "!! REGISTER HERE !!"
-    register_info: 'If you want to receive newsletters and other informations, the path is free ! But if you want to access to our audio examples and all the incredible files, you should know that "Les Binioufous" is an association. You have to pay a subscription (only 10€ per year) to access to the other side of the <s>Moon</s> Fabulous site !!'
-    subscribe_here: "!! SUBSCRIBE HERE !!"
     registration_title: Registration
     registration_heading: "Go ahead and register !!"
     registration_warning: "The registration has to be approved by an administrator !!"

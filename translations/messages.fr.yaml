@@ -142,10 +142,6 @@ join:
     email_placeholder: "Ton email..."
     password_placeholder: "Ton mot de passe..."
     login_submit: "Connexion !"
-    register_title: Inscription
-    register_here: "!! INSCRIS-TOI ICI !!"
-    register_info: "Si tu veux juste recevoir la newsletter et d'autres informations, c'est libre d'accès ! Mais si tu veux accéder à nos exemples audio et à tous nos fichiers, sache que « Les Binioufous » est une association. Il faut payer une cotisation (seulement 10€ par an) pour accéder à l'autre face de <s>la Lune</s> ce site fabuleux !!"
-    subscribe_here: "!! COTISE ICI !!"
     registration_title: Inscription
     registration_heading: "Allez, inscris-toi !!"
     registration_warning: "L'inscription doit être validée par un administrateur !!"
