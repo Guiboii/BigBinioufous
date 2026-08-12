@@ -1,0 +1,35 @@
+{#
+Composant réutilisable pour une popup de dialogue avec formulaire.
+
+Params :
+  - id : identifiant unique du formulaire (obligatoire)
+  - action : URL de soumission (optionnel, par défaut current path)
+  - title : clé de traduction du titre (obligatoire)
+  - content : HTML du contenu du formulaire (obligatoire)
+
+Structuration a11y :
+  - role="dialog" + aria-modal="true" : expose le rôle au lecteur d'écran
+  - aria-labelledby : lie le formulaire à son titre h2
+  - aria-live="polite" sur les erreurs : annonce les messages au lecteur
+  - Bouton fermer accessible avec aria-label
+#}
+<form
+    {% if action is defined and action %}action="{{ action }}"{% endif %}
+    id="{{ id }}"
+    class="d-none"
+    method="post"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="{{ id }}-title"
+>
+    <div class="dialog-header">
+        <h2 id="{{ id }}-title">{{ title|trans }}</h2>
+        <button type="button" class="close" aria-label="{{ 'common.close'|trans }}">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="dialog-body">
+        {{ content|raw }}
+    </div>
+</form>

@@ -1,0 +1,13 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'event.new_title'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'event.create_heading'|trans }}</h1>
+
+    {{ include('event/_form.html.twig') }}
+
+    <a href="{{ path('event_index') }}" class="text-green">{{ 'event.back_to_list'|trans }}</a>
+</div>
+{% endblock %}

@@ -1,15 +1,15 @@
 {% extends 'desk/base.html.twig' %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}{{ 'nav.profile'|trans }}{% endblock %}
 
 {% block body %}
     <div class="container">
         <div class="container">
-            <h4>Update your profile !</h4>
-            {{ form_start(form )}}
-            {{ form_widget(form)}}
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a class="btn btn-secondary" href="update-password">Change your Password</a>
+            <h1>{{ 'desk.update_profile'|trans }}</h1>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button type="submit" class="btn btn-green">{{ 'desk.update_submit'|trans }}</button>
+            <a class="btn btn-red" href="{{ path('update-password') }}">{{ 'desk.change_password'|trans }}</a>
             {{ form_end(form) }}
         </div>
     </div>

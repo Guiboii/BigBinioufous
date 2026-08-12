@@ -2,23 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\PasswordUpdateRepository;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
 
 class PasswordUpdate
 {
-    
     private $oldPassword;
 
-    /**
-     * @Assert\Length(min=8, minMessage="Please insert 8 characters at least")
-     */
+    #[Assert\Length(min: 8, minMessage: 'Please insert 8 characters at least')]
     private $newPassword;
 
-    /**
-     * @Assert\EqualTo(propertyPath="newPassword", message="Please confirm")
-     */
+    #[Assert\EqualTo(propertyPath: 'newPassword', message: 'Please confirm')]
     private $confirmPassword;
 
     public function getOldPassword(): ?string

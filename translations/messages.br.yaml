@@ -1,0 +1,208 @@
+# Fichier généré au fil de l'extraction des textes en dur des templates Twig.
+# Breton traduit au mieux (je ne suis pas locutrice native) : à faire relire
+# par quelqu'un qui parle breton si l'exactitude compte, ceci est une base.
+
+a11y:
+    skip_to_content: "Mont d'an endalc'had pennañ"
+
+common:
+    close: Serriñ
+
+home:
+    heading: "Donemat e-touez ar Binioufous !!"
+
+nav:
+    home: Degemer
+    story: Istor
+    music: Sonerezh
+    schedule: Deiziadur
+    desk: Burev
+    profile: Profil
+    logout: Digennaskañ
+    join_or_login: "Kevredañ pe kennaskañ"
+    tagline: "Ar strollad sonerezh ar muiañ foll er Galaksi !!"
+    planning: Deiziadur
+    accountant: Kontabilite
+    toggle: "Diskouez/kuzhat ar merdeiñ"
+
+contact:
+    title: Salud
+    name_label: Da anv
+    email_label: Da imel
+    message_label: Petra a fell dit lavarout dimp
+    submit: Mat eo
+
+story:
+    title: Istor
+    nav_contact: "@darempred"
+    mobile_note: "Gwel eeunaet evit ar pellgomz : an handelv klok gant an endro 3D a c'hortoz ac'hanout war urzhiataer."
+
+schedule:
+    title: Deiziadur
+    mobile_note: "Gwel eeunaet evit ar pellgomz : an handelv klok gant an endro 3D a c'hortoz ac'hanout war urzhiataer."
+    month_of: Miz
+    month:
+        jan: Gen
+        feb: C'hwe
+        mar: Meu
+        apr: Ebr
+        may: Mae
+        jun: Eve
+        jul: Goue
+        aug: Eost
+        sep: Gwen
+        oct: Here
+        nov: Du
+        dec: Kzu
+
+join:
+    title: "Kevredañ !!"
+    login_button: Kennaskañ
+    join_button: Kevredañ
+    login_title: Kennaskañ
+    login_heading: "Kennaska, mignon !!"
+    login_error: "Fazi zo bet..."
+    email_placeholder: "Da imel..."
+    password_placeholder: "Da c'her-tremen..."
+    login_submit: "Kennaskañ !"
+    registration_title: Enskrivadur
+    registration_heading: "Deus, enskriv !!"
+    registration_warning: "Ret eo d'un melestrour kadarnaat an enskrivadur !!"
+    registration_notice: "Gwez e ret eo dit paeañ ur c'houtouenn evit dont da vezañ ur Binioufous gwir, pe ma fell dit implij hor partiturioù evit seniñ sonerezh gant meur a vouezh"
+    pay_subscription: "PAEAÑ UR C'HOUTOUENN EVIT UR BLOAZ"
+    submit: "Kevredañ !!"
+
+desk:
+    add_picture: "Lakaat ur skeudenn !"
+    hello: "Salud %nickname% !"
+    pending_validation: "Bezit pasiant !! Ret eo d'ur melestrour kadarnaat ho kont..."
+    pending_count: "%count% kadarnadenn(où) o gortoz"
+    binioufous_heading: "Setu ar Binioufous !"
+    mailing_lists: "Rolloù postel out enskrivet enno"
+    favorite_songs: Tonioù karetañ
+    welcome_simple: "Donemat, implijer ker !!"
+    change_password: Cheñch da c'her-tremen
+    update_submit: Hizivaat
+    update_profile: "Hizivaat da brofil !"
+    list:
+        admins_title: Ar Velestrourien
+        accountants_title: Ar Gontourien
+        binioufous_title: Ar Binioufous
+        members_title: An Izili
+        simples_title: An implijerien eeun
+
+music:
+    title: Roll an tonioù
+    mobile_note: "Gwel eeunaet evit ar pellgomz : an handelv klok gant an endro 3D a c'hortoz ac'hanout war urzhiataer."
+    upload: Kas
+    loop: Adseniñ
+    by: gant
+    no_records: n'eus bet kavet ton ebet
+    voice_label: "Mouezh :"
+    download: pellgargañ
+    no_links: n'eus bet kavet liamm ebet
+    members_prompt: "Evit an izili nemetken, evit dibrennañ ar pellgargadurioù :"
+    new_title: Ton nevez
+    create_heading: Krouiñ un ton nevez
+    back_to_list: distro d'ar roll
+    edit_title: Kemmañ an ton
+    edit_heading: Kemmañ an ton
+    update_submit: Hizivaat
+    save_submit: Enrollañ
+    confirm_delete: "Sur out da zilemel an dra-mañ ?"
+    delete: Dilemel
+    track_title: Ton
+    artist: Arzour
+    duration: Padelezh
+    edit_link: kemmañ
+    zoom_label: "Zoumañ war stumm an don"
+    play_label: Seniñ
+    pause_label: Ehan
+    stop_label: Paouez
+    player_region: "C'hoarier son"
+
+Id: Id
+
+Administrator: Melestrour
+Accountant: Kontour
+Binioufous: Binioufous
+Simple: Eeun
+User: Implijer
+
+admin:
+    compta_title: Kontabilite
+    compta_hello: "Salud %name% !"
+    compta_welcome: "Donemat war bajenn ar gontabilite !!"
+    compta_wip: "Mat eo, un tammig labour c'hoazh a-raok implij anezhi"
+    validation_title: Kadarnadenn
+    pending_requests_title: Goulennoù kadarnadenn o gortoz
+    wished_role: Roll c'hoantet
+    created_at: Krouet d'an
+    back_to_lists: Distro d'ar rolloù
+    contact: Darempred
+    make_admin: Lakaat an implijer-mañ da velestrour
+    make_accountant: Lakaat an implijer-mañ da gontour
+    confirm_make_admin: "Lakaat an implijer-mañ da velestrour ?"
+    confirm_make_accountant: "Lakaat an implijer-mañ da gontour ?"
+    roles: Rolloù
+    validate: Kadarnaat
+    wish: C'hoant
+    date_of_birth: Deiz-ha-bloaz
+    edit_user_aria: "Kemmañ profil %name%"
+    validate_user_aria: "Kadarnaat enskrivadur %name%"
+    remove_role_aria: "Lemel ar roll « %role% »"
+    confirm_remove_role: "Lemel ar roll « %role% » ?"
+    edit_profile_section: "Kemmañ ar profil"
+
+Name: Anv
+Picture: Skeudenn
+City: Kêr
+Instrument: Benveg
+Actions: Oberoù
+Country: Bro
+"no picture": "skeudenn ebet"
+
+"Your gender": Da genrouez
+"(sorry for that)": "(digarez evit se)"
+Male: Paotr
+Female: Plac'h
+"Still looking for...": "C'hoazh o klask..."
+"First Name": Anv-bihan
+"Your first name": Da anv-bihan
+"Last Name": Anv-familh
+"Your last name": Da anv-familh
+Nickname: Lesanv
+"Your nickname": Da lesanv
+"choose your artist's name": "dibab da anv arzour"
+"Your artist's name": "Da anv arzour"
+Email: Imel
+"Your email address": Da chomlec'h imel
+Password: "Ger-tremen"
+"Choose a strong one": "Dibab unan kreñv"
+"Confirm Password": "Kadarnaat ar ger-tremen"
+"Please confirm your password": "Kadarnaat da c'her-tremen"
+"Your country": Da vro
+"choose your counrty": "dibab da vro"
+"choose your country": "dibab da vro"
+"Your city": Da gêr
+"The city you live in, bro !": "Ar gêr ma chomez enni, mignon !"
+"The date of your birth": Da zeiz-ha-bloaz
+"To whish your Birthday, of course !!": "Evit hetiñ da deiz-ha-bloaz, sur !!"
+"The date of your Birth": Da zeiz-ha-bloaz
+"To wish your Birhtday, of course": "Evit hetiñ da deiz-ha-bloaz, sur"
+"You want to be": "Fellout a ra dit bezañ"
+"the place you have in the team": "da lec'h er skipailh"
+"A real Binioufous !!": "Ur Binioufous gwir !!"
+"A Binioufous, but I cannot come to the rehearsals...": "Ur Binioufous, met ne c'hellan ket dont d'ar c'hlaskerezhioù..."
+"A big Fan !!": "Ur mirour bras !!"
+"A picture of you (jpeg)": "Ur skeudenn ac'hanout (jpeg)"
+"A picture of you (jpg)": "Ur skeudenn ac'hanout (jpg)"
+"Last password": "Ger-tremen kozh"
+"Insert your password": "Skriv da c'her-tremen"
+"New password": "Ger-tremen nevez"
+"Confirm password": "Kadarnaat ar ger-tremen"
+Title: Titl
+"title of the file": "titl ar restr"
+Minutes: Munutennoù
+Seconds: Eilennoù
+"track (mp3 file)": "ton (restr mp3)"

@@ -1,21 +1,38 @@
-{% extends 'popup.html.twig' %}
+{# Fragment inclus dans join/index.html.twig via le composant form-dialog.
+   Contient les champs du formulaire de connexion (pas la structure form/dialog). #}
+{% if hasError %}
+    <div class="alert alert-danger" role="alert" aria-live="polite">
+        {{ 'join.login_error'|trans }}
+    </div>
+{% endif %}
 
-{% block title %}Login{% endblock %}
+<div class="form-group">
+    <label for="email">{{ 'Email'|trans }}</label>
+    <input
+        type="email"
+        name="_username"
+        id="email"
+        class="form-control"
+        placeholder="{{ 'join.email_placeholder'|trans }}"
+        autocomplete="email"
+        required
+        value="{{ username }}"
+    >
+</div>
 
-{% block body %}    
-    <h4>Log in buddy !!</h4>
-    {% if hasError %}
-        <div class="alert alert-danger">You made a mistake...</div>
-    {% endif %}
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="text" name="_username" id="email" class="form-control" placeholder="Your email..." required value = "{{username}}">
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="_password" id="password" placeholder="Your password..." class="form-control" required>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success">Connexion !</button>
-        </div>
-{% endblock %}
+<div class="form-group">
+    <label for="password">{{ 'Password'|trans }}</label>
+    <input
+        type="password"
+        name="_password"
+        id="password"
+        placeholder="{{ 'join.password_placeholder'|trans }}"
+        class="form-control"
+        autocomplete="current-password"
+        required
+    >
+</div>
+
+<div class="form-group">
+    <button type="submit" class="btn btn-success">{{ 'join.login_submit'|trans }}</button>
+</div>

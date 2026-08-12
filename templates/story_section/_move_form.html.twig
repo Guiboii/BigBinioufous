@@ -1,0 +1,7 @@
+{% set route = direction == 'up' ? 'story_section_move_up' : 'story_section_move_down' %}
+{% set icon = direction == 'up' ? 'ri-arrow-up-line' : 'ri-arrow-down-line' %}
+{% set label = direction == 'up' ? 'story_admin.move_up_aria'|trans({'%title%': section.title}) : 'story_admin.move_down_aria'|trans({'%title%': section.title}) %}
+<form method="post" action="{{ path(route, {id: section.id}) }}" class="btn-form">
+    <input type="hidden" name="_token" value="{{ csrf_token('move' ~ section.id) }}">
+    <button class="btn btn-green" aria-label="{{ label }}"{% if disabled %} disabled{% endif %}><i class="{{ icon }}" aria-hidden="true"></i></button>
+</form>

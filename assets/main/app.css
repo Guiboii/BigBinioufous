@@ -1,16 +1,47 @@
-body {
-    background-color: #F2B233;
+:root {
+    --bb-gold: #F2B233;
+    --bb-gold-rgb: 242, 178, 51;
+    --bb-gold-pale: #FBDB7C;
+    --bb-green-deep: #0F352C;
+    --bb-green-mid: #1F6652;
+    --bb-red: #BC2727;
+    --bb-red-dark: #9E0000;
+    --bb-ink: #16140F;
+    --bb-white: #FFFFFF;
+    --bb-border-dark: #23272B;
+    /* Ombre douce partagée par toute la famille "carte" du gestionnaire de
+       fichiers (formulaire nouveau dossier, zone de dépôt, cartes du hub,
+       bannière de déplacement, panneau mobile de .navbar-admin) : un seul
+       réglage pour donner du relief cohérent à tous ces blocs plutôt que
+       des aplats de couleur juxtaposés sans hiérarchie. */
+    --bb-shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
-.device-orientation {
+body {
+    background-color: var(--bb-gold);
+}
+
+/* Skip link : 1er élément focusable de la page (cf. templates/base.html.twig),
+   invisible tant qu'il n'a pas le focus clavier (hors écran plutôt que
+   display:none, pour rester atteignable par Tab), visible et à fort contraste
+   dès qu'il est focus. Permet de sauter la navbar/scène 3D pour aller direct
+   au contenu (#main-content). */
+.skip-link {
     position: absolute;
-    z-index: 1200;
-    color: #F2B233;
-    font-size: 3.5em;
-    width: 100%;
-    top: 25%;
-    text-align: center;
+    z-index: 2000;
+    top: -3rem;
+    left: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--bb-ink);
+    color: var(--bb-white);
     font-weight: bold;
+    border-radius: 0 0 8px 8px;
+    transition: top 0.15s ease;
+}
+.skip-link:focus {
+    top: 0;
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
 }
 
 .avatar {
@@ -24,54 +55,60 @@ body {
     max-height: 64px;
 }
 
-.badge-green {
-    color: #F2B233;
-    background-color: #1f6652;
-}
+/* Avant : --bb-gold sur --bb-red ne tenait que 3.24:1, sous le minimum AA
+   (4.5:1), seul usage de cette classe (bouton "Payer une cotisation",
+   templates/join/registration.html.twig). Blanc (6.07:1, AA), même
+   correctif que celui déjà appliqué sur #joinForm/#loginForm pour la même
+   paire de couleurs (cf. assets/login/join.css). */
 .badge-red {
-    color: #F2B233;
-    background-color: #BC2727;
+    color: var(--bb-white);
+    background-color: var(--bb-red);
 }
 
 .btn-link, a,
 .btn-link:hover, a:hover {
-    color: #1F6652;
+    color: var(--bb-green-mid);
     border-radius: 25px;
 }
+/* Texte blanc (pas vert) sur fond rouge : même bug de contraste (~1.45:1)
+   que celui corrigé sur la navbar, ici sur les boutons "refuser" du desk/admin */
 .btn-red {
-    color: #298b70;
+    color: var(--bb-white);
     font-weight: bold;
     border-radius: 25px;
-    background: #BC2727;
+    background: var(--bb-red);
     width: fit-content;
 }
 .btn-red:hover{
-    color: #F2B233;
-    background: #9e0000;
+    color: var(--bb-white);
+    background: var(--bb-red-dark);
+}
+/* Focus clavier jamais différencié du hover jusqu'ici (rien ne le stylait du
+   tout, donc focus Bootstrap par défaut sur .btn : outline:0 + halo bleu peu
+   contrasté). --bb-ink : ces boutons sont posés sur fond clair ici (fond
+   --bb-gold du body, lignes de tableau blanches, .card blanche), contrairement
+   à .login/.join (fond sombre de la scène 3D) qui utilisent du blanc :
+   ink/gold 9.81:1, ink/blanc 18.4:1 (AAA dans les deux cas). */
+.btn-red:focus-visible,
+.btn-green:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
 }
 
+/* Texte blanc (pas rouge) sur fond vert : même bug, sur les boutons "valider" */
 .btn-green {
-    color: #BC2727;
+    color: var(--bb-white);
     font-weight: bold;
     border-radius: 25px;
-    background: #298b70;
+    background: var(--bb-green-mid);
     width: fit-content;
 }
 .btn-green:hover{
-    color: #F2B233;
-    background: #1F6652;
-}
-.bg-green {
-    background:  #1F6652;;
-}
-.bg-red {
-    background:  #9e0000;;
-}
-.bg-red-light{
-    background: #BC2727;
+    color: var(--bb-white);
+    background: var(--bb-green-deep);
 }
 .bg-yellow {
-    background:  #F2B233;;
+    background: var(--bb-gold);
 }
 
 .centered {
@@ -80,14 +117,23 @@ body {
     justify-content: center;
 }
 
+/* .text-green : utilitaire de couleur posé directement sur le fond
+   --bb-gold du body (headers de pages publiques, liens "retour" d'admin...),
+   pas sur .navbar-collapse/#loginForm/#joinForm où --bb-green-mid/--bb-red
+   sont par ailleurs déjà bien contrastés. L'ancienne couleur
+   (--bb-green-vivid, retirée : plus aucun usage une fois .text-green
+   corrigé) sur --bb-gold ne tenait que 2.77:1, sous le minimum AA (4.5:1
+   texte normal) : --bb-green-deep, déjà présent dans la palette (:root),
+   tient 7.15:1 (AAA).
+   .text-redwall (--bb-red-dark sur --bb-gold, 4.56:1 AA) retiré : plus
+   aucun usage une fois l'avertissement de /register passé dans une carte
+   ink+gold (.registration-notice) au lieu du fond doré du body directement,
+   cf. join/registration.html.twig. */
 .text-green {
-    color:  #257a62;
-}
-.text-redwall {
-    color:  #BC2727;
+    color: var(--bb-green-deep);
 }
 .text-yellow {
-    color:  #F2B233;
+    color: var(--bb-gold);
 }
 
 #c {
@@ -135,7 +181,7 @@ canvas {
     width: 100%;
     height: 100%;
     display: block;
-    background: #9E0000;
+    background: var(--bb-red-dark);
 }
 
 .isloaded{
@@ -146,7 +192,7 @@ canvas {
     width: 100%;
     height: 0%;
     display: block;
-    background: #9E0000;
+    background: var(--bb-red-dark);
     -webkit-transition-property: background-color height;
     -webkit-transition-duration: 0.3s;
     -webkit-transition-delay: 0.5s;
@@ -158,26 +204,8 @@ canvas {
 }
 
 .list-group-item.active {
-    background-color: #1F6652;
-    border-color: #1F6652;
-}
-
-#joinForm, #loginForm {
-    position: absolute;
-    z-index: 900;
-    background: #BC2727;
-    width: 440px;
-    text-align: center;
-    top: 50%;
-    left: 50%;
-    margin-top: -200px;
-    margin-left: -170px;
-    padding: 2% 4%;
-    border: 5px solid #23272b;
-}
-
-#loginForm {
-    background: #1f6652;
+    background-color: var(--bb-green-mid);
+    border-color: var(--bb-green-mid);
 }
 
 #contactForm {
@@ -185,64 +213,446 @@ canvas {
     z-index: 1100;
     width: 790px;
     height: 400px;
-    background: #1f6652;
+    background: var(--bb-green-mid);
     left: 50%;
     margin-left: -290px;
     top: 23px;
 }
 
 form {
-    background: #1f6652;
+    background: var(--bb-green-mid);
     text-align: left;
-    color: #F2B233;
+    color: var(--bb-gold);
     padding: 2% 4%;
-    border: 5px solid #23272b;
+    border: 5px solid var(--bb-border-dark);
 }
 
-.login, .join {
-    position: absolute;
-    z-index: 900;
-    top: 50%;
-    width: 150px;
+/* .login/.join et #joinForm/#loginForm déménagés dans assets/login/join.css
+   (même convention que Musique/Histoire/Planning : une page avec sa propre
+   scène 3D a son propre fichier). */
+
+/* Même bug de contraste que #joinForm/#loginForm (déjà corrigé dans
+   assets/login/join.css) mais jamais vérifié ici : tout <form> "nu" (profil,
+   mot de passe, validation/promotion d'utilisateur, gestion du planning,
+   dans templates/desk|admin|event/) hérite du doré (--bb-gold) sur fond
+   --bb-green-mid de la règle "form" générique ci-dessus, 3.63:1, sous le
+   minimum AA (4.5:1) pour du texte normal (labels générés par
+   form_widget(form)). Blanc (6.82:1, AAA) plutôt que --bb-gold, comme sur
+   #joinForm/#loginForm. Scopé à body.desk (cf. templates/desk/base.html.twig)
+   pour ne pas toucher les <form> de story/music/join, hors périmètre de
+   cette passe et déjà audités/stylés séparément. */
+body.desk form {
+    color: var(--bb-white);
+}
+/* Messages d'erreur de validation (.invalid-feedback, injectés par
+   bootstrap_4_layout.html.twig quand un champ est invalide) : couleur rouge
+   Bootstrap par défaut (#dc3545) ne tient qu'1.51:1 sur ce fond vert, quasi
+   invisible. --bb-gold-pale (déjà utilisé ailleurs dans la palette, ex.
+   icônes de la navbar publique) tient 5.04:1 (AA) et reste visuellement
+   distinct du blanc des labels ; le texte de l'erreur lui-même (pas la
+   couleur seule) reste le vecteur principal de l'info pour un lecteur
+   d'écran. */
+body.desk form .invalid-feedback {
+    color: var(--bb-gold-pale);
+}
+/* .btn-green a exactement la même couleur de fond que le <form> desk/admin
+   qui le contient (--bb-green-mid des deux côtés) : le bouton "Valider"/
+   "Enregistrer" était totalement invisible, aucune limite visuelle avec le
+   fond (repéré sur admin/user/show.html.twig, addadmin.html.twig,
+   addaccountant.html.twig, valid.html.twig, desk/profile.html.twig).
+   Bordure blanche pour le détacher (6.82:1 sur --bb-green-mid, même calcul
+   que body.desk form ci-dessus) plutôt que de changer sa couleur de fond :
+   reste dans la palette rouge/vert/or déjà en place, pas de 3e teinte. */
+body.desk form .btn-green {
+    border: 2px solid var(--bb-white);
+}
+
+/* Aide-mémoire Markdown du formulaire de section Histoire
+   (templates/story_section/_form.html.twig) : le <form> parent est déjà en
+   texte blanc sur fond --bb-green-mid (body.desk form ci-dessus, 6.82:1),
+   l'encart se distingue par un fond plus sombre superposé plutôt qu'une
+   nouvelle teinte. --bb-gold-pale sur ce fond composité tient 8.35:1 (AAA,
+   calcul de luminance relative). */
+.markdown-help {
+    margin-bottom: 1rem;
+    padding: 0.85rem 1rem;
+    background: rgba(0, 0, 0, 0.18);
+    border-left: 4px solid var(--bb-gold);
+    border-radius: 6px;
+}
+.markdown-help-title {
+    margin: 0 0 0.5rem;
+    font-weight: bold;
+}
+.markdown-help ul {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+.markdown-help li {
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+}
+.markdown-help code {
+    padding: 0.1rem 0.35rem;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 4px;
+    color: var(--bb-gold-pale);
+    font-family: "Courier New", monospace;
+}
+
+/* Barre d'outils EasyMDE (story-admin.js) : la lib ne fixe aucun fond sur
+   .editor-toolbar (hérite donc du vert du <form> générique, body.desk form
+   ci-dessus) ni de couleur sur ses boutons (noir par défaut du navigateur,
+   ~3:1 sur ce fond, sous AA). Fond assombri façon "barre d'outils" distincte
+   du form (--bb-green-deep, 13.4:1 avec le blanc, même calcul que les
+   usages existants de cette paire plus haut dans ce fichier), icônes en
+   blanc. Survol/état actif en --bb-green-mid + bordure blanche plutôt qu'un
+   fond quasi blanc par défaut de la lib, qui aurait rendu l'icône blanche
+   invisible dessus. */
+.editor-toolbar {
+    background: var(--bb-green-deep);
+    border-color: var(--bb-green-mid);
+}
+.editor-toolbar button {
+    color: var(--bb-white);
+}
+.editor-toolbar button:hover,
+.editor-toolbar button.active {
+    background: var(--bb-green-mid);
+    border-color: var(--bb-white);
+}
+.editor-toolbar i.separator {
+    border-left-color: var(--bb-white);
+    opacity: 0.4;
+}
+.editor-preview {
+    color: var(--bb-ink);
+}
+
+/* Titre de page unique et cohérent dans tout le desk/admin/event (retour
+   utilisatrice du 2026-08-11 : "aucun titre pareil", chaque page utilisait
+   un niveau différent - h1/h3/h4 - avec le style par défaut du navigateur
+   pour chaque niveau, donc une taille différente à chaque fois). Un seul
+   <h1> par page désormais (cf. templates concernés), stylé avec la police
+   d'affichage de la marque (Bungee, déjà chargée sur les pages publiques
+   via templates/base.html.twig, ajoutée à templates/desk/base.html.twig)
+   plutôt que la police système par défaut. */
+body.desk h1 {
+    font-family: "Bungee", "Arial Black", sans-serif;
+    color: var(--bb-red-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 1.6rem;
+}
+/* Sous-titres de section (ex. "Les Administrateurices" sur /desk) : h2,
+   même famille que h1 pour rester dans la même identité typographique,
+   mais plus petit et sans la couleur vive pour marquer la hiérarchie. */
+body.desk h2 {
+    font-family: "Bungee", "Arial Black", sans-serif;
+    color: var(--bb-ink);
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+}
+
+/* Un panneau encre (--bb-ink) avait été tenté ici pour remplacer le blanc
+   Bootstrap par défaut du .card (admin/user/show|addadmin|addaccountant),
+   toujours jugé "horrible" par l'utilisatrice ensuite : aucune autre page
+   du site n'a de grande surface noire, --bb-ink n'y sert qu'à du texte/un
+   petit fond (skip-link, cadre d'avatar). Les 3 templates concernés ne
+   posent plus ce wrapper .card du tout : le bouton "promouvoir" est un
+   simple bouton sur le fond doré de la page (comme "Retour aux listes"
+   juste au-dessus), et le formulaire d'édition garde sa boîte verte
+   naturelle (règle "form" générique plus bas), exactement comme sur
+   desk/profile.html.twig. */
+
+/* Même souci que ci-dessus (case verte/noire imbriquée), repéré cette fois sur les mini
+   <form> d'action (supprimer un événement, refuser une inscription :
+   uniquement des champs cachés + un bouton icône) : la règle "form"
+   générique leur collait quand même son fond vert + sa bordure épaisse
+   derrière un simple bouton, "horrible" selon l'utilisatrice une fois
+   l'icône seule (sans texte pour meubler visuellement la boîte). Remplace
+   le style="display:inline-block" qui était sur ces <form>. */
+body.desk .btn-form {
+    display: inline-block;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Message flash ("Inscription refusée", "Profil enregistré"...) jugé moche
+   par l'utilisatrice : rendu Bootstrap par défaut (fond vert pâle générique,
+   texte vert foncé), hors palette. Même logique que .card plus haut : fond
+   uni de la marque + liseré au lieu du gris/vert neutre de Bootstrap.
+   13.4:1 blanc sur --bb-green-deep (AAA). Seul alert-success existe
+   actuellement dans ce périmètre (tous les addFlash() du desk/admin sont
+   'success'), pas besoin de couvrir les autres variantes Bootstrap ici. */
+body.desk .alert-success {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bb-green-deep);
+    color: var(--bb-white);
+    border: none;
+    border-left: 5px solid var(--bb-gold);
+    border-radius: 10px;
+    font-weight: bold;
+}
+body.desk .alert-success i {
+    font-size: 1.4rem;
+    color: var(--bb-gold);
+}
+body.desk .alert-success p {
+    margin: 0;
+}
+
+/* "Ajoute une photo !" (avatar par défaut sur /desk) jugée "raplapla" par
+   l'utilisatrice : c'était un simple .btn-red étroit (largeur fit-content)
+   avec le texte qui retombait mot par mot dans la colonne .col-1 étroite
+   qui le contient. Reprend la taille de l'avatar réel qu'il remplace
+   (.avatar-medium, 64px) en zone de dépôt façon dropzone (bordure
+   pointillée) plutôt qu'un bouton texte, pour avoir la même présence
+   visuelle que la photo une fois ajoutée. */
+body.desk .add-picture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    width: 64px;
+    height: 64px;
+    padding: 0.5rem;
+    border-radius: 16px;
+    border: 3px dashed var(--bb-red-dark);
+    background: rgba(158, 0, 0, 0.08);
+    color: var(--bb-red-dark);
+    font-weight: bold;
+    font-size: 0.7rem;
+    line-height: 1.1;
     text-align: center;
-    left: 50%;
-    margin-left: -75px;
+}
+body.desk .add-picture i {
+    font-size: 1.4rem;
+}
+body.desk .add-picture:hover,
+body.desk .add-picture:focus-visible {
+    background: var(--bb-red);
+    border-color: var(--bb-white);
+    color: var(--bb-white);
 }
 
-.login {
-    margin-left: -25%;
+/* Fiche utilisateur (admin/user/show|addadmin|addaccountant|valid.html.twig)
+   jugée "trop trop moche" par l'utilisatrice : en-tête refait en vrai bandeau
+   d'identité (avatar dans un cadre doré, nom + sous-titre instrument/ville,
+   actions "retour"/"contacter" en icônes plutôt qu'en gros boutons texte de
+   part et d'autre), rôles en pastilles plutôt qu'en lignes de tableau. */
+body.desk .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
 }
-.join {
-    margin-left: 15%;
+body.desk .profile-identity {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+}
+/* Fond encre jugé "nul" par l'utilisatrice ("j'en veux du vert au moins"),
+   même redite du panneau noir déjà retiré ailleurs : --bb-green-mid comme
+   les pastilles de rôle juste en dessous, plutôt qu'une 2e couleur neutre
+   inventée. Blanc plutôt que doré-pâle sur ce fond (6.81:1, AAA, même
+   calcul que le texte des pastilles de rôle). */
+body.desk .profile-avatar-frame {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 3px solid var(--bb-gold);
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+body.desk .profile-avatar-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+body.desk .profile-name {
+    margin: 0;
+    text-align: left;
+}
+body.desk .profile-subtitle {
+    margin: 0.15rem 0 0;
+    color: var(--bb-ink);
+    font-weight: bold;
+    opacity: 0.75;
+}
+/* Boutons "retour"/"contacter" en icône seule dans l'en-tête : même taille
+   carrée que les boutons icône des tableaux (body.desk .table .btn-*
+   ci-dessus), répétée ici explicitement car en dehors d'un .table. */
+body.desk .profile-header > .btn-red,
+body.desk .profile-header > .btn-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    flex-shrink: 0;
 }
 
-a.login:hover {
-    background-color: #BC2727;
+body.desk .role-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+body.desk .role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    /* Padding asymétrique à l'origine (moins à droite, pour "laisser la
+       place" au bouton poubelle) : ça se voit trop sur "Utilisateur·rice",
+       seule pastille sans bouton (ROLE_USER, jamais une vraie assignation
+       retirable), le bord droit paraissait plus serré que le gauche.
+       Symétrique désormais, quel que soit le contenu de la pastille. */
+    padding: 0.4rem 1rem;
     border-radius: 25px;
+    font-weight: bold;
 }
-a.join:hover {
-    background-color: #F2B233;
-    border-radius: 25px;
+body.desk .role-badge .btn-red {
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 
+
+/* Scrollbar cohérente avec le reste du site (retour utilisatrice du
+   2026-08-11) : Histoire/Musique/Planning ont chacune une scrollbar
+   thématisée (cf. assets/story/minisite.css, assets/music/music.css,
+   assets/schedule/schedule.css), desk/admin/event utilisait encore la
+   scrollbar grise par défaut du navigateur. Doré pâle sur transparent,
+   même choix que Musique (déjà validé sur un fond sombre comparable aux
+   panneaux .card ci-dessus).
+   Ciblé sur html.desk plutôt que body.desk (1er essai du 2026-08-11, resté
+   sans effet visible) : la scrollbar de la fenêtre est pilotée par
+   l'élément racine <html>, pas <body>, tant que <body> n'a pas son propre
+   overflow ; assets/story/minisite.css contourne ça en stylant "*" (tous
+   les éléments d'un coup), ici la classe "desk" est posée sur <html> en
+   plus de <body> (templates/desk/base.html.twig) pour cibler précisément
+   la bonne scrollbar sans styler tout le document. */
+html.desk {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bb-gold-pale) transparent;
+    /* Sans ça, la place réservée à la scrollbar verticale n'existe que sur
+       les pages assez hautes pour vraiment défiler : la navbar (position:
+       fixed, cf. plus bas) et tout le contenu se décalaient de quelques px
+       à chaque changement de page selon qu'il y avait ou non une scrollbar,
+       repéré par l'utilisatrice le 2026-08-11. scrollbar-gutter réserve
+       cet espace en permanence, scrollbar visible ou non. */
+    scrollbar-gutter: stable;
+}
+html.desk::-webkit-scrollbar {
+    width: 10px;
+}
+html.desk::-webkit-scrollbar-track {
+    background: transparent;
+}
+html.desk::-webkit-scrollbar-thumb {
+    background-color: var(--bb-gold-pale);
+    border-radius: 8px;
+}
+html.desk::-webkit-scrollbar-thumb:hover {
+    background-color: var(--bb-gold);
+}
+
+/* Boutons icône seule (modifier/valider/retirer un rôle dans les tableaux)
+   à une taille tantôt "ronde", tantôt écrasée selon le contenu autour
+   ("les boutons ça part en couille", retour utilisatrice du 2026-08-11) :
+   taille fixe et centrage de l'icône pour que toutes les actions d'un
+   tableau se ressemblent, quel que soit le texte des colonnes voisines. */
+body.desk .table .btn-red,
+body.desk .table .btn-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+}
+
+/* Les 5 tableaux de /desk (admins/comptables/binioufous/membres/simples,
+   templates/desk/lists/*.twig) sont 5 <table> séparées avec les mêmes
+   colonnes (Nom/Photo/Pays/Ville/Instrument/Actions) : en layout auto (par
+   défaut), chaque table calcule ses largeurs de colonne indépendamment
+   selon SON propre contenu, donc la colonne "Actions" (et les autres) ne
+   tombe pas à la même position d'une table à l'autre malgré des colonnes
+   identiques (retour utilisatrice du 2026-08-11 : "action des tableaux pas
+   alignés"). table-layout: fixed + mêmes largeurs en % sur toutes forcent
+   un alignement réel colonne par colonne, plutôt qu'une coïncidence liée au
+   contenu. */
+body.desk .table {
+    table-layout: fixed;
+    width: 100%;
+}
+body.desk .table th:nth-child(1),
+body.desk .table td:nth-child(1) {
+    width: 22%;
+}
+body.desk .table th:nth-child(2),
+body.desk .table td:nth-child(2) {
+    width: 18%;
+}
+body.desk .table th:nth-child(3),
+body.desk .table td:nth-child(3) {
+    width: 16%;
+}
+body.desk .table th:nth-child(4),
+body.desk .table td:nth-child(4) {
+    width: 16%;
+}
+body.desk .table th:nth-child(5),
+body.desk .table td:nth-child(5) {
+    width: 16%;
+}
+body.desk .table th:nth-child(6),
+body.desk .table td:nth-child(6) {
+    width: 12%;
+}
+/* table-layout: fixed ne fait plus rétrécir automatiquement une colonne
+   pour un mot très long (ex. "South Georgia and the South Sandwich
+   Islands") : autorise le retour à la ligne plutôt qu'un débordement hors
+   de la cellule. */
+body.desk .table td {
+    overflow-wrap: break-word;
+}
+
+/* Texte blanc au survol (pas gold/rouge) : même bug de contraste que sur la
+   navbar, ici sur les CTA "payer l'adhésion" / "s'abonner" */
 .red-hover:hover {
-    background-color: #BC2727;
+    background-color: var(--bb-red);
     border-radius: 5px;
-    color: #F2B233;
+    color: var(--bb-white);
     padding: 6px 12px;
 }
 
 .green-hover:hover {
-    background-color: #1f6652;
+    background-color: var(--bb-green-mid);
     border-radius: 5px;
-    color: #BC2727;
-    padding: 6px 12px;
-}
-
-.yellow-hover:hover {
-    background-color: #F2B233;
-    border-radius: 5px;
-    color: #1F6652;
+    color: var(--bb-white);
     padding: 6px 12px;
 }
 
@@ -261,101 +671,1280 @@ a.join:hover {
 }
 
 .navbar.mini {
-    background: #0f352c;
+    background: var(--bb-green-deep);
     width: 100%;
 }
 
+/* Badge rond du bouton hamburger, façon peau de caisse claire */
+.navbar-toggler {
+    position: relative;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 54px;
+    height: 54px;
+    background: var(--bb-gold);
+    border: 3px solid var(--bb-ink);
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.navbar-toggler:hover {
+    transform: scale(1.06);
+}
+.navbar-toggler[aria-expanded="true"] {
+    background: var(--bb-green-mid);
+    border-color: var(--bb-gold);
+}
+@media (prefers-reduced-motion: reduce) {
+    .navbar-toggler {
+        transition: none;
+    }
+}
+
 .navbar-collapse {
-    top: 10%;
-    left: 10%;
-    background: #fbdb7c;
-    border: 5px solid #1f6652;
-    padding: 5% 10%;
-    width: 80%;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90%, 440px);
+    max-height: 82vh;
+    overflow-y: auto;
+    background: var(--bb-green-mid);
+    border: 3px solid var(--bb-gold);
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    padding: 2.5rem 2rem;
     position: fixed;
     z-index: 1000;
     text-align: center;
 }
+
+/* Liens de la navbar principale : or sur vert, jamais de rouge sur vert.
+   Neutralise aussi l'ancienne règle globale "li.nav-item:hover" (fond rouge)
+   plus bas dans ce fichier, qui sinon transparaissait derrière le lien au survol. */
+.navbar-collapse .navbar-nav .nav-item {
+    background: transparent;
+    border-radius: 0;
+}
+.navbar-collapse .navbar-nav .nav-item + .nav-item {
+    border-top: 1px solid rgba(var(--bb-gold-rgb), 0.25);
+}
+.navbar-collapse .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: 8px;
+    background: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.navbar-collapse .nav-link i {
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--bb-gold-pale);
+    transition: color 0.15s ease;
+}
+.navbar-collapse .nav-link h2 {
+    margin: 0;
+    font-family: "Bungee", "Arial Black", sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--bb-gold-pale);
+}
+/* Page courante : même traitement visuel que :hover/:focus-visible (fond
+   doré, texte/icône vert foncé), ciblé sur aria-current="page" (posé côté
+   Twig d'après la route active, cf. templates/partials/header.html.twig)
+   plutôt que l'ancienne classe .active jamais posée nulle part côté
+   template (règle morte jusqu'ici). */
+.navbar-collapse .nav-link:hover,
+.navbar-collapse .nav-link:focus-visible,
+.navbar-collapse .nav-link[aria-current="page"] {
+    background: var(--bb-gold);
+}
+.navbar-collapse .nav-link:hover i,
+.navbar-collapse .nav-link:hover h2,
+.navbar-collapse .nav-link:focus-visible i,
+.navbar-collapse .nav-link:focus-visible h2,
+.navbar-collapse .nav-link[aria-current="page"] i,
+.navbar-collapse .nav-link[aria-current="page"] h2 {
+    color: var(--bb-green-deep);
+}
+.navbar-collapse .nav-link:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Sur téléphone : uniquement les icônes, le libellé reste lisible par les
+   lecteurs d'écran (technique sr-only) mais n'est plus affiché à l'écran. */
+@media (max-width: 576px) {
+    .navbar-collapse .nav-link i {
+        font-size: 1.5rem;
+    }
+    .navbar-collapse .nav-link h2 {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+}
+
+/* Sélecteur de langue : 3 liens simples, pas de <select> (chrome natif du
+   navigateur non stylable, cause du rendu incohérent avec le reste). */
+.navbar-collapse .lang-switcher {
+    margin-top: 0;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(var(--bb-gold-rgb), 0.25);
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.navbar-collapse .lang-link {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--bb-gold-pale);
+    border: 1px solid transparent;
+}
+.navbar-collapse .lang-link:hover,
+.navbar-collapse .lang-link:focus-visible {
+    border-color: var(--bb-gold-pale);
+}
+.navbar-collapse .lang-link.active {
+    background: var(--bb-gold);
+    color: var(--bb-green-deep);
+}
+
+.navbar-collapse .navbar-text {
+    display: block;
+    margin-top: 1.5rem;
+    font-style: italic;
+    color: var(--bb-gold-pale);
+    opacity: 0.85;
+}
+
 .navbar-admin {
     width: 100%;
     z-index: 1000;
-    background: #BC2727;
+    background: var(--bb-red);
+}
+.navbar-admin .container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+/* Bouton hamburger : même badge rond que .navbar-toggler de la navbar
+   publique (assets/partials/header.html.twig), réutilisé tel quel pour
+   rester cohérent, cf. assets/main/app.js pour le JS de fermeture Escape
+   (généralisé aux 2 navbars, il n'y en a jamais qu'une seule par page). */
+.navbar-admin .navbar-toggler {
+    margin: 0.5rem 0;
+}
+/* .text-yellow (doré) sur ce fond rouge ne tenait que 3.24:1, sous le
+   minimum AA (4.5:1) : repassé en blanc (6.07:1) pour ce contexte précis,
+   sans toucher .text-yellow ailleurs (déjà vérifié correct sur /join). */
+.navbar-admin .text-yellow {
+    color: var(--bb-white);
+}
+/* Aucun focus visible dédié sur cette navbar jusqu'ici (contrairement à
+   .navbar-collapse .nav-link:focus-visible ci-dessus) : au clavier, le
+   focus Bootstrap par défaut sur un <a> est quasi invisible. Blanc plutôt
+   que --bb-ink (utilisé plus bas sur les boutons .btn-red/.btn-green
+   posés sur fond clair) : ici le fond est rouge, blanc/rouge tient 6.07:1
+   (même calcul que .navbar-admin .text-yellow ci-dessus), ink/rouge ne
+   tiendrait que 3.03:1. */
+.navbar-admin .nav-link:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+/* Page courante (aria-current="page", cf. templates/desk/partials/header.html.twig) :
+   aucun équivalent n'existait ici jusqu'ici (contrairement à .navbar-collapse
+   ci-dessus). Fond blanc + texte rouge foncé : même paire de couleurs déjà
+   validée sur ce même fond rouge (panneau mobile replié plus bas dans ce
+   fichier, --bb-red-dark sur blanc = 8.55:1 AAA), pas une nouvelle teinte. */
+.navbar-admin .nav-link[aria-current="page"] {
+    background: var(--bb-white);
+    color: var(--bb-red-dark);
+    border-radius: 8px;
+}
+.navbar-admin .nav-link[aria-current="page"] i {
+    color: var(--bb-red-dark);
+}
+/* Mobile (<768px) : vrai menu repliable (bouton hamburger + panneau
+   #navbarAdminNav, pattern "disclosure" WAI-ARIA, même mécanique que
+   .navbar-toggler de la navbar publique), plutôt que l'ancien correctif
+   flex-wrap qui empilait les 8 items + sélecteur de langue en 1 seule
+   colonne remplissant tout l'écran avant même le contenu de la page
+   (retour utilisatrice 2026-08-11 : "la navbar en mode tel... la aled").
+   #navbarAdminNav n'a volontairement PAS la classe .navbar-collapse : cette
+   classe porte déjà un style de carte flottante centrée pour la navbar
+   publique (cf. .navbar-collapse plus haut dans ce fichier), pas voulu ici
+   (panneau intégré au fil de la page, pas une popup). .collapse:not(.show)
+   { display:none } et .navbar-nav { display:flex; flex-direction:column }
+   viennent déjà de bootstrap.min.css (importé dans app.js), pas besoin de
+   les répéter ici. */
+@media (max-width: 767px) {
+    /* Panneau replié : un ton plus sombre (--bb-red-dark, 8.56:1 pour le
+       texte blanc, encore mieux que le 6.07:1 de la barre du haut) + coins
+       arrondis + ombre portée, pour qu'il se détache clairement du bouton
+       hamburger au-dessus au lieu de former un seul aplat rouge uni du haut
+       de l'écran jusqu'à "Déconnexion" (retour utilisatrice 2026-08-11).
+       Le halo rouge de 15px de .navbar-admin (padding de .container) reste
+       visible tout autour, façon cadre/passe-partout. */
+    .navbar-admin #navbarAdminNav {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.75rem 0.75rem 1.25rem;
+        background: var(--bb-red-dark);
+        border-radius: 12px;
+        box-shadow: var(--bb-shadow-soft);
+    }
+    .navbar-admin .nav-item.ml-auto {
+        margin-left: 0 !important;
+    }
+    /* Cible tactile confortable (WCAG 2.5.8, 44px visé plutôt que le
+       minimum 24px) : chaque item prend toute la largeur du panneau. */
+    .navbar-admin .nav-link {
+        min-height: 44px;
+        padding: 0.6rem 0.5rem;
+    }
+    .navbar-admin .lang-switcher {
+        justify-content: center;
+        padding: 0.6rem 0.5rem;
+    }
+}
+@media (min-width: 768px) {
+    .navbar-admin .navbar-toggler {
+        display: none;
+    }
+    .navbar-admin .collapse {
+        display: flex !important;
+        flex: 1;
+    }
+    .navbar-admin .navbar-nav {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+/* Sélecteur de langue : mêmes 3 liens que .navbar-collapse ci-dessus (pas
+   de <select>, chrome natif non stylable, cf. commentaire plus haut), sur
+   fond rouge ici plutôt que vert -> blanc au lieu de doré (6.07:1, même
+   calcul que .navbar-admin .text-yellow). */
+.navbar-admin .lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 0.75rem;
+}
+.navbar-admin .lang-link {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--bb-white);
+    border: 1px solid transparent;
+}
+.navbar-admin .lang-link:hover,
+.navbar-admin .lang-link:focus-visible {
+    border-color: var(--bb-white);
+}
+.navbar-admin .lang-link.active {
+    background: var(--bb-white);
+    color: var(--bb-red-dark);
+}
+
+/* Navbar fixe en haut demandée par l'utilisatrice ("le texte passe
+   derrière"), desktop seulement : en dessous de 768px .navbar-admin peut
+   déjà occuper plusieurs lignes (cf. reflow mobile ci-dessus), la fixer en
+   plus obligerait à réserver une hauteur de contenu imprévisible en haut
+   de chaque page (grand bandeau vide ou chevauchement selon le nombre de
+   lignes). #main-content récupère un padding-top équivalent à la hauteur
+   mesurée de la navbar (cf. méthode "mesure empirique" déjà utilisée sur
+   /story et /music, CLAUDE.md) pour ne rien cacher dessous au chargement. */
+@media (min-width: 768px) {
+    .navbar-admin {
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+    body.desk main {
+        padding-top: 58px;
+    }
 }
 
 .navbar .navbar-toggler svg {
-    width: 50px;
-    height: 50px;
-    color: white;
+    width: 24px;
+    height: 24px;
+    color: var(--bb-ink);
+}
+.navbar-toggler[aria-expanded="true"] svg {
+    color: var(--bb-gold);
 }
 
+/* Texte blanc explicite : sans ça le texte hérite du vert de la règle "a"
+   globale et devient illisible (vert sur vert) sur les pills actives du
+   planning et de la minisite histoire */
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    background: #1f6652;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
 }
 
+/* Même bug de contraste rouge/vert que sur l'ancienne navbar (~1.1:1),
+   ici sur le survol des pills planning/histoire : texte blanc à la place */
 li.nav-item.active, li.nav-item:hover,
 .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus,
 .navbar-dark .navbar-nav .show > .nav-link, .navbar-dark .navbar-nav .active > .nav-link, .navbar-dark .navbar-nav .nav-link.show, .navbar-dark .navbar-nav .nav-link.active {
-    color: #1f6652;
-    background-color: #BC2727;
+    color: var(--bb-white);
+    background-color: var(--bb-red);
     border-radius: 25px;
 }
 .navbar-dark .navbar-nav .nav-link {
-    color: #1f6652;
-    background: #BC2727;
+    color: var(--bb-white);
+    background: var(--bb-red);
 }
 
-.navbar-text {
-    color: #00000070;
-}
-
-#miniSite {
-    left: 50%;
-    margin-left: -290px;
-    top: 23px;
-}
-
+/* Aligné sur l'écran 3D de la page /story : la caméra Three.js est fixe
+   (pas d'orbit controls, cf. story.js) mais son aspect ratio suit la
+   fenêtre, donc l'écran affiché change de taille/position avec elle. Pas
+   de vraie projection 3D->2D ici (le mesh "Desk" n'a pas de sous-objet
+   "écran" isolé à cibler), juste un calibrage en unités de viewport
+   (mesuré précisément en pixels à 1280x800 puis converti en vw/vh) pour
+   suivre le redimensionnement au lieu d'une boîte figée en px : suit
+   raisonnablement bien la plupart des tailles d'écran, sans être
+   pixel-perfect à toutes les résolutions/ratios. */
 #miniSite {
     position: absolute;
     z-index: 900;
-    width: 790px;
-    height: 402px;
+    left: 21.8vw;
+    top: 1.6vh;
+    width: 76.4vw;
+    height: 63.9vh;
     background: transparent;
     overflow-y: scroll;
 }
 
-.scroll-wrapper.schedule {
-        margin: 56px 150px;
+/* Règles de /schedule déménagées dans assets/schedule/schedule.css (même
+   convention que music.css/story.css : une page avec sa propre scène 3D
+   a son propre fichier plutôt que de grossir ce fichier partagé). */
+
+/* Gestionnaire de fichiers /desk/music (templates/desk/music.html.twig,
+   assets/desk/quick-upload.js) : reprend le vocabulaire déjà en place sur
+   body.desk plutôt qu'un style à part (pastilles pleines --bb-green-mid
+   comme .role-badge, pas de grand panneau --bb-ink : jugé "moche"/"nul" sur
+   .card et .profile-avatar-frame par l'utilisatrice, cf. plus haut dans ce
+   fichier). Espacement vertical commun à tous les blocs de la page. */
+.desk-intro {
+    margin-bottom: 1rem;
+}
+.desk-breadcrumb,
+.desk-actions,
+.desk-folders,
+.desk-documents,
+.desk-empty,
+.desk-track {
+    margin-bottom: 1.5rem;
+}
+
+.desk-breadcrumb {
+    color: var(--bb-ink);
+    font-weight: bold;
+}
+.desk-breadcrumb ol {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.desk-breadcrumb li {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.desk-breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--bb-green-mid);
+}
+/* Maillon courant (aria-current="page") : texte simple, pas de lien vers
+   soi-même (cf. pattern WAI-ARIA breadcrumb). Couleur --bb-ink comme le
+   reste du fil, se distingue déjà des liens verts sans artifice en plus. */
+.desk-breadcrumb [aria-current] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.desk-breadcrumb-sep {
+    opacity: 0.6;
+}
+
+/* "Nouveau dossier" et la zone de dépôt : les 2 actions les plus probables
+   en arrivant dans un dossier, à poids visuel égal côte à côte sur desktop
+   (au lieu de l'ancien enchaînement vertical qui écrasait "Nouveau dossier"
+   sous la grande zone de dépôt), empilées sur mobile. */
+.desk-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+@media (min-width: 640px) {
+    .desk-actions {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+        align-items: stretch;
+    }
+}
+
+/* Créer un dossier : un <form> "nu" hérite malgré lui de la règle générique
+   "form" tout en haut de ce fichier (fond --bb-green-mid, bordure épaisse
+   --bb-border-dark, padding en %) tant qu'on ne l'écrase pas explicitement
+   ici : d'où le "carré blanc/vert" jugé moche/peu lisible par l'utilisatrice
+   (le <label> par-dessus, en --bb-ink, ne tenait que 2.70:1 sur ce fond
+   vert, sous le minimum AA même en gros texte, cf. calcul WCAG). Card dédiée
+   dans la même famille visuelle que .quick-upload-zone juste à côté (même
+   bordure --bb-green-mid, même fond transparent sur le doré du body, même
+   rayon/ombre) mais en trait plein plutôt que pointillé : signale
+   "champ à remplir" plutôt que "zone à déposer" tout en restant cousine
+   visuelle de la zone de dépôt, --bb-ink/--bb-gold = 9.81:1 (AAA). */
+.desk-new-folder {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background: transparent;
+    color: var(--bb-ink);
+    border: 2px solid var(--bb-green-mid);
+    border-radius: 10px;
+    box-shadow: var(--bb-shadow-soft);
+}
+.desk-new-folder label {
+    margin: 0;
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: var(--bb-ink);
+}
+.desk-new-folder-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+.desk-new-folder input[type="text"] {
+    flex: 1 1 12rem;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--bb-ink);
+    border-radius: 8px;
+    background: var(--bb-white);
+    color: var(--bb-ink);
+}
+.desk-new-folder input[type="text"]:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 1px;
+}
+/* Cible tactile confortable (44px) sur le bouton "Créer" : .btn-green n'a
+   par défaut qu'un padding réduit hérité de Bootstrap. */
+.desk-new-folder .btn-green {
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+}
+
+/* Zone de dépôt : bordure --bb-green-mid (accent d'action du reste du site,
+   pas --bb-ink) sur fond doré hérité de body.desk. Focus-visible en blanc
+   épais, même traitement que .skip-link sur ce même fond. Même ombre que
+   .desk-new-folder juste à côté, pour rester visuellement de la même
+   famille malgré le style de bordure différent (pointillé vs plein). */
+.quick-upload-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.5rem;
+    border: 2px dashed var(--bb-green-mid);
+    border-radius: 10px;
+    box-shadow: var(--bb-shadow-soft);
+    text-align: center;
+    color: var(--bb-green-deep);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.quick-upload-zone i {
+    font-size: 1.3rem;
+}
+.quick-upload-zone:hover {
+    background: rgba(var(--bb-gold-rgb), 0.25);
+}
+.quick-upload-zone.dragover {
+    background: var(--bb-green-mid);
+    border-style: solid;
+    color: var(--bb-white);
+}
+.quick-upload-zone:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+/* Pendant l'envoi : plus de vert (état "action possible"), zone au repos
+   visuellement pour laisser toute la place à la barre de progression
+   juste en dessous. cursor "progress" plutôt que "not-allowed" : cliquer
+   ne fait rien de cassé, juste rien de plus tant que ça envoie. */
+.quick-upload-zone.uploading {
+    border-color: var(--bb-ink);
+    color: var(--bb-ink);
+    cursor: progress;
+    opacity: 0.7;
+}
+
+/* Enveloppe la zone de dépôt/progression/statut dans une même cellule de
+   .desk-actions : l'espacement entre elles vient du gap ci-dessous, pas de
+   marges individuelles (qui ne servaient qu'à combler l'ancien
+   enchaînement vertical de toute la page, plus nécessaire maintenant
+   qu'elles sont regroupées dans leur propre carte). */
+.desk-upload-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Barre de progression rouge/jaune (couleurs de marque : navbar rouge,
+   fond doré) : rayures diagonales façon "chantier", repère visuel net que
+   quelque chose est activement en train de se passer, distinct du reste
+   de l'UI en vert. Respecte prefers-reduced-motion (rayures statiques). */
+.quick-upload-progress-track {
+    height: 0.9rem;
+    border-radius: 999px;
+    background: var(--bb-gold-pale);
+    border: 1px solid var(--bb-ink);
+    overflow: hidden;
+}
+.quick-upload-progress-bar {
+    height: 100%;
+    width: 0;
+    background: repeating-linear-gradient(
+        135deg,
+        var(--bb-red) 0,
+        var(--bb-red) 12px,
+        var(--bb-gold) 12px,
+        var(--bb-gold) 24px
+    );
+    background-size: 34px 34px;
+    transition: width 0.2s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .quick-upload-progress-bar {
+        animation: quick-upload-stripes 1s linear infinite;
+    }
+}
+@keyframes quick-upload-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 34px 0;
+    }
+}
+.quick-upload-progress-label {
+    margin: 0.4rem 0 0;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--bb-ink);
+}
+
+.quick-upload-status {
+    list-style: none;
+    padding: 0;
+    color: var(--bb-red-dark);
+    font-weight: bold;
+}
+
+/* Dossiers : même pastille pleine --bb-green-mid que .role-badge (bouton
+   supprimer DEDANS la pastille, pas à côté dans une 2e bulle : jugé
+   "bizarre" par l'utilisatrice en 2e passe), pour rester dans le même
+   vocabulaire visuel que le reste du desk/admin. */
+.desk-folders {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+.desk-folder-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    /* Padding gauche/droite volontairement différent (1rem/1.3rem) : à
+       16px/16px pile, le bouton (disque rouge plein, aucun blanc interne)
+       paraissait plus proche du bord que l'icône dossier (glyphe avec du
+       blanc intégré avant le trait visible) alors que les 2 boîtes CSS
+       sont identiques au pixel près, cf. .role-badge un peu plus haut pour
+       un précédent similaire côté padding. Compense l'œil, pas la boîte. */
+    padding: 0.4rem 1.3rem 0.4rem 1rem;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    border-radius: 25px;
+    font-weight: bold;
+}
+.desk-folder-badge a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--bb-white);
+}
+.desk-folder-badge a:hover,
+.desk-folder-badge a:focus-visible {
+    color: var(--bb-gold-pale);
+}
+.desk-folder-badge a:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+.desk-folder-badge .btn-red {
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+/* Liste de fichiers : une icône colorée par type (repère de lecture rapide
+   dans une grosse arborescence, cf. Document::getKind()/getIconClass()),
+   nom + méta sur 2 lignes, actions à droite. Simples lignes séparées par un
+   filet plutôt qu'une carte par ligne : cohérent avec l'aversion déjà
+   actée pour les gros blocs pleins sur cette page. */
+.desk-documents {
+    list-style: none;
+    padding: 0;
+}
+.desk-document {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(var(--bb-gold-rgb), 0.6);
+}
+.desk-document:last-child {
+    border-bottom: none;
+}
+.desk-document-icon {
+    flex-shrink: 0;
+    width: 1.75rem;
+    text-align: center;
+    font-size: 1.25rem;
+    color: var(--bb-ink);
+}
+.desk-document--audio .desk-document-icon {
+    color: var(--bb-green-mid);
+}
+.desk-document--video .desk-document-icon {
+    color: var(--bb-red-dark);
+}
+.desk-document--image .desk-document-icon {
+    color: var(--bb-green-deep);
+}
+.desk-document-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.desk-document-main a {
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+.desk-document-meta {
+    color: var(--bb-ink);
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Étoile favori (documents audio) : contour par défaut, pleine + verte une
+   fois activée (même vert "positif" que .btn-green/.badge-green ailleurs,
+   pas de nouvelle teinte). */
+.desk-favorite-star {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0.2rem;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: var(--bb-ink);
+    cursor: pointer;
+}
+.desk-favorite-star.active {
+    color: var(--bb-green-mid);
+}
+.desk-favorite-star:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+/* .btn-red garde son propre focus-visible (contour encre, déjà défini plus
+   haut dans ce fichier) : pas besoin de le redéfinir ici. */
+.desk-document .btn-red {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.desk-empty {
+    color: var(--bb-ink);
+    opacity: 0.8;
+}
+
+/* Morceaux/voix (racine uniquement). Un filet au-dessus de chaque morceau
+   (sauf le 1er) pour séparer sans empiler des cartes pleines. */
+.desk-track {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(var(--bb-gold-rgb), 0.6);
+}
+.desk-track:first-of-type {
+    padding-top: 0;
+    border-top: none;
+}
+.desk-track h2 small {
+    font-family: inherit;
+    text-transform: none;
+    font-weight: normal;
+    color: var(--bb-ink);
+    opacity: 0.75;
+    letter-spacing: normal;
+}
+.desk-voices {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 1rem;
+}
+.desk-voices li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Pastille bistable : contour au repos (pas encore choisie), pleine une
+   fois activée. Même rayon/padding que .role-badge et .desk-folders a pour
+   rester dans le même vocabulaire de "pastille" partout sur cette page. */
+.desk-voice-toggle {
+    padding: 0.4rem 1rem;
+    border-radius: 25px;
+    border: 2px solid var(--bb-green-mid);
+    background: transparent;
+    color: var(--bb-green-deep);
+    font-weight: bold;
+    cursor: pointer;
+}
+.desk-voice-toggle.active {
+    background: var(--bb-green-mid);
+    border-color: var(--bb-green-mid);
+    color: var(--bb-white);
+}
+.desk-voice-toggle:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+.desk-voice-players {
+    color: var(--bb-ink);
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Bouton "Déplacer" par ligne (dossier/document) : même gabarit que
+   .desk-folder-badge .btn-red / .desk-document .btn-red juste au-dessus,
+   couleur --bb-ink (action neutre, ni positive --bb-green-mid ni
+   destructive --bb-red-dark) pour rester lisible parmi les deux autres. */
+.desk-move-start {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bb-ink);
+    color: var(--bb-white);
+}
+.desk-folder-badge .desk-move-start {
+    width: 1.75rem;
+    height: 1.75rem;
+    min-width: 1.75rem;
+    font-size: 0.85rem;
+}
+.desk-document .desk-move-start {
+    width: 2.25rem;
+    height: 2.25rem;
+}
+.desk-move-start:hover,
+.desk-move-start:focus-visible {
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+}
+.desk-move-start:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Cibles tactiles (WCAG 2.5.8, 44px visé comme ailleurs sur cette page,
+   cf. .navbar-admin .nav-link plus haut) pour les boutons icône seuls
+   (étoile favori, déplacer, supprimer) des pastilles dossier et des lignes
+   document : agrandies uniquement sur mobile, où le doigt remplace le
+   curseur de souris, sans changer leur gabarit compact habituel sur
+   desktop où plusieurs se suivent côte à côte. */
+@media (max-width: 576px) {
+    .desk-favorite-star {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    .desk-folder-badge .btn-red,
+    .desk-folder-badge .desk-move-start,
+    .desk-document .btn-red,
+    .desk-document .desk-move-start {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+    }
+    .desk-voice-toggle {
+        min-height: 44px;
+    }
+}
+
+/* Bannière de déplacement (mode "choisis une destination") : pleine
+   --bb-green-mid, même vert "action possible" que le reste de la page, pour
+   signaler un mode actif plutôt qu'une simple info passive. Même ombre que
+   .desk-new-folder/.quick-upload-zone (--bb-shadow-soft) : cohérence de
+   relief entre tous les blocs "action" de la page, plutôt qu'un aplat de
+   couleur isolé sans lien visuel avec le reste. */
+.desk-move-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.3rem;
+    border-radius: 10px;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    box-shadow: var(--bb-shadow-soft);
+}
+.desk-move-banner p {
+    margin: 0;
+    font-weight: bold;
+}
+.desk-move-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.desk-move-actions .btn-green {
+    background: var(--bb-white);
+    color: var(--bb-green-deep);
+}
+.desk-move-actions .btn-green:hover,
+.desk-move-actions .btn-green:focus-visible {
+    background: var(--bb-gold-pale);
+}
+.desk-move-actions .btn-link {
+    color: var(--bb-white);
+    font-weight: bold;
+    text-decoration: underline;
+}
+.desk-move-actions .btn-link:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Hub /desk/files (templates/desk/files_hub.html.twig) : une carte par
+   espace, même pastille pleine --bb-green-mid que .desk-folder-badge mais
+   en grand (c'est le contenu principal de la page, pas une action annexe).
+   Même --bb-shadow-soft que le reste de la famille "carte" du gestionnaire
+   de fichiers, pour que le hub ne semble pas venir d'une page différente. */
+.desk-spaces {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.desk-space-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    width: 12rem;
+    padding: 2rem 1rem;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    border-radius: 14px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: var(--bb-shadow-soft);
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.desk-space-card i {
+    font-size: 2.5rem;
+}
+.desk-space-card:hover,
+.desk-space-card:focus-visible {
+    background: var(--bb-green-deep);
+    color: var(--bb-white);
+    transform: translateY(-2px);
+}
+.desk-space-card:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .desk-space-card {
+        transition: none;
+    }
+}
+/* Sous 400px (1 seule colonne quoi qu'il arrive vu le gap), la carte remplit
+   la largeur disponible plutôt que de rester figée à 12rem avec un vide
+   asymétrique à côté sur les très petits écrans. */
+@media (max-width: 400px) {
+    .desk-space-card {
+        width: 100%;
+        max-width: 20rem;
+    }
+}
+
+/* Visionneuse de document (assets/desk/file-preview.js) : fond blanc plutôt
+   que la palette de marque, pour ne pas fausser les couleurs d'une image/
+   d'un PDF affiché dedans. Contour ink sur focus-visible (fond clair ici,
+   pas le doré de body.desk), même logique que .btn-red/.btn-green plus
+   haut dans ce fichier. */
+/* [hidden] : la règle display:flex ci-dessous a la même spécificité que le
+   [hidden] { display: none } par défaut du navigateur, et les règles
+   d'origine "author" (ce fichier) l'emportent sur celles d'origine "user
+   agent" même à spécificité égale : sans ce override explicite, le modal
+   restait affiché malgré l'attribut hidden posé par assets/desk/
+   file-preview.js. */
+.file-preview-modal[hidden] {
+    display: none;
+}
+.file-preview-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+.file-preview-backdrop {
     position: absolute;
-    z-index: 900;
-    width: 790px;
-    height: auto;
+    inset: 0;
+    background: rgba(22, 20, 15, 0.85);
 }
-
-.scroll-wrapper.schedule .scroll {
-    margin-left: 150px;
-    width: 414px;
-    height: 552px;
-    background: white;
-    overflow-y: scroll;
-    float: left;
-    display: inline-block;
-}
-
-
-._scroll-wrapper.schedule .navbar {
-    left: 50%;
-    margin-left: 100px;
-}
-
-.scroll-wrapper.schedule img {
+.file-preview-dialog {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    height: auto;
+    max-width: 900px;
+    max-height: 100%;
+    background: var(--bb-white);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+.file-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--bb-red);
+    color: var(--bb-white);
+}
+.file-preview-header h2 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--bb-white);
+    overflow-wrap: anywhere;
+}
+.file-preview-download,
+.file-preview-close {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: var(--bb-white);
+    font-weight: bold;
+    cursor: pointer;
+}
+.file-preview-close {
+    font-size: 1.3rem;
+    padding: 0.2rem;
+}
+.file-preview-download:hover,
+.file-preview-close:hover {
+    color: var(--bb-gold-pale);
+}
+.file-preview-download:focus-visible,
+.file-preview-close:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+.file-preview-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow: auto;
+    background: var(--bb-ink);
+}
+.file-preview-body img {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+}
+.file-preview-body iframe {
+    width: 100%;
+    height: 75vh;
+    border: none;
+    background: var(--bb-white);
+}
+.file-preview-body audio {
+    width: 100%;
+}
+.file-preview-body video {
+    max-width: 100%;
 }
 
+/* .registration-form : même bug de contraste que celui déjà corrigé sur
+   body.desk form (--bb-gold sur --bb-green-mid, 3.63:1, sous AA), jamais
+   traité sur /register jusqu'ici. Blanc, AAA (6.82:1). */
+.registration-form {
+    color: var(--bb-white);
+}
+.registration-form .invalid-feedback {
+    color: var(--bb-gold-pale);
+}
 
-#calendar {
-    width: 300px;
-    float: left;
-    margin-left: 54px;
+/* En-tête de /register (h1 en Bungee, .text-green déjà défini plus haut
+   dans ce fichier : 7.15:1 sur --bb-gold, AAA). Remplace l'ancien
+   <span class="badge badge-green"><h1>, cf. commentaire dans le template. */
+.registration-header {
+    text-align: center;
+    margin: 2rem auto 1.5rem;
+}
+.registration-header h1 {
     display: inline-block;
+    margin: 0;
+    font-family: "Bungee", "Arial Black", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 1.8rem;
+}
+
+/* Avertissement (validation admin obligatoire) + rappel cotisation : avant
+   en .text-redwall/texte nu sur le fond --bb-gold du body (cf. template).
+   1er jet en --bb-ink (carte "noire"), jugé trop éloigné de l'identité
+   verte/dorée du site par l'utilisatrice ("dénature trop", 2026-08-12) :
+   --bb-green-deep à la place (déjà utilisé ailleurs pour ce même rôle de
+   fond de carte/panneau sombre, ex. .alert-success, .editor-toolbar plus
+   bas dans ce fichier), liseré doré inchangé (déjà la paire couleur la
+   plus utilisée du site, navbar/boutons). --bb-red/--bb-red-dark ne
+   tiennent que 3.03:1/2.15:1 sur ce fond (sous AA 4.5:1) : pas de rouge
+   ici non plus, gras + icône (ri-error-warning-fill) portent la
+   distinction "avertissement" plutôt que la seule teinte ; texte blanc,
+   13.4:1 (AAA, même calcul que .editor-toolbar plus bas). Même structure
+   icône + contenu que .already-member-followup juste en dessous (classe
+   dédiée : contenu différent, pas de fieldset ici). */
+.registration-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--bb-green-deep);
+    border: 2px solid var(--bb-gold);
+    border-radius: 12px;
+    box-shadow: var(--bb-shadow-soft);
+    padding: 1.25rem 1.5rem;
+    margin: 0 auto 2rem;
+    max-width: 560px;
+    text-align: left;
+    color: var(--bb-white);
+}
+.registration-notice > i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--bb-gold);
+}
+.registration-notice-warning {
+    font-weight: bold;
+    margin: 0 0 0.5rem;
+}
+.registration-notice p:last-child {
+    /* --bb-gold-pale sur --bb-green-deep : 9.9:1 (AAA), distingue ce 2e
+       paragraphe (info secondaire) du 1er (avertissement, blanc) sans
+       dépendre uniquement du gras. */
+    margin: 0;
+    color: var(--bb-gold-pale);
+}
+
+/* Question "Es-tu déjà adhérent·e ?" en tête de /register (cf. ROADMAP.md,
+   "Flux d'inscription à clarifier"). 1er jet (radios nues dans le flux
+   normal du formulaire) jugé "pas beau et pas clair" par l'utilisatrice :
+   reconstruit en carte détachée du reste du formulaire (liseré doré, même
+   traitement que .card en body.desk/admin.html.twig) pour vraiment
+   ressortir comme LA question à traiter en premier. Fond --bb-ink
+   d'origine remplacé par --bb-green-deep (retour utilisatrice 2026-08-12,
+   "dénature trop" : cf. .registration-notice juste au-dessus, même
+   changement/mêmes ratios de contraste, pour que les 2 cartes de la page
+   restent cohérentes entre elles). */
+.already-member-step {
+    background: var(--bb-green-deep);
+    border: 2px solid var(--bb-gold);
+    border-radius: 12px;
+    box-shadow: var(--bb-shadow-soft);
+    padding: 1.5rem;
+    margin: 0 auto 2rem;
+    max-width: 560px;
+    text-align: center;
+}
+.already-member-kicker {
+    margin: 0 0 0.25rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--bb-gold);
+}
+.already-member-fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+.already-member-step legend {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--bb-white);
+    margin: 0 0 0.5rem;
+}
+.already-member-hint {
+    color: var(--bb-gold-pale);
+    margin: 0 0 1.25rem;
+}
+
+/* Toggle Oui/Non en boutons pilule (même langage visuel que .login/.join,
+   assets/login/join.css) plutôt que des puces radio minuscules faciles à
+   manquer. Input natif gardé (focus clavier, comportement radio natif,
+   lecteur d'écran), juste rendu visuellement discret : le label devient le
+   vrai bouton visible, cliquable via son "for" même quand l'input est
+   quasi invisible. */
+.already-member-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.already-member-toggle .form-check {
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+.already-member-toggle .form-check-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+}
+.already-member-toggle .form-check-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 2rem;
+    border-radius: 50px;
+    border: 2px solid var(--bb-gold);
+    background: transparent;
+    color: var(--bb-white);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.already-member-toggle .form-check-input:checked + .form-check-label {
+    background: var(--bb-gold);
+    color: var(--bb-ink);
+}
+.already-member-toggle .form-check-input:focus-visible + .form-check-label {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* .member-card-box/.not-member-help-box : suite directe du choix ci-dessus,
+   dans la même carte (pas 2 cartes séparées) pour rester visuellement liées
+   à la question qui les a fait apparaître. Icône + bloc de texte plutôt
+   qu'un pavé de texte plein pour scinder visuellement l'information. */
+.already-member-followup {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    text-align: left;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(242, 178, 51, 0.35);
+}
+.already-member-followup > i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+}
+.member-card-box > i {
+    color: var(--bb-gold);
+}
+.not-member-help-box > i {
+    color: var(--bb-gold-pale);
+}
+.already-member-followup-content {
+    flex: 1;
+    min-width: 0;
+}
+.already-member-followup-content .form-group label {
+    color: var(--bb-white);
+}
+.already-member-note {
+    font-size: 0.9rem;
+    color: var(--bb-gold-pale);
+    margin: 0.5rem 0 0;
+}
+.not-member-help-box p:first-child {
+    color: var(--bb-white);
+    margin-top: 0;
 }

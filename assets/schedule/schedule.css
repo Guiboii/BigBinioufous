@@ -1,0 +1,405 @@
+/* Contenu réel depuis l'entité Event (cf. EventController/ScheduleController),
+   gérée par un·e admin via /admin/event. */
+
+/* Avant : position:absolute en px fixes (margin: 56px 150px, width: 790px),
+   ne suit pas la fenêtre. Comme il n'existe pas de repère 3D clair à viser
+   ici (contrairement à l'écran du bureau sur /story ou au meuble sur
+   /music : la scène /schedule est un mur à peu près vide), pas de vraie
+   projection 3D->2D, juste un flex centré et fluide en vw/%. */
+.scroll-wrapper.schedule {
+    position: absolute;
+    z-index: 900;
+    top: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    width: min(92vw, 790px);
+}
+
+.scroll-wrapper.schedule .scroll {
+    width: min(100%, 414px);
+    height: 65vh;
+    max-height: 552px;
+    background: var(--bb-gold-pale);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+/* Scrollbar fine thématisée à la place de la barre grise par défaut du
+   navigateur, même traitement que .playlist sur /music. */
+.scroll-wrapper.schedule .scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bb-green-deep) transparent;
+}
+.scroll-wrapper.schedule .scroll::-webkit-scrollbar {
+    width: 8px;
+}
+.scroll-wrapper.schedule .scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scroll-wrapper.schedule .scroll::-webkit-scrollbar-thumb {
+    background: var(--bb-green-deep);
+    border-radius: 4px;
+}
+.scroll-wrapper.schedule .scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--bb-red);
+}
+
+.scroll-wrapper.schedule img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.scroll-wrapper.schedule .empty-note {
+    padding: 1rem;
+    color: var(--bb-ink);
+    opacity: 0.7;
+}
+
+/* Note "connecte-toi pour voir les répétitions" (hors connexion uniquement,
+   cf. schedule/index.html.twig) : même famille visuelle que
+   .event-card .event-description (encadré doré, liseré rouge) plutôt
+   qu'une nouvelle teinte, pour rester dans le thème de la page. */
+.schedule-login-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.75rem 1rem 0;
+    padding: 0.6rem 0.75rem;
+    background: var(--bb-gold-pale);
+    border-left: 3px solid var(--bb-red);
+    border-radius: 4px;
+    color: var(--bb-ink);
+}
+.schedule-login-note i {
+    color: var(--bb-red);
+    font-size: 1.1rem;
+    flex: 0 0 auto;
+}
+.schedule-login-note a {
+    color: var(--bb-green-deep);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.event-month {
+    padding: 0.75rem 1rem 0;
+}
+/* h2 (avant h4, cf. schedule/index.html.twig : hiérarchie de titres corrigée
+   pour suivre le h1 de page sans sauter de niveau). font-size explicite pour
+   garder le même rendu visuel qu'avant (h4 Bootstrap 4 = 1.5rem par défaut,
+   h2 = 2rem : sans ça la taille du titre de mois changerait visuellement). */
+.event-month h2 {
+    font-size: 1.5rem;
+    color: var(--bb-green-deep);
+    border-bottom: 2px solid var(--bb-red);
+    padding-bottom: 0.25rem;
+}
+
+.event-card {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: 1px solid var(--bb-green-mid);
+    border-radius: 6px;
+    background: var(--bb-white);
+}
+.event-card img {
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+/* h3 (avant h5, cf. schedule/index.html.twig). Même logique de font-size
+   explicite que .event-month h2 ci-dessus (h5 Bootstrap 4 = 1.25rem). */
+.event-card h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+    color: var(--bb-ink);
+}
+.event-card .event-date,
+.event-card .event-location {
+    margin: 0 0 0.25rem;
+    color: var(--bb-ink);
+}
+.event-card .event-date {
+    font-weight: 600;
+}
+/* Description mise en valeur (demande explicite : doit se voir, pas juste
+   une ligne de texte perdue parmi les autres) : encadré distinct plutôt
+   qu'un <p> de plus, même esprit que .mobile-note. */
+.event-card .event-description {
+    margin: 0.5rem 0;
+    padding: 0.5rem 0.6rem;
+    background: var(--bb-gold-pale);
+    border-left: 3px solid var(--bb-red);
+    border-radius: 4px;
+    color: var(--bb-ink);
+    font-style: italic;
+}
+.event-card .event-description i {
+    color: var(--bb-red);
+    font-style: normal;
+    margin-right: 0.15rem;
+}
+/* Icônes Remixicon (même famille que la navbar, assets/main/app.js) devant
+   titre/date/adresse/agenda, en accent rouge pour ressortir sur les cartes
+   claires (>= 3:1 exigé pour un élément graphique, ~5.9:1 ici). */
+.event-card h3 i,
+.event-card .event-date i,
+.event-card .event-location i,
+.event-add-to-calendar__label i {
+    color: var(--bb-red);
+    margin-right: 0.15rem;
+}
+.event-location a {
+    color: var(--bb-green-deep);
+    font-weight: 600;
+    text-decoration: underline;
+}
+.event-location a:hover,
+.event-location a:focus-visible {
+    color: var(--bb-red);
+}
+/* 3 fournisseurs en petits boutons distincts plutôt qu'en liens texte
+   soulignés côte à côte (illisible, "le bordel" au retour utilisatrice) :
+   Google/Outlook ont leur propre formulaire pré-rempli en ligne, Apple
+   Calendar et les autres passent par le .ics. */
+.event-add-to-calendar {
+    margin-top: 0.5rem;
+}
+.event-add-to-calendar__label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    color: var(--bb-ink);
+}
+.event-add-to-calendar__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+.event-add-to-calendar__buttons a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--bb-green-deep);
+    border-radius: 20px;
+    color: var(--bb-green-deep);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+.event-add-to-calendar__buttons a i {
+    font-size: 0.9rem;
+}
+.event-add-to-calendar__buttons a:hover,
+.event-add-to-calendar__buttons a:focus-visible {
+    background: var(--bb-green-deep);
+    color: var(--bb-white);
+}
+.event-add-to-calendar__buttons a:focus-visible {
+    outline: 2px solid var(--bb-red);
+    outline-offset: 1px;
+}
+/* Pastille de type : couleurs distinctes ET texte (pas de sens porté par la
+   seule teinte, cf. section Accessibilité de CLAUDE.md). */
+.event-type {
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.event-card--rehearsal .event-type {
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+}
+.event-card--concert .event-type {
+    background: var(--bb-gold);
+    color: var(--bb-ink);
+}
+.event-card--other .event-type {
+    background: var(--bb-border-dark);
+    color: var(--bb-white);
+}
+
+/* Vrai calendrier mois/jours (grille rendue en JS, cf. initMiniCalendar()
+   dans schedule.js) plutôt que des pastilles par mois : #calendar n'a plus
+   rien à voir avec .navbar (ancien piège de position:fixed hérité, cf.
+   CLAUDE.md, réglé en repartant d'un <div> propre plutôt qu'en réutilisant
+   la classe Bootstrap générique). */
+.mini-calendar {
+    width: min(100%, 300px);
+    background: var(--bb-white);
+    border: 3px solid var(--bb-green-deep);
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.mini-calendar__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    background: var(--bb-green-deep);
+    color: var(--bb-gold-pale);
+}
+.mini-calendar__title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.mini-calendar__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--bb-gold-pale);
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+.mini-calendar__nav:hover,
+.mini-calendar__nav:focus-visible {
+    background: rgba(var(--bb-gold-rgb), 0.25);
+    color: var(--bb-gold);
+}
+.mini-calendar__nav:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: 1px;
+}
+.mini-calendar__weekdays,
+.mini-calendar__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+.mini-calendar__weekdays {
+    padding: 0.5rem 0.5rem 0;
+    color: var(--bb-green-deep);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-align: center;
+}
+.mini-calendar__grid {
+    padding: 0.35rem 0.5rem 0.75rem;
+    gap: 2px;
+}
+.mini-calendar__day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    border-radius: 50%;
+    color: var(--bb-ink);
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+.mini-calendar__day--empty {
+    visibility: hidden;
+}
+/* "Aujourd'hui" : contour seul (pas de fond) pour rester distinct des jours
+   à événement, qui eux ont un fond plein rouge (demande explicite : "du
+   rouge sur les jours où ya des events"). */
+.mini-calendar__day--today {
+    border: 2px solid var(--bb-green-deep);
+    font-weight: 700;
+}
+.mini-calendar__day--event {
+    background: var(--bb-red);
+    color: var(--bb-white);
+    font-weight: 700;
+    cursor: pointer;
+}
+.mini-calendar__day--event:hover,
+.mini-calendar__day--event:focus-visible {
+    background: var(--bb-red-dark);
+}
+.mini-calendar__day--event:focus-visible {
+    outline: 2px solid var(--bb-green-deep);
+    outline-offset: 1px;
+}
+/* Jour à la fois "aujourd'hui" ET avec événement : combine les deux, fond
+   rouge (priorité à l'info la plus utile) + contour distinct. */
+.mini-calendar__day--today.mini-calendar__day--event {
+    border: 2px solid var(--bb-ink);
+}
+
+/* Mode mobile (<=700px, même détection .is-mobile que /music et /story) :
+   la scène 3D (déjà peu utilisée ici, cf. commentaire plus haut) n'apporte
+   rien en petit, le flyer/planning restent affichés en flux normal. */
+.mobile-note {
+    display: none;
+}
+html.is-mobile .mobile-note {
+    display: block;
+    margin: 0.75rem 1rem 0.75rem 86px;
+    padding: 0.6rem 0.8rem;
+    background: var(--bb-gold-pale);
+    color: var(--bb-ink);
+    font-size: 0.85rem;
+    font-style: italic;
+    border-radius: 4px;
+}
+html.is-mobile .mascotte,
+html.is-mobile .loading {
+    display: none;
+}
+/* Scrollbar grise par défaut du navigateur pour toute la page (plus de
+   scène 3D plein écran ici pour la masquer, contrairement au desktop) :
+   même thème doré/vert que le reste plutôt que la barre native. */
+html.is-mobile {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bb-green-deep) var(--bb-gold);
+}
+html.is-mobile::-webkit-scrollbar {
+    width: 10px;
+}
+html.is-mobile::-webkit-scrollbar-track {
+    background: var(--bb-gold);
+}
+html.is-mobile::-webkit-scrollbar-thumb {
+    background: var(--bb-green-deep);
+    border-radius: 5px;
+}
+html.is-mobile::-webkit-scrollbar-thumb:hover {
+    background: var(--bb-red);
+}
+html.is-mobile .scroll-wrapper.schedule {
+    position: static;
+    transform: none;
+    left: auto;
+    top: auto;
+    width: 100%;
+    max-width: 500px;
+    margin: 0.75rem auto;
+    padding: 0 0.75rem;
+}
+/* Avant : .scroll gardait son overflow-y:auto + max-height du mode desktop,
+   donc 2 scrolls imbriqués sur mobile (celui de .scroll ET celui de la
+   page), peu lisible. Un seul scroll (celui de la page) : .scroll prend
+   toute la hauteur de son contenu. Calendrier passé en 1er (order:-1) :
+   plus utile pour se repérer dans le mois avant de dérouler la longue
+   liste d'événements en dessous. */
+html.is-mobile .scroll-wrapper.schedule .scroll {
+    order: 1;
+    height: auto;
+    max-height: none;
+    overflow-y: visible;
+}
+html.is-mobile .mini-calendar {
+    order: -1;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 1rem;
+}

@@ -1,27 +1,44 @@
+<h2>{{ 'desk.list.admins_title'|trans }}</h2>
 <table class="table table-hover text-center">
-            <h3>Les Administrateurices</h3>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Picture</th>
-                    <th>City</th>
-                    <th>Instrument</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for admin in admins %}
-                <tr>
-                    <td>{% if admin.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %} {{ admin.fullName }}</td>
-                    <td>{% if admin.picture == null %}
-                        <i class="fas fa-portrait"></i> <em>no picture</em>
+    <thead>
+        <tr>
+            <th>{{ 'Name'|trans }}</th>
+            <th>{{ 'Picture'|trans }}</th>
+            <th>{{ 'Country'|trans }}</th>
+            <th>{{ 'City'|trans }}</th>
+            <th>{{ 'Instrument'|trans }}</th>
+            <th>{{ 'Actions'|trans }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for admin in admins %}
+            <tr>
+                <td>
+                    {% if admin.gender == 'male' %}
+                        <i class="ri-men-fill" aria-hidden="true"></i>
+                    {% elseif admin.gender == 'female' %}
+                        <i class="ri-women-fill" aria-hidden="true"></i>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ admin.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ admin.firstname}}">
-                    {% endif %}</td>
-                    <td>{{ admin.city }}</td>
-                    <td>{{ admin.instrument.title }}</td>
-                    <td><a href="{{ path ('user_show', {'slug' : admin.slug})}}" class="btn btn-green"><i class="fas fa-user-edit"></i></a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        <i class="ri-genderless-fill" aria-hidden="true"></i>
+                    {% endif %}
+                    {{ admin.fullName }}</td>
+                <td>
+                    {% if admin.picture == null %}
+                        <i class="ri-image-line" aria-hidden="true"></i>
+                        <em>{{ 'no picture'|trans }}</em>
+                    {% else %}
+                        <img src="{{ asset('uploads/pictures/' ~ admin.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ admin.firstname }}">
+                    {% endif %}
+                </td>
+                <td>{{ admin.country }}</td>
+                <td>{{ admin.city }}</td>
+                <td>{{ admin.instrument.title }}</td>
+                <td>
+                    <a href="{{ path ('user_show', {slug: admin.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': admin.fullName}) }}">
+                        <i class="ri-edit-line" aria-hidden="true"></i>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,32 +1,150 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Registration{% endblock %}
+{% block title %}{{ 'join.registration_title'|trans }}{% endblock %}
 
 {% block body %}
 
 <div class="container">
-    <div class="row ml-4 centered">
-        <span class="badge badge-green mt-4">
-            <h4>Go ahead and register !!</h4>
-        </span>
-        <div class="text-green text-center mt-4">
-            <p class="text-red">The register have to be approuved by an administrator !!</p>
-            <p>Please notice that you must pay a subscription, to become a real Binioufous or if you just want to use our folders to play music with separates voices</p>
-        </div>
-        <div class="row">
-            <button class="btn badge-red mb-4">
-                <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="link red-hover">PAY A SUBSCRIPTION FOR ONE YEAR</a>
-            </button>
+    {# Avant : <span class="badge badge-green"><h1>...</h1></span> (un <h1>,
+       élément de bloc, imbriqué dans un <span> en ligne : nesting HTML
+       invalide) + avertissement/notice en texte nu (.text-redwall/aucune
+       classe) posés directement sur le fond --bb-gold du body, sans rapport
+       visuel avec la carte "Es-tu déjà adhérent·e ?" juste en dessous (déjà
+       dans le langage carte ink+gold du reste du site) : "pas dans le thème
+       du tout" (retour utilisatrice 2026-08-12). Titre simple en Bungee
+       (même identité que le reste du site, cf. body.desk h1/.navbar-collapse
+       h2 dans app.css) et avertissement + notice regroupés dans une carte
+       ink+gold (.registration-notice, même langage que .already-member-step
+       juste en dessous) pour que le haut de page forme un seul ensemble
+       cohérent plutôt que 2 styles qui se suivent sans lien. #}
+    <div class="registration-header">
+        <h1 class="text-green">{{ 'join.registration_heading'|trans }}</h1>
+    </div>
+
+    <div class="registration-notice">
+        <i class="ri-error-warning-fill" aria-hidden="true"></i>
+        <div class="registration-notice-content">
+            <p class="registration-notice-warning">{{ 'join.registration_warning'|trans }}</p>
+            <p>{{ 'join.registration_notice'|trans }}</p>
         </div>
     </div>
 
-    {{ form_start(form) }}
+    {# .registration-form : même bug de contraste que celui déjà corrigé sur
+       body.desk form (cf. assets/main/app.css) mais jamais traité ici. La
+       règle générique "form { color: var(--bb-gold) }" sur fond
+       --bb-green-mid ne tient que 3.63:1, sous le minimum AA (4.5:1) pour du
+       texte normal : tous les labels de ce formulaire (Prénom, Email...)
+       étaient sous le seuil. Blanc (6.82:1, AAA), même correctif que
+       body.desk, scopé à cette page plutôt que rendu global (les popups
+       #joinForm/#loginForm ont déjà leur propre traitement dans join.css). #}
+    {{ form_start(form, {attr: {class: 'registration-form'}}) }}
+
+    {# Avant : le bouton de cotisation HelloAsso et le choix `wish` plus bas
+       dans le formulaire étaient visibles en même temps sans ordre clair
+       ("on sait pas trop où s'inscrire", retour utilisatrice, direction
+       validée le 2026-08-10). Question posée en tête : "Es-tu déjà
+       adhérent·e ?" détermine ce qu'on met en avant juste en dessous
+       (numéro de carte à vérifier par un admin, ou cotisation HelloAsso +
+       rappel du souhait "Simple" pour un profil sans cotisation). Le reste
+       du formulaire (identité...) reste affiché en dessous dans tous les
+       cas ; seul le souhait ("Tu veux être", champ wish) est réellement
+       verrouillé sur "Un grand fan !!" si "Non" est choisi (cf. script en
+       bas de page) : 1er jet qui se contentait d'un texte d'aide à côté
+       jugé insuffisant par l'utilisatrice ("ya pas de choix dans le
+       formulaire, c juste un grand fan qu'il y a"), rien n'empêchait
+       réellement de choisir "Binioufous"/"Member" malgré la réponse "Non".
+
+       1er jet (posé tel quel dans le flux normal du formulaire, radios par
+       défaut du navigateur) jugé "pas beau et pas clair" par l'utilisatrice.
+       Reconstruit en carte à part, détachée visuellement du reste (fond
+       --bb-ink + liseré doré, même traitement que .card en body.desk) pour
+       vraiment se voir comme LA question à traiter en premier, avec un
+       toggle en boutons pilule (même langage que .login/.join) plutôt que
+       des puces radio minuscules faciles à rater. #}
+    <div class="already-member-step">
+        <p class="already-member-kicker">{{ 'register.step_label'|trans }}</p>
+
+        {# <legend> doit être le tout 1er enfant du <fieldset> pour que
+           l'association accessible (nom du groupe de radios pour un lecteur
+           d'écran) soit fiable : le paragraphe "kicker" reste donc hors du
+           fieldset plutôt qu'avant le legend à l'intérieur. #}
+        <fieldset class="already-member-fieldset">
+            {{ form_label(form.alreadyMember) }}
+            <p class="already-member-hint">{{ 'register.already_member_hint'|trans }}</p>
+            <div class="already-member-toggle">
+                {{ form_widget(form.alreadyMember) }}
+            </div>
+        </fieldset>
+
+        <div id="memberCardBox" class="already-member-followup member-card-box d-none">
+            <i class="ri-checkbox-circle-fill" aria-hidden="true"></i>
+            <div class="already-member-followup-content">
+                {{ form_row(form.memberCardNumber) }}
+                <p class="already-member-note">{{ 'register.member_card_note'|trans }}</p>
+            </div>
+        </div>
+
+        <div id="notMemberHelpBox" class="already-member-followup not-member-help-box d-none">
+            <i class="ri-information-fill" aria-hidden="true"></i>
+            <div class="already-member-followup-content">
+                <p>{{ 'register.not_member_hint'|trans }}</p>
+                {# Avant : <button><a>...</a></button>, imbrication invalide (un
+                   <a> n'est pas un contenu autorisé dans <button>) en plus de
+                   poser 2 arrêts de tabulation pour une seule action. Un seul
+                   <a>, vraie navigation externe donc pas de <button>. #}
+                <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations" class="btn badge-red mb-2 red-hover">{{ 'join.pay_subscription'|trans }}</a>
+                <p class="already-member-note">{{ 'register.or_choose_simple'|trans }}</p>
+            </div>
+        </div>
+    </div>
+
     {{ form_widget(form) }}
     <div class="nav-item" >
-    <button class="submit btn btn-success">Join !!</button>
+    <button type="submit" class="submit btn btn-success">{{ 'join.submit'|trans }}</button>
     </div>
     {{ form_end(form) }}
 
 </div>
 
+{# Toggle minimal (pas de dépendance JS externe) : affiche le bon bloc selon
+   la réponse à "Es-tu déjà adhérent·e ?". Champs déjà présents par défaut en
+   d-none plutôt qu'un flash visible-puis-masqué au chargement.
+
+   Répondre "Non" désactive aussi les 2 choix "Un vrai Binioufous !!"/"Un
+   Binioufous, mais je ne peux pas venir aux répétitions..." du champ "Tu
+   veux être" plus bas (réservés à un·e adhérent·e à jour de cotisation) et
+   force "Un grand fan !!" : avant, le texte d'aide à côté de HelloAsso le
+   suggérait mais rien n'empêchait réellement de choisir un autre souhait,
+   contradiction repérée par l'utilisatrice ("ya pas de choix dans le
+   formulaire, c juste un grand fan qu'il y a"). Options réactivées (pas
+   supprimées) si la personne revient sur "Oui" ensuite. #}
+<script>
+    (function () {
+        var yesRadio = document.getElementById('registration_alreadyMember_0');
+        var noRadio = document.getElementById('registration_alreadyMember_1');
+        var memberCardBox = document.getElementById('memberCardBox');
+        var notMemberHelpBox = document.getElementById('notMemberHelpBox');
+        var wishSelect = document.getElementById('registration_wish');
+
+        if (!yesRadio || !noRadio || !memberCardBox || !notMemberHelpBox || !wishSelect) {
+            return;
+        }
+
+        function updateBoxes() {
+            memberCardBox.classList.toggle('d-none', !yesRadio.checked);
+            notMemberHelpBox.classList.toggle('d-none', !noRadio.checked);
+
+            Array.prototype.forEach.call(wishSelect.options, function (option) {
+                option.disabled = noRadio.checked && 'Simple' !== option.value;
+            });
+            if (noRadio.checked) {
+                wishSelect.value = 'Simple';
+            }
+        }
+
+        yesRadio.addEventListener('change', updateBoxes);
+        noRadio.addEventListener('change', updateBoxes);
+        updateBoxes();
+    })();
+</script>
 {% endblock %}

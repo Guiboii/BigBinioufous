@@ -3,149 +3,127 @@
 namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
-
-/**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity(fields={"email"}, message="This email is already used by another user, please change")
- */
-class User implements UserInterface
+#[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['email'], message: 'This email is already used by another user, please change')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="This field couldn't be empty")
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: "This field couldn't be empty")]
     private $firstName;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="This field couldn't be empty")
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: "This field couldn't be empty")]
     private $lastName;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Email(message="Please enter a valid email address")
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Email(message: 'Please enter a valid email address')]
     private $email;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $hash;
-    /**
-     * @Assert\EqualTo(propertyPath="hash", message="you made a mistake")
-     */
+
+    #[Assert\EqualTo(propertyPath: 'hash', message: 'you made a mistake')]
     public $passwordConfirm;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $nickname;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $city;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $gender;
 
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: 'date')]
     private $birth;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $country;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Role::class, mappedBy="users")
-     */
+    #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'users')]
     private $roles;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\ManyToMany(targetEntity: Voice::class, mappedBy: 'users')]
+    private $voices;
+
+    #[ORM\ManyToMany(targetEntity: Document::class, mappedBy: 'favoritedBy')]
+    private $favoriteDocuments;
+
+    #[ORM\Column(type: 'boolean')]
     private $validation;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $wish;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * Numéro de carte d'adhérent·e, renseigné à l'inscription si la personne
+     * indique être déjà adhérente (cotisation HelloAsso déjà payée),
+     * vérifié manuellement par un·e admin lors de la validation du compte.
+     * Nul pour les comptes créés avant cette fonctionnalité, ou pour les
+     * personnes qui ne se déclarent pas déjà adhérentes.
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $memberCardNumber;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $picture;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $slug;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Instrument::class, inversedBy="users")
-     */
+    #[ORM\ManyToOne(targetEntity: Instrument::class, inversedBy: 'users')]
     private $instrument;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
     /**
-     * Permet d'initialiser le slug
-     *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     * 
-     * @return void
+     * Permet d'initialiser le slug.
      */
-    public function initializeSlug() {
-        if(empty($this->slug)) {
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function initializeSlug(): void
+    {
+        if (empty($this->slug)) {
             $slugify = new Slugify();
-            $this->slug = $slugify->slugify($this->firstName . ' ' . $this->lastName);
+            $this->slug = $slugify->slugify($this->firstName.' '.$this->lastName);
         }
     }
 
     /**
-     * Remplis le champ createdAt
-     * 
-     * @ORM\PrePersist
-     * 
+     * Remplis le champ createdAt.
      */
+    #[ORM\PrePersist]
     public function initializeCreatedAt()
     {
-        if(empty($this->createdAt)){
+        if (empty($this->createdAt)) {
             $this->createdAt = new \DateTime();
         }
     }
-    
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->voices = new ArrayCollection();
+        $this->favoriteDocuments = new ArrayCollection();
     }
 
-    public function getFullName() {
+    public function getFullName()
+    {
         return "{$this->firstName} {$this->lastName}";
     }
 
@@ -202,8 +180,9 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRoles(){
-        $roles = $this->roles->map(function($role){
+    public function getRoles(): array
+    {
+        $roles = $this->roles->map(function ($role) {
             return $role->getTitle();
         })->toArray();
 
@@ -212,22 +191,24 @@ class User implements UserInterface
         return $roles;
     }
 
-    public function getPassword(){
+    public function getPassword(): ?string
+    {
         return $this->hash;
     }
 
-    public function getSalt(){}
-
-    public function getUsername() {
+    public function getUserIdentifier(): string
+    {
         return $this->email;
     }
 
-    public function eraseCredentials () {}
-    
-        public function getNickname(): ?string
-        {
-            return $this->nickname;
-        }
+    public function eraseCredentials(): void
+    {
+    }
+
+    public function getNickname(): ?string
+    {
+        return $this->nickname;
+    }
 
     public function setNickname(string $nickname): self
     {
@@ -328,6 +309,18 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getMemberCardNumber(): ?string
+    {
+        return $this->memberCardNumber;
+    }
+
+    public function setMemberCardNumber(?string $memberCardNumber): self
+    {
+        $this->memberCardNumber = $memberCardNumber;
+
+        return $this;
+    }
+
     public function getPicture(): ?string
     {
         return $this->picture;
@@ -372,6 +365,60 @@ class User implements UserInterface
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Voice[]
+     */
+    public function getVoices(): Collection
+    {
+        return $this->voices;
+    }
+
+    public function addVoice(Voice $voice): self
+    {
+        if (!$this->voices->contains($voice)) {
+            $this->voices[] = $voice;
+            $voice->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVoice(Voice $voice): self
+    {
+        if ($this->voices->removeElement($voice)) {
+            $voice->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Document[]
+     */
+    public function getFavoriteDocuments(): Collection
+    {
+        return $this->favoriteDocuments;
+    }
+
+    public function addFavoriteDocument(Document $document): self
+    {
+        if (!$this->favoriteDocuments->contains($document)) {
+            $this->favoriteDocuments[] = $document;
+            $document->addFavoritedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteDocument(Document $document): self
+    {
+        if ($this->favoriteDocuments->removeElement($document)) {
+            $document->removeFavoritedBy($this);
+        }
 
         return $this;
     }

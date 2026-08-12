@@ -1,40 +1,80 @@
 <header>
-    <nav class="navbar">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-            <svg class="bi bi-list" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z" clip-rule="evenodd"/></svg>
+    {# app.request.attributes.get('_route') donne le nom de la route active
+       (home, story, music...) : sert à marquer le lien de la page courante
+       avec aria-current="page" (pattern standard, annoncé par les lecteurs
+       d'écran), plutôt que le <span class="sr-only">(current)</span> qui
+       était codé en dur uniquement sur "Accueil" (donc faux dès qu'on
+       quittait la page d'accueil). Ce même attribut sert aussi de hook JS
+       (assets/main/app.js) pour empêcher ce lien précis de recharger la
+       page au clic. #}
+    {% set currentRoute = app.request.attributes.get('_route') %}
+    <nav class="navbar" aria-label="{{ 'nav.tagline'|trans }}">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="{{ 'nav.toggle'|trans }}">
+            <svg class="bi bi-list" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z" clip-rule="evenodd"/></svg>
         </button>
         <div class="collapse navbar-collapse no-transition" id="navbarText">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('home') }}"><h2>Home</h2><span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ path('home') }}"{% if currentRoute == 'home' %} aria-current="page"{% endif %}>
+                        <i class="ri-home-4-fill" aria-hidden="true"></i>
+                        <h2>{{ 'nav.home'|trans }}</h2>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('story') }}"><h2>Story</h2></a>
+                    <a class="nav-link" href="{{ path('story') }}"{% if currentRoute == 'story' %} aria-current="page"{% endif %}>
+                        <i class="ri-book-open-fill" aria-hidden="true"></i>
+                        <h2>{{ 'nav.story'|trans }}</h2>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('music') }}"><h2>Music</h2></a>
+                    <a class="nav-link" href="{{ path('music') }}"{% if currentRoute == 'music' %} aria-current="page"{% endif %}>
+                        <i class="ri-music-2-fill" aria-hidden="true"></i>
+                        <h2>{{ 'nav.music'|trans }}</h2>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('schedule') }}"><h2>Schedule</h2></a>
+                    <a class="nav-link" href="{{ path('schedule') }}"{% if currentRoute == 'schedule' %} aria-current="page"{% endif %}>
+                        <i class="ri-calendar-event-fill" aria-hidden="true"></i>
+                        <h2>{{ 'nav.schedule'|trans }}</h2>
+                    </a>
                 </li>
                 {% if app.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('desk') }}"><h2>Desk</h2></a>
+                        <a class="nav-link" href="{{ path('desk') }}"{% if currentRoute == 'desk' %} aria-current="page"{% endif %}>
+                            <i class="ri-user-settings-fill" aria-hidden="true"></i>
+                            <h2>{{ 'nav.desk'|trans }}</h2>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('profile') }}"><h2>Profile</h2></a>
+                        <a class="nav-link" href="{{ path('profile') }}"{% if currentRoute == 'profile' %} aria-current="page"{% endif %}>
+                            <i class="ri-user-fill" aria-hidden="true"></i>
+                            <h2>{{ 'nav.profile'|trans }}</h2>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('logout') }}"><h2>Logout</h2></a>
+                        {# Jamais aria-current : "Déconnexion" est une action, pas une page sur
+                           laquelle on peut se trouver (redirige aussitôt, ne se rend jamais). #}
+                        <a class="nav-link" href="{{ path('logout') }}">
+                            <i class="ri-logout-box-r-fill" aria-hidden="true"></i>
+                            <h2>{{ 'nav.logout'|trans }}</h2>
+                        </a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('join') }}"><h2>Join or Login</h2></a>
+                        <a class="nav-link" href="{{ path('join') }}"{% if currentRoute == 'join' %} aria-current="page"{% endif %}>
+                            <i class="ri-door-open-fill" aria-hidden="true"></i>
+                            <h2>{{ 'nav.join_or_login'|trans }}</h2>
+                        </a>
                     </li>
                 {% endif %}
+                <li class="nav-item lang-switcher">
+                    <a href="{{ path('app_locale', {locale: 'fr'}) }}" class="lang-link {% if app.request.locale == 'fr' %}active{% endif %}">FR</a>
+                    <a href="{{ path('app_locale', {locale: 'en'}) }}" class="lang-link {% if app.request.locale == 'en' %}active{% endif %}">EN</a>
+                    <a href="{{ path('app_locale', {locale: 'br'}) }}" class="lang-link {% if app.request.locale == 'br' %}active{% endif %}">BR</a>
+                </li>
             </ul>
             <span class="navbar-text">
-            The craziest oboe band of the Galaxy !!
+                {{ 'nav.tagline'|trans }}
             </span>
         </div>
     </nav>

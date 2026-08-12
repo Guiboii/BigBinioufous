@@ -2,17 +2,20 @@ iframe {
     width: 750px;
     border: none;
 }
-.overlay {
-    position: absolute;
-    top: 50%;
-    left:50%;
-    margin-top: -141px;
-    margin-left: -333px;
-    z-index: 900;
-        overflow: hidden;
-    display: block;
-    width: 642px;
-}
+/* Les 3 boîtes ci-dessous (waveform, boutons, playlist) sont positionnées en
+   position:fixed avec des left/top/width/height calculés dynamiquement en JS
+   (updateOverlayPosition() dans music.js), par vraie projection 3D->2D de
+   points ancrés sur la face avant du meuble, recalculée à chaque resize. Le
+   vw/vh utilisé avant ne suit pas une caméra en perspective dès que le ratio
+   largeur/hauteur de la fenêtre change (l'étalement horizontal du champ de
+   vision dépend du ratio, contrairement au vertical qui est fixe) : correct
+   à 1280x800/1600x900 mais décalé sur une fenêtre plus large, cf. section
+   "Cadrage d'un overlay 2D..." de CLAUDE.md. .overlay et .player-wrap ne
+   portent donc plus de positionnement : ce sont juste des conteneurs DOM,
+   leurs enfants sortent du flux via la position fixed posée en JS (chacun
+   avec son propre z-index : sans .overlay positionné pour créer un contexte
+   d'empilement commun, ses enfants fixed doivent porter le leur pour ne pas
+   se retrouver sous le <canvas> WebGL, ajouté plus tard dans le DOM). */
 
 table {
     display: block;
@@ -20,136 +23,375 @@ table {
 
 .player-wrap {
     background: transparent;
-    width: 100%;
-    height: 186px;
-    overflow: scroll;
-    margin-left: 0;
 }
-.player-wrap .row {
-    height: 91px;
-    width: 100%;
+
+.player-wrap .row:first-child {
     background: #695044;
-    margin: 0;
+    z-index: 900;
 }
-
+/* flex + align-items:center : sans ça les enfants (liens, svg, input range)
+   s'alignent sur leur baseline par défaut, très différente d'un élément à
+   l'autre (le slider en particulier partait visiblement plus haut que les
+   boutons à côté). */
 .player-wrap .row.playerButtons {
-    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    background: #695044;
     padding: 4px;
-    height: 39px;
+    box-sizing: border-box;
+    z-index: 900;
 }
 
 
+/* Avant : cadre figé à 237px avec 2 colonnes ayant chacune leur propre
+   scrollbar (+ celle du player-wrap au-dessus, jamais nécessaire vu que
+   son contenu tient largement dedans) : 3 scrollbars imbriquées au total.
+   Une seule ici, sur .playlist (la seule liste qui peut vraiment être
+   longue), .members-only n'a jamais assez de contenu pour en avoir besoin. */
 .playlist-wrap {
     background: #4a3d37;
-    height: 237px;
-    width: 641px;
-    margin-top: 0;
-    border: 5px solid #895b41;  
+    border: 5px solid #895b41;
+    box-sizing: border-box;
     overflow: hidden;
+    z-index: 900;
 }
 
-.accordion, .members-only {
-    height: inherit;
-    overflow: scroll;
-    display: inline-block;
-    width: 50%;
-}
-
-
-.members-only form#loginForm {
-    padding: 12%;
-    border: 5px solid #4a3d37;
+.playlist, .members-only {
     height: 100%;
-    position: relative;
-    margin-top: 0;
-    top: -5px;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+    width: 50%;
+    padding: 0.75rem;
+}
+.playlist {
+    overflow-y: auto;
+    border-right: 1px solid #664c40;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bb-gold-pale) transparent;
+}
+.playlist::-webkit-scrollbar {
+    width: 8px;
+}
+.playlist::-webkit-scrollbar-track {
+    background: transparent;
+}
+.playlist::-webkit-scrollbar-thumb {
+    background: var(--bb-gold-pale);
+    border-radius: 4px;
+}
+.playlist::-webkit-scrollbar-thumb:hover {
+    background: var(--bb-gold);
 }
 
-.accordion button {
-    border: 0;  
-    text-transform: uppercase;
-    font-size: 16px;
+/* Fond hérité de .playlist-wrap (#4a3d37, marron très sombre, L≈0.05) :
+   sans couleur explicite, le texte serait noir par défaut et les liens
+   hériteraient du vert --bb-green-mid (règle globale "a { color: ... }"),
+   l'un comme l'autre illisibles ici (~1:1). Même logique pour .playlist
+   .list-group-item et .loggedinContent ci-dessous. */
+.members-prompt {
+    margin: 0;
+    color: var(--bb-gold-pale);
+    font-size: 13px;
+    line-height: 1.5;
+}
+.members-prompt a {
+    color: var(--bb-white);
+    font-weight: bold;
+    text-decoration: underline;
+}
+.members-prompt a:hover,
+.members-prompt a:focus-visible {
+    color: var(--bb-gold);
 }
 
-.card { border-radius: 0;}
-.card-header, .card-body, .table {
-    padding: 0;
-    margin-bottom: 0;
+.empty-note {
+    color: var(--bb-gold-pale);
+    opacity: 0.75;
+    font-size: 13px;
+}
+
+/* Bootstrap donne un fond blanc à .list-group-item par défaut, indépendamment
+   du .card qu'on n'utilise plus ici : sans le retirer, le texte doré atterrit
+   sur du blanc (~1.35:1, illisible) au lieu du marron voulu. */
+.playlist .list-group-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.4rem;
+    margin-bottom: 0.15rem;
+    border-radius: 4px;
+    background-color: transparent;
+    border: 0;
+    color: var(--bb-gold-pale);
+    text-decoration: none;
+}
+.playlist .list-group-item svg {
+    flex: 0 0 auto;
+    opacity: 0.8;
+}
+.playlist .list-group-item .badge {
+    margin-left: auto;
+}
+.playlist .list-group-item:hover,
+.playlist .list-group-item:focus-visible {
+    background: rgba(var(--bb-gold-rgb), 0.15);
+    color: var(--bb-gold);
+}
+.playlist .list-group-item:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: -2px;
+}
+.playlist .list-group-item.active {
+    background-color: var(--bb-green-mid);
+}
+
+.loggedinContent .list-group-item {
+    display: block;
+    padding: 0.4rem 0;
+    background-color: transparent;
+    border: 0;
+    color: var(--bb-gold-pale);
+    font-size: 13px;
+}
+.loggedinContent .list-group-item a {
+    color: var(--bb-white);
+    font-weight: bold;
+}
+.loggedinContent .list-group-item a:hover,
+.loggedinContent .list-group-item a:focus-visible {
+    color: var(--bb-gold);
 }
 
 .waveW {
     width: 100%;
+    height: 100%;
 }
 
-#waveform, .accordion > .card > .card-header {
-    background: #4a3d37;;
+#waveform {
+    background: #4a3d37;
+    height: 100%;
+}
+/* wavesurfer.js crée un <wave> interne (overflow-x:auto, pas de classe/id)
+   pour le défilement horizontal quand on zoome (#slider) au-delà de la
+   largeur du cadre : sans ça, scrollbar grise par défaut du navigateur,
+   flèches ◄► comprises, qui jure complètement avec le thème. */
+#waveform wave {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bb-gold-pale) transparent;
+}
+#waveform wave::-webkit-scrollbar {
+    height: 8px;
+}
+#waveform wave::-webkit-scrollbar-track {
+    background: transparent;
+}
+#waveform wave::-webkit-scrollbar-thumb {
+    background: var(--bb-gold-pale);
+    border-radius: 4px;
+}
+#waveform wave::-webkit-scrollbar-thumb:hover {
+    background: var(--bb-gold);
 }
 
 #uploadNew {
     width: 35%;
 }
 
-input#slider {  
+/* Slider de zoom natif : par défaut, rendu générique gris du navigateur qui
+   ne s'intègre pas au thème, même topo que les scrollbars. */
+input#slider {
     width: 15%;
     margin-left: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: rgba(var(--bb-gold-rgb), 0.3);
+    border-radius: 2px;
+    outline: none;
+}
+input#slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bb-gold-pale);
+    border: 2px solid var(--bb-green-deep);
+    cursor: pointer;
+}
+input#slider::-moz-range-track {
+    height: 4px;
+    background: rgba(var(--bb-gold-rgb), 0.3);
+    border-radius: 2px;
+}
+input#slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bb-gold-pale);
+    border: 2px solid var(--bb-green-deep);
+    cursor: pointer;
+}
+input#slider:hover::-webkit-slider-thumb,
+input#slider:focus-visible::-webkit-slider-thumb {
+    background: var(--bb-gold);
+}
+input#slider:hover::-moz-range-thumb,
+input#slider:focus-visible::-moz-range-thumb {
+    background: var(--bb-gold);
+}
+input#slider:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: 2px;
 }
 
 #loopRegion, #uploadNew {
     margin-top: 5px;
 }
 
+/* #stopTrack/#playPause/#loopRegion sont maintenant de vrais <button>
+   (avant : <div>, cf. music/index.html.twig) : reset des styles par défaut
+   du navigateur (border/background/font), le reste de leur apparence (icônes,
+   couleurs, espacement) était déjà porté par les règles ci-dessous qui
+   ciblent les mêmes ids et n'ont pas besoin de changer. */
+.player-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+/* Icônes du lecteur : fond #695044 (marron moyen, L≈0.09) derrière tout ça.
+   Avant : rgba(0,0,0,0.4) et --bb-green-mid/--bb-red-dark/--bb-ink, tous des
+   tons sombres sur un fond déjà sombre (~1.1-1.7:1, sous le minimum 3:1 des
+   icônes/UI WCAG). --bb-gold-pale tient ~5.5:1 dessus. */
 #loopRegion, a#loopRegion:hover {
     margin-left: 5px;
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--bb-gold-pale);
 }
 
 #uploadNew, a#uploadNew:hover {
     padding: 0 0;
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--bb-gold-pale);
     text-decoration: none;
 }
 
 #upload svg {
-    color:#9e0000;
+    color: var(--bb-gold-pale);
     width: 32px;
     height: 32px;
     margin-top: -3px;
 }
 #play svg {
-    color:#1F6652;
+    color: var(--bb-gold-pale);
     width: 42px;
     height: 42px;
 }
 #pause svg {
-    color: white;
+    color: var(--bb-white);
     width: 42px;
     height: 42px;
 }
 #stop svg {
-    color: black;
+    color: var(--bb-gold-pale);
     width: 42px;
     height: 42px;
 }
 #loop svg {
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--bb-gold-pale);
     width: 32px;
     height: 32px;
     margin-top: 0px;
 }
 #loopRegion.looping #loop svg {
-    color:#F2B233;
+    color: var(--bb-gold);
 }
 
 
-.card, .accordion > .card:not(:last-of-type) {
-    border: 0;
+/* Avant : button:focus { outline: none; } sans remplacement, donc aucun
+   indicateur de focus clavier visible sur les boutons du lecteur une fois
+   convertis en vrais <button> (cf. .player-btn ci-dessus). Même traitement
+   :focus-visible que le reste du site (fond sombre #695044 ici, L≈0.09 :
+   blanc tient largement le 3:1 minimum d'un indicateur de focus). */
+.player-btn:focus-visible,
+#uploadNew:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Mode mobile (<=700px, cf. le script dans music/index.html.twig qui pose
+   .is-mobile sur <html> avant le 1er rendu) : music.js saute l'init Three.js
+   dans ce cas (meuble 3D + personnage illisibles en petit), donc le lecteur
+   (Player.js, indépendant du 3D) et la playlist restent affichés tels quels
+   mais en flux normal plutôt qu'en position:fixed calculée par projection
+   3D->2D (qui n'a plus de sens sans scène 3D à projeter). Fond clair
+   --bb-gold-pale + texte --bb-ink (13.6:1, largement AAA) plutôt qu'un vert
+   sombre : sur le fond --bb-gold du body, un bandeau clair s'intègre mieux
+   qu'un pavé vert foncé qui tranche fort.
+   Le bouton hamburger (.navbar-toggler, position:fixed sans top explicite)
+   n'a pas de top posé en dur : son "static position" fallback se calcule
+   à partir du 1er contenu du flux de <body>, ici .mobile-note (piège
+   vérifié empiriquement : augmenter le margin-top de .mobile-note pousse
+   le bouton vers le bas d'autant, alors qu'ils n'ont aucun lien direct en
+   CSS). Un margin-top généreux sur .mobile-note pousserait donc aussi le
+   bouton, sans jamais réellement les désuperposer (l'écart entre les deux
+   reste ~constant). Solution : décaler la bannière horizontalement après
+   le bouton (left: ~86px, sa largeur + marge) plutôt que verticalement en
+   dessous, et garder un margin-top modeste comme sur le reste du site. */
+.mobile-note {
+    display: none;
+}
+html.is-mobile .mobile-note {
+    display: block;
+    margin: 0.75rem 1rem 0.75rem 86px;
+    padding: 0.6rem 0.8rem;
+    background: var(--bb-gold-pale);
+    color: var(--bb-ink);
+    font-size: 0.85rem;
+    font-style: italic;
+    border-radius: 4px;
+}
+
+html.is-mobile .mascotte,
+html.is-mobile .loading {
+    display: none;
+}
+
+html.is-mobile .overlay {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0.75rem;
+}
+html.is-mobile .player-wrap .row:first-child {
+    position: static;
+    width: 100%;
+    height: 91px;
+}
+html.is-mobile .player-wrap .row.playerButtons {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-wrap: wrap;
+}
+html.is-mobile .playlist-wrap {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+}
+/* 2 colonnes de 50% deviennent illisibles sous ~500px (cas du .members-only
+   vide la plupart du temps, mais .playlist doit rester lisible même seule) :
+   empilées à la place, .members-only après puisqu'elle est secondaire. */
+html.is-mobile .playlist,
+html.is-mobile .members-only {
+    display: block;
+    width: 100%;
+}
+html.is-mobile .playlist {
+    border-right: 0;
     border-bottom: 1px solid #664c40;
-}
-
-button:focus {
-    outline: none;  
-}
-
-.card-body, .list-group-item {
-    font-size: 13px;
 }

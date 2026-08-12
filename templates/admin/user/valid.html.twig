@@ -4,27 +4,34 @@
 
 {% block body %}
     <div class="container">
-        <div class="row mt-4">
-            <button class="bg-yellow">
-                <a class="btn btn-red" href="{{ path ('valid') }}"><h3>Retour aux listes</h3></a>
-            </button>
-            <div class="col text-center">
-                <div class="row card-header centered">
+        <div class="profile-header">
+            <a class="btn btn-red" href="{{ path ('valid') }}" aria-label="{{ 'admin.back_to_lists'|trans }}"><i class="ri-arrow-left-line" aria-hidden="true"></i></a>
+            <div class="profile-identity">
+                <div class="profile-avatar-frame">
                     {% if user.picture == null %}
-                        <i class="fas fa-portrait"></i> <em>no picture</em>
+                        <i class="ri-image-line" aria-hidden="true"></i>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname}}">
-                    {% endif %}<h1 class="ml-2">{{ user.fullName }} {% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %}</h1>
+                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" alt=" Avatar de {{ user.firstname }}">
+                    {% endif %}
                 </div>
+                <div>
+                    <h1 class="profile-name">{{ user.fullName }} {% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif user.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %}</h1>
+                    <p class="profile-subtitle">{{ user.instrument.title }} · {{ user.city }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col text-center">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Wish</th>
-                            <th>Instrument</th>
-                            <th>Country</th>
-                            <th>City</th>
-                            <th>Date of Birth</th>
-                            <th>Created At</th>
+                            <th>{{ 'admin.wish'|trans }}</th>
+                            <th>{{ 'Instrument'|trans }}</th>
+                            <th>{{ 'Country'|trans }}</th>
+                            <th>{{ 'City'|trans }}</th>
+                            <th>{{ 'admin.date_of_birth'|trans }}</th>
+                            <th>{{ 'admin.created_at'|trans }}</th>
+                            <th>{{ 'register.member_card_number'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,8 +40,14 @@
                             <td>{{ user.instrument.title }}</td>
                             <td>{{ user.country }}</td>
                             <td>{{ user.city }}</td>
-                            <td>{{ user.birth | date('d/m/Y') }}</td>
-                            <td>{{ user.createdAt | date('d/m/Y') }}</td>
+                            <td>{{ user.birth|date('d/m/Y') }}</td>
+                            <td>{{ user.createdAt|date('d/m/Y') }}</td>
+                            {# Numéro à vérifier manuellement (pas d'API HelloAsso
+                               disponible pour valider en direct, cf. RegistrationType).
+                               Vide = la personne s'est déclarée non-adhérente à
+                               l'inscription (wish Simple probable, ou une inscription
+                               antérieure à cette fonctionnalité). #}
+                            <td>{{ user.memberCardNumber ?: '-' }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -44,8 +57,9 @@
             {{ form_start(form) }}
             {{ form_widget(form) }}
             <div class="centered">
-                <button type="submit" class="btn btn-green">Valider</button>
+                <button type="submit" class="btn btn-green">{{ 'admin.validate'|trans }}</button>
             </div>
             {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}

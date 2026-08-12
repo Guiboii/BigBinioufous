@@ -1,25 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Join us !!{% endblock %}
+{% block title %}{{ 'join.title'|trans }}{% endblock %}
 
 {% block body %}
 
-<a class="login text-yellow" href="#" role="button"><h1>Log in</h1></a>
-<a class="join text-redwall" href="#" role="button"><h1>Join us</h1></a>
+{# Avant : 2 <a href="#" role="button"><h1>...</h1></a>, donc 2 h1 sur la
+   page (viole "1 seul h1"), un lien qui ne navigue nulle part part (juste
+   du JS), et aucun état exposé (juste des <a> "cosmétiques"). Ici : un vrai
+   h1 unique pour la page, et 2 <button> (vraies actions "ouvrir un panneau
+   sur cette même page", pas des liens) avec aria-expanded/aria-controls
+   tenus à jour par join.js à l'ouverture/fermeture. #}
+<h1 class="sr-only">{{ 'join.title'|trans }}</h1>
 
+<button type="button" class="login" aria-expanded="false" aria-controls="loginForm">
+    <i class="ri-login-circle-fill" aria-hidden="true"></i> <span>{{ 'join.login_button'|trans }}</span>
+</button>
+{# Avant : bouton ouvrant un popup intermédiaire (INSCRIS-TOI ICI/COTISE ICI,
+   join/launch.html.twig) qui faisait doublon avec le flux "Es-tu déjà
+   adhérent·e ?" de /register (celui-ci gère déjà les 2 cas, cotisation
+   HelloAsso incluse) et n'avait jamais eu le relookage visuel du reste du
+   popup ("le thème n'a rien à voir avec le reste", retour utilisatrice
+   2026-08-12). Vrai lien de navigation vers /register directement. #}
+<a href="{{ path('register') }}" class="join">
+    <i class="ri-user-add-fill" aria-hidden="true"></i> <span>{{ 'join.join_button'|trans }}</span>
+</a>
 
-<form action="{{ path('join')}}" id="loginForm" class="d-none" method="post">
-         {{ include ('join/login.html.twig') }}
-</form>
+{{ include('components/form-dialog.html.twig', {
+    id: 'loginForm',
+    action: path('join'),
+    title: 'join.login_title',
+    content: include('join/login.html.twig'),
+}) }}
 
-<form id="joinForm" class="d-none" method="post">
-        {{ include ('join/launch.html.twig') }}
-</form>
-
-<div class="loading" id="js-loader"><div class="loader"></div></div>
-<div class="mascotte"><canvas id="c"></canvas></div>
+<div class="loading" id="js-loader" aria-hidden="true"><div class="loader"></div></div>
+<div class="mascotte" aria-hidden="true"><canvas id="c"></canvas></div>
 {% endblock %}
 
-{% block javascripts %}
-        {{ encore_entry_script_tags('join') }}
-{% endblock %}
+{% block importmap %}{{ importmap(['app', 'join']) }}{% endblock %}

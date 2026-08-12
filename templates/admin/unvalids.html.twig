@@ -1,40 +1,47 @@
 {% extends 'desk/base.html.twig' %}
 
-{% block title %}Validation{% endblock %}
+{% block title %}{{ 'admin.validation_title'|trans }}{% endblock %}
 
 {% block body %}
 
 <div class="container mt-2">
     <div class="container mt-2">
+        <h1>{{ 'admin.pending_requests_title'|trans }}</h1>
         <table class="table table-hover text-center">
-            <h3>Demandes de validation en attente</h3>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Picture</th>
-                    <th>Wished role</th>
-                    <th>Instrument</th>
-                    <th>Country</th>
-                    <th>City</th>
-                    <th>Created At</th>
-                    <th>Actions</th>
+                    <th>{{ 'Name'|trans }}</th>
+                    <th>{{ 'Picture'|trans }}</th>
+                    <th>{{ 'admin.wished_role'|trans }}</th>
+                    <th>{{ 'Instrument'|trans }}</th>
+                    <th>{{ 'Country'|trans }}</th>
+                    <th>{{ 'City'|trans }}</th>
+                    <th>{{ 'admin.created_at'|trans }}</th>
+                    <th>{{ 'Actions'|trans }}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for user in unvalids %}
                 <tr>
-                    <td>{% if user.gender == 'male' %}<i class="fas fa-male"></i>{% else %}<i class="fas fa-female"></i>{% endif %} {{ user.fullName }}</td>
+                    <td>{% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif user.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %} {{ user.fullName }}</td>
                     <td>{% if user.picture == null %}
-                        <i class="fas fa-portrait"></i> <em>no picture</em>
+                        <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname}}">
+                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname }}">
                     {% endif %}</td>
                     <td>{{ user.wish }}</td>
                     <td>{{ user.instrument.title }}</td>
                     <td>{{ user.country }}</td>
                     <td>{{ user.city }}</td>
-                    <td>{{ user.createdAt | date('d/m/Y') }}</td>
-                    <td> <a href="{{ path ('user_valid', {'slug' : user.slug, 'wish' : user.wish})}}" class="btn btn-green"><i class="fas fa-check"></i></a></td>
+                    <td>{{ user.createdAt|date('d/m/Y') }}</td>
+                    <td>
+                        <a href="{{ path ('user_valid', {slug: user.slug, wish: user.wish}) }}" class="btn btn-green" aria-label="{{ 'admin.validate_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></a>
+                        <form method="post" action="{{ path('user_refuse', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_refuse'|trans({'%name%': user.fullName})|e('js') }}');" class="btn-form">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('refuse' ~ user.id) }}">
+                            <button type="submit" class="btn btn-red" aria-label="{{ 'admin.refuse_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-close-circle-line" aria-hidden="true"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

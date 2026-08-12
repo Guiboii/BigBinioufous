@@ -1,4 +1,6 @@
 .DS_Store
+.vscode
+.env
 
 ###> symfony/framework-bundle ###
 /.env
@@ -11,6 +13,8 @@
 /vendor/
 /public/uploads/music/
 /public/uploads/pictures/
+/public/uploads/events/
+/public/uploads/documents/
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###
@@ -18,10 +22,28 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
 
-###> symfony/webpack-encore-bundle ###
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> vincentlanglet/twig-cs-fixer ###
+/.twig-cs-fixer.cache
+###< vincentlanglet/twig-cs-fixer ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
+
+###> node (lint tooling only, plus de build JS) ###
 /node_modules/
 /public/build/
 npm-debug.log
-yarn-error.log
-###< symfony/webpack-encore-bundle ###
+###< node (lint tooling only, plus de build JS) ###
+.playwright-mcp/

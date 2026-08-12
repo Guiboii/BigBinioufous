@@ -2,67 +2,67 @@
 
 namespace App\Controller;
 
+use App\Entity\PasswordUpdate;
 use App\Entity\User;
 use App\Form\AccountType;
-use App\Entity\PasswordUpdate;
-use App\Form\RegistrationType;
 use App\Form\PasswordUpdateType;
+use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class LoginController extends AbstractController
 {
-     /**
-     * page to join
-     *
-     * @Route("/join", name="join")
+    /**
+     * page to join.
      */
-    public function index(AuthenticationUtils $utils, Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder)
+    #[Route('/join', name: 'join')]
+    public function index(AuthenticationUtils $utils, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder)
     {
         $error = $utils->getLastAuthenticationError();
         $username = $utils->getLastUsername();
 
         return $this->render('join/index.html.twig', [
-            'hasError' => $error !== null,
-            'username' => $username
-        ]);   
-    }
-    
-    /**
-     * to login
-     * 
-     * @Route("/login", name="login")
-     * 
-     * @return Response
-     */
-    public function login()
-    {
-        return $this->render('join/login.html.twig');
+            'hasError' => null !== $error,
+            'username' => $username,
+        ]);
     }
 
     /**
-     * to logout
-     * 
-     * @Route("/logout", name="logout")
+     * /login redirects to /join: security.yaml's login_path/check_path already
+     * point to the "join" route, /login is never used by the real auth flow.
+     * join/login.html.twig used to be rendered here as a standalone document
+     * (via popup.html.twig) but is now a fragment included inline in
+     * join/index.html.twig, so it can no longer be rendered on its own.
+     */
+    #[Route('/login', name: 'login')]
+    public function login(): Response
+    {
+        return $this->redirectToRoute('join');
+    }
+
+    /**
+     * to logout.
      *
      * @return void
      */
-    public function logout() {}
+    #[Route('/logout', name: 'logout')]
+    public function logout()
+    {
+    }
 
     /**
-     * to register
+     * to register.
      *
-     * @Route("/register", name="register")
-     * 
      * @return Response
      */
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, SluggerInterface $slugger)
+    #[Route('/register', name: 'register')]
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, SluggerInterface $slugger)
     {
         $user = new User();
 
@@ -70,45 +70,49 @@ class LoginController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             // valid simple user automatically
 
             $validation = false;
             $userole = $form->get('wish')->getData();
-            if ($userole == 'Simple')
-            {
+            if ('Simple' == $userole) {
                 $validation = true;
             }
-             
+
+            // memberCardNumber n'a de sens que si "Es-tu déjà adhérent·e ?"
+            // vaut "yes" : le champ étant affiché/masqué côté JS, on nettoie
+            // ici au cas où une valeur aurait quand même été soumise (JS
+            // désactivé, ou manipulation directe du formulaire).
+            if ('yes' !== $form->get('alreadyMember')->getData()) {
+                $user->setMemberCardNumber(null);
+            }
+
             /** @var UploadedFile $brochureFile */
             $pictureFile = $form->get('picture')->getData();
 
+            $newFilename = null;
+
             // this condition is needed because the 'brochure' field is not required
             // so the PDF file must be processed only when a file is uploaded
-            if ($pictureFile)
-            {
-            $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+            if ($pictureFile) {
+                $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
 
                 // Move the file to the directory where brochures are stored
-                try
-                {
+                try {
                     $pictureFile->move(
                         $this->getParameter('pictures_directory'),
                         $newFilename
                     );
-                }
-                catch (FileException $e)
-                {
+                } catch (FileException $e) {
                     // ... handle exception if something happens during file upload
                 }
             }
 
-            $hash = $encoder->encodePassword($user, $user->getHash());
-            $user   ->setHash($hash)
+            $hash = $encoder->hashPassword($user, $user->getHash());
+            $user->setHash($hash)
                     ->setValidation($validation)
                     ->setPicture($newFilename);
 
@@ -116,39 +120,38 @@ class LoginController extends AbstractController
             $manager->flush();
 
             $this->addFlash(
-            'success', "Welcome ! Log you now, your account has been created"
+                'success', 'Welcome ! Log you now, your account has been created'
             );
-        
 
             return $this->redirectToRoute('join');
         }
 
         return $this->render('join/registration.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
+
     /**
-     * update profile
-     * 
-     * @Route("/desk/profile", name="profile")
+     * update profile.
      *
      * @return Response
      */
-    public function profile(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger){
-
+    #[Route('/desk/profile', name: 'profile')]
+    public function profile(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger)
+    {
         $user = $this->getUser();
         $form = $this->createForm(AccountType::class, $user);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $brochureFile */
             $pictureFile = $form->get('picture')->getData();
 
             // this condition is needed because the 'brochure' field is not required
             // so the PDF file must be processed only when a file is uploaded
             if ($pictureFile) {
-            $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
                 // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
@@ -172,23 +175,23 @@ class LoginController extends AbstractController
             $manager->flush();
 
             $this->addFlash(
-                'success', "Profile saved"
+                'success', 'Profile saved'
             );
         }
 
         return $this->render('desk/profile.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
     /**
-     * Update the password
+     * Update the password.
      *
-     * @Route("/desk/update-password", name="update-password")
-     * 
      * @return void
      */
-    public function updatePassword(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager){
+    #[Route('/desk/update-password', name: 'update-password')]
+    public function updatePassword(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager)
+    {
         $passwordUpdate = new PasswordUpdate();
 
         $user = $this->getUser();
@@ -197,12 +200,11 @@ class LoginController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
-            if(!password_verify($passwordUpdate->getOldPassword(), $user->getHash())){
-
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!password_verify($passwordUpdate->getOldPassword(), $user->getHash())) {
             } else {
                 $newPassword = $passwordUpdate->getNewPassword();
-                $hash = $encoder->encodePassword($user, $newPassword);
+                $hash = $encoder->hashPassword($user, $newPassword);
 
                 $user->setHash($hash);
 
@@ -211,7 +213,7 @@ class LoginController extends AbstractController
 
                 $this->addFlash(
                     'success',
-                    "Your password has been update"
+                    'Your password has been update'
                 );
 
                 return $this->redirectToRoute('profile');
@@ -219,7 +221,7 @@ class LoginController extends AbstractController
         }
 
         return $this->render('desk/password.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -1,0 +1,355 @@
+# Fichier généré au fil de l'extraction des textes en dur des templates Twig.
+
+a11y:
+    skip_to_content: Aller au contenu principal
+
+common:
+    close: Fermer
+
+home:
+    heading: "Bienvenue chez les Binioufous !!"
+
+nav:
+    home: Accueil
+    story: Histoire
+    music: Musique
+    schedule: Planning
+    desk: Espace membre
+    profile: Profil
+    logout: Déconnexion
+    join_or_login: Rejoindre ou se connecter
+    tagline: "Le groupe de hautbois le plus déjanté de la Galaxie !!"
+    folders: Dossiers
+    planning: Planning
+    accountant: Comptabilité
+    toggle: Basculer la navigation
+
+contact:
+    title: Hello
+    name_label: Ton nom
+    email_label: Ton email
+    message_label: Qu'est-ce que tu veux nous dire
+    submit: OK
+
+story:
+    title: Histoire
+    nav_contact: "@contact"
+    mobile_note: "Vue simplifiée pour mobile : la version complète avec le décor 3D t'attend sur ordinateur."
+
+story_admin:
+    index_heading: Gestion de la page Histoire
+    index_intro: "Les sections ci-dessous s'affichent dans cet ordre sur la page Histoire. Le contenu accepte la mise en forme Markdown (barre d'outils dans le champ Contenu : gras, italique, titre, liste, lien...), avec un aperçu du rendu à côté."
+    add_new: Ajouter une section
+    no_sections: Aucune section pour l'instant.
+    field_title: Titre
+    field_title_placeholder: "Ex. Qui sont les Binioufous ?"
+    field_content: Contenu
+    field_content_placeholder: "Texte de la section (aide-mémoire juste au-dessus)..."
+    markdown_help_title: "Mise en forme (facultatif) :"
+    markdown_help_h1: "en début de ligne = gros titre"
+    markdown_help_h2: "en début de ligne = titre plus petit"
+    markdown_help_bold: "="
+    markdown_help_bold_example: "gras"
+    markdown_help_italic: "="
+    markdown_help_italic_example: "italique"
+    markdown_help_strike: "="
+    markdown_help_strike_example: "barré"
+    markdown_help_list: "en début de ligne = liste à puces"
+    markdown_help_link: "= lien cliquable"
+    new_title: Nouvelle section
+    create_heading: Ajouter une section
+    edit_title: Modifier la section
+    edit_heading: Modifier la section
+    back_to_list: retour à la liste
+    save_submit: Enregistrer
+    update_submit: Mettre à jour
+    confirm_delete: "Tu es sûr·e de vouloir supprimer cette section ?"
+    delete_aria: "Supprimer « %title% »"
+    edit_aria: "Modifier « %title% »"
+    move_up_aria: "Monter « %title% »"
+    move_down_aria: "Descendre « %title% »"
+    preview_aria: "Voir « %title% » sur le site"
+
+schedule:
+    title: Planning
+    mobile_note: "Vue simplifiée pour mobile : la version complète avec le décor 3D t'attend sur ordinateur."
+    no_events: "Rien de prévu pour l'instant."
+    login_note: "Connecte-toi pour voir aussi les répétitions et le reste du planning."
+    login_note_cta: "Rejoindre / se connecter"
+    month_of: Mois de
+    prev_month: Mois précédent
+    next_month: Mois suivant
+    day:
+        mon: LUN
+        tue: MAR
+        wed: MER
+        thu: JEU
+        fri: VEN
+        sat: SAM
+        sun: DIM
+    month:
+        jan: JANV
+        feb: FÉVR
+        mar: MARS
+        apr: AVR
+        may: MAI
+        jun: JUIN
+        jul: JUIL
+        aug: AOÛT
+        sep: SEPT
+        oct: OCT
+        nov: NOV
+        dec: DÉC
+
+event:
+    index_heading: Gestion du planning
+    add_new: Ajouter une date
+    no_events: Aucune date pour l'instant.
+    new_title: Nouvelle date
+    create_heading: Ajouter une date
+    edit_title: Modifier la date
+    edit_heading: Modifier la date
+    back_to_list: retour à la liste
+    save_submit: Enregistrer
+    update_submit: Mettre à jour
+    confirm_delete: "Tu es sûr·e de vouloir supprimer cette date ?"
+    delete: Supprimer
+    field_title: Titre
+    field_title_placeholder: "Ex. Fest-noz de la Saint-Jean"
+    field_location: Lieu
+    field_location_placeholder: "Ex. Place du marché, Rennes"
+    field_type: Type
+    type_rehearsal: Répétition
+    type_concert: Concert
+    type_other: Autre
+    field_date: Date
+    field_end_date: "Heure de fin (facultatif)"
+    field_description: Description
+    field_description_placeholder: "Facultatif"
+    field_poster: "Affiche (facultatif)"
+    poster_invalid_type: "Merci de choisir une image JPEG ou PNG valide"
+    add_to_calendar: "Ajouter à mon agenda"
+    calendar_other: "Autre (.ics)"
+    edit_aria: "Modifier « %title% »"
+
+join:
+    title: "Rejoindre !!"
+    login_button: Se connecter
+    join_button: Rejoindre
+    login_title: Connexion
+    login_heading: "Connecte-toi mon pote !!"
+    login_error: "Il y a une erreur..."
+    email_placeholder: "Ton email..."
+    password_placeholder: "Ton mot de passe..."
+    login_submit: "Connexion !"
+    registration_title: Inscription
+    registration_heading: "Allez, inscris-toi !!"
+    registration_warning: "L'inscription doit être validée par un·e administrateur·rice !!"
+    registration_notice: "Sache que tu dois payer une cotisation pour devenir un vrai Binioufous, ou si tu veux juste utiliser nos partitions pour jouer de la musique à plusieurs voix"
+    pay_subscription: "PAYER UNE COTISATION POUR UN AN"
+    submit: "Rejoindre !!"
+
+register:
+    step_label: "Pour commencer :"
+    already_member_question: "Es-tu déjà adhérent·e ?"
+    already_member_hint: "As-tu déjà payé ta cotisation HelloAsso ?"
+    member_card_number: "Numéro de carte d'adhérent·e"
+    member_card_number_placeholder: "Le numéro indiqué sur ta carte ou ta confirmation HelloAsso"
+    member_card_note: "Ce numéro sera vérifié manuellement par un·e administrateur·rice au moment de valider ton inscription."
+    not_member_hint: "Pas de souci ! Deux possibilités :"
+    or_choose_simple: "Ou, si tu ne veux pas encore cotiser, choisis « Un grand fan !! » dans le champ « Tu veux être » plus bas : un profil restreint, sans cotisation."
+
+desk:
+    add_picture: "Ajoute une photo !"
+    hello: "Salut %nickname% !"
+    pending_validation: "Merci de patienter !! Ton compte doit être validé par un·e administrateur·rice..."
+    pending_count: "%count% validation(s) en attente"
+    binioufous_heading: "Voici les Binioufous !"
+    mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"
+    favorite_songs: Morceaux favoris
+    welcome_simple: "Bienvenue cher utilisateur !!"
+    hub_intro: "Choisis un espace de fichiers."
+    space_music: Musique
+    space_music_intro: "Morceaux, partitions, enregistrements... et choisis la ou les voix que tu joues sur chaque morceau."
+    space_admin: Administratif
+    space_admin_intro: "Comptes-rendus et documents administratifs."
+    space_accounting: Comptabilité
+    space_accounting_intro: "Relevés et documents comptables."
+    move_start: Déplacer
+    move_folder_aria: "Déplacer le dossier %name%"
+    move_document_aria: "Déplacer le document %name%"
+    move_here: "Déplacer dans « %folder% »"
+    move_here_aria: "Déplacer ici, dans %name%"
+    move_cancel: Annuler le déplacement
+    move_banner_document: "Déplacement de « %name% » : choisis un dossier de destination, ou déplace-le ici."
+    move_banner_folder: "Déplacement du dossier « %name% » : choisis un dossier de destination, ou déplace-le ici."
+    new_folder_label: "Nouveau dossier :"
+    new_folder_placeholder: "Nom du dossier"
+    new_folder_submit: Créer
+    voice_playing: "(tu joues cette voix)"
+    voice_played_by: "Joué par :"
+    voice_no_players: "Personne ne joue cette voix pour l'instant"
+    quick_upload_zone: "Glisse tes fichiers ici (mp3, vidéo, pdf, photo), ou clique pour en choisir"
+    quick_upload_uploading: envoi en cours...
+    quick_upload_progress: "Progression de l'envoi"
+    download: Télécharger
+    confirm_delete_folder: "Supprimer le dossier « %name% » et tout ce qu'il contient ?"
+    delete_folder_aria: "Supprimer le dossier %name%"
+    quick_upload_success: ajouté !
+    quick_upload_error: "échec, réessaie"
+    documents_heading: Documents
+    document_uploaded_by: "déposé par"
+    confirm_delete_document: "Tu es sûr·e de vouloir supprimer ce document ?"
+    breadcrumb: "Fil d'Ariane des dossiers"
+    files_root: Fichiers
+    folder_empty: "Ce dossier est vide."
+    favorite: Mettre en favori
+    unfavorite: Retirer des favoris
+    change_password: Changer ton mot de passe
+    update_submit: Mettre à jour
+    update_profile: "Mets à jour ton profil !"
+    list:
+        admins_title: Les Administrateurices
+        accountants_title: Les Comptables
+        binioufous_title: Les Binioufous
+        members_title: Les Membres
+        simples_title: Les simples utilisateurs
+
+music:
+    title: Liste des morceaux
+    mobile_note: "Vue simplifiée pour mobile : le lecteur complet avec le meuble 3D t'attend sur ordinateur."
+    upload: Envoyer
+    loop: Boucle
+    by: par
+    no_records: aucun morceau trouvé
+    voice_label: "Voix :"
+    download: télécharger
+    no_links: aucun lien trouvé
+    members_prompt: "Réservé aux membres, pour débloquer les téléchargements :"
+    new_title: Nouveau morceau
+    create_heading: Créer un nouveau morceau
+    back_to_list: retour à la liste
+    edit_title: Modifier le morceau
+    edit_heading: Modifier le morceau
+    update_submit: Mettre à jour
+    save_submit: Enregistrer
+    confirm_delete: "Tu es sûr·e de vouloir supprimer cet élément ?"
+    delete: Supprimer
+    track_title: Morceau
+    artist: Artiste
+    duration: Durée
+    edit_link: modifier
+    zoom_label: "Zoom sur la forme d'onde"
+    play_label: Lecture
+    pause_label: "Mettre en pause"
+    stop_label: Arrêter
+    player_region: "Lecteur audio"
+    voices_heading: Voix
+    no_voices: "Aucune voix pour l'instant"
+    voice_listen: écouter
+    voice_add_submit: Ajouter la voix
+    voice_name: Nom de la voix
+    voice_name_placeholder: "ex. Hautbois 1"
+    voice_file: "Fichier audio de la voix (mp3, facultatif)"
+    invalid_mp3: "Merci d'envoyer un fichier mp3 valide"
+    confirm_delete_voice: "Tu es sûr·e de vouloir supprimer cette voix ?"
+
+Id: Id
+
+Administrator: "Administrateur·rice"
+Accountant: Comptable
+Binioufous: Binioufous
+Member: Membre
+Simple: Simple
+User: "Utilisateur·rice"
+
+admin:
+    compta_title: Compta
+    compta_hello: "Bonjour %name% !"
+    compta_welcome: "Bienvenue sur la page comptabilité !!"
+    compta_wip: "OK, encore un peu de travail avant de pouvoir s'en servir"
+    validation_title: Validation
+    pending_requests_title: Demandes de validation en attente
+    wished_role: Rôle souhaité
+    created_at: Créé le
+    back_to_lists: Retour aux listes
+    contact: Contacter
+    make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice"
+    make_accountant: "Faire de cet utilisateur·rice un·e comptable"
+    make_binioufous: "Faire de cet utilisateur·rice un·e binioufous"
+    make_member: "Faire de cet utilisateur·rice un·e membre"
+    make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice"
+    confirm_make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice ?"
+    confirm_make_accountant: "Faire de cet utilisateur·rice un·e comptable ?"
+    confirm_make_binioufous: "Faire de cet utilisateur·rice un·e binioufous ?"
+    confirm_make_member: "Faire de cet utilisateur·rice un·e membre ?"
+    confirm_make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice ?"
+    already_has_role: "Cette personne a déjà ce rôle."
+    roles: Rôles
+    validate: Valider
+    wish: Souhait
+    date_of_birth: Date de naissance
+    edit_user_aria: "Modifier le profil de %name%"
+    validate_user_aria: "Valider l'inscription de %name%"
+    remove_role_aria: "Retirer le rôle « %role% »"
+    confirm_remove_role: "Retirer le rôle « %role% » ?"
+    refuse: Refuser
+    refuse_user_aria: "Refuser l'inscription de %name%"
+    confirm_refuse: "Refuser l'inscription de %name% ? Le compte sera supprimé."
+    promote_section: Promouvoir
+    edit_profile_section: Modifier le profil
+
+Name: Nom
+Picture: Photo
+City: Ville
+Instrument: Instrument
+Actions: Actions
+Country: Pays
+"no picture": "pas de photo"
+
+"Your gender": Ton genre
+"(sorry for that)": "(désolé pour ça)"
+Male: Homme
+Female: Femme
+Yes: Oui
+No: Non
+"Still looking for...": "Toujours en train de chercher..."
+"First Name": Prénom
+"Your first name": Ton prénom
+"Last Name": Nom
+"Your last name": Ton nom
+Nickname: Surnom
+"Your nickname": Ton surnom
+"choose your artist's name": "choisis ton nom d'artiste"
+"Your artist's name": "Ton nom d'artiste"
+Email: Email
+"Your email address": Ton adresse email
+Password: "Mot de passe"
+"Choose a strong one": "Choisis-en un solide"
+"Confirm Password": "Confirme le mot de passe"
+"Please confirm your password": "Confirme ton mot de passe"
+"Your country": Ton pays
+"choose your counrty": "choisis ton pays"
+"choose your country": "choisis ton pays"
+"Your city": Ta ville
+"The city you live in, bro !": "La ville où tu vis, mon pote !"
+"The date of your birth": Ta date de naissance
+"To whish your Birthday, of course !!": "Pour te souhaiter ton anniversaire, bien sûr !!"
+"The date of your Birth": Ta date de naissance
+"To wish your Birhtday, of course": "Pour souhaiter ton anniversaire, bien sûr"
+"You want to be": "Tu veux être"
+"the place you have in the team": "ta place dans l'équipe"
+"A real Binioufous !!": "Un vrai Binioufous !!"
+"A Binioufous, but I cannot come to the rehearsals...": "Un Binioufous, mais je ne peux pas venir aux répétitions..."
+"A big Fan !!": "Un grand fan !!"
+"A picture of you (jpeg)": "Une photo de toi (jpeg)"
+"A picture of you (jpg)": "Une photo de toi (jpg)"
+"Last password": "Ancien mot de passe"
+"Insert your password": "Saisis ton mot de passe"
+"New password": "Nouveau mot de passe"
+"Confirm password": "Confirme le mot de passe"
+Title: Titre
+"title of the file": "titre du morceau"
+Minutes: Minutes
+Seconds: Secondes
+"track (mp3 file)": "morceau (fichier mp3)"

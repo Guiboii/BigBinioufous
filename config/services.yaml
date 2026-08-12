@@ -5,7 +5,10 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     mp3: '%kernel.project_dir%/public/uploads/music'
+    voices_directory: '%kernel.project_dir%/public/uploads/music/voices'
+    documents_directory: '%kernel.project_dir%/public/uploads/documents'
     pictures_directory : '%kernel.project_dir%/public/uploads/pictures'
+    event_posters: '%kernel.project_dir%/public/uploads/events'
 
 services:
     # default configuration for services in *this* file
@@ -24,6 +27,14 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    # Filtre Twig |markdown_to_html (contenu Markdown éditable de la page
+    # Histoire, cf. StorySection) : TwigExtraBundle câble déjà league/commonmark
+    # automatiquement (présence détectée), reste seulement à ajouter le
+    # strikethrough (~~texte~~, remplace les <s> en dur du contenu historique)
+    # via le tag twig.markdown.league_extension qu'il collecte lui-même.
+    League\CommonMark\Extension\Strikethrough\StrikethroughExtension:
+        tags: ['twig.markdown.league_extension']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

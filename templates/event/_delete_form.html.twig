@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('event_delete', {id: event.id}) }}" onsubmit="return confirm('{{ 'event.confirm_delete'|trans|e('js') }}');" class="btn-form">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
+    <button class="btn btn-red" aria-label="{{ 'event.delete'|trans }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+</form>

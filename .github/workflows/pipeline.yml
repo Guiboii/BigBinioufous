@@ -1,0 +1,119 @@
+name: pipeline
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main_2026
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  # --- Lint ---------------------------------------------------------------
+  lint-php-twig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --no-scripts
+      - name: Lint PHP (PHP-CS-Fixer)
+        run: composer cs-php
+      - name: Lint Twig (Twig-CS-Fixer)
+        run: composer cs-twig
+      - name: .env éphémère pour booter le kernel (jamais commité, juste pour ce job)
+        run: |
+          echo "APP_ENV=test" > .env
+          echo 'DATABASE_URL="mysql://user:password@127.0.0.1:3306/app?serverVersion=5.7"' >> .env
+      - name: Vérifie les fichiers de traduction (syntaxe + clés manquantes fr/en)
+        run: |
+          php bin/console lint:yaml translations/
+          php bin/console debug:translation fr --only-missing
+          php bin/console debug:translation en --only-missing
+          # br exclu du check strict : Symfony embarque ses propres messages de
+          # validation/sécurité en interne (fr/en...) mais pas en breton, donc
+          # --only-missing y trouvera toujours du bruit venant du framework lui-même
+
+  lint-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint JS (ESLint)
+        run: npm run lint:js
+
+  # --- Sécurité (après le lint) --------------------------------------------
+  composer-audit:
+    needs: [lint-php-twig, lint-js]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --no-scripts
+      - name: Full dependency audit
+        run: composer audit --abandoned=report
+
+  npm-audit:
+    needs: [lint-php-twig, lint-js]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+      - name: Install dependencies
+        run: npm ci
+      - name: Full dependency audit
+        run: npm audit --audit-level=high
+
+  dependency-review:
+    needs: [lint-php-twig, lint-js]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+  # --- Déploiement (Phase 3 de ROADMAP.md) --------------------------------
+  # Déploiement direct (pas de Docker) : connexion SSH au VPS, git pull,
+  # migrations, recompilation des assets. Nécessite les secrets VPS_HOST,
+  # VPS_USER, VPS_SSH_KEY, VPS_PATH (voir ROADMAP.md, Phase 3), et un clone
+  # initial du repo déjà fait à la main sur le VPS.
+  deploy:
+    needs: [composer-audit, npm-audit]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déploiement SSH sur le VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ${{ secrets.VPS_PATH }}
+            git pull origin master
+            composer install --no-dev --no-progress --prefer-dist --optimize-autoloader
+            php bin/console doctrine:migrations:migrate --no-interaction
+            php bin/console asset-map:compile
+            php bin/console cache:clear
