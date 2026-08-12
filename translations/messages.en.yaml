@@ -74,6 +74,8 @@ schedule:
     title: Schedule
     mobile_note: "Simplified mobile view: the full version with the 3D scenery is waiting for you on a computer."
     no_events: "Nothing planned yet."
+    login_note: "Log in to also see rehearsals and the rest of the schedule."
+    login_note_cta: "Join / log in"
     month_of: Month of
     prev_month: Previous month
     next_month: Next month

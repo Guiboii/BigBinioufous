@@ -74,6 +74,8 @@ schedule:
     title: Planning
     mobile_note: "Vue simplifiée pour mobile : la version complète avec le décor 3D t'attend sur ordinateur."
     no_events: "Rien de prévu pour l'instant."
+    login_note: "Connecte-toi pour voir aussi les répétitions et le reste du planning."
+    login_note_cta: "Rejoindre / se connecter"
     month_of: Mois de
     prev_month: Mois précédent
     next_month: Mois suivant
