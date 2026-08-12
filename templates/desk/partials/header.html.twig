@@ -1,4 +1,9 @@
 <header>
+    {# Voir templates/partials/header.html.twig pour le pourquoi de ce pattern
+       (aria-current="page" + hook JS assets/main/app.js pour ne pas recharger
+       la page sur un clic sur le lien déjà courant). Cette navbar n'avait
+       jusqu'ici aucune indication de page courante, même fausse. #}
+    {% set currentRoute = app.request.attributes.get('_route') %}
     <nav class="navbar-admin navbar-expand-md" aria-label="{{ 'nav.desk'|trans }}">
         <div class="container">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarAdminNav" aria-controls="navbarAdminNav" aria-expanded="false" aria-label="{{ 'nav.toggle'|trans }}">
@@ -8,10 +13,10 @@
             <div class="collapse" id="navbarAdminNav">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-yellow" href="{{ path('home') }}"><i class="ri-home-4-fill" aria-hidden="true"></i> {{ 'nav.home'|trans }}</a>
+                        <a class="nav-link text-yellow" href="{{ path('home') }}"{% if currentRoute == 'home' %} aria-current="page"{% endif %}><i class="ri-home-4-fill" aria-hidden="true"></i> {{ 'nav.home'|trans }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-yellow" href="{{ path('desk') }}"><i class="ri-user-settings-fill" aria-hidden="true"></i> {{ 'nav.desk'|trans }}</a>
+                        <a class="nav-link text-yellow" href="{{ path('desk') }}"{% if currentRoute == 'desk' %} aria-current="page"{% endif %}><i class="ri-user-settings-fill" aria-hidden="true"></i> {{ 'nav.desk'|trans }}</a>
                     </li>
                     {% if app.user %}
                         {% set canFilesMusic = is_granted('ROLE_BINIOUFOUS') or is_granted('ROLE_ADMIN') %}
@@ -23,23 +28,23 @@
                                 {# Un seul espace accessible : lien direct, pas la peine de passer par le
                                    hub pour un choix qui n'en est pas un (retour utilisatrice 2026-08-11). #}
                                 {% if accessibleSpaces == 1 %}
-                                    <a href="{{ path('desk_files', {space: canFilesMusic ? 'music' : (canFilesAdmin ? 'admin' : 'accounting')}) }}" class="nav-link text-yellow"><i class="ri-folder-3-fill" aria-hidden="true"></i> {{ 'nav.folders'|trans }}</a>
+                                    <a href="{{ path('desk_files', {space: canFilesMusic ? 'music' : (canFilesAdmin ? 'admin' : 'accounting')}) }}" class="nav-link text-yellow"{% if currentRoute == 'desk_files' %} aria-current="page"{% endif %}><i class="ri-folder-3-fill" aria-hidden="true"></i> {{ 'nav.folders'|trans }}</a>
                                 {% else %}
-                                    <a href="{{ path('desk_files_hub') }}" class="nav-link text-yellow"><i class="ri-folder-3-fill" aria-hidden="true"></i> {{ 'nav.folders'|trans }}</a>
+                                    <a href="{{ path('desk_files_hub') }}" class="nav-link text-yellow"{% if currentRoute == 'desk_files_hub' %} aria-current="page"{% endif %}><i class="ri-folder-3-fill" aria-hidden="true"></i> {{ 'nav.folders'|trans }}</a>
                                 {% endif %}
                             </li>
                         {% endif %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item">
-                                <a href="{{ path('event_index') }}" class="nav-link text-yellow"><i class="ri-calendar-event-fill" aria-hidden="true"></i> {{ 'nav.planning'|trans }}</a>
+                                <a href="{{ path('event_index') }}" class="nav-link text-yellow"{% if currentRoute == 'event_index' %} aria-current="page"{% endif %}><i class="ri-calendar-event-fill" aria-hidden="true"></i> {{ 'nav.planning'|trans }}</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ path('story_section_index') }}" class="nav-link text-yellow"><i class="ri-book-open-fill" aria-hidden="true"></i> {{ 'nav.story'|trans }}</a>
+                                <a href="{{ path('story_section_index') }}" class="nav-link text-yellow"{% if currentRoute == 'story_section_index' %} aria-current="page"{% endif %}><i class="ri-book-open-fill" aria-hidden="true"></i> {{ 'nav.story'|trans }}</a>
                             </li>
                         {% endif %}
                         {% if is_granted('ROLE_COMPTA') %}
                             <li class="nav-item">
-                                <a href="{{ path('accountant') }}" class="nav-link text-yellow"><i class="ri-money-euro-circle-fill" aria-hidden="true"></i> {{ 'nav.accountant'|trans }}</a>
+                                <a href="{{ path('accountant') }}" class="nav-link text-yellow"{% if currentRoute == 'accountant' %} aria-current="page"{% endif %}><i class="ri-money-euro-circle-fill" aria-hidden="true"></i> {{ 'nav.accountant'|trans }}</a>
                             </li>
                         {% endif %}
                     {% endif %}
@@ -50,9 +55,10 @@
                         <a href="{{ path('app_locale', {locale: 'br'}) }}" class="lang-link {% if app.request.locale == 'br' %}active{% endif %}">BR</a>
                     </li>
                     <li class="nav-item ml-auto">
-                        <a class="nav-link text-yellow" href="{{ path('profile') }}"><i class="ri-user-fill" aria-hidden="true"></i> {{ 'nav.profile'|trans }}</a>
+                        <a class="nav-link text-yellow" href="{{ path('profile') }}"{% if currentRoute == 'profile' %} aria-current="page"{% endif %}><i class="ri-user-fill" aria-hidden="true"></i> {{ 'nav.profile'|trans }}</a>
                     </li>
                     <li class="nav-item">
+                        {# Jamais aria-current, cf. templates/partials/header.html.twig #}
                         <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="ri-logout-box-r-fill" aria-hidden="true"></i> {{ 'nav.logout'|trans }}</a>
                     </li>
                 </ul>

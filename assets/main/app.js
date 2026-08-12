@@ -33,11 +33,39 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!menu) {
     return;
   }
+
+  // Remet le panneau replié dans l'état "fermé" tel que le ferait Bootstrap
+  // au clic sur le toggler : factorisé car réutilisé à la fois par Échap et
+  // par le clic sur le lien de la page courante ci-dessous.
+  function closeMenu() {
+    menu.classList.remove('show');
+    toggler.setAttribute('aria-expanded', 'false');
+  }
+
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && menu.classList.contains('show')) {
-      menu.classList.remove('show');
-      toggler.setAttribute('aria-expanded', 'false');
+      closeMenu();
       toggler.focus();
+    }
+  });
+
+  // Lien de la page courante (aria-current="page", posé côté Twig d'après la
+  // route active) : cliquer dessus ne doit pas recharger la page pour rien,
+  // mais doit quand même fermer le panneau replié comme n'importe quel autre
+  // lien de la navbar (qui, eux, s'en chargent "gratuitement" via la
+  // navigation qui recharge la page). Écouteur posé sur le panneau plutôt
+  // que sur chaque lien : un seul <a aria-current="page"> existe par page,
+  // et ça marche aussi bien pour la navbar admin dépliée en desktop (aucune
+  // classe 'show' à retirer dans ce cas, closeMenu() n'a alors aucun effet
+  // visible, ce qui est le comportement voulu).
+  menu.addEventListener('click', function (e) {
+    var currentLink = e.target.closest('a[aria-current="page"]');
+    if (!currentLink) {
+      return;
+    }
+    e.preventDefault();
+    if (menu.classList.contains('show')) {
+      closeMenu();
     }
   });
 });

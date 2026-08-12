@@ -756,17 +756,22 @@ body.desk .table td {
     white-space: nowrap;
     color: var(--bb-gold-pale);
 }
+/* Page courante : même traitement visuel que :hover/:focus-visible (fond
+   doré, texte/icône vert foncé), ciblé sur aria-current="page" (posé côté
+   Twig d'après la route active, cf. templates/partials/header.html.twig)
+   plutôt que l'ancienne classe .active jamais posée nulle part côté
+   template (règle morte jusqu'ici). */
 .navbar-collapse .nav-link:hover,
 .navbar-collapse .nav-link:focus-visible,
-.navbar-collapse li.nav-item.active .nav-link {
+.navbar-collapse .nav-link[aria-current="page"] {
     background: var(--bb-gold);
 }
 .navbar-collapse .nav-link:hover i,
 .navbar-collapse .nav-link:hover h2,
 .navbar-collapse .nav-link:focus-visible i,
 .navbar-collapse .nav-link:focus-visible h2,
-.navbar-collapse li.nav-item.active .nav-link i,
-.navbar-collapse li.nav-item.active .nav-link h2 {
+.navbar-collapse .nav-link[aria-current="page"] i,
+.navbar-collapse .nav-link[aria-current="page"] h2 {
     color: var(--bb-green-deep);
 }
 .navbar-collapse .nav-link:focus-visible {
@@ -864,6 +869,19 @@ body.desk .table td {
     outline: 3px solid var(--bb-white);
     outline-offset: 2px;
     border-radius: 8px;
+}
+/* Page courante (aria-current="page", cf. templates/desk/partials/header.html.twig) :
+   aucun équivalent n'existait ici jusqu'ici (contrairement à .navbar-collapse
+   ci-dessus). Fond blanc + texte rouge foncé : même paire de couleurs déjà
+   validée sur ce même fond rouge (panneau mobile replié plus bas dans ce
+   fichier, --bb-red-dark sur blanc = 8.55:1 AAA), pas une nouvelle teinte. */
+.navbar-admin .nav-link[aria-current="page"] {
+    background: var(--bb-white);
+    color: var(--bb-red-dark);
+    border-radius: 8px;
+}
+.navbar-admin .nav-link[aria-current="page"] i {
+    color: var(--bb-red-dark);
 }
 /* Mobile (<768px) : vrai menu repliable (bouton hamburger + panneau
    #navbarAdminNav, pattern "disclosure" WAI-ARIA, même mécanique que
