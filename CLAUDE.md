@@ -76,9 +76,9 @@ Sur `/schedule`, toujours pas revérifié à ce jour (ni vw/vh, ni projection) :
 
 ## Branches & CI
 
-- `main_2026` sert de branche principale de travail pour cette utilisatrice (pas de droits de push sur `master`) ; la CI cible donc `main_2026` **et** `master`.
+- `master` est la branche principale de travail (2026-08-12 : `main_2026` fusionnée dans `master` via PR GitHub #33, puis supprimée locale + distante, devenue inutile). Chaque fonctionnalité part d'une branche dédiée depuis `master`, mergée dedans une fois prête.
 - `.github/workflows/pipeline.yml` : un seul fichier, jobs enchaînés via `needs:` (lint → sécurité → déploiement à venir en Phase 3) :
-  - `lint-php-twig` / `lint-js` : PHP-CS-Fixer + Twig-CS-Fixer / ESLint, sur chaque push (toutes branches) et PR vers `main_2026`/`master`
+  - `lint-php-twig` / `lint-js` : PHP-CS-Fixer + Twig-CS-Fixer / ESLint, sur chaque push (toutes branches) et PR vers `master`
   - `npm-audit` (sur push) / `dependency-review` (sur PR) : dépendent des jobs de lint, mêmes seuils qu'avant (`--audit-level=high` / `fail-on-severity: high`)
   - job `deploy` pas encore implémenté (commenté dans le fichier), prévu pour push sur `master` uniquement une fois la Phase 3 de `ROADMAP.md` faite
 - Dependabot est déjà actif sur ce repo (nombreuses branches distantes `dependabot/*`) : vérifier si une PR Dependabot existe déjà avant de monter une dépendance à la main.

@@ -4,7 +4,6 @@ on:
   push:
   pull_request:
     branches:
-      - main_2026
       - master
 
 permissions:

@@ -28,7 +28,7 @@ Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous"
 - **Node.js** `24` (version pinnée dans `.nvmrc`) : utilisé uniquement pour l'outillage de lint (ESLint/Prettier), plus aucun build JS en prod
 - **PHP** CLI système en `8.4.24`, compatible avec `^8.1` requis par `composer.json`
 - Gestion de version des deps : `composer.lock`, `package-lock.json` (source de vérité pour npm, devDependencies de lint uniquement), `symfony.lock`
-- **CI** : GitHub Actions (`.github/workflows/pipeline.yml`), un seul fichier, jobs enchaînés (lint → sécurité → déploiement à venir) : lint PHP/Twig/JS, puis `npm audit` sur push (scan complet) ou `dependency-review-action` sur PR vers `main_2026`/`master` (diff des deps ajoutées), seuil `high`
+- **CI** : GitHub Actions (`.github/workflows/pipeline.yml`), un seul fichier, jobs enchaînés (lint → sécurité → déploiement à venir) : lint PHP/Twig/JS, puis `npm audit` sur push (scan complet) ou `dependency-review-action` sur PR vers `master` (diff des deps ajoutées), seuil `high`
 
 ## Structure du projet
 
