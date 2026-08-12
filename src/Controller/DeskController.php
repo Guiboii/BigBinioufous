@@ -29,9 +29,9 @@ class DeskController extends AbstractController
     public function index(EntityManagerInterface $manager, RoleRepository $repo, UserRepository $repoUser)
     {
         // Liste "Les Membres" (ROLE_MEMBER) retirée de cette page le
-        // 2026-08-12 : rôle jamais attribué par le nouveau toggle Membre/
-        // Pas membre (ROLE_SIMPLE <-> ROLE_BINIOUFOUS, cf. ROADMAP.md
-        // "Facilitons l'inscription"), gardait juste des comptes historiques
+        // 2026-08-12 : rôle jamais attribué par le toggle Membre/Pas membre
+        // (ROLE_BINIOUFOUS, cf. ROADMAP.md "Facilitons l'inscription"),
+        // gardait juste des comptes historiques
         // ne débloquant aucune permission propre dans le code, confusion
         // repérée par l'utilisatrice ("pour moi membre, ben c'est
         // binioufous !"). UserRepository::findMembers() reste utilisable
@@ -42,12 +42,14 @@ class DeskController extends AbstractController
         $roleAdmin = $repo->findOneByDescription('Administrator');
         $roleAccountant = $repo->findOneByDescription('Accountant');
         $roleBinioufous = $repo->findOneByDescription('Binioufous');
-        $roleSimple = $repo->findOneByDescription('Simple');
 
         $admins = $repoUser->findAdmins($roleAdmin);
         $accountants = $repoUser->findAccountants($roleAccountant);
         $binioufous = $repoUser->findBinioufous($roleBinioufous);
-        $simples = $repoUser->findSimples($roleSimple);
+        // ROLE_SIMPLE fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles
+        // fusionnés") : plus de rôle à passer, "simple" = validé sans
+        // ROLE_BINIOUFOUS.
+        $simples = $repoUser->findSimples();
 
         return $this->render('desk/index.html.twig', [
             'roles' => $roles,

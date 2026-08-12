@@ -101,36 +101,21 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
     }
 
-    #[Route('/admin/setsimple/{slug}', name: 'create_simple', methods: ['POST'])]
-    public function addSimpleRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, RoleRepository $repo, Request $request): Response
-    {
-        if ($this->isCsrfTokenValid('create_simple'.$user->getId(), $request->request->get('_token'))) {
-            $user->addRole($repo->findOneByTitle('ROLE_SIMPLE'));
-            $manager->persist($user);
-            $manager->flush();
-
-            $this->addFlash(
-                'success',
-                'Rôle ajouté'
-            );
-        }
-
-        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
-    }
-
     /**
-     * Bascule ROLE_SIMPLE <-> ROLE_BINIOUFOUS en un clic, directement
-     * depuis les listes desk (templates/desk/lists/simples.html.twig et
-     * binioufous.html.twig) plutôt que de passer par la fiche détaillée de
-     * chaque utilisateur·ice. Remplace les boutons de promotion individuels
-     * (create_admin/create_accountant/create_binioufous/create_simple,
-     * gardés tels quels sur la fiche admin/user/show.html.twig pour les
-     * rôles admin/comptable, hors scope ici) pour ce cas précis :
-     * simplification des rôles décidée le 2026-08-12 (cf. ROADMAP.md),
-     * ROLE_MEMBER n'ayant jamais débloqué de permission propre dans le code
-     * (absent de security.yaml), seul ROLE_BINIOUFOUS fait une vraie
-     * différence (accès aux partitions/voix). ROLE_MEMBER reste en base pour
-     * les comptes qui l'ont déjà (plus aucun moyen de l'attribuer désormais,
+     * Bascule ROLE_BINIOUFOUS en un clic, directement depuis les listes desk
+     * (templates/desk/lists/simples.html.twig et binioufous.html.twig)
+     * plutôt que de passer par la fiche détaillée de chaque utilisateur·ice.
+     * Remplace les boutons de promotion individuels (create_admin/
+     * create_accountant/create_binioufous, gardés tels quels sur la fiche
+     * admin/user/show.html.twig pour les rôles admin/comptable, hors scope
+     * ici) pour ce cas précis : simplification des rôles décidée le
+     * 2026-08-12 (cf. ROADMAP.md), ROLE_MEMBER n'ayant jamais débloqué de
+     * permission propre dans le code (absent de security.yaml), seul
+     * ROLE_BINIOUFOUS fait une vraie différence (accès aux partitions/voix).
+     * ROLE_SIMPLE fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles fusionnés",
+     * 2026-08-12) : "pas membre" n'est plus un rôle à assigner, juste
+     * l'absence de ROLE_BINIOUFOUS. ROLE_MEMBER reste en base pour les
+     * comptes qui l'ont déjà (plus aucun moyen de l'attribuer désormais,
      * create_member retiré le 2026-08-12), mais n'est plus jamais attribué
      * par cette action.
      */
@@ -139,14 +124,11 @@ class AdminController extends AbstractController
     {
         if ($this->isCsrfTokenValid('toggle_membership'.$user->getId(), $request->request->get('_token'))) {
             $binioufousRole = $repo->findOneByTitle('ROLE_BINIOUFOUS');
-            $simpleRole = $repo->findOneByTitle('ROLE_SIMPLE');
 
             if (\in_array('ROLE_BINIOUFOUS', $user->getRoles(), true)) {
                 $user->removeRole($binioufousRole);
-                $user->addRole($simpleRole);
                 $this->addFlash('success', $user->getFullName().' n\'est plus "Membre".');
             } else {
-                $user->removeRole($simpleRole);
                 $user->addRole($binioufousRole);
                 $this->addFlash('success', $user->getFullName().' est maintenant "Membre".');
             }
@@ -195,9 +177,15 @@ class AdminController extends AbstractController
      * cf. ROADMAP.md "Facilitons l'inscription") : le rôle Membre/Pas
      * membre se décide après coup, indépendamment de cette validation, via
      * le toggle sur les listes desk (AdminController::toggleMembership()).
+     * Le bug historique ("compte validé invisible dans toutes les listes
+     * desk") qui avait fait ajouter un ROLE_SIMPLE de palier ici ne se pose
+     * plus : ROLE_SIMPLE est fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles
+     * fusionnés", 2026-08-12), UserRepository::findSimples() traite
+     * directement "validé, sans ROLE_BINIOUFOUS" sans avoir besoin d'un
+     * rôle explicite.
      */
     #[Route('/admin/{slug}/valid', name: 'user_valid')]
-    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, RoleRepository $repo, MailerInterface $mailer, LoggerInterface $logger, Request $request)
+    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, MailerInterface $mailer, LoggerInterface $logger, Request $request)
     {
         $form = $this->createForm(ValidRoleType::class, $user);
 
@@ -205,16 +193,6 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setValidation(true);
-
-            // Bug repéré par l'utilisatrice : un compte tout juste validé
-            // n'apparaissait dans aucune des listes /desk (ni Simples, ni
-            // Binioufous), donc invisible pour les admins malgré un accès
-            // déjà fonctionnel. ROLE_SIMPLE en palier de base à la
-            // validation (seulement s'il n'a encore aucun rôle métier) :
-            // le toggle Membre/Pas membre prend le relai ensuite.
-            if (!\in_array('ROLE_SIMPLE', $user->getRoles(), true) && !\in_array('ROLE_BINIOUFOUS', $user->getRoles(), true)) {
-                $user->addRole($repo->findOneByTitle('ROLE_SIMPLE'));
-            }
 
             $manager->persist($user);
             $manager->flush();

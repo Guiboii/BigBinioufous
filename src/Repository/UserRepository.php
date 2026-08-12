@@ -78,12 +78,22 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findSimples($roleSimple)
+    /**
+     * "Simple" n'est plus un rôle stocké en base (fusionné avec ROLE_USER,
+     * cf. ROADMAP.md "Rôles fusionnés") : un·e simple utilisateur·rice est
+     * désormais défini comme "validé·e, sans ROLE_BINIOUFOUS", plutôt que par
+     * un rôle explicite à assigner/retirer.
+     */
+    public function findSimples()
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('r.id = :val')
-            ->leftJoin('u.roles', 'r')
-            ->setParameter('val', $roleSimple)
+            ->andWhere('u.validation = true')
+            ->andWhere('u.id NOT IN (
+                SELECT u2.id FROM App\Entity\User u2
+                JOIN u2.roles r2
+                WHERE r2.title = :binioufous
+            )')
+            ->setParameter('binioufous', 'ROLE_BINIOUFOUS')
             ->orderBy('u.lastName', 'ASC')
             ->getQuery()
             ->getResult();

@@ -75,8 +75,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Compte accepté par un·e admin (accès de base au site). Décorrélé du
-     * rôle (ROLE_SIMPLE/ROLE_BINIOUFOUS, cf. claimsMembership ci-dessous et
-     * le toggle "Membre"/"Pas membre" côté admin) depuis la simplification
+     * rôle (ROLE_BINIOUFOUS, cf. claimsMembership ci-dessous et le toggle
+     * "Membre"/"Pas membre" côté admin) depuis la simplification
      * de l'inscription : avant, le champ wish (retiré) déterminait à la
      * fois le rôle ET si la validation était automatique.
      */

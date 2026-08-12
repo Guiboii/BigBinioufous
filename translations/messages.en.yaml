@@ -299,11 +299,9 @@ admin:
     make_admin: Make this user an administrator
     make_accountant: Make this user an accountant
     make_binioufous: Make this user a binioufous
-    make_simple: Make this user a simple user
     confirm_make_admin: "Make this user an administrator?"
     confirm_make_accountant: "Make this user an accountant?"
     confirm_make_binioufous: "Make this user a binioufous?"
-    confirm_make_simple: "Make this user a simple user?"
     toggle_to_member_aria: "Make %name% a Member"
     confirm_toggle_to_member: "Make %name% a Member (grants access to sheet music)?"
     toggle_to_simple_aria: "Make %name% not a Member anymore"

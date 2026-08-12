@@ -291,7 +291,6 @@ Administrator: "Administrateur·rice"
 Accountant: Comptable
 Binioufous: Binioufous
 Member: Membre
-Simple: Simple
 User: "Utilisateur·rice"
 
 admin:
@@ -308,15 +307,15 @@ admin:
     make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice"
     make_accountant: "Faire de cet utilisateur·rice un·e comptable"
     make_binioufous: "Faire de cet utilisateur·rice un·e binioufous"
-    make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice"
     confirm_make_admin: "Faire de cet utilisateur·rice un·e administrateur·rice ?"
     confirm_make_accountant: "Faire de cet utilisateur·rice un·e comptable ?"
     confirm_make_binioufous: "Faire de cet utilisateur·rice un·e binioufous ?"
-    confirm_make_simple: "Faire de cet utilisateur·rice un·e simple utilisateur·rice ?"
     # Toggle Membre/Pas membre (2026-08-12, simplification des rôles, cf.
-    # ROADMAP.md) : ROLE_BINIOUFOUS <-> ROLE_SIMPLE en un clic depuis les
+    # ROADMAP.md) : ROLE_BINIOUFOUS ajouté/retiré en un clic depuis les
     # listes desk, distinct des boutons de promotion ci-dessus (fiche
-    # détaillée, rôles admin/comptable/binioufous/membre/simple séparés).
+    # détaillée, rôles admin/comptable/binioufous/membre séparés). "Simple"
+    # fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles fusionnés") : plus de
+    # bouton de promotion dédié, retiré ci-dessus.
     toggle_to_member_aria: "Passer %name% Membre"
     confirm_toggle_to_member: "Passer %name% Membre (accès aux partitions) ?"
     toggle_to_simple_aria: "Repasser %name% Pas membre"

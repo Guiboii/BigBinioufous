@@ -41,7 +41,7 @@
         </div>
 
         <div class="container text-center">
-            {% if 'ROLE_ADMIN' not in user.roles or 'ROLE_COMPTA' not in user.roles or 'ROLE_BINIOUFOUS' not in user.roles or 'ROLE_SIMPLE' not in user.roles %}
+            {% if 'ROLE_ADMIN' not in user.roles or 'ROLE_COMPTA' not in user.roles or 'ROLE_BINIOUFOUS' not in user.roles %}
                 <h2>{{ 'admin.promote_section'|trans }}</h2>
                 <div class="promote-pills">
                     {% if 'ROLE_ADMIN' not in user.roles %}
@@ -60,12 +60,6 @@
                         <form method="post" action="{{ path('create_binioufous', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_binioufous'|trans|e('js') }}');" class="btn-form">
                             <input type="hidden" name="_token" value="{{ csrf_token('create_binioufous' ~ user.id) }}">
                             <button type="submit" class="btn btn-green" aria-label="{{ 'admin.make_binioufous'|trans }}"><i class="ri-add-line" aria-hidden="true"></i> {{ 'Binioufous'|trans }}</button>
-                        </form>
-                    {% endif %}
-                    {% if 'ROLE_SIMPLE' not in user.roles %}
-                        <form method="post" action="{{ path('create_simple', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_make_simple'|trans|e('js') }}');" class="btn-form">
-                            <input type="hidden" name="_token" value="{{ csrf_token('create_simple' ~ user.id) }}">
-                            <button type="submit" class="btn btn-green" aria-label="{{ 'admin.make_simple'|trans }}"><i class="ri-add-line" aria-hidden="true"></i> {{ 'Simple'|trans }}</button>
                         </form>
                     {% endif %}
                 </div>

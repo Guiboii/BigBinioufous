@@ -42,15 +42,13 @@ class AppFixtures extends Fixture
         $binioufousRole->setTitle('ROLE_BINIOUFOUS')
                     ->setDescription('Binioufous');
         $manager->persist($binioufousRole);
-        // Pas de ROLE_MEMBER ici : rôle retiré des attributions possibles
-        // (cf. AdminController::toggleMembership, "Rôles simplifiés"), ne
-        // reste en base que pour d'éventuels comptes de prod qui l'avaient
-        // déjà. Aucune raison d'en fabriquer un jamais utilisé dans des
-        // fixtures fraîches.
-        $simpleRole = new Role();
-        $simpleRole->setTitle('ROLE_SIMPLE')
-                    ->setDescription('Simple');
-        $manager->persist($simpleRole);
+        // Pas de ROLE_MEMBER ni ROLE_SIMPLE ici : ROLE_MEMBER retiré des
+        // attributions possibles (cf. AdminController::toggleMembership,
+        // "Rôles simplifiés"), ROLE_SIMPLE fusionné avec ROLE_USER (cf.
+        // ROADMAP.md "Rôles fusionnés", 2026-08-12, migration
+        // Version20260812170000 qui nettoie les comptes de prod qui
+        // l'avaient déjà). Aucune raison d'en fabriquer un jamais utilisé
+        // dans des fixtures fraîches.
         $userRole = new Role();
         $userRole->setTitle('ROLE_USER')
                     ->setDescription('User');
@@ -181,9 +179,10 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
         }
-        // ajout de simples utilisateurs (déjà validés, ROLE_SIMPLE : sert à
-        // peupler la liste desk/lists/simples.html.twig pour tester le
-        // toggle "Passer Membre").
+        // ajout de simples utilisateurs (validés, sans rôle métier : "simple"
+        // n'est plus un rôle à assigner, cf. ROADMAP.md "Rôles fusionnés")
+        // pour peupler la liste desk/lists/simples.html.twig et tester le
+        // toggle "Passer Membre".
 
         for ($i = 1; $i <= 10; ++$i) {
             $user = new User();
@@ -203,7 +202,6 @@ class AppFixtures extends Fixture
                     ->setCountry($faker->country)
                     ->setBirth($faker->dateTime($max = 'now'))
                     ->setValidation(true)
-                    ->addRole($simpleRole)
                     ->setInstrument($faker->randomElement($instruments))
                     ->setCreatedAt($faker->dateTimeBetween($startDate = '-3 months', $endDate = 'now'));
 

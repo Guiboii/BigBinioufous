@@ -39,7 +39,11 @@
                    séparément pour CHAQUE rôle du compte, donc ROLE_ADMIN ET
                    ROLE_BINIOUFOUS déclenchaient chacun leur branche). Priorité
                    décroissante (admin > binioufous > membre > simple), une
-                   seule branche rendue, celle du rôle le plus "haut". #}
+                   seule branche rendue, celle du rôle le plus "haut".
+                   "Simple" (else final) n'est plus un rôle à part : fusionné
+                   avec ROLE_USER (cf. ROADMAP.md "Rôles fusionnés",
+                   2026-08-12), c'est juste ce qui reste quand aucune des
+                   branches au-dessus ne s'applique. #}
                 {% if is_granted('ROLE_ADMIN') %}
                     <div class="col">
                         <a href="{{ path('valid') }}" class="btn btn-red">{{ 'desk.pending_count'|trans({'%count%': unvalids|length}) }}</a>
@@ -68,7 +72,7 @@
                     <div class="col">
                         <p>{{ 'desk.favorite_songs'|trans }}</p>
                     </div>
-                {% elseif is_granted('ROLE_SIMPLE') %}
+                {% else %}
                     <h2>{{ 'desk.welcome_simple'|trans }}</h2>
                     <div class="col">
                         <p>{{ 'desk.mailing_lists'|trans }}</p>
