@@ -150,11 +150,6 @@ join:
     submit: "Rejoindre !!"
 
 register:
-    # Clé du message d'erreur de connexion (UserChecker) pour un compte pas
-    # encore validé : pas encore affichée distinctement (join/login.html.twig
-    # montre le même message générique "Il y a une erreur..." pour toute
-    # erreur de connexion, cf. join.login_error), gardée prête si besoin.
-    pending_login_error: "Ton compte n'a pas encore été validé par un·e admin."
     field_username: Pseudo
     field_username_placeholder: "Ton pseudo (visible des autres membres)"
     field_email: Email
@@ -176,6 +171,8 @@ desk:
     add_picture: "Ajoute une photo !"
     hello: "Salut %nickname% !"
     pending_count: "%count% validation(s) en attente"
+    pending_review: "Ton compte est en cours de vérification par un·e admin. En attendant, tu peux déjà compléter ton profil !"
+    pending_review_cta: "Compléter mon profil"
     binioufous_heading: "Voici les Binioufous !"
     mailing_lists: "Listes de diffusion auxquelles tu es abonné·e"
     favorite_songs: Morceaux favoris

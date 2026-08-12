@@ -21,10 +21,17 @@
                 <h1>{{ 'desk.hello'|trans({'%nickname%': app.user.nickname}) }}</h1>
             </div>
             <div class="row centered">
-                {# Le bandeau "compte en attente de validation" qui vivait ici
-                   est devenu inatteignable : UserChecker (src/Security/) bloque
-                   désormais la connexion elle-même tant que le compte n'est
-                   pas validé, on ne peut plus arriver sur /desk sans l'être. #}
+                {# Retour utilisatrice 2026-08-12 : même pas encore validé,
+                   l'accès à /desk (et donc /desk/profile) doit rester possible
+                   pour compléter son profil en attendant. Un 1er jet
+                   (UserChecker, src/Security/) bloquait la connexion
+                   elle-même : retiré, remplacé par ce bandeau informatif. #}
+                {% if app.user.validation == false %}
+                    <div class="alert alert-info">
+                        <p>{{ 'desk.pending_review'|trans }}</p>
+                        <a href="{{ path('profile') }}" class="btn btn-green">{{ 'desk.pending_review_cta'|trans }}</a>
+                    </div>
+                {% endif %}
                 {# Un seul bloc, pas un par rôle : un compte qui cumule ROLE_ADMIN
                    et ROLE_BINIOUFOUS (ex. admin qui est aussi binioufous) voyait
                    avant la section "Les Binioufous" deux fois (la boucle

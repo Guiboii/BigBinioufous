@@ -213,7 +213,7 @@ class AdminController extends AbstractController
      * le toggle sur les listes desk (AdminController::toggleMembership()).
      */
     #[Route('/admin/{slug}/valid', name: 'user_valid')]
-    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, MailerInterface $mailer, LoggerInterface $logger, Request $request)
+    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, RoleRepository $repo, MailerInterface $mailer, LoggerInterface $logger, Request $request)
     {
         $form = $this->createForm(ValidRoleType::class, $user);
 
@@ -221,6 +221,17 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setValidation(true);
+
+            // Bug repéré par l'utilisatrice : un compte tout juste validé
+            // n'apparaissait dans aucune des listes /desk (ni Simples, ni
+            // Binioufous), donc invisible pour les admins malgré un accès
+            // déjà fonctionnel. ROLE_SIMPLE en palier de base à la
+            // validation (seulement s'il n'a encore aucun rôle métier) :
+            // le toggle Membre/Pas membre prend le relai ensuite.
+            if (!\in_array('ROLE_SIMPLE', $user->getRoles(), true) && !\in_array('ROLE_BINIOUFOUS', $user->getRoles(), true)) {
+                $user->addRole($repo->findOneByTitle('ROLE_SIMPLE'));
+            }
+
             $manager->persist($user);
             $manager->flush();
 

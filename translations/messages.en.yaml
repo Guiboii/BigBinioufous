@@ -171,6 +171,8 @@ desk:
     add_picture: "Add picture!"
     hello: "Hi %nickname% !"
     pending_count: "%count% pending validation(s)"
+    pending_review: "Your account is being reviewed by an admin. In the meantime, you can already fill in your profile!"
+    pending_review_cta: "Complete my profile"
     binioufous_heading: "Here are the Binioufous!"
     mailing_lists: mailing-lists you subscribed
     favorite_songs: favorite songs

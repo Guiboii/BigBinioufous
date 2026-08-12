@@ -15,9 +15,6 @@ security:
             security: false
         main:
             provider: in_database
-            # Bloque réellement la connexion tant que le compte n'est pas
-            # validé par un·e admin (cf. src/Security/UserChecker.php).
-            user_checker: App\Security\UserChecker
 
             form_login:
                 login_path: join
