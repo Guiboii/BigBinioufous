@@ -33,37 +33,31 @@ contact:
 
 story:
     title: Story
-    nav_intro: "@intro"
-    nav_who: "@who?"
-    nav_what: "@what?"
-    nav_why: "@why?"
     nav_contact: "@contact"
     mobile_note: "Simplified mobile view: the full version with the 3D scenery is waiting for you on a computer."
-    intro: "Welcome to the Binioufous website, the craziest oboe band (but not only!) in the galaxy!! You'll find here all the info about us, and if you feel like it, you can leave us a message, that'll make us happy 🙂"
-    who_title: "So, who are the Binioufous…"
-    who_ages_title: "Young ones, and old ones"
-    who_ages_text: "Binioufous come in all ages and all levels, I'd say. There's kids, teens, adults, young-olds, old-youngs, middle-agers, in-betweeners. Sure, they've all got something to do with a music school… We haven't seen a self-taught Binioufou yet, bam, the guy just Binioufizes himself right away, just like that! Well actually, that's because we're waiting for you, mate!!"
-    who_instruments_title: "Oboes, and others"
-    who_instruments_text: "Well, for the big majority we play oboe, no denying it! But there's also tubas, bassoons, percussion… Sure we like to play loud, but given our instruments, it's not exactly heavy metal either… So we like to play a bit of everything, current hits as well as old ones, as they say. Sometimes it's well-known tunes, but sometimes they're only well known to us, because we don't use sheet music, so we rehearse them a lot to learn them, mate…"
-    who_level_title: "Beginners, and pros, nothing but Binioufous!"
-    who_level_text: "Oh yes, beginners and pros. That's how it is at Binioufous, we mix it up. Some come from big fancy schools in Lyon up on the hills, some come from tiny little schools like that, some come from soooo far away, some come on foot they're so close by, some come by bike, others by bus. Sometimes some just don't come at all. <s>So some know how to play, some are learning,</s> actually no, they all know how to play and they're all still learning. You'd have to ask them, but I think that's why they come."
-    who_no_sheet_title: "No sheet music, just sound"
-    who_no_sheet_text: "Oh yes, no sheet music. That's how it is at Binioufous, there's no score! Well that's exactly what lets us play anywhere, and look the audience straight in the eye, just like that. You stare hard, and you blow, and you blow… You sway your hips, and you move around. Anyway you're never stuck behind a music stand, and you never forget your sheet music. Which makes your bag a lot lighter."
-    what_title: "The Binioufous, an oboe band, but not really…"
-    what_intro_text: "So at first, it's just for fun: we cover, as an oboe band, well-known popular tunes (not in a cheesy way, mind you), more like ABBA, Star Wars, the Bee Gees. Yeah, old stuff, ok, but it still makes you swing just as much!!"
-    what_oboe_text: "And also, since we're mostly oboists (though we're happy when other instruments join us), it's to show that you can also have fun and play the oboe like crazy people. We have to admit that if people often picture oboists as a bit uptight, there must be a reason (well, when people picture them at all…)."
-    what_instrument_text: "Because let's face it (and we really regret it), our dear oboe (and actually the tubas and bassoons that join us too) remain very distant instruments in the collective imagination. Probably because it doesn't take up much space in public life. So we go out, we play anywhere, anytime (almost), and we BLOW HARD!!"
-    history_title: "Want to know the real story of <s>an oboe band</s> the Binioufous?"
-    history_ok: "OK,"
-    history_text: "Once upon a time there was a musician-teacher named Guiboï. One day he arrived at a music school near Lyon. Among the crowd of students, he spotted four who were in their second cycle. Two girls and two boys. So he suggested they team up and play some tunes together. What? But what could we play, dear teacher? Well, I don't know, how about tunes you actually like, that you could play in the street, that even passers-by would recognize! And there it went. Of course the group grew bigger. Over time other musicians joined in to flesh out the ensemble. Today the Binioufous gather a good twenty people, depending on estimates and plans… But if you really want to know who the Binioufous are, check out the \"Who are the Binioufous?\" tab."
-    why_title: "The Binioufous, what for?"
-    why_party_title: "The party, duh!!"
-    why_party_text: "As we said, we're mostly oboists. We like to party and share our passion for these instruments people call \"rare\" (we call them \"beautiful\"). We're not narrow-minded and we're totally fine with other musicians joining in (even if we struggle to understand people who play less beautiful instruments than ours…). We want to share our repertoire, our arrangements and our madness. So:"
-    why_li_concert: "you feel like partying and want to organize a crazy, very original concert? We'll gladly come play around the Rhône-Alpes region, we'd need to talk it over if it's further away."
-    why_li_teacher: "you're a musician-teacher looking for a bit of madness to pass on to your students? We'll send you our sound files (never any sheet music, Binioufous' honor), you pick them up with your students, you play the Binioufous tunes, and we'll come play with you, the icing on the cake!"
-    why_li_school: "you're a teacher, a headmaster, an elected official in charge of culture and short on entertainment for the coming year? We'll sort it out, same as above, we send you our files and we step in once, twice, three times (or more) during the year, straight to your audience, and we set the place on fire (figuratively, of course!!)."
-    why_li_clarinet: "you play clarinet? We offer you oboe lessons!!"
-    why_outro: "If you still don't know what to do with the Binioufous, send us a message, that'll be a start!!"
+
+story_admin:
+    index_heading: Manage the Story page
+    index_intro: "The sections below appear in this order on the Story page. Content accepts Markdown formatting (toolbar in the Content field: bold, italic, heading, list, link...), with a live preview next to it."
+    add_new: Add a section
+    no_sections: No section yet.
+    field_title: Title
+    field_title_placeholder: "E.g. Who are the Binioufous?"
+    field_content: Content
+    field_content_placeholder: "Section text..."
+    new_title: New section
+    create_heading: Add a section
+    edit_title: Edit section
+    edit_heading: Edit section
+    back_to_list: back to list
+    save_submit: Save
+    update_submit: Update
+    confirm_delete: "Are you sure you want to delete this section?"
+    delete_aria: "Delete \"%title%\""
+    edit_aria: "Edit \"%title%\""
+    move_up_aria: "Move \"%title%\" up"
+    move_down_aria: "Move \"%title%\" down"
+    preview_aria: "View \"%title%\" on the site"
 
 schedule:
     title: Schedule

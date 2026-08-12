@@ -33,37 +33,31 @@ contact:
 
 story:
     title: Histoire
-    nav_intro: "@intro"
-    nav_who: "@cki ?"
-    nav_what: "@ckoi ?"
-    nav_why: "@prq ?"
     nav_contact: "@contact"
     mobile_note: "Vue simplifiée pour mobile : la version complète avec le décor 3D t'attend sur ordinateur."
-    intro: "Bienvenue sur le site des Binioufous, la bande de hautbois (mais pas que…) la plus déjantée de la galaxie !! Tu trouveras ici toutes les informations qui nous concernent, pi même si tu veux tu peux nous laisser des messages comme ça on est content 🙂"
-    who_title: "Alors les Binioufous, c'est qui…"
-    who_ages_title: "Des jeunes, pi des vieux"
-    who_ages_text: "Des Binioufous y'en a de tous les âges et de tous les niveaux j'ai envie de dire. Y'a des enfants, des ados, des adultes, des jeunes-vieux, des vieux-jeunes, des middle-age, des médians. Bon c'est vrai ils ont tous à voir avec une école de musique… On a encore pas vu de Binioufous autodidacte, paf, le gars il se Binioufizze direct, comme ça ! Bah en fait, c'est parce qu'on t'attend, pâ !!"
-    who_instruments_title: "Des hautbois, pi des autres"
-    who_instruments_text: "Bon bah pour la grosse majorité on joue du hautbois, hein ! On peut pas le cacher. Mais y'a aussi des tubas, des bassons, des percus… C'est vrai qu'on aime bien jouer fort, mais en même temps, vu nos instruments, bah c'est pas non plus trop violent… Alors on aime bien tout jouer aussi, autant les tubes du moment que ceux d'antan, comme on dit. Parfois c'est des tubes connus, mais des fois ils sont bien connus que de nous, parce qu'on n'utilise pas de partition, donc on les répète souvent pour les apprendre, pâ…"
-    who_level_title: "Des novices, pi des pros, rien que des Binioufous !"
-    who_level_text: "Bah oui, des novices, pi des pros. On est comme ça aux Binioufous, on mélange. Alors y'en a des qui viennent de grandes écoles fort réputées de Lyon qui sont sur des collines, y'en a qui viennent de 'tites écoles riquiqui comme ça, y'en a ils viennent de loooooiiiiiin, y'en a ils viennent à pied tellement ils sont proches, y'en a ils viennent en vélo, d'autres en bus. Des fois y'en a ils viennent pas, carrément. <s>Alors y'en a ils savent jouer, y'en a ils apprennent,</s> non en fait ils savent tous jouer et ils apprennent tous. Faut leur demander mais je crois que c'est pour ça qu'ils viennent."
-    who_no_sheet_title: "De l'oralité, pi du son"
-    who_no_sheet_text: "Bah oui, oralité. C'est comme ça aux Binioufous, y'a pas de partition ! Bah justement, ça nous permet de jouer partout, pi de regarder le public droit dans les yeux, schtack comme ça là. Tu fixes bien, pi tu souffles, pi tu souffles… Tu déhanches, pi tu bouges de d'là de d'ci. T'façon t'es pas bloqué derrière ton pupitre, pi t'oublies jamais tes partitions. Ça fait qu'ton cartable est moins lourd."
-    what_title: "Les Binioufous, c'est une bande de hautbois, mais pas du tout…"
-    what_intro_text: "Alors au début, c'est juste pour se marrer : on reprend en bande de hautbois des thèmes populaires connus (pas au sens petit bonhomme en mousse, hein) plutôt genre, ABBA, StarWars, BeeGees. Ouais bon des trucs de vieux, ok, mais ça fait toujours autant swinguer n'empêche !!"
-    what_oboe_text: "Et pi quand même, parce qu'on est aussi une grosse majorité de hautboïstes (mais on est content quand d'autres instruments nous rejoignent), c'est pour montrer qu'on peut aussi s'amuser et jouer du hautbois comme des oufs. On doit bien reconnaître que si on s'imagine souvent les hautboïstes comme des gens un peu coincés, c'est qu'il doit bien y avoir une raison (enfin, quand on se les imagine…)."
-    what_instrument_text: "Parce qu'il faut bien admettre (et nous le déplorons tellement), notre cher hautbois (et en fait les tubas et bassons qui nous accompagnent aussi) restent des instruments très lointains dans l'imaginaire collectif. C'est sans doute dû au fait qu'il n'occupe pas beaucoup l'espace public. Alors on sort, on joue n'importe où, n'importe quand (ou presque) et on SOUFFLE FORT !!"
-    history_title: "Tu veux connaître la vraie histoire <s>d'une Bande de hautbois</s> des Binioufous ?"
-    history_ok: "OK,"
-    history_text: "Il était une fois un musicien-enseignant qui s'appelait Guiboï. Un jour il arriva dans une école de musique aux alentours de Lyon. Il découvrit alors, parmi la foule des élèves, quatre qui étaient en deuxième cycle. Deux filles et deux garçons. Alors il leur proposa de se regrouper et de jouer des morceaux ensemble. Quoi ? mais que pourrions-nous jouer cher professeur ? Eh bien, je ne sais pas moi, par exemple des morceaux que vous aimez bien, que vous pourriez interpréter dans la rue et même que les gens qui passent les connaîtraient ! Et voilà, c'était parti. Alors bien sûr le groupe s'est agrandi. Au fil du temps d'autres instrumentistes sont venus étoffer l'ensemble. Aujourd'hui les Binioufous rassemblent une bonne vingtaine de personnes, selon les estimations et les projets… Mais si tu veux vraiment savoir qui sont les Binioufous ? consulte l'onglet Les Binioufous, c'est qui ?"
-    why_title: "Les Binioufous, pour quoi faire ?"
-    why_party_title: "La fête pardi !!"
-    why_party_text: "Comme on le disait, nous sommes une grosse majorité de hautboïstes. On aime faire la fête et partager notre passion pour ces instruments qu'on appelle « rares » (nous on dit « beaux »). Nous ne sommes pas obtus et acceptons bien la présence d'autres instrumentistes (même si nous avons du mal à comprendre tous ces gens qui jouent des instruments moins beaux que les nôtres…). Nous souhaitons partager notre répertoire, nos arrangements et notre folie. Donc :"
-    why_li_concert: "tu as envie de faire la fête et tu souhaites organiser un concert fou et très original ? On vient jouer facilement dans la région Rhône-Alpes, il faut en discuter s'il faut voyager plus loin."
-    why_li_teacher: "tu es musicien(ne)-enseignant(e) et tu cherches un petit grain de folie à transmettre à tes élèves ? On t'envoie nos fichiers son (jamais de partition, foi de Binioufous), tu repiques avec tes élèves, vous jouez les morceaux Binioufous, on vient jouer avec vous _cerise sur le gâteau_ !"
-    why_li_school: "tu es prof, directeur(trice), élu(e) à la culture et en manque d'animation pour ta future année ? On s'organise, comme précédemment on t'envoie nos fichiers et on intervient une, deux, trois fois (ou plus) dans l'année directement avec ton public et on met le feu (façon de parler, hein !!)."
-    why_li_clarinet: "tu es clarinettiste ? On te propose des cours de hautbois !!"
-    why_outro: "Si tu ne sais toujours pas quoi faire avec les Binioufous, envoie-nous un message, ce sera toujours ça de fait !!"
+
+story_admin:
+    index_heading: Gestion de la page Histoire
+    index_intro: "Les sections ci-dessous s'affichent dans cet ordre sur la page Histoire. Le contenu accepte la mise en forme Markdown (barre d'outils dans le champ Contenu : gras, italique, titre, liste, lien...), avec un aperçu du rendu à côté."
+    add_new: Ajouter une section
+    no_sections: Aucune section pour l'instant.
+    field_title: Titre
+    field_title_placeholder: "Ex. Qui sont les Binioufous ?"
+    field_content: Contenu
+    field_content_placeholder: "Texte de la section..."
+    new_title: Nouvelle section
+    create_heading: Ajouter une section
+    edit_title: Modifier la section
+    edit_heading: Modifier la section
+    back_to_list: retour à la liste
+    save_submit: Enregistrer
+    update_submit: Mettre à jour
+    confirm_delete: "Tu es sûr·e de vouloir supprimer cette section ?"
+    delete_aria: "Supprimer « %title% »"
+    edit_aria: "Modifier « %title% »"
+    move_up_aria: "Monter « %title% »"
+    move_down_aria: "Descendre « %title% »"
+    preview_aria: "Voir « %title% » sur le site"
 
 schedule:
     title: Planning

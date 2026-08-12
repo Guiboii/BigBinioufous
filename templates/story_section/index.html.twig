@@ -1,0 +1,42 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'story_admin.index_heading'|trans }}{% endblock %}
+
+{% block body %}
+
+<div class="container mt-2">
+    <div class="container mt-2">
+        <h1>{{ 'story_admin.index_heading'|trans }}</h1>
+        <p>{{ 'story_admin.index_intro'|trans }}</p>
+
+        <a href="{{ path('story_section_new') }}" class="btn btn-green mb-3">{{ 'story_admin.add_new'|trans }}</a>
+
+        {% if sections is empty %}
+            <p><em>{{ 'story_admin.no_sections'|trans }}</em></p>
+        {% else %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'story_admin.field_title'|trans }}</th>
+                        <th>{{ 'Actions'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for section in sections %}
+                        <tr>
+                            <td>{{ section.title }}</td>
+                            <td>
+                                <a href="{{ path('minisite') }}#{{ section.slug }}" class="btn btn-green" target="_blank" rel="noopener" aria-label="{{ 'story_admin.preview_aria'|trans({'%title%': section.title}) }}"><i class="ri-external-link-line" aria-hidden="true"></i></a>
+                                {{ include('story_section/_move_form.html.twig', {section: section, direction: 'up', disabled: loop.first}) }}
+                                {{ include('story_section/_move_form.html.twig', {section: section, direction: 'down', disabled: loop.last}) }}
+                                <a href="{{ path('story_section_edit', {id: section.id}) }}" class="btn btn-green" aria-label="{{ 'story_admin.edit_aria'|trans({'%title%': section.title}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
+                                {{ include('story_section/_delete_form.html.twig', {section: section}) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

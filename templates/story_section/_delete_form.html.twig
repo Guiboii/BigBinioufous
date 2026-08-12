@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('story_section_delete', {id: section.id}) }}" onsubmit="return confirm('{{ 'story_admin.confirm_delete'|trans|e('js') }}');" class="btn-form">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ section.id) }}">
+    <button class="btn btn-red" aria-label="{{ 'story_admin.delete_aria'|trans({'%title%': section.title}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+</form>

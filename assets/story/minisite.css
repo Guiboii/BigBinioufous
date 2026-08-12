@@ -370,10 +370,10 @@ a:focus-visible {
 main {
     flex: 1 1 auto;
     overflow-y: auto;
-    max-width: 720px;
+    max-width: 1000px;
     width: 100%;
     margin: 0 auto;
-    padding: 1.75rem 1.25rem 3rem;
+    padding: 1.75rem 3rem 3rem;
     scroll-behavior: smooth;
 }
 
@@ -415,10 +415,13 @@ p {
     margin: 0 0 1rem;
 }
 
-/* Le <s> (texte barré) sert de blague récurrente dans le texte d'origine
-   ("y'en a ils savent jouer... non en fait ils savent tous") : un rouge
-   discret renforce la correction/le gag plutôt que de décorer au hasard. */
-s {
+/* Texte barré (~~texte~~ en Markdown, rendu en <del> par league/commonmark,
+   contenu éditable de StorySection) : sert de blague récurrente dans le
+   texte d'origine ("y'en a ils savent jouer... non en fait ils savent
+   tous") : un rouge discret renforce la correction/le gag plutôt que de
+   décorer au hasard. */
+s,
+del {
     color: var(--term-red);
     opacity: 0.85;
 }
