@@ -46,8 +46,14 @@ table {
 /* Avant : cadre figé à 237px avec 2 colonnes ayant chacune leur propre
    scrollbar (+ celle du player-wrap au-dessus, jamais nécessaire vu que
    son contenu tient largement dedans) : 3 scrollbars imbriquées au total.
-   Une seule ici, sur .playlist (la seule liste qui peut vraiment être
-   longue), .members-only n'a jamais assez de contenu pour en avoir besoin. */
+   Réduit à une seule à l'origine, sur .playlist, en supposant .members-only
+   toujours assez court pour ne pas déborder. Faux dès qu'un morceau a
+   plusieurs voix (ex. 10 mp3 uploadés dans un même dossier) : sans overflow
+   ni scrollbar propres, le bas de la liste des voix était juste rogné par
+   .playlist-wrap (overflow: hidden ci-dessous), sans aucun moyen de
+   défiler pour l'atteindre (retour utilisatrice, 2026-08-13 : "à droite on
+   voit pas tt les musiques, et rien pour descendre"). .members-only reprend
+   donc le même traitement que .playlist. */
 .playlist-wrap {
     background: #4a3d37;
     border: 5px solid #895b41;
@@ -63,24 +69,28 @@ table {
     box-sizing: border-box;
     width: 50%;
     padding: 0.75rem;
-}
-.playlist {
     overflow-y: auto;
-    border-right: 1px solid #664c40;
     scrollbar-width: thin;
     scrollbar-color: var(--bb-gold-pale) transparent;
 }
-.playlist::-webkit-scrollbar {
+.playlist {
+    border-right: 1px solid #664c40;
+}
+.playlist::-webkit-scrollbar,
+.members-only::-webkit-scrollbar {
     width: 8px;
 }
-.playlist::-webkit-scrollbar-track {
+.playlist::-webkit-scrollbar-track,
+.members-only::-webkit-scrollbar-track {
     background: transparent;
 }
-.playlist::-webkit-scrollbar-thumb {
+.playlist::-webkit-scrollbar-thumb,
+.members-only::-webkit-scrollbar-thumb {
     background: var(--bb-gold-pale);
     border-radius: 4px;
 }
-.playlist::-webkit-scrollbar-thumb:hover {
+.playlist::-webkit-scrollbar-thumb:hover,
+.members-only::-webkit-scrollbar-thumb:hover {
     background: var(--bb-gold);
 }
 
@@ -161,6 +171,23 @@ table {
 .loggedinContent .list-group-item a:hover,
 .loggedinContent .list-group-item a:focus-visible {
     color: var(--bb-gold);
+}
+
+/* .desk-voice-toggle/.desk-voice-players (assets/main/app.css) pensées pour
+   le fond clair du gestionnaire de fichiers : --bb-green-deep (texte pastille
+   non active) et --bb-ink (texte "Joué par ...") y tiennent leur contraste,
+   mais sur le marron très sombre de .members-only (#4a3d37, L≈0.05) c'est
+   quasi illisible (~1.5:1 et ~1:1), même bug que .playlist/.loggedinContent
+   ci-dessus (retour utilisatrice, 2026-08-13 : "tjr du noir sur marron").
+   --bb-gold-pale (7.71:1 sur ce fond, AAA) déjà la couleur de repli établie
+   ici. L'état .active (fond plein --bb-green-mid, texte --bb-white, 6.82:1)
+   n'a pas ce problème, pas retouché. */
+.members-only .desk-voice-toggle {
+    border-color: var(--bb-gold-pale);
+    color: var(--bb-gold-pale);
+}
+.members-only .desk-voice-players {
+    color: var(--bb-gold-pale);
 }
 
 .waveW {
