@@ -42,6 +42,11 @@
                                 <a href="{{ path('story_section_index') }}" class="nav-link text-yellow"{% if currentRoute == 'story_section_index' %} aria-current="page"{% endif %}><i class="ri-book-open-fill" aria-hidden="true"></i> {{ 'nav.story'|trans }}</a>
                             </li>
                         {% endif %}
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_COMPTA') %}
+                            <li class="nav-item">
+                                <a href="{{ path('note_index') }}" class="nav-link text-yellow"{% if currentRoute starts with 'note_' %} aria-current="page"{% endif %}><i class="ri-quill-pen-fill" aria-hidden="true"></i> {{ 'nav.notes'|trans }}</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
 
                     <li class="nav-item lang-switcher">

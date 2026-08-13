@@ -44,6 +44,10 @@ return [
         'path' => './assets/desk/avatar-preview.js',
         'entrypoint' => true,
     ],
+    'note-admin' => [
+        'path' => './assets/desk/note-admin.js',
+        'entrypoint' => true,
+    ],
     'jquery' => [
         'version' => '3.6.0',
     ],

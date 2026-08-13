@@ -1500,6 +1500,21 @@ li.nav-item.active, li.nav-item:hover,
     padding: 0;
 }
 
+/* Notes (/desk/notes) : pastille "Partagée" inline dans la liste, même
+   paire de couleurs déjà vérifiée AA/AAA que .role-badge/.desk-folder-badge
+   (--bb-green-mid/--bb-white) plutôt qu'une classe Bootstrap badge-* non
+   définie dans ce projet. */
+.note-shared-badge {
+    display: inline-block;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    padding: 0.15rem 0.6rem;
+    border-radius: 25px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
 /* Liste de fichiers : une icône colorée par type (repère de lecture rapide
    dans une grosse arborescence, cf. Document::getKind()/getIconClass()),
    nom + méta sur 2 lignes, actions à droite. Simples lignes séparées par un

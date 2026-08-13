@@ -1,0 +1,31 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ note.title }}{% endblock %}
+
+{% block importmap %}
+    {{ importmap('app') }}
+    <link rel="stylesheet" href="{{ asset('desk/note-print.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container mt-2 no-print">
+    <a href="{{ path('note_index') }}" class="text-green">{{ 'note.back_to_list'|trans }}</a>
+    {% if note.author == app.user %}
+        <a href="{{ path('note_edit', {id: note.id}) }}" class="btn btn-green"><i class="ri-edit-line" aria-hidden="true"></i> {{ 'note.edit_title'|trans }}</a>
+    {% endif %}
+    <button type="button" onclick="window.print()" class="btn btn-green"><i class="ri-printer-fill" aria-hidden="true"></i> {{ 'note.export_pdf'|trans }}</button>
+</div>
+
+<div class="note-print">
+    <div class="note-print-item">
+        <h2>
+            {{ note.title }}
+            {% if note.shared %}
+                <span class="note-shared-badge">{{ 'note.badge_shared'|trans }}</span>
+            {% endif %}
+        </h2>
+        <p class="note-print-meta">{{ 'note.show_meta'|trans({'%author%': note.author.nickname, '%date%': note.updatedAt|date('d/m/Y H:i')}) }}</p>
+        {{ note.content|markdown_to_html }}
+    </div>
+</div>
+{% endblock %}

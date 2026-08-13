@@ -24,7 +24,7 @@
                 <tbody>
                     {% for section in sections %}
                         <tr>
-                            <td>{{ section.title }}</td>
+                            <td><a href="{{ path('story_section_show', {id: section.id}) }}">{{ section.title }}</a></td>
                             <td>
                                 <a href="{{ path('minisite') }}#{{ section.slug }}" class="btn btn-green" target="_blank" rel="noopener" aria-label="{{ 'story_admin.preview_aria'|trans({'%title%': section.title}) }}"><i class="ri-external-link-line" aria-hidden="true"></i></a>
                                 {{ include('story_section/_move_form.html.twig', {section: section, direction: 'up', disabled: loop.first}) }}
