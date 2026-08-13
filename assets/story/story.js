@@ -137,9 +137,31 @@ function init() {
     },
   );
 
+  // trieurs (pile de classeurs posée sur le bureau) : cf. le même bloc dans
+  // assets/mascotte/mascotte.js, coordonnées décalées de (-0.5, 0, -1) ici
+  // (Desk.gltf positionné différemment sur cette page).
+  addTrieur('trieurAccounting', 2.2, 2.58);
+  addTrieur('trieurMusic', 2.58, 2.96);
+  addTrieur('trieurAdmin', 2.96, 3.34);
+  addTrieur('trieurOther', 3.34, 3.7);
+
   window.addEventListener('click', (e) => raycast(e));
   window.addEventListener('touchend', (e) => raycast(e, true));
   window.addEventListener('resize', onWindowResize, false);
+}
+
+function addTrieur(name, yMin, yMax) {
+  // profondeur (Z) volontairement réduite par rapport au modèle réel
+  // (contrairement à mascotte.js) : caméra ici très proche et quasi dans
+  // l'axe de la pile, une boîte aussi profonde que la pile réelle fait se
+  // chevaucher les zones de clic de deux trieurs adjacents sur un même rayon
+  var trieur = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(1.28, yMax - yMin, 0.4),
+    new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0 }),
+  );
+  trieur.position.set(7.56, (yMin + yMax) / 2, -5.775);
+  trieur.name = name;
+  scene.add(trieur);
 }
 
 function roomGeo(width, height, scaleY) {
@@ -188,6 +210,23 @@ function onWindowResize() {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
+
+// GLTFLoader renomme les nœuds en collision avec le nom de la scène GLTF
+// d'origine (Desk.gltf a une scène ET un nœud tous deux nommés "Desk" :
+// le nœud devient "Desk_1" au chargement), donc object.parent.name ne
+// vaut jamais "Desk" pour les meshes du bureau. On remonte l'arborescence
+// jusqu'au groupe qu'on a nommé nous-mêmes (model.name = 'desk') plutôt
+// que de dépendre de ce renommage interne.
+function isDescendantOf(object, name) {
+  var current = object;
+  while (current) {
+    if (current.name === name) {
+      return true;
+    }
+    current = current.parent;
+  }
+  return false;
+}
 //
 
 function raycast(e, touch = false) {
@@ -203,10 +242,26 @@ function raycast(e, touch = false) {
   // calculate objects intersecting the picking ray
   var intersects = raycaster.intersectObjects(scene.children, true);
   console.log(intersects);
+
+  // les trieurs (fine tranche de la pile) peuvent être occultés par le
+  // reste du bureau à distance quasi identique : on les cherche dans tous
+  // les objets touchés par le rayon, pas seulement le plus proche
+  var trieurSpaces = {
+    trieurAccounting: 'accounting',
+    trieurMusic: 'music',
+    trieurAdmin: 'admin',
+    trieurOther: 'other',
+  };
+  var trieurHit = intersects.find((i) => trieurSpaces[i.object.name]);
+  if (trieurHit) {
+    location.href = '/desk/files/' + trieurSpaces[trieurHit.object.name];
+    return;
+  }
+
   if (intersects[0]) {
     var object = intersects[0].object;
     console.log(object.name);
-    if (object.parent.name === 'Desk') {
+    if (isDescendantOf(object, 'desk')) {
       if (!currentlyAnimating) {
         currentlyAnimating = true;
         playModifierAnimation(idle, 0.25, next, 0.25);

@@ -208,9 +208,30 @@ function init() {
     },
   );
 
+  // trieurs (pile de classeurs posée sur le bureau) : 4 rayures du modèle
+  // (Desk.gltf, sous-mesh Cube011_7/Cube011_8) rendues cliquables via des
+  // volumes invisibles superposés, faute de sous-objets nommés dans le
+  // modèle 3D (une seule pile fusionnée, cf. contactPlane dans story.js
+  // pour le même principe). Coordonnées monde relevées par raycast/
+  // Box3Helper sur la pile visible (x:7.42-8.70, z:-5.52 à -4.03).
+  addTrieur('trieurAccounting', 2.2, 2.58);
+  addTrieur('trieurMusic', 2.58, 2.96);
+  addTrieur('trieurAdmin', 2.96, 3.34);
+  addTrieur('trieurOther', 3.34, 3.7);
+
   window.addEventListener('click', (e) => raycast(e));
   window.addEventListener('touchend', (e) => raycast(e, true));
   window.addEventListener('resize', onWindowResize, false);
+}
+
+function addTrieur(name, yMin, yMax) {
+  var trieur = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(1.28, yMax - yMin, 1.49),
+    new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0 }),
+  );
+  trieur.position.set(8.06, (yMin + yMax) / 2, -4.775);
+  trieur.name = name;
+  scene.add(trieur);
 }
 
 function roomGeo(width, height, scaleY) {
@@ -284,6 +305,21 @@ function raycast(e, touch = false) {
   var intersects = raycaster.intersectObjects(scene.children, true);
   console.log(intersects);
 
+  // les trieurs (fine tranche de la pile) peuvent être occultés par le
+  // reste du bureau à distance quasi identique : on les cherche dans tous
+  // les objets touchés par le rayon, pas seulement le plus proche
+  var trieurSpaces = {
+    trieurAccounting: 'accounting',
+    trieurMusic: 'music',
+    trieurAdmin: 'admin',
+    trieurOther: 'other',
+  };
+  var trieurHit = intersects.find((i) => trieurSpaces[i.object.name]);
+  if (trieurHit) {
+    location.href = '/desk/files/' + trieurSpaces[trieurHit.object.name];
+    return;
+  }
+
   if (intersects[0]) {
     var object = intersects[0].object;
     console.log(object.name);
@@ -295,7 +331,7 @@ function raycast(e, touch = false) {
       }
     } else if (object.parent.name === 'SoundSystem') {
       location.href = '/music';
-    } else if (object.parent.name === 'Desk') {
+    } else if (isDescendantOf(object, 'desk')) {
       location.href = '/story';
     } else if (object.name === 'soucoupe') {
       location.href = '/schedule';
@@ -310,6 +346,23 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// GLTFLoader renomme les nœuds en collision avec le nom de la scène GLTF
+// d'origine (Desk.gltf a une scène ET un nœud tous deux nommés "Desk" :
+// le nœud devient "Desk_1" au chargement), donc object.parent.name ne
+// vaut jamais "Desk" pour les meshes du bureau. On remonte l'arborescence
+// jusqu'au groupe qu'on a nommé nous-mêmes (model.name = 'desk') plutôt
+// que de dépendre de ce renommage interne.
+function isDescendantOf(object, name) {
+  var current = object;
+  while (current) {
+    if (current.name === name) {
+      return true;
+    }
+    current = current.parent;
+  }
+  return false;
 }
 
 function animate() {
