@@ -37,8 +37,10 @@ class Folder
 
     /**
      * Types MIME acceptés à l'upload (DocumentController::upload()) par
-     * espace : l'espace musique se limite au son/vidéo, les autres gardent
-     * la liste large (documents/images/office...).
+     * espace. Musique restreint au son/vidéo un temps (2026-08-13), mais un
+     * dossier de morceau réel mélange aussi PDF/partitions, docx de
+     * structure, image de pochette : élargi à la même liste large que les
+     * autres espaces (2026-08-13, retour utilisatrice le jour même).
      */
     private const DOCUMENT_MIME_TYPES = [
         'application/pdf',
@@ -62,24 +64,12 @@ class Folder
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'application/vnd.ms-powerpoint',
         'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.oasis.opendocument.text',
         'text/plain',
     ];
 
-    private const AUDIO_VIDEO_MIME_TYPES = [
-        'video/mp4',
-        'video/quicktime',
-        'video/webm',
-        'video/x-msvideo',
-        'audio/mpeg',
-        'audio/mp3',
-        'audio/mp4',
-        'audio/x-m4a',
-        'audio/wav',
-        'audio/x-wav',
-    ];
-
     public const ALLOWED_MIME_TYPES = [
-        self::SPACE_MUSIC => self::AUDIO_VIDEO_MIME_TYPES,
+        self::SPACE_MUSIC => self::DOCUMENT_MIME_TYPES,
         self::SPACE_ADMIN => self::DOCUMENT_MIME_TYPES,
         self::SPACE_ACCOUNTING => self::DOCUMENT_MIME_TYPES,
         self::SPACE_OTHER => self::DOCUMENT_MIME_TYPES,

@@ -266,6 +266,11 @@ desk:
     delete_folder_aria: "Delete folder %name%"
     quick_upload_success: added!
     quick_upload_error: "failed, try again"
+    quick_upload_error_invalid_mimetype: "file type not accepted here"
+    quick_upload_error_file_too_large: "file too large"
+    quick_upload_error_invalid_input: "no file received"
+    quick_upload_error_upload_failed: "failed to save the file"
+    quick_upload_error_invalid_token: "session expired, reload the page"
     documents_heading: Documents
     document_uploaded_by: "uploaded by"
     confirm_delete_document: "Are you sure you want to delete this document?"
@@ -338,9 +343,10 @@ music:
     voice_listen: listen
     youtube_link: "Watch on YouTube"
     youtube_url_label: "YouTube link (optional)"
-    folder_path_label: "Audio files folder (optional)"
-    folder_path_placeholder: "e.g. 10 Rasputin"
-    folder_path_hint: "Then drop the audio files into this folder from the Files page."
+    folder_label: "Audio files folder (optional)"
+    folder_empty_option: "None (the song has no folder yet)"
+    folder_hint: "The folder must already exist and contain the audio files:"
+    folder_hint_empty: "No folder yet: create it first and drop the audio files inside, before you can link it here."
     files_link: "See all files in the music space"
     add_song: "Add a song to the setlist"
     move_up: "Move up in the setlist"

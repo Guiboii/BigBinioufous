@@ -41,8 +41,7 @@ class SetlistController extends AbstractController
         }
 
         $artist = $this->resolveArtist($request, $manager, $artistRepository);
-
-        $folder = $folderRepository->findOrCreateByPath(Folder::SPACE_MUSIC, (string) $request->request->get('path'), $manager);
+        $folder = $this->resolveFolder($request, $folderRepository);
 
         $item = new SetlistItem();
         $item->setTitle($title)
@@ -60,7 +59,7 @@ class SetlistController extends AbstractController
     }
 
     #[Route('/{id}', name: 'setlist_edit', methods: ['POST'])]
-    public function edit(SetlistItem $item, Request $request, EntityManagerInterface $manager, ArtistRepository $artistRepository): Response
+    public function edit(SetlistItem $item, Request $request, EntityManagerInterface $manager, ArtistRepository $artistRepository, FolderRepository $folderRepository): Response
     {
         $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, Folder::SPACE_MUSIC);
 
@@ -76,9 +75,11 @@ class SetlistController extends AbstractController
         }
 
         $artist = $this->resolveArtist($request, $manager, $artistRepository);
+        $folder = $this->resolveFolder($request, $folderRepository);
 
         $item->setTitle($title)
             ->setArtist($artist)
+            ->setFolder($folder)
             ->setYoutubeUrl('' !== (string) $request->request->get('youtubeUrl') ? $request->request->get('youtubeUrl') : null);
 
         $manager->flush();
@@ -117,6 +118,30 @@ class SetlistController extends AbstractController
         }
 
         return null;
+    }
+
+    /**
+     * "folder" (id, select rempli par MusicController::index() via
+     * FolderRepository::findTopLevel()) : lie le morceau à un dossier déjà
+     * créé et déjà rempli depuis /desk/files/music, plutôt que d'en créer
+     * un à la volée par un champ texte libre (source de doublons par
+     * faute de frappe, retour utilisatrice le 2026-08-13, cf.
+     * templates/music/index.html.twig). Vide/id invalide/dossier d'un
+     * autre espace ou en corbeille -> pas de dossier lié.
+     */
+    private function resolveFolder(Request $request, FolderRepository $folderRepository): ?Folder
+    {
+        $folderId = $request->request->get('folder');
+        if (!$folderId) {
+            return null;
+        }
+
+        $folder = $folderRepository->find($folderId);
+        if (!$folder || Folder::SPACE_MUSIC !== $folder->getSpace() || $folder->isDeleted()) {
+            return null;
+        }
+
+        return $folder;
     }
 
     /**

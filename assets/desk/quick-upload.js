@@ -11,6 +11,12 @@ if (zone) {
   var progressTrack = document.getElementById('quick-upload-progress-track');
   var progressLabel = document.getElementById('quick-upload-progress-label');
   var status = document.getElementById('quick-upload-status');
+  var errorMessages = {};
+  try {
+    errorMessages = JSON.parse(zone.dataset.errorMessages || '{}');
+  } catch {
+    errorMessages = {};
+  }
 
   zone.addEventListener('click', function () {
     if (!zone.classList.contains('uploading')) {
@@ -164,9 +170,9 @@ if (zone) {
         return Promise.resolve();
       }
 
-      return uploadEntry(entries[index]).then(function (ok) {
-        if (!ok) {
-          failed.push(entries[index].file.name);
+      return uploadEntry(entries[index]).then(function (result) {
+        if (!result.ok) {
+          failed.push({ name: entries[index].file.name, error: result.error });
         }
         updateProgress(
           index + 1,
@@ -189,9 +195,10 @@ if (zone) {
       zone.removeAttribute('aria-disabled');
       input.disabled = false;
       progress.hidden = true;
-      failed.forEach(function (name) {
+      failed.forEach(function (failure) {
         var item = document.createElement('li');
-        item.textContent = name + ' : ' + zone.dataset.error;
+        var message = errorMessages[failure.error] || zone.dataset.error;
+        item.textContent = failure.name + ' : ' + message;
         status.appendChild(item);
       });
     });
@@ -221,11 +228,11 @@ if (zone) {
     })
       .then(function (response) {
         return response.json().then(function (data) {
-          return response.ok && data.success === true;
+          return { ok: response.ok && data.success === true, error: data.error || null };
         });
       })
       .catch(function () {
-        return false;
+        return { ok: false, error: null };
       });
   }
 }

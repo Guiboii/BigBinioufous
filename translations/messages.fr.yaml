@@ -266,6 +266,11 @@ desk:
     delete_folder_aria: "Supprimer le dossier %name%"
     quick_upload_success: ajouté !
     quick_upload_error: "échec, réessaie"
+    quick_upload_error_invalid_mimetype: "type de fichier non accepté ici"
+    quick_upload_error_file_too_large: "fichier trop volumineux"
+    quick_upload_error_invalid_input: "aucun fichier reçu"
+    quick_upload_error_upload_failed: "échec de l'enregistrement du fichier"
+    quick_upload_error_invalid_token: "session expirée, recharge la page"
     documents_heading: Documents
     document_uploaded_by: "déposé par"
     confirm_delete_document: "Tu es sûr·e de vouloir supprimer ce document ?"
@@ -338,9 +343,10 @@ music:
     voice_listen: écouter
     youtube_link: "Voir sur YouTube"
     youtube_url_label: "Lien YouTube (facultatif)"
-    folder_path_label: "Dossier des fichiers audio (facultatif)"
-    folder_path_placeholder: "ex. 10 Rasputin"
-    folder_path_hint: "Dépose ensuite les fichiers audio dans ce dossier depuis la page Fichiers."
+    folder_label: "Dossier des fichiers audio (facultatif)"
+    folder_empty_option: "Aucun (le morceau n'a pas encore de dossier)"
+    folder_hint: "Le dossier doit déjà exister et contenir les fichiers audio :"
+    folder_hint_empty: "Aucun dossier pour l'instant : crée-le d'abord et dépose les fichiers audio dedans, avant de pouvoir le lier ici."
     files_link: "Voir tous les fichiers de l'espace musique"
     add_song: "Ajouter un morceau à la setlist"
     move_up: "Monter dans la setlist"

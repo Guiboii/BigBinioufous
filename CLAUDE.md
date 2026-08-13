@@ -12,7 +12,7 @@ Application web Symfony 7.4 pour la gestion d'une fanfare ("Binioufous") : inscr
 
 - `composer install` : installe les deps PHP
 - `php bin/console doctrine:database:create` / `doctrine:migrations:migrate` / `doctrine:fixtures:load` : setup BDD (fixtures = jeu de données de démo via Faker)
-- `php -S localhost:8000 -t public` : lance le serveur de dev
+- `php -d upload_max_filesize=200M -d post_max_size=210M -S localhost:8000 -t public` : lance le serveur de dev. `-d` nécessaires : le `php.ini` CLI système par défaut limite `upload_max_filesize` à `2M`/`post_max_size` à `8M`, largement insuffisant pour les gros fichiers audio/vidéo de l'espace musique (bug trouvé le 2026-08-13 : upload silencieux en échec, sans page d'erreur claire, dès qu'un fichier dépassait 2M).
 - `php bin/phpunit` : lance les tests (aucun test réel actuellement, seulement `tests/bootstrap.php`)
 
 Version PHP : `composer.json` requiert `^8.1` (bump depuis `^7.2.5|^8.0` lors de l'upgrade Symfony 5→6.4). Le PHP CLI système en `8.4.24` convient.
