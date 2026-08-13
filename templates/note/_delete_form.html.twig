@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('note_delete', {id: note.id}) }}" onsubmit="return confirm('{{ 'note.confirm_delete'|trans|e('js') }}');" class="btn-form">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ note.id) }}">
+    <button class="btn btn-red" aria-label="{{ 'note.delete_aria'|trans({'%title%': note.title}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+</form>

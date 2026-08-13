@@ -1,0 +1,16 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ section.title }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ section.title }}</h1>
+
+    <div class="markdown-view">
+        {{ section.content|markdown_to_html }}
+    </div>
+
+    <a href="{{ path('story_section_edit', {id: section.id}) }}" class="btn btn-green mb-3"><i class="ri-edit-line" aria-hidden="true"></i> {{ 'story_admin.edit_title'|trans }}</a>
+    <a href="{{ path('story_section_index') }}" class="text-green">{{ 'story_admin.back_to_list'|trans }}</a>
+</div>
+{% endblock %}

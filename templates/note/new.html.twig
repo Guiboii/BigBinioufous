@@ -1,0 +1,15 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'note.new_title'|trans }}{% endblock %}
+
+{% block importmap %}{{ importmap(['app', 'note-admin']) }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'note.create_heading'|trans }}</h1>
+
+    {{ include('note/_form.html.twig') }}
+
+    <a href="{{ path('note_index') }}" class="text-green">{{ 'note.back_to_list'|trans }}</a>
+</div>
+{% endblock %}

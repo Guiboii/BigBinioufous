@@ -21,6 +21,7 @@ nav:
     tagline: "Le groupe de hautbois le plus déjanté de la Galaxie !!"
     folders: Dossiers
     planning: Planning
+    notes: Notes
     toggle: Basculer la navigation
 
 contact:
@@ -68,6 +69,44 @@ story_admin:
     move_up_aria: "Monter « %title% »"
     move_down_aria: "Descendre « %title% »"
     preview_aria: "Voir « %title% » sur le site"
+
+note:
+    index_heading: Notes du bureau
+    index_intro: "Prise de note pour le conseil et le bureau. Une note est privée par défaut : coche « Partager avec le bureau » pour la rendre visible (en lecture seule) aux autres admins/compta, tu restes seul·e à pouvoir la modifier ou la supprimer."
+    add_new: Nouvelle note
+    no_notes: Aucune note pour l'instant.
+    field_title: Titre
+    field_title_placeholder: "Ex. Compte-rendu réunion du bureau"
+    field_content: Contenu
+    field_content_placeholder: "Texte de la note (aide-mémoire juste au-dessus)..."
+    field_shared: Partager avec le bureau
+    column_author: Auteur·ice
+    column_author_me: Moi
+    column_updated: Dernière modif
+    badge_shared: Partagée
+    markdown_help_title: "Mise en forme (facultatif) :"
+    markdown_help_h1: "en début de ligne = gros titre"
+    markdown_help_h2: "en début de ligne = titre plus petit"
+    markdown_help_bold: "="
+    markdown_help_bold_example: "gras"
+    markdown_help_italic: "="
+    markdown_help_italic_example: "italique"
+    markdown_help_strike: "="
+    markdown_help_strike_example: "barré"
+    markdown_help_list: "en début de ligne = liste à puces"
+    markdown_help_link: "= lien cliquable"
+    new_title: Nouvelle note
+    create_heading: Nouvelle note
+    edit_title: Modifier la note
+    edit_heading: Modifier la note
+    back_to_list: retour à la liste
+    save_submit: Enregistrer
+    update_submit: Mettre à jour
+    confirm_delete: "Tu es sûr·e de vouloir supprimer cette note ?"
+    delete_aria: "Supprimer « %title% »"
+    edit_aria: "Modifier « %title% »"
+    show_meta: "Par %author%, dernière modif le %date%"
+    export_pdf: Exporter en PDF
 
 schedule:
     title: Planning
@@ -199,6 +238,8 @@ desk:
     music_help_link: "Gérer la setlist sur la page Musique"
     space_admin: Administratif
     space_admin_intro: "Comptes-rendus et documents administratifs."
+    notes_help_intro: "Pour la prise de note (idées, brouillons, comptes-rendus en cours de rédaction), utilise l'outil de notes dédié plutôt que ce classeur."
+    notes_help_link: "Ouvrir les notes du bureau"
     space_accounting: Comptabilité
     space_accounting_intro: "Relevés et documents comptables."
     space_other: Autre

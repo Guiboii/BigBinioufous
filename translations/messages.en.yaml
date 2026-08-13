@@ -21,6 +21,7 @@ nav:
     tagline: "The craziest oboe band of the Galaxy !!"
     folders: Folders
     planning: Schedule
+    notes: Notes
     toggle: Toggle navigation
 
 contact:
@@ -68,6 +69,44 @@ story_admin:
     move_up_aria: "Move \"%title%\" up"
     move_down_aria: "Move \"%title%\" down"
     preview_aria: "View \"%title%\" on the site"
+
+note:
+    index_heading: Board notes
+    index_intro: "Note-taking for the board and committee. A note is private by default: check \"Share with the board\" to make it visible (read-only) to other admins/accountants, you remain the only one who can edit or delete it."
+    add_new: New note
+    no_notes: No note yet.
+    field_title: Title
+    field_title_placeholder: "E.g. Board meeting minutes"
+    field_content: Content
+    field_content_placeholder: "Note text (cheat sheet just above)..."
+    field_shared: Share with the board
+    column_author: Author
+    column_author_me: Me
+    column_updated: Last updated
+    badge_shared: Shared
+    markdown_help_title: "Formatting (optional):"
+    markdown_help_h1: "at the start of a line = big heading"
+    markdown_help_h2: "at the start of a line = smaller heading"
+    markdown_help_bold: "="
+    markdown_help_bold_example: "bold"
+    markdown_help_italic: "="
+    markdown_help_italic_example: "italic"
+    markdown_help_strike: "="
+    markdown_help_strike_example: "strikethrough"
+    markdown_help_list: "at the start of a line = bullet list"
+    markdown_help_link: "= clickable link"
+    new_title: New note
+    create_heading: New note
+    edit_title: Edit note
+    edit_heading: Edit note
+    back_to_list: back to list
+    save_submit: Save
+    update_submit: Update
+    confirm_delete: "Are you sure you want to delete this note?"
+    delete_aria: "Delete \"%title%\""
+    edit_aria: "Edit \"%title%\""
+    show_meta: "By %author%, last updated on %date%"
+    export_pdf: Export as PDF
 
 schedule:
     title: Schedule
@@ -199,6 +238,8 @@ desk:
     music_help_link: "Manage the setlist on the Music page"
     space_admin: Administrative
     space_admin_intro: "Meeting minutes and administrative documents."
+    notes_help_intro: "For note-taking (ideas, drafts, minutes in progress), use the dedicated notes tool instead of this folder."
+    notes_help_link: "Open the board notes"
     space_accounting: Accounting
     space_accounting_intro: "Statements and accounting documents."
     space_other: Other

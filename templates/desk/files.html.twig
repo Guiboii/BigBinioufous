@@ -47,6 +47,18 @@
             {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'files'}) }}
         {% endif %}
 
+        {% if 'admin' == space %}
+            {# Outil de prise de note du bureau/conseil (/desk/notes) : pas
+               rangé dans cet espace (accessible ROLE_ADMIN + ROLE_COMPTA,
+               contrairement à cet espace réservé ROLE_ADMIN seul), juste
+               signalé ici pour qu'on le retrouve depuis le gestionnaire de
+               fichiers administratif, même pattern que l'encart musique. #}
+            <div class="desk-music-help">
+                <p>{{ 'desk.notes_help_intro'|trans }}</p>
+                <a href="{{ path('note_index') }}">{{ 'desk.notes_help_link'|trans }}</a>
+            </div>
+        {% endif %}
+
         {% if not anyMoving %}
             <form method="get" action="{{ path('desk_files', {space: space}) }}" class="desk-search" role="search">
                 <label for="desk-search-input" class="sr-only">{{ 'desk.search_label'|trans }}</label>

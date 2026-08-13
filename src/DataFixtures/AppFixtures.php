@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Artist;
 use App\Entity\Event;
 use App\Entity\Instrument;
+use App\Entity\Note;
 use App\Entity\Role;
 use App\Entity\SetlistItem;
 use App\Entity\StorySection;
@@ -290,6 +291,23 @@ class AppFixtures extends Fixture
                 ->setPosition($position);
             $manager->persist($section);
         }
+
+        // Notes de démo pour l'outil de prise de note du bureau/conseil
+        // (/desk/notes), rattachées au compte admin/admin jetable pour
+        // tester facilement les deux cas (privée / partagée) en local.
+        $privateNote = new Note();
+        $privateNote->setTitle('Idées pour la prochaine AG')
+            ->setContent("- Point sur les adhésions\n- Budget instruments\n- Date à caler avec la salle")
+            ->setAuthor($quickAdmin)
+            ->setShared(false);
+        $manager->persist($privateNote);
+
+        $sharedNote = new Note();
+        $sharedNote->setTitle('Compte-rendu réunion du bureau')
+            ->setContent("## Présents\nQuickAdmin, Guiboï\n\n## Décisions\n- Validation du budget résidence d'hiver\n- Relance des devis en attente")
+            ->setAuthor($quickAdmin)
+            ->setShared(true);
+        $manager->persist($sharedNote);
 
         $manager->flush();
     }
