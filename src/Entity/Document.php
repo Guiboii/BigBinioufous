@@ -212,6 +212,11 @@ class Document
         return str_starts_with((string) $this->mimeType, 'audio/');
     }
 
+    public function isVideo(): bool
+    {
+        return str_starts_with((string) $this->mimeType, 'video/');
+    }
+
     /**
      * Icône + repère couleur par type de fichier (assets/main/app.css,
      * .desk-document--*) : utile pour repérer vite un fichier dans une

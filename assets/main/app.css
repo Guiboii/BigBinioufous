@@ -1202,6 +1202,30 @@ li.nav-item.active, li.nav-item:hover,
 .desk-intro {
     margin-bottom: 1rem;
 }
+/* Encart d'explication du lien /desk/files/music <-> /music (seul espace
+   relié à une 2e page), cf. templates/desk/files.html.twig. Bordure gauche
+   + fond légèrement assombri sur le doré du body plutôt qu'un grand panneau
+   plein --bb-ink (cf. commentaire ci-dessus, jugé "moche" ailleurs sur
+   cette page) : --bb-ink sur ce fond composité tient largement l'AAA. */
+.desk-music-help {
+    margin-bottom: 1.5rem;
+    padding: 0.85rem 1rem;
+    background: rgba(0, 0, 0, 0.06);
+    border-left: 4px solid var(--bb-green-mid);
+    border-radius: 6px;
+    color: var(--bb-ink);
+}
+.desk-music-help p {
+    margin: 0 0 0.5rem;
+}
+.desk-music-help a {
+    font-weight: bold;
+    color: var(--bb-green-mid);
+}
+.desk-music-help a:hover,
+.desk-music-help a:focus-visible {
+    color: var(--bb-green-deep);
+}
 .desk-breadcrumb,
 .desk-actions,
 .desk-folders,

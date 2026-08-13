@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Artist;
 use App\Entity\Folder;
 use App\Entity\SetlistItem;
 use App\Repository\ArtistRepository;
@@ -39,10 +40,7 @@ class SetlistController extends AbstractController
             return $this->redirectToRoute('music');
         }
 
-        $artist = null;
-        if ($artistId = $request->request->get('artist')) {
-            $artist = $artistRepository->find($artistId);
-        }
+        $artist = $this->resolveArtist($request, $manager, $artistRepository);
 
         $folder = $folderRepository->findOrCreateByPath(Folder::SPACE_MUSIC, (string) $request->request->get('path'), $manager);
 
@@ -77,10 +75,7 @@ class SetlistController extends AbstractController
             return $this->redirectToRoute('music');
         }
 
-        $artist = null;
-        if ($artistId = $request->request->get('artist')) {
-            $artist = $artistRepository->find($artistId);
-        }
+        $artist = $this->resolveArtist($request, $manager, $artistRepository);
 
         $item->setTitle($title)
             ->setArtist($artist)
@@ -91,6 +86,37 @@ class SetlistController extends AbstractController
         $this->addFlash('success', 'Morceau modifié');
 
         return $this->redirectToRoute('music');
+    }
+
+    /**
+     * "new_artist" (texte libre, cf. templates/music/index.html.twig) a
+     * priorité sur "artist" (id du select) : permet de créer un artiste à
+     * la volée depuis le formulaire de la setlist plutôt que de dépendre
+     * uniquement des fixtures. Réutilise un artiste existant du même nom
+     * (insensible à la casse, cf. ArtistRepository::findOneByName()) au
+     * lieu d'en dupliquer un.
+     */
+    private function resolveArtist(Request $request, EntityManagerInterface $manager, ArtistRepository $artistRepository): ?Artist
+    {
+        $newArtistName = trim((string) $request->request->get('new_artist'));
+        if ('' !== $newArtistName) {
+            $existing = $artistRepository->findOneByName($newArtistName);
+            if ($existing) {
+                return $existing;
+            }
+
+            $artist = new Artist();
+            $artist->setName($newArtistName);
+            $manager->persist($artist);
+
+            return $artist;
+        }
+
+        if ($artistId = $request->request->get('artist')) {
+            return $artistRepository->find($artistId);
+        }
+
+        return null;
     }
 
     /**

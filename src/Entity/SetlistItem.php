@@ -102,13 +102,16 @@ class SetlistItem
     }
 
     /**
-     * Fichiers audio du dossier du morceau (medley = plusieurs), pour le
-     * lecteur/la liste "voix" de /music. Vide si pas de dossier ou pas
-     * encore de fichier dedans (item posé juste avec un lien YouTube).
+     * Fichiers audio ET vidéo du dossier du morceau (medley = plusieurs),
+     * pour le lecteur/la liste "voix" de /music : l'espace musique accepte
+     * les deux à l'upload (cf. Folder::ALLOWED_MIME_TYPES), une vidéo ne
+     * doit pas rester invisible sur la page publique. Vide si pas de
+     * dossier ou pas encore de fichier dedans (item posé juste avec un lien
+     * YouTube).
      *
      * @return Document[]
      */
-    public function getAudioDocuments(): array
+    public function getMediaDocuments(): array
     {
         if (!$this->folder) {
             return [];
@@ -116,12 +119,12 @@ class SetlistItem
 
         return array_values(array_filter(
             $this->folder->getDocuments()->toArray(),
-            static fn (Document $document) => $document->isAudio()
+            static fn (Document $document) => $document->isAudio() || $document->isVideo()
         ));
     }
 
-    public function getFirstAudioDocument(): ?Document
+    public function getFirstMediaDocument(): ?Document
     {
-        return $this->getAudioDocuments()[0] ?? null;
+        return $this->getMediaDocuments()[0] ?? null;
     }
 }

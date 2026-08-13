@@ -24,6 +24,17 @@
     <p class="mobile-note">{{ 'music.mobile_note'|trans }}</p>
 
     <div class="overlay">
+        {# h2 hors de .player-wrap volontairement : music.js cible
+           ".player-wrap .row:first-child" (le sélecteur CSS :first-child
+           s'applique au 1er enfant réel de .player-wrap) pour repositionner
+           la waveform par projection 3D, un enfant ajouté avant .row le
+           casserait. #}
+        <h2 class="sr-only">{{ 'music.player_heading'|trans }}</h2>
+        {# Annonce le morceau en cours à chaque changement (clic ou fin
+           automatique, cf. Player.js) : rien ne le faisait avant pour un
+           utilisateur de lecteur d'écran qui ne regarde pas la playlist à
+           ce moment-là (cf. audit accessibilité). #}
+        <p id="now-playing" class="sr-only" aria-live="polite"></p>
         <div class="player-wrap">
             <div class="row">
 
@@ -82,10 +93,14 @@
                rien à charger dans wavesurfer (Player.js appelle
                wavesurfer.load() sur chaque href de #playlist a) : rendu en
                <span> plutôt qu'en lien cliquable dans ce cas, le lien
-               YouTube (s'il existe) reste le seul moyen de l'écouter. #}
-            <div class="playlist float-left" id="playlist">
+               YouTube (s'il existe) reste le seul moyen de l'écouter.
+               <ul>/<li> plutôt qu'un flux de <a>/<span> à plat : sans ça,
+               un lecteur d'écran n'annonce jamais "liste de N éléments",
+               cf. audit accessibilité. #}
+            <h2 class="sr-only">{{ 'music.playlist_heading'|trans }}</h2>
+            <ul class="playlist float-left" id="playlist">
                 {% for item in items %}
-                    {% set audio = item.firstAudioDocument %}
+                    {% set media = item.firstMediaDocument %}
                     {% set songLabel %}
                         <svg class="bi bi-play-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 010 1.393z"/></svg>
                         {{ item.title }}
@@ -97,28 +112,36 @@
                             <a href="{{ item.youtubeUrl }}" class="badge" target="_blank" rel="noopener">{{ 'music.youtube_link'|trans }}</a>
                         {% endif %}
                     {% endset %}
-                    {% if audio %}
-                        <a href="{{ asset('uploads/documents/' ~ audio.filename) }}" class="list-group-item">{{ songLabel|raw }}</a>
-                    {% else %}
-                        <span class="list-group-item">{{ songLabel|raw }}</span>
-                    {% endif %}
+                    <li>
+                        {% if media %}
+                            {# data-track-title : Player.js l'annonce dans la
+                               zone aria-live à chaque changement de morceau
+                               (clic ou fin automatique) plutôt que de
+                               réutiliser le HTML riche du lien (icône + badge
+                               YouTube), pas adapté à une annonce vocale. #}
+                            <a href="{{ asset('uploads/documents/' ~ media.filename) }}" class="list-group-item" data-track-title="{{ item.artist ? (item.title ~ ' ' ~ 'music.by'|trans ~ ' ' ~ item.artist.name) : item.title }}">{{ songLabel|raw }}</a>
+                        {% else %}
+                            <span class="list-group-item">{{ songLabel|raw }}</span>
+                        {% endif %}
+                    </li>
                 {% else %}
-                    <span class="empty-note">{{ 'music.no_records'|trans }}</span>
+                    <li class="empty-note">{{ 'music.no_records'|trans }}</li>
                 {% endfor %}
-            </div>
+            </ul>
 
             <div class="members-only float-left">
+                <h2 class="sr-only">{{ 'music.members_heading'|trans }}</h2>
                 {% if is_granted('ROLE_BINIOUFOUS') or is_granted('ROLE_ADMIN') %}
                     {# Vue "fichiers bruts" réservée aux binioufous (todoMusique) :
                        les voix/parts de chaque morceau, plus un lien vers le
                        classeur complet plutôt qu'un second rendu de l'arbre ici. #}
-                    <div class="loggedinContent">
+                    <ul class="loggedinContent">
                         {% for item in items %}
-                            <div class="list-group-item">
+                            <li class="list-group-item">
                                 <strong>{{ item.title }}</strong>
                                 {% if item.artist %}{{ 'music.by'|trans }} {{ item.artist.name }}{% endif %}
                                 <ul class="music-voices">
-                                    {% for document in item.audioDocuments %}
+                                    {% for document in item.mediaDocuments %}
                                         {% set playing = document.playedBy.contains(app.user) %}
                                         <li>
                                             <form method="post" action="{{ path('document_played_toggle', {space: 'music', id: document.id}) }}" class="btn-form">
@@ -144,12 +167,25 @@
                                         <li>{{ 'music.no_voices'|trans }}</li>
                                     {% endfor %}
                                 </ul>
-                            </div>
+                            </li>
                         {% else %}
-                            <span class="empty-note">{{ 'music.no_links'|trans }}</span>
+                            <li class="empty-note">{{ 'music.no_links'|trans }}</li>
                         {% endfor %}
-                        <a href="{{ path('desk_files', {space: 'music'}) }}" class="btn btn-secondary">{{ 'music.files_link'|trans }}</a>
-                    </div>
+                    </ul>
+                    {% if is_granted('FOLDER_WRITE', 'music') %}
+                        {# Ouvre la modale plus bas en JS (assets/music/music.js,
+                           pattern généralisé depuis musicLoginTrigger). Placé ici
+                           (dans .members-only, déjà repositionné en fixed par
+                           updateOverlayPosition() via .playlist-wrap parent, cf.
+                           music.js) plutôt qu'en bouton fixed séparé : reste dans
+                           le même bloc que "Voir tous les fichiers", cohérent
+                           avec la demande de l'utilisatrice, et hérite du même
+                           positionnement déjà fonctionnel/visible sur desktop. #}
+                        <button type="button" id="setlistManageTrigger" class="btn btn-green setlist-manage-trigger">
+                            <i class="ri-music-2-line" aria-hidden="true"></i> {{ 'music.manage_setlist'|trans }}
+                        </button>
+                    {% endif %}
+                    <a href="{{ path('desk_files', {space: 'music'}) }}" class="btn btn-secondary">{{ 'music.files_link'|trans }}</a>
                 {% elseif app.user %}
                     <div class="members-prompt">
                         <p>{{ 'music.members_prompt'|trans }}</p>
@@ -165,58 +201,118 @@
             </div>
         </div>
 
-        {% if is_granted('FOLDER_WRITE', 'music') %}
-            {# Ajout à la setlist : "path" reprend le même mécanisme que le
-               glisser-déposer de /desk/files/music (FolderRepository::
-               findOrCreateByPath), pour rattacher direct le morceau au
-               dossier qui contient déjà ses fichiers audio. #}
-            <details class="setlist-admin">
-                <summary>{{ 'music.add_song'|trans }}</summary>
-                <form method="post" action="{{ path('setlist_new') }}">
-                    <label for="setlist-title">{{ 'music.track_title'|trans }}</label>
-                    <input type="text" id="setlist-title" name="title" required maxlength="255">
-
-                    <label for="setlist-artist">{{ 'music.artist'|trans }}</label>
-                    <select id="setlist-artist" name="artist">
-                        <option value="">{{ 'music.no_artist'|trans }}</option>
-                        {% for artist in artists %}
-                            <option value="{{ artist.id }}">{{ artist.name }}</option>
-                        {% endfor %}
-                    </select>
-
-                    <label for="setlist-youtube">{{ 'music.youtube_url_label'|trans }}</label>
-                    <input type="url" id="setlist-youtube" name="youtubeUrl">
-
-                    <label for="setlist-path">{{ 'music.folder_path_label'|trans }}</label>
-                    <input type="text" id="setlist-path" name="path" placeholder="{{ 'music.folder_path_placeholder'|trans }}">
-
-                    <input type="hidden" name="_token" value="{{ csrf_token('create_setlist_item') }}">
-                    <button type="submit" class="btn btn-green">{{ 'music.add_song'|trans }}</button>
-                </form>
-            </details>
-
-            <ul class="setlist-admin-list">
-                {% for item in items %}
-                    <li>
-                        {{ item.title }}
-                        <form method="post" action="{{ path('setlist_move_up', {id: item.id}) }}" class="btn-form">
-                            <input type="hidden" name="_token" value="{{ csrf_token('move_setlist_item' ~ item.id) }}">
-                            <button type="submit" aria-label="{{ 'music.move_up'|trans }}">↑</button>
-                        </form>
-                        <form method="post" action="{{ path('setlist_move_down', {id: item.id}) }}" class="btn-form">
-                            <input type="hidden" name="_token" value="{{ csrf_token('move_setlist_item' ~ item.id) }}">
-                            <button type="submit" aria-label="{{ 'music.move_down'|trans }}">↓</button>
-                        </form>
-                        <form method="post" action="{{ path('setlist_delete', {id: item.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'music.confirm_delete'|trans|e('js') }}');">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_setlist_item' ~ item.id) }}">
-                            <button type="submit" class="btn btn-red">{{ 'music.delete'|trans }}</button>
-                        </form>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
     </div>
+
+    {% if is_granted('FOLDER_WRITE', 'music') %}
+        {# Sortie volontaire du système de projection 3D (cf. plan) : cette
+           modale reste en flux/position normale (pas de position:fixed
+           calculée en JS par updateOverlayPosition()), donc son z-index et
+           sa visibilité ne dépendent jamais du canvas 3D. Même squelette a11y
+           que components/form-dialog.html.twig (role=dialog, aria-modal,
+           aria-labelledby, bouton fermer) sans en réutiliser le composant :
+           form-dialog.html.twig EST lui-même un <form>, alors qu'il faut ici
+           plusieurs <form> distincts (ajout + un par morceau) qui ne peuvent
+           pas s'imbriquer en HTML. #}
+        <div id="setlistManageDialog" class="setlist-dialog d-none" role="dialog" aria-modal="true" aria-labelledby="setlist-dialog-title">
+            <div class="setlist-dialog-backdrop" data-close></div>
+            <div class="setlist-dialog-content">
+                <div class="dialog-header">
+                    <h2 id="setlist-dialog-title">{{ 'music.manage_setlist'|trans }}</h2>
+                    <button type="button" class="close" data-close aria-label="{{ 'common.close'|trans }}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="dialog-body">
+                    {# "path" reprend le même mécanisme que le glisser-déposer
+                       de /desk/files/music (FolderRepository::findOrCreateByPath),
+                       pour rattacher direct le morceau au dossier qui contient
+                       déjà ses fichiers audio. #}
+                    <h3>{{ 'music.add_song'|trans }}</h3>
+                    <form method="post" action="{{ path('setlist_new') }}">
+                        <label for="setlist-title">{{ 'music.track_title'|trans }}</label>
+                        <input type="text" id="setlist-title" name="title" required maxlength="255">
+
+                        <label for="setlist-artist">{{ 'music.artist'|trans }}</label>
+                        <select id="setlist-artist" name="artist">
+                            <option value="">{{ 'music.no_artist'|trans }}</option>
+                            {% for artist in artists %}
+                                <option value="{{ artist.id }}">{{ artist.name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        {# Rempli => prioritaire sur le select ci-dessus, cf.
+                           SetlistController::resolveArtist() : crée l'artiste à
+                           la volée (ou réutilise un artiste du même nom déjà
+                           existant) plutôt que de dépendre uniquement des
+                           fixtures pour peupler la liste. #}
+                        <label for="setlist-new-artist">{{ 'music.new_artist_label'|trans }}</label>
+                        <input type="text" id="setlist-new-artist" name="new_artist" placeholder="{{ 'music.new_artist_placeholder'|trans }}" maxlength="255">
+
+                        <label for="setlist-youtube">{{ 'music.youtube_url_label'|trans }}</label>
+                        <input type="url" id="setlist-youtube" name="youtubeUrl">
+
+                        <label for="setlist-path">{{ 'music.folder_path_label'|trans }}</label>
+                        <input type="text" id="setlist-path" name="path" placeholder="{{ 'music.folder_path_placeholder'|trans }}" aria-describedby="setlist-path-hint">
+                        <p id="setlist-path-hint" class="field-hint">{{ 'music.folder_path_hint'|trans }}</p>
+
+                        <input type="hidden" name="_token" value="{{ csrf_token('create_setlist_item') }}">
+                        <button type="submit" class="btn btn-green">{{ 'music.add_song'|trans }}</button>
+                    </form>
+
+                    <h3>{{ 'music.setlist_list_heading'|trans }}</h3>
+                    <ol class="setlist-admin-list">
+                        {% for item in items %}
+                            <li>
+                                <details class="setlist-edit">
+                                    <summary>{{ item.title }}</summary>
+                                    <form method="post" action="{{ path('setlist_edit', {id: item.id}) }}">
+                                        <label for="edit-title-{{ item.id }}">{{ 'music.track_title'|trans }}</label>
+                                        <input type="text" id="edit-title-{{ item.id }}" name="title" value="{{ item.title }}" required maxlength="255">
+
+                                        <label for="edit-artist-{{ item.id }}">{{ 'music.artist'|trans }}</label>
+                                        <select id="edit-artist-{{ item.id }}" name="artist">
+                                            <option value="">{{ 'music.no_artist'|trans }}</option>
+                                            {% for artist in artists %}
+                                                <option value="{{ artist.id }}"{{ item.artist and item.artist.id == artist.id ? ' selected' : '' }}>{{ artist.name }}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <label for="edit-new-artist-{{ item.id }}">{{ 'music.new_artist_label'|trans }}</label>
+                                        <input type="text" id="edit-new-artist-{{ item.id }}" name="new_artist" placeholder="{{ 'music.new_artist_placeholder'|trans }}" maxlength="255">
+
+                                        <label for="edit-youtube-{{ item.id }}">{{ 'music.youtube_url_label'|trans }}</label>
+                                        <input type="url" id="edit-youtube-{{ item.id }}" name="youtubeUrl" value="{{ item.youtubeUrl }}">
+
+                                        <input type="hidden" name="_token" value="{{ csrf_token('edit_setlist_item' ~ item.id) }}">
+                                        <button type="submit" class="btn btn-green">{{ 'music.edit_submit'|trans }}</button>
+                                    </form>
+                                </details>
+                                {% if item.folder %}
+                                    <a href="{{ path('desk_files', {space: 'music', folder: item.folder.id}) }}" class="setlist-files-link">
+                                        <i class="ri-folder-music-line" aria-hidden="true"></i> {{ 'music.view_files'|trans }}
+                                    </a>
+                                {% endif %}
+                                <form method="post" action="{{ path('setlist_move_up', {id: item.id}) }}" class="btn-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('move_setlist_item' ~ item.id) }}">
+                                    <button type="submit" class="setlist-order-btn" aria-label="{{ 'music.move_up'|trans }}">↑</button>
+                                </form>
+                                <form method="post" action="{{ path('setlist_move_down', {id: item.id}) }}" class="btn-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('move_setlist_item' ~ item.id) }}">
+                                    <button type="submit" class="setlist-order-btn" aria-label="{{ 'music.move_down'|trans }}">↓</button>
+                                </form>
+                                <form method="post" action="{{ path('setlist_delete', {id: item.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'music.confirm_delete'|trans|e('js') }}');">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_setlist_item' ~ item.id) }}">
+                                    <button type="submit" class="btn btn-red">{{ 'music.delete'|trans }}</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
     {{ include('components/form-dialog.html.twig', {
         id: 'musicLoginForm',

@@ -195,6 +195,8 @@ desk:
     hub_intro: "Pick a files space."
     space_music: Music
     space_music_intro: "Tracks, sheet music, recordings... and pick the voice(s) you play on each song."
+    music_help_intro: "This folder only holds the audio files: each song's title, artist and YouTube link are managed on the Music page, not here. The folder name you give there (e.g. \"10 Rasputin\") automatically creates a folder here: that's where the mp3s/videos need to go."
+    music_help_link: "Manage the setlist on the Music page"
     space_admin: Administrative
     space_admin_intro: "Meeting minutes and administrative documents."
     space_accounting: Accounting
@@ -283,6 +285,9 @@ music:
     track_title: Track
     artist: Artist
     no_artist: "No artist"
+    new_artist_label: "Or new artist:"
+    new_artist_placeholder: "New artist name"
+    edit_submit: Save
     zoom_label: Zoom waveform
     play_label: Play
     pause_label: Pause
@@ -294,10 +299,17 @@ music:
     youtube_url_label: "YouTube link (optional)"
     folder_path_label: "Audio files folder (optional)"
     folder_path_placeholder: "e.g. 10 Rasputin"
+    folder_path_hint: "Then drop the audio files into this folder from the Files page."
     files_link: "See all files in the music space"
     add_song: "Add a song to the setlist"
     move_up: "Move up in the setlist"
     move_down: "Move down in the setlist"
+    manage_setlist: "Manage the setlist"
+    setlist_list_heading: "Songs in the setlist"
+    view_files: "View its files"
+    player_heading: Player
+    playlist_heading: Setlist
+    members_heading: "Members area"
 
 accounting:
     tabs_label: "Accounting section navigation"

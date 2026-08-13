@@ -79,17 +79,23 @@ document.addEventListener('DOMContentLoaded', function () {
   // The playlist links
   var links = document.querySelectorAll('#playlist a');
   var currentTrack = 0;
+  var nowPlaying = document.querySelector('#now-playing');
 
   // Load a track by index and highlight the corresponding link
   // aria-current="true" en plus de la classe .active : la classe seule ne
   // porte l'info que visuellement (couleur de fond), un lecteur d'écran ne
-  // peut pas la détecter.
+  // peut pas la détecter. nowPlaying (aria-live) annonce le changement pour
+  // qui ne regarde pas la playlist à ce moment-là (clic ou piste suivante
+  // automatique).
   var setCurrentSong = function (index) {
     links[currentTrack].classList.remove('active');
     links[currentTrack].removeAttribute('aria-current');
     currentTrack = index;
     links[currentTrack].classList.add('active');
     links[currentTrack].setAttribute('aria-current', 'true');
+    if (nowPlaying) {
+      nowPlaying.textContent = links[currentTrack].dataset.trackTitle || '';
+    }
     wavesurfer.load(links[currentTrack].href);
   };
 

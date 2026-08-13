@@ -195,6 +195,8 @@ desk:
     hub_intro: "Choisis un espace de fichiers."
     space_music: Musique
     space_music_intro: "Morceaux, partitions, enregistrements... et choisis la ou les voix que tu joues sur chaque morceau."
+    music_help_intro: "Ce classeur ne contient que les fichiers audio : le titre, l'artiste et le lien YouTube de chaque morceau se gèrent sur la page Musique, pas ici. Le nom de dossier que tu donnes là-bas (ex. « 10 Rasputin ») crée automatiquement un dossier ici : c'est dedans qu'il faut déposer les mp3/vidéos."
+    music_help_link: "Gérer la setlist sur la page Musique"
     space_admin: Administratif
     space_admin_intro: "Comptes-rendus et documents administratifs."
     space_accounting: Comptabilité
@@ -283,6 +285,9 @@ music:
     track_title: Morceau
     artist: Artiste
     no_artist: "Aucun artiste"
+    new_artist_label: "Ou nouvel artiste :"
+    new_artist_placeholder: "Nom du nouvel artiste"
+    edit_submit: Enregistrer
     zoom_label: "Zoom sur la forme d'onde"
     play_label: Lecture
     pause_label: "Mettre en pause"
@@ -294,10 +299,17 @@ music:
     youtube_url_label: "Lien YouTube (facultatif)"
     folder_path_label: "Dossier des fichiers audio (facultatif)"
     folder_path_placeholder: "ex. 10 Rasputin"
+    folder_path_hint: "Dépose ensuite les fichiers audio dans ce dossier depuis la page Fichiers."
     files_link: "Voir tous les fichiers de l'espace musique"
     add_song: "Ajouter un morceau à la setlist"
     move_up: "Monter dans la setlist"
     move_down: "Descendre dans la setlist"
+    manage_setlist: "Gérer la setlist"
+    setlist_list_heading: "Morceaux de la setlist"
+    view_files: "Voir ses fichiers"
+    player_heading: Lecteur
+    playlist_heading: Setlist
+    members_heading: "Espace membres"
 
 accounting:
     tabs_label: "Navigation de l'espace Comptabilité"

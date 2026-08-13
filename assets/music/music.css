@@ -323,6 +323,244 @@ input#slider:focus-visible {
     outline-offset: 2px;
 }
 
+/* Playlist/liste "voix" désormais de vraies <ul>/<li> (cf. audit
+   accessibilité, un lecteur d'écran annonce "liste de N éléments" alors
+   qu'un flux de <a>/<span> ne dit rien) : neutralise le style de liste par
+   défaut du navigateur (puces, marge/padding gauche), qui n'a jamais existé
+   avant que ces conteneurs soient de vraies listes. */
+.playlist,
+.loggedinContent {
+    list-style: none;
+    margin: 0;
+}
+
+/* Bouton "Gérer la setlist" : dans .members-only (cf.
+   templates/music/index.html.twig, à côté de "Voir tous les fichiers"), donc
+   pas de position propre à poser ici — il hérite du positionnement déjà
+   fonctionnel de .playlist-wrap (fixed desktop via projection 3D, static
+   mobile, cf. règles plus haut/plus bas dans ce fichier). Seule la modale
+   elle-même (.setlist-dialog) reste hors de ce système, cf. plus bas. */
+.setlist-manage-trigger {
+    display: block;
+    margin-bottom: 0.6rem;
+}
+
+/* Modale de gestion de la setlist. z-index 1000 : au-dessus du canvas 3D
+   (800) et du player/playlist (900), jamais en compétition avec eux. Fond
+   clair --bb-gold-pale + texte --bb-ink (13.6:1, AAA) plutôt que le vert
+   sombre hérité par défaut d'un <form> "nu" (règle globale "form" tout en
+   haut de assets/main/app.css, --bb-gold sur --bb-green-mid, 3.63:1, sous le
+   minimum AA — bug confirmé par l'audit) : cohérent avec .mobile-note déjà
+   présent sur cette page, et la modale n'est de toute façon plus "dans" le
+   décor sombre de la scène. */
+.setlist-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.setlist-dialog-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+.setlist-dialog-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 42rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--bb-gold-pale);
+    color: var(--bb-ink);
+    border-radius: 10px;
+    box-shadow: var(--bb-shadow-soft);
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+.setlist-dialog .dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.setlist-dialog .dialog-header h2 {
+    margin: 0;
+    color: var(--bb-ink);
+    font-size: 1.3rem;
+}
+.setlist-dialog .close {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--bb-ink);
+    cursor: pointer;
+}
+.setlist-dialog .close:hover,
+.setlist-dialog .close:focus-visible {
+    color: var(--bb-green-mid);
+}
+.setlist-dialog .close:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
+}
+.setlist-dialog h3 {
+    color: var(--bb-ink);
+    font-size: 1.05rem;
+    margin: 1.5rem 0 0.75rem;
+}
+.setlist-dialog h3:first-of-type {
+    margin-top: 0;
+}
+
+/* <form> internes à la modale : neutralise l'héritage de la règle globale
+   "form" (fond --bb-green-mid + texte --bb-gold, le même bug de contraste
+   que ci-dessus) puisque le fond clair de la modale porte déjà sa propre
+   lisibilité. */
+.setlist-dialog form {
+    background: transparent;
+    color: var(--bb-ink);
+    padding: 0;
+    border: 0;
+}
+.setlist-dialog label {
+    display: block;
+    margin-top: 0.75rem;
+    font-weight: bold;
+    color: var(--bb-ink);
+}
+.setlist-dialog input[type="text"],
+.setlist-dialog input[type="url"],
+.setlist-dialog select {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    margin-top: 0.3rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--bb-ink);
+    border-radius: 8px;
+    background: var(--bb-white);
+    color: var(--bb-ink);
+}
+.setlist-dialog input:focus-visible,
+.setlist-dialog select:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 1px;
+}
+.setlist-dialog .field-hint {
+    margin: 0.3rem 0 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+.setlist-dialog .btn-green {
+    margin-top: 1rem;
+}
+
+/* Liste des morceaux (ordre significatif : les boutons monter/descendre le
+   confirment, cf. audit) : chaque item garde son <details> d'édition
+   (contenu secondaire, la modale est déjà masquée par défaut) stylé comme un
+   vrai bouton repliable plutôt qu'un texte discret — <summary> est nativement
+   focusable/actionnable au clavier (Entrée/Espace), pas de JS requis pour ça. */
+.setlist-admin-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.setlist-admin-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(22, 20, 15, 0.15);
+}
+.setlist-admin-list li:last-child {
+    border-bottom: none;
+}
+.setlist-admin-list details.setlist-edit {
+    flex: 1 1 100%;
+}
+.setlist-admin-list summary {
+    padding: 0.5rem 0.75rem;
+    background: var(--bb-white);
+    border: 2px solid var(--bb-ink);
+    border-radius: 8px;
+    color: var(--bb-ink);
+    font-weight: bold;
+    cursor: pointer;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+.setlist-admin-list summary:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
+}
+.setlist-admin-list details[open] summary {
+    border-radius: 8px 8px 0 0;
+    border-bottom: none;
+}
+.setlist-admin-list details form {
+    padding: 0.75rem;
+    border: 2px solid var(--bb-ink);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+}
+
+.setlist-files-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 44px;
+    padding: 0 0.5rem;
+    color: var(--bb-green-deep);
+    font-weight: bold;
+}
+.setlist-files-link:hover,
+.setlist-files-link:focus-visible {
+    color: var(--bb-green-mid);
+}
+.setlist-files-link:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
+}
+
+/* Boutons monter/descendre : avant, des glyphes nus (↑/↓) sans aucun style,
+   largement sous les 44px recommandés (cf. audit). */
+.setlist-order-btn {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--bb-ink);
+    border-radius: 8px;
+    background: var(--bb-white);
+    color: var(--bb-ink);
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+.setlist-order-btn:hover,
+.setlist-order-btn:focus-visible {
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    border-color: var(--bb-green-mid);
+}
+.setlist-order-btn:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
+}
+
+.setlist-admin-list .btn-red {
+    min-height: 44px;
+}
+
 /* Mode mobile (<=700px, cf. le script dans music/index.html.twig qui pose
    .is-mobile sur <html> avant le 1er rendu) : music.js saute l'init Three.js
    dans ce cas (meuble 3D + personnage illisibles en petit), donc le lecteur

@@ -29,6 +29,20 @@
         <h1>{{ ('desk.space_' ~ space)|trans }}</h1>
         <p class="desk-intro">{{ ('desk.space_' ~ space ~ '_intro')|trans }}</p>
 
+        {% if 'music' == space %}
+            {# Seul espace relié à une 2e page (/music, la setlist publique) :
+               le lien dossier ↔ morceau n'est pas devinable sans explication
+               (retour utilisatrice : "je comprends pas comment c'est censé
+               marcher"), une phrase noyée dans .desk-intro ne suffisait pas.
+               Encart à part, discret (bordure + fond léger, pas un grand
+               panneau plein --bb-ink : jugé "moche" ailleurs sur cette page,
+               cf. commentaire .desk-intro dans app.css). #}
+            <div class="desk-music-help">
+                <p>{{ 'desk.music_help_intro'|trans }}</p>
+                <a href="{{ path('music') }}">{{ 'desk.music_help_link'|trans }}</a>
+            </div>
+        {% endif %}
+
         {% if 'accounting' == space %}
             {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'files'}) }}
         {% endif %}

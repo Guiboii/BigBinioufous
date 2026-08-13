@@ -19,32 +19,18 @@ class ArtistRepository extends ServiceEntityRepository
         parent::__construct($registry, Artist::class);
     }
 
-    // /**
-    //  * @return Artist[] Returns an array of Artist objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Recherche insensible à la casse : sert à retrouver un artiste déjà
+     * existant avant d'en créer un nouveau depuis le formulaire de la
+     * setlist (SetlistController::new()/edit()), pour éviter les doublons
+     * "Metallica"/"metallica" tapés à des moments différents.
+     */
+    public function findOneByName(string $name): ?Artist
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('LOWER(a.name) = LOWER(:name)')
+            ->setParameter('name', $name)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Artist
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

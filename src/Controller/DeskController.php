@@ -102,7 +102,20 @@ class DeskController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $breadcrumb = $currentFolder->getAncestors();
+        // Folder::getAncestors() remonte jusqu'à la racine incluse (utile
+        // tel quel pour le "chemin" d'un résultat de recherche, cf.
+        // templates/desk/files.html.twig en mode recherche) : ici la racine
+        // est déjà affichée séparément ("Fichiers", 1er maillon du fil
+        // d'Ariane en dur dans le template), et il manque le dossier
+        // courant lui-même (page affichée). Sans ce filtre, le fil d'Ariane
+        // d'un sous-dossier n'affichait jamais son propre nom, seulement
+        // celui de la racine en double — et currentFolderPath ci-dessous
+        // (utilisé par quick-upload.js pour préfixer le chemin d'upload)
+        // valait "Musique" au lieu du vrai sous-dossier, un upload dans
+        // n'importe quel sous-dossier créait un dossier "Musique" errant à
+        // l'intérieur au lieu d'uploader directement là où on était.
+        $atRoot = $currentFolder->getId() === $root->getId();
+        $breadcrumb = $atRoot ? [] : array_merge(array_slice($currentFolder->getAncestors(), 1), [$currentFolder]);
 
         $movingDocument = null;
         if ($moveDocumentId = $request->query->get('move_document')) {
@@ -155,7 +168,7 @@ class DeskController extends AbstractController
         return $this->render('desk/files.html.twig', [
             'space' => $space,
             'root' => $root,
-            'atRoot' => $currentFolder->getId() === $root->getId(),
+            'atRoot' => $atRoot,
             'currentFolder' => $currentFolder,
             'currentFolderPath' => implode('/', array_map(static fn (Folder $f) => $f->getName(), $breadcrumb)),
             'breadcrumb' => $breadcrumb,
