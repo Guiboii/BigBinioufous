@@ -1,0 +1,51 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'note.index_heading'|trans }}{% endblock %}
+
+{% block body %}
+
+<div class="container mt-2">
+    <div class="container mt-2">
+        <h1>{{ 'note.index_heading'|trans }}</h1>
+        <p>{{ 'note.index_intro'|trans }}</p>
+
+        <a href="{{ path('note_new') }}" class="btn btn-green mb-3">{{ 'note.add_new'|trans }}</a>
+
+        {% if notes is empty %}
+            <p><em>{{ 'note.no_notes'|trans }}</em></p>
+        {% else %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'note.field_title'|trans }}</th>
+                        <th>{{ 'note.column_author'|trans }}</th>
+                        <th>{{ 'note.column_updated'|trans }}</th>
+                        <th>{{ 'Actions'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                        {% set mine = note.author == app.user %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('note_show', {id: note.id}) }}">{{ note.title }}</a>
+                                {% if note.shared %}
+                                    <span class="note-shared-badge">{{ 'note.badge_shared'|trans }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ mine ? 'note.column_author_me'|trans : note.author.nickname }}</td>
+                            <td>{{ note.updatedAt|date('d/m/Y H:i') }}</td>
+                            <td>
+                                {% if mine %}
+                                    <a href="{{ path('note_edit', {id: note.id}) }}" class="btn btn-green" aria-label="{{ 'note.edit_aria'|trans({'%title%': note.title}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
+                                    {{ include('note/_delete_form.html.twig', {note: note}) }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

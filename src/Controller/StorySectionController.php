@@ -50,6 +50,19 @@ class StorySectionController extends AbstractController
         ]);
     }
 
+    /**
+     * Vue en lecture seule d'une section (contenu rendu, comme sur la page
+     * Histoire) : clic sur le titre depuis l'index, distinct du lien
+     * "modifier" (retour utilisatrice, même besoin sur /desk/notes).
+     */
+    #[Route('/{id}', name: 'story_section_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function show(StorySection $section): Response
+    {
+        return $this->render('story_section/show.html.twig', [
+            'section' => $section,
+        ]);
+    }
+
     #[Route('/{id}/edit', name: 'story_section_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, StorySection $section, EntityManagerInterface $entityManager): Response
     {

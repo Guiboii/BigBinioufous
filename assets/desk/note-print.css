@@ -1,0 +1,62 @@
+/* Export imprimable des notes (templates/note/export.html.twig), même
+   raisonnement que assets/accounting/document-print.css : noir sur blanc,
+   bouton "Exporter en PDF" -> window.print() (pas de génération PDF côté
+   serveur, cf. ROADMAP.md pour la même décision côté devis/factures).
+   Chargée uniquement sur cette page. */
+
+.note-print {
+    max-width: 210mm;
+    margin: 0 auto 2rem;
+    padding: 15mm;
+    background: #ffffff;
+    color: #16140f;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.note-print-item {
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #d8d2c4;
+}
+.note-print-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.note-print-item h2 {
+    margin: 0 0 0.3rem;
+}
+.note-print-meta {
+    margin: 0 0 1rem;
+    font-style: italic;
+    color: #4b473c;
+}
+
+@page {
+    size: A4;
+    margin: 15mm 12mm;
+}
+
+@media print {
+    body {
+        background: #ffffff;
+    }
+    /* body > header (pas juste "header") : même piège que document-print.css,
+       la navbar du site est un <header> enfant direct de <body>, distinct de
+       tout <header>/titre propre à cette page. */
+    body > header,
+    .skip-link,
+    .alert,
+    .no-print {
+        display: none !important;
+    }
+    .note-print {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        max-width: none;
+    }
+    .note-print-item {
+        break-inside: avoid;
+    }
+}
