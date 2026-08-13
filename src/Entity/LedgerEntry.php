@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\LedgerEntryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Ligne du journal de trésorerie (dépenses et recettes), cf.
@@ -39,6 +40,7 @@ class LedgerEntry
      * montant lui-même, cf. LedgerEntryRepository::getBalance().
      */
     #[ORM\Column(type: 'float')]
+    #[Assert\Positive]
     private $amount;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
