@@ -40,10 +40,12 @@ class DocumentController extends AbstractController
             return $this->json(['error' => 'invalid_input'], 400);
         }
 
-        // Capturé avant move() : File::move() renvoie un nouvel objet et ne
-        // modifie pas $file sur place, un 2e appel à $file->getMimeType()
-        // après coup viserait le fichier temporaire déjà déplacé/disparu.
+        // Capturés avant move() : File::move() renvoie un nouvel objet et ne
+        // modifie pas $file sur place, un 2e appel à $file->getMimeType()/
+        // getSize() après coup viserait le fichier temporaire déjà
+        // déplacé/disparu.
         $mimeType = $file->getMimeType();
+        $size = $file->getSize();
 
         if (!\in_array($mimeType, Folder::ALLOWED_MIME_TYPES[$space] ?? [], true)) {
             return $this->json(['error' => 'invalid_mimetype'], 400);
@@ -65,6 +67,7 @@ class DocumentController extends AbstractController
         $document->setName($originalFilename)
             ->setFilename($newFilename)
             ->setMimeType($mimeType)
+            ->setSize($size)
             ->setUploadedBy($this->getUser())
             ->setFolder($folder);
 
@@ -74,6 +77,10 @@ class DocumentController extends AbstractController
         return $this->json(['success' => true, 'id' => $document->getId()]);
     }
 
+    /**
+     * Met un document à la corbeille (cf. Document::$deletedAt). Suppression
+     * définitive : voir purge() ci-dessous.
+     */
     #[Route('/{id}', name: 'document_delete', methods: ['DELETE'])]
     public function delete(string $space, Document $document, Request $request, EntityManagerInterface $manager): Response
     {
@@ -84,13 +91,73 @@ class DocumentController extends AbstractController
         }
 
         if ($this->isCsrfTokenValid('delete_document'.$document->getId(), $request->request->get('_token'))) {
-            $manager->remove($document);
+            $document->setDeletedAt(new \DateTime());
             $manager->flush();
 
-            $this->addFlash('success', 'Document supprimé');
+            $this->addFlash('success', 'Document déplacé dans la corbeille');
         }
 
         return $this->redirectToRoute('desk_files', array_merge(['space' => $space], $request->query->all()));
+    }
+
+    /**
+     * Sort un document de la corbeille. Si son dossier a lui-même été
+     * supprimé (ou un ancêtre du dossier), le document repart à la racine
+     * de l'espace plutôt que de rester invisible.
+     */
+    #[Route('/{id}/restore', name: 'document_restore', methods: ['POST'])]
+    public function restore(string $space, Document $document, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
+    {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
+        if ($document->getFolder()->getSpace() !== $space) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($this->isCsrfTokenValid('restore_document'.$document->getId(), $request->request->get('_token'))) {
+            $folder = $document->getFolder();
+            if ($folder->isDeleted() || $folderRepository->hasDeletedAncestor($folder)) {
+                $document->setFolder($folderRepository->findOrCreateRoot($space, $manager));
+            }
+
+            $document->setDeletedAt(null);
+            $manager->flush();
+
+            $this->addFlash('success', 'Document restauré');
+        }
+
+        return $this->redirectToRoute('desk_files_trash', ['space' => $space]);
+    }
+
+    /**
+     * Suppression définitive : seul moment où le fichier physique est
+     * vraiment retiré du disque (documents_directory), une fois la ligne
+     * supprimée en base confirmée.
+     */
+    #[Route('/{id}/purge', name: 'document_purge', methods: ['DELETE'])]
+    public function purge(string $space, Document $document, Request $request, EntityManagerInterface $manager): Response
+    {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
+        if ($document->getFolder()->getSpace() !== $space) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($this->isCsrfTokenValid('purge_document'.$document->getId(), $request->request->get('_token'))) {
+            $filename = $document->getFilename();
+
+            $manager->remove($document);
+            $manager->flush();
+
+            $path = $this->getParameter('documents_directory').'/'.$filename;
+            if (is_file($path)) {
+                unlink($path);
+            }
+
+            $this->addFlash('success', 'Document supprimé définitivement');
+        }
+
+        return $this->redirectToRoute('desk_files_trash', ['space' => $space]);
     }
 
     /**
@@ -178,7 +245,7 @@ class DocumentController extends AbstractController
         $targetId = $request->request->get('target');
         $target = $targetId ? $folderRepository->find($targetId) : $folderRepository->findOrCreateRoot($space, $manager);
 
-        if (!$target || $target->getSpace() !== $space) {
+        if (!$target || $target->getSpace() !== $space || $target->isDeleted()) {
             throw $this->createNotFoundException();
         }
 

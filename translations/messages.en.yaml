@@ -229,6 +229,35 @@ desk:
     breadcrumb: "Folder breadcrumb"
     files_root: Files
     folder_empty: "This folder is empty."
+    search_label: "Search a file or folder"
+    search_placeholder: "Search..."
+    search_submit: Search
+    search_clear: "Clear search"
+    search_results: "%count% result(s) for \"%query%\""
+    search_empty: "No results for this search."
+    result_path: "In %path%"
+    trash_link: Trash
+    trash_title: Trash
+    trash_intro: "Deleted files and folders stay here until restored or permanently deleted."
+    trash_back_link: "Back to files"
+    trash_empty_confirm: "Permanently empty the trash? This action cannot be undone."
+    trash_empty_submit: "Empty trash"
+    trash_restore_aria: "Restore %name%"
+    trash_purge_confirm: "Permanently delete \"%name%\"? This action cannot be undone."
+    trash_purge_aria: "Permanently delete %name%"
+    trash_deleted_at: "Deleted on"
+    trash_no_items: "The trash is empty."
+    sort_label: "Sort by:"
+    sort_name: Name
+    sort_date: Modified
+    sort_size: Size
+    select_all: "Select all"
+    select_folder_aria: "Select folder %name%"
+    select_document_aria: "Select document %name%"
+    bulk_move_submit: "Move selection"
+    bulk_delete_submit: "Delete selection"
+    bulk_selected_count: "%count% selected"
+    bulk_move_banner: "Moving %count% item(s): pick a destination folder, or move them here."
     favorite: Add to favorites
     unfavorite: Remove from favorites
     change_password: Change your password

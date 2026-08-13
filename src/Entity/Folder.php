@@ -105,6 +105,15 @@ class Folder
     #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'folder', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private $documents;
 
+    /**
+     * Corbeille : suppression non récursive (cf. FolderController::delete()) :
+     * seul le dossier lui-même reçoit une date, ses enfants ne sont pas
+     * touchés. La restauration (FolderController::restore()) ramène donc
+     * tout l'arbre d'un coup, sans double entrée dans la corbeille.
+     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $deletedAt;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -166,5 +175,42 @@ class Folder
     public function getDocuments(): Collection
     {
         return $this->documents;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return null !== $this->deletedAt;
+    }
+
+    /**
+     * Parents du plus ancien (racine) au plus proche, sans se compter
+     * elle-même : sert au breadcrumb (DeskController::files()) et à
+     * l'affichage du chemin des résultats de recherche
+     * (FolderRepository::search()/DocumentRepository::search()).
+     *
+     * @return Folder[]
+     */
+    public function getAncestors(): array
+    {
+        $ancestors = [];
+        $current = $this->parent;
+        while ($current) {
+            array_unshift($ancestors, $current);
+            $current = $current->getParent();
+        }
+
+        return $ancestors;
     }
 }

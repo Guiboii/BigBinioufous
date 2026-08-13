@@ -1,0 +1,79 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'desk.trash_title'|trans }}{% endblock %}
+
+{% block body %}
+    {% set writable = is_granted('FOLDER_WRITE', space) %}
+
+    <div class="container">
+        <h1>{{ 'desk.trash_title'|trans }}</h1>
+        <p class="desk-intro">{{ 'desk.trash_intro'|trans }}</p>
+
+        <a href="{{ path('desk_files', {space: space}) }}" class="btn-link desk-trash-back">
+            <i class="ri-arrow-left-line" aria-hidden="true"></i> {{ 'desk.trash_back_link'|trans }}
+        </a>
+
+        {% if writable and (trashedFolders|length > 0 or trashedDocuments|length > 0) %}
+            <form method="post" action="{{ path('desk_files_trash_empty', {space: space}) }}" class="btn-form desk-trash-empty" onsubmit="return confirm('{{ 'desk.trash_empty_confirm'|trans|e('js') }}');">
+                <input type="hidden" name="_token" value="{{ csrf_token('empty_trash' ~ space) }}">
+                <button type="submit" class="btn btn-red"><i class="ri-delete-bin-7-line" aria-hidden="true"></i> {{ 'desk.trash_empty_submit'|trans }}</button>
+            </form>
+        {% endif %}
+
+        {% if trashedFolders|length > 0 %}
+            <ul class="desk-folders">
+                {% for folder in trashedFolders %}
+                    <li>
+                        <span class="desk-folder-badge">
+                            <i class="ri-folder-fill" aria-hidden="true"></i> {{ folder.name }}
+                            {% if writable %}
+                                <form method="post" action="{{ path('folder_restore', {space: space, id: folder.id}) }}" class="btn-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('restore_folder' ~ folder.id) }}">
+                                    <button type="submit" class="btn btn-green" aria-label="{{ 'desk.trash_restore_aria'|trans({'%name%': folder.name}) }}"><i class="ri-arrow-go-back-line" aria-hidden="true"></i></button>
+                                </form>
+                                <form method="post" action="{{ path('folder_purge', {space: space, id: folder.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.trash_purge_confirm'|trans({'%name%': folder.name})|e('js') }}');">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('purge_folder' ~ folder.id) }}">
+                                    <button type="submit" class="btn btn-red" aria-label="{{ 'desk.trash_purge_aria'|trans({'%name%': folder.name}) }}"><i class="ri-delete-bin-7-line" aria-hidden="true"></i></button>
+                                </form>
+                            {% endif %}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if trashedDocuments|length > 0 %}
+            <ul class="desk-documents">
+                {% for document in trashedDocuments %}
+                    <li class="desk-document desk-document--{{ document.kind }}">
+                        <i class="{{ document.iconClass }} desk-document-icon" aria-hidden="true"></i>
+
+                        <div class="desk-document-main">
+                            <span>{{ document.name }}</span>
+                            <span class="desk-document-meta">
+                                .{{ document.extension }} · {{ document.humanSize }} · {{ 'desk.trash_deleted_at'|trans }} {{ document.deletedAt|date('d/m/Y') }}
+                            </span>
+                        </div>
+
+                        {% if writable %}
+                            <form method="post" action="{{ path('document_restore', {space: space, id: document.id}) }}" class="btn-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('restore_document' ~ document.id) }}">
+                                <button type="submit" class="btn btn-green" aria-label="{{ 'desk.trash_restore_aria'|trans({'%name%': document.name}) }}"><i class="ri-arrow-go-back-line" aria-hidden="true"></i></button>
+                            </form>
+                            <form method="post" action="{{ path('document_purge', {space: space, id: document.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.trash_purge_confirm'|trans({'%name%': document.name})|e('js') }}');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('purge_document' ~ document.id) }}">
+                                <button type="submit" class="btn btn-red" aria-label="{{ 'desk.trash_purge_aria'|trans({'%name%': document.name}) }}"><i class="ri-delete-bin-7-line" aria-hidden="true"></i></button>
+                            </form>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if trashedFolders|length == 0 and trashedDocuments|length == 0 %}
+            <p class="desk-empty">{{ 'desk.trash_no_items'|trans }}</p>
+        {% endif %}
+    </div>
+{% endblock %}

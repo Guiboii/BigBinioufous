@@ -39,7 +39,7 @@ class FolderController extends AbstractController
 
             if ('' === $name) {
                 $this->addFlash('error', 'Le nom du dossier ne peut pas être vide');
-            } elseif ($folderRepository->findOneBy(['parent' => $parent, 'name' => $name])) {
+            } elseif ($folderRepository->findOneBy(['parent' => $parent, 'name' => $name, 'deletedAt' => null])) {
                 $this->addFlash('error', 'Un dossier « '.$name.' » existe déjà ici');
             } else {
                 $folder = new Folder();
@@ -55,10 +55,10 @@ class FolderController extends AbstractController
     }
 
     /**
-     * Supprime un dossier et tout son contenu (sous-dossiers + documents en
-     * cascade, cf. Folder::$children/$documents : cascade+orphanRemoval).
-     * Les fichiers restent sur le disque (même choix que Track/Voice/
-     * Document ailleurs dans le projet, rien ne nettoie public/uploads/).
+     * Met un dossier à la corbeille (non récursif : cf. Folder::$deletedAt,
+     * ses sous-dossiers/documents ne sont pas touchés, la restauration
+     * ramène tout l'arbre d'un coup). Suppression définitive : voir
+     * purge() ci-dessous.
      */
     #[Route('/{id}', name: 'folder_delete', methods: ['DELETE'])]
     public function delete(string $space, Folder $folder, Request $request, EntityManagerInterface $manager): Response
@@ -70,13 +70,98 @@ class FolderController extends AbstractController
         }
 
         if ($this->isCsrfTokenValid('delete_folder'.$folder->getId(), $request->request->get('_token'))) {
-            $manager->remove($folder);
+            $folder->setDeletedAt(new \DateTime());
             $manager->flush();
 
-            $this->addFlash('success', 'Dossier supprimé');
+            $this->addFlash('success', 'Dossier déplacé dans la corbeille');
         }
 
         return $this->redirectToRoute('desk_files', array_merge(['space' => $space], $request->query->all()));
+    }
+
+    /**
+     * Sort un dossier de la corbeille. Si son parent (ou un ancêtre plus
+     * lointain) est lui-même toujours supprimé, il repart à la racine de
+     * l'espace plutôt que de rester un "orphelin caché" invisible
+     * (cf. FolderRepository::hasDeletedAncestor()).
+     */
+    #[Route('/{id}/restore', name: 'folder_restore', methods: ['POST'])]
+    public function restore(string $space, Folder $folder, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
+    {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
+        if ($folder->getSpace() !== $space) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($this->isCsrfTokenValid('restore_folder'.$folder->getId(), $request->request->get('_token'))) {
+            if ($folderRepository->hasDeletedAncestor($folder)) {
+                $folder->setParent($folderRepository->findOrCreateRoot($space, $manager));
+            }
+
+            $folder->setDeletedAt(null);
+            $manager->flush();
+
+            $this->addFlash('success', 'Dossier restauré');
+        }
+
+        return $this->redirectToRoute('desk_files_trash', ['space' => $space]);
+    }
+
+    /**
+     * Suppression définitive d'un dossier et de tout son contenu : seul
+     * endroit du gestionnaire de fichiers qui touche vraiment au disque
+     * (les fichiers physiques des documents descendants sont supprimés
+     * après le flush Doctrine, une fois la suppression en base confirmée).
+     * La cascade Doctrine (Folder::$children/$documents,
+     * cascade+orphanRemoval) supprime déjà les lignes en base.
+     */
+    #[Route('/{id}/purge', name: 'folder_purge', methods: ['DELETE'])]
+    public function purge(string $space, Folder $folder, Request $request, EntityManagerInterface $manager): Response
+    {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
+        if ($folder->getSpace() !== $space) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($this->isCsrfTokenValid('purge_folder'.$folder->getId(), $request->request->get('_token'))) {
+            $filenames = $this->collectDescendantFilenames($folder);
+
+            $manager->remove($folder);
+            $manager->flush();
+
+            foreach ($filenames as $filename) {
+                $path = $this->getParameter('documents_directory').'/'.$filename;
+                if (is_file($path)) {
+                    unlink($path);
+                }
+            }
+
+            $this->addFlash('success', 'Dossier supprimé définitivement');
+        }
+
+        return $this->redirectToRoute('desk_files_trash', ['space' => $space]);
+    }
+
+    /**
+     * @return string[] noms de fichiers physiques de tous les documents
+     *                  sous ce dossier, récursivement, à récupérer avant
+     *                  le remove() Doctrine qui les efface de la base
+     */
+    private function collectDescendantFilenames(Folder $folder): array
+    {
+        $filenames = [];
+
+        foreach ($folder->getDocuments() as $document) {
+            $filenames[] = $document->getFilename();
+        }
+
+        foreach ($folder->getChildren() as $child) {
+            $filenames = array_merge($filenames, $this->collectDescendantFilenames($child));
+        }
+
+        return $filenames;
     }
 
     /**
@@ -100,7 +185,7 @@ class FolderController extends AbstractController
         $targetId = $request->request->get('target');
         $target = $targetId ? $folderRepository->find($targetId) : $folderRepository->findOrCreateRoot($space, $manager);
 
-        if (!$target || $target->getSpace() !== $space) {
+        if (!$target || $target->getSpace() !== $space || $target->isDeleted()) {
             throw $this->createNotFoundException();
         }
 

@@ -4,13 +4,26 @@
 
 {% block body %}
     {% set moving = movingDocument or movingFolder %}
+    {% set anyMoving = moving or bulkMoving %}
     {# Écriture (créer/déplacer/supprimer/uploader) distincte de la lecture
        de l'espace : cf. FolderWriteVoter, un membre binioufous peut lire un
        espace sans forcément pouvoir y écrire (ex. espace "autre"). #}
     {% set writable = is_granted('FOLDER_WRITE', space) %}
+    {# Multi-sélection (checkboxes/barre d'actions groupées) et glisser-
+       déposer pour déplacer : uniquement en navigation normale, pas pendant
+       une recherche ni un déplacement (simple ou groupé) déjà en cours,
+       pour ne pas superposer 2 mécanismes d'interaction à la fois. #}
+    {% set canBulkSelect = writable and not searching and not anyMoving %}
     {% set moveParams = {} %}
     {% if movingDocument %}{% set moveParams = moveParams|merge({move_document: movingDocument.id}) %}{% endif %}
     {% if movingFolder %}{% set moveParams = moveParams|merge({move_folder: movingFolder.id}) %}{% endif %}
+    {% if bulkMoving %}
+        {% set moveParams = moveParams|merge({
+            bulk_move: 1,
+            folder_ids: bulkMovingFolders|map(f => f.id),
+            document_ids: bulkMovingDocuments|map(d => d.id),
+        }) %}
+    {% endif %}
 
     <div class="container">
         <h1>{{ ('desk.space_' ~ space)|trans }}</h1>
@@ -20,31 +33,49 @@
             {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'files'}) }}
         {% endif %}
 
-        {# Pattern WAI-ARIA "Breadcrumb" (https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/) :
-           nav étiqueté + liste ordonnée de liens, le dernier maillon (page
-           courante) n'est pas un lien vers lui-même mais du texte avec
-           aria-current="page". #}
-        <nav class="desk-breadcrumb" aria-label="{{ 'desk.breadcrumb'|trans }}">
-            <ol>
-                <li>
-                    {% if atRoot %}
-                        <span aria-current="page"><i class="ri-hard-drive-2-fill" aria-hidden="true"></i> {{ 'desk.files_root'|trans }}</span>
-                    {% else %}
-                        <a href="{{ path('desk_files', {space: space}|merge(moveParams)) }}"><i class="ri-hard-drive-2-fill" aria-hidden="true"></i> {{ 'desk.files_root'|trans }}</a>
-                    {% endif %}
-                </li>
-                {% for folder in breadcrumb %}
+        {% if not anyMoving %}
+            <form method="get" action="{{ path('desk_files', {space: space}) }}" class="desk-search" role="search">
+                <label for="desk-search-input" class="sr-only">{{ 'desk.search_label'|trans }}</label>
+                <input type="search" id="desk-search-input" name="q" value="{{ query }}" placeholder="{{ 'desk.search_placeholder'|trans }}">
+                <button type="submit" class="btn btn-green"><i class="ri-search-line" aria-hidden="true"></i> {{ 'desk.search_submit'|trans }}</button>
+                {% if searching %}
+                    <a href="{{ path('desk_files', {space: space}) }}" class="btn-link">{{ 'desk.search_clear'|trans }}</a>
+                {% endif %}
+                {% if writable %}
+                    <a href="{{ path('desk_files_trash', {space: space}) }}" class="btn-link desk-trash-link"><i class="ri-delete-bin-line" aria-hidden="true"></i> {{ 'desk.trash_link'|trans }}</a>
+                {% endif %}
+            </form>
+        {% endif %}
+
+        {% if searching %}
+            <p class="desk-search-summary" role="status">{{ 'desk.search_results'|trans({'%query%': query, '%count%': subfolders|length + documents|length}) }}</p>
+        {% else %}
+            {# Pattern WAI-ARIA "Breadcrumb" (https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/) :
+               nav étiqueté + liste ordonnée de liens, le dernier maillon (page
+               courante) n'est pas un lien vers lui-même mais du texte avec
+               aria-current="page". #}
+            <nav class="desk-breadcrumb" aria-label="{{ 'desk.breadcrumb'|trans }}">
+                <ol>
                     <li>
-                        <i class="ri-arrow-right-s-line desk-breadcrumb-sep" aria-hidden="true"></i>
-                        {% if loop.last %}
-                            <span aria-current="page">{{ folder.name }}</span>
+                        {% if atRoot %}
+                            <span aria-current="page"><i class="ri-hard-drive-2-fill" aria-hidden="true"></i> {{ 'desk.files_root'|trans }}</span>
                         {% else %}
-                            <a href="{{ path('desk_files', {space: space, folder: folder.id}|merge(moveParams)) }}">{{ folder.name }}</a>
+                            <a href="{{ path('desk_files', {space: space}|merge(moveParams)) }}"><i class="ri-hard-drive-2-fill" aria-hidden="true"></i> {{ 'desk.files_root'|trans }}</a>
                         {% endif %}
                     </li>
-                {% endfor %}
-            </ol>
-        </nav>
+                    {% for folder in breadcrumb %}
+                        <li>
+                            <i class="ri-arrow-right-s-line desk-breadcrumb-sep" aria-hidden="true"></i>
+                            {% if loop.last %}
+                                <span aria-current="page">{{ folder.name }}</span>
+                            {% else %}
+                                <a href="{{ path('desk_files', {space: space, folder: folder.id}|merge(moveParams)) }}">{{ folder.name }}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ol>
+            </nav>
+        {% endif %}
 
         {% if moving and writable %}
             <div class="desk-move-banner" role="status">
@@ -64,7 +95,21 @@
                     <a href="{{ path('desk_files', {space: space, folder: currentFolder.id}) }}" class="btn-link">{{ 'desk.move_cancel'|trans }}</a>
                 </div>
             </div>
-        {% elseif writable %}
+        {% elseif bulkMoving and writable %}
+            <div class="desk-move-banner" role="status">
+                <p>{{ 'desk.bulk_move_banner'|trans({'%count%': bulkMovingFolders|length + bulkMovingDocuments|length}) }}</p>
+                <div class="desk-move-actions">
+                    <form method="post" action="{{ path('bulk_move', {space: space}) }}" class="btn-form">
+                        <input type="hidden" name="target" value="{{ currentFolder.id }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('bulk_move' ~ space) }}">
+                        {% for folder in bulkMovingFolders %}<input type="hidden" name="folder_ids[]" value="{{ folder.id }}">{% endfor %}
+                        {% for document in bulkMovingDocuments %}<input type="hidden" name="document_ids[]" value="{{ document.id }}">{% endfor %}
+                        <button type="submit" class="btn btn-green"><i class="ri-folder-transfer-line" aria-hidden="true"></i> {{ 'desk.move_here'|trans({'%folder%': currentFolder.name}) }}</button>
+                    </form>
+                    <a href="{{ path('desk_files', {space: space, folder: currentFolder.id}) }}" class="btn-link">{{ 'desk.move_cancel'|trans }}</a>
+                </div>
+            </div>
+        {% elseif writable and not searching %}
             {# .desk-actions regroupe les 2 actions les plus probables en arrivant
                dans un dossier (créer un dossier / déposer des fichiers), à poids
                visuel égal côte à côte plutôt qu'un enchaînement vertical qui
@@ -113,24 +158,62 @@
             </div>
         {% endif %}
 
+        {% if canBulkSelect and (subfolders|length > 0 or documents|length > 0) %}
+            <div class="desk-bulk-toolbar">
+                <label class="desk-select-all">
+                    <input type="checkbox" id="desk-select-all">
+                    {{ 'desk.select_all'|trans }}
+                </label>
+            </div>
+        {% endif %}
+
         {% if subfolders|length > 0 %}
             <ul class="desk-folders">
                 {% for folder in subfolders %}
                     <li>
-                        <span class="desk-folder-badge">
+                        <span class="desk-folder-badge"
+                            {% if canBulkSelect %}
+                                draggable="true" data-drag-kind="folder" data-drag-id="{{ folder.id }}"
+                                data-dropzone="folder" data-drop-id="{{ folder.id }}"
+                                data-move-action="{{ path('folder_move', {space: space, id: folder.id}) }}"
+                                data-move-token="{{ csrf_token('move_folder' ~ folder.id) }}"
+                            {% endif %}
+                        >
+                            {% if canBulkSelect %}
+                                <input type="checkbox" class="desk-select" data-kind="folder" data-id="{{ folder.id }}" aria-label="{{ 'desk.select_folder_aria'|trans({'%name%': folder.name}) }}">
+                            {% endif %}
                             <a href="{{ path('desk_files', {space: space, folder: folder.id}|merge(moveParams)) }}">
                                 <i class="ri-folder-fill" aria-hidden="true"></i> {{ folder.name }}
                             </a>
+                            {% if searching %}
+                                {% set ancestorPath = folder.ancestors|length > 0 ? folder.ancestors|map(a => a.name)|join(' / ') : 'desk.files_root'|trans %}
+                                <span class="desk-result-path">{{ 'desk.result_path'|trans({'%path%': ancestorPath}) }}</span>
+                            {% endif %}
                             {% if moving and writable %}
                                 <form method="post" action="{{ path(movingDocument ? 'document_move' : 'folder_move', {space: space, id: movingDocument ? movingDocument.id : movingFolder.id}) }}" class="btn-form">
                                     <input type="hidden" name="target" value="{{ folder.id }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token((movingDocument ? 'move_document' : 'move_folder') ~ (movingDocument ? movingDocument.id : movingFolder.id)) }}">
                                     <button type="submit" class="btn btn-green" aria-label="{{ 'desk.move_here_aria'|trans({'%name%': folder.name}) }}"><i class="ri-folder-transfer-line" aria-hidden="true"></i></button>
                                 </form>
-                            {% elseif not moving and writable %}
+                            {% elseif bulkMoving and writable %}
+                                <form method="post" action="{{ path('bulk_move', {space: space}) }}" class="btn-form">
+                                    <input type="hidden" name="target" value="{{ folder.id }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('bulk_move' ~ space) }}">
+                                    {% for f in bulkMovingFolders %}<input type="hidden" name="folder_ids[]" value="{{ f.id }}">{% endfor %}
+                                    {% for d in bulkMovingDocuments %}<input type="hidden" name="document_ids[]" value="{{ d.id }}">{% endfor %}
+                                    <button type="submit" class="btn btn-green" aria-label="{{ 'desk.move_here_aria'|trans({'%name%': folder.name}) }}"><i class="ri-folder-transfer-line" aria-hidden="true"></i></button>
+                                </form>
+                            {% elseif not anyMoving and writable and not searching %}
                                 <a href="{{ path('desk_files', {space: space, folder: currentFolder.id, move_folder: folder.id}) }}" class="desk-move-start" aria-label="{{ 'desk.move_folder_aria'|trans({'%name%': folder.name}) }}"><i class="ri-drag-move-2-line" aria-hidden="true"></i></a>
                                 <form method="post" action="{{ path('folder_delete', {space: space, id: folder.id, folder: currentFolder.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_folder'|trans({'%name%': folder.name})|e('js') }}');">
                                     <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_folder' ~ folder.id) }}">
+                                    <button type="submit" class="btn btn-red" aria-label="{{ 'desk.delete_folder_aria'|trans({'%name%': folder.name}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                                </form>
+                            {% elseif not anyMoving and writable and searching %}
+                                <form method="post" action="{{ path('folder_delete', {space: space, id: folder.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_folder'|trans({'%name%': folder.name})|e('js') }}');">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="q" value="{{ query }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete_folder' ~ folder.id) }}">
                                     <button type="submit" class="btn btn-red" aria-label="{{ 'desk.delete_folder_aria'|trans({'%name%': folder.name}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
                                 </form>
@@ -141,10 +224,33 @@
             </ul>
         {% endif %}
 
+        {% if not searching and documents|length > 0 %}
+            <div class="desk-sort-bar" role="group" aria-label="{{ 'desk.sort_label'|trans }}">
+                <span class="desk-sort-bar-label">{{ 'desk.sort_label'|trans }}</span>
+                {% for col in ['name', 'date', 'size'] %}
+                    {% set nextDir = (sort == col and dir == 'asc') ? 'desc' : 'asc' %}
+                    <a href="{{ path('desk_files', {space: space, folder: currentFolder.id, sort: col, dir: nextDir}) }}"
+                       class="desk-sort-link{{ sort == col ? ' active' : '' }}">
+                        {{ ('desk.sort_' ~ col)|trans }}
+                        {% if sort == col %}<i class="{{ dir == 'asc' ? 'ri-arrow-up-line' : 'ri-arrow-down-line' }}" aria-hidden="true"></i>{% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if documents|length > 0 %}
             <ul class="desk-documents">
                 {% for document in documents %}
-                    <li class="desk-document desk-document--{{ document.kind }}">
+                    <li class="desk-document desk-document--{{ document.kind }}"
+                        {% if canBulkSelect %}
+                            draggable="true" data-drag-kind="document" data-drag-id="{{ document.id }}"
+                            data-move-action="{{ path('document_move', {space: space, id: document.id}) }}"
+                            data-move-token="{{ csrf_token('move_document' ~ document.id) }}"
+                        {% endif %}
+                    >
+                        {% if canBulkSelect %}
+                            <input type="checkbox" class="desk-select" data-kind="document" data-id="{{ document.id }}" aria-label="{{ 'desk.select_document_aria'|trans({'%name%': document.name}) }}">
+                        {% endif %}
                         <i class="{{ document.iconClass }} desk-document-icon" aria-hidden="true"></i>
 
                         <div class="desk-document-main">
@@ -153,8 +259,11 @@
                                data-preview-url="{{ asset('uploads/documents/' ~ document.filename) }}"
                                data-preview-name="{{ document.name }}">{{ document.name }}</a>
                             <span class="desk-document-meta">
-                                .{{ document.extension }}{% if document.uploadedBy %} · {{ 'desk.document_uploaded_by'|trans }} {{ document.uploadedBy.nickname }}{% endif %}
+                                .{{ document.extension }} · {{ document.humanSize }}{% if document.uploadedBy %} · {{ 'desk.document_uploaded_by'|trans }} {{ document.uploadedBy.nickname }}{% endif %}
                             </span>
+                            {% if searching %}
+                                <span class="desk-result-path">{{ 'desk.result_path'|trans({'%path%': (document.folder.ancestors|map(a => a.name)|merge([document.folder.name]))|join(' / ')}) }}</span>
+                            {% endif %}
                         </div>
 
                         {% if document.isAudio %}
@@ -167,10 +276,17 @@
                             </form>
                         {% endif %}
 
-                        {% if not moving and writable %}
+                        {% if not anyMoving and writable and not searching %}
                             <a href="{{ path('desk_files', {space: space, folder: currentFolder.id, move_document: document.id}) }}" class="desk-move-start" aria-label="{{ 'desk.move_document_aria'|trans({'%name%': document.name}) }}"><i class="ri-drag-move-2-line" aria-hidden="true"></i></a>
                             <form method="post" action="{{ path('document_delete', {space: space, id: document.id, folder: currentFolder.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_document'|trans|e('js') }}');">
                                 <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_document' ~ document.id) }}">
+                                <button type="submit" class="btn btn-red" aria-label="{{ 'music.delete'|trans }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                            </form>
+                        {% elseif not anyMoving and writable and searching %}
+                            <form method="post" action="{{ path('document_delete', {space: space, id: document.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_document'|trans|e('js') }}');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="q" value="{{ query }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete_document' ~ document.id) }}">
                                 <button type="submit" class="btn btn-red" aria-label="{{ 'music.delete'|trans }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
                             </form>
@@ -181,9 +297,38 @@
         {% endif %}
 
         {% if subfolders|length == 0 and documents|length == 0 %}
-            <p class="desk-empty">{{ 'desk.folder_empty'|trans }}</p>
+            <p class="desk-empty">{{ (searching ? 'desk.search_empty' : 'desk.folder_empty')|trans }}</p>
         {% endif %}
     </div>
+
+    {% if canBulkSelect and (subfolders|length > 0 or documents|length > 0) %}
+        {# Barre d'actions groupées : masquée par défaut (hidden), affichée par
+           assets/desk/bulk-actions.js dès qu'au moins une case est cochée.
+           Les 2 formulaires ci-dessous restent vides tant que rien n'est
+           sélectionné (le JS y injecte les folder_ids[]/document_ids[]
+           cochés juste avant de les soumettre) : pas de dégradation utile
+           sans JS ici (une sélection multiple n'a de sens qu'avec du JS pour
+           en afficher l'état), contrairement au reste du gestionnaire de
+           fichiers qui reste utilisable sans JS. #}
+        <div id="desk-bulk-bar" class="desk-bulk-bar" hidden
+            data-count-label="{{ 'desk.bulk_selected_count'|trans({'%count%': '__COUNT__'}) }}"
+            data-bulk-move-action="{{ path('bulk_move', {space: space}) }}"
+            data-bulk-move-token="{{ csrf_token('bulk_move' ~ space) }}"
+        >
+            <span id="desk-bulk-count" aria-live="polite"></span>
+            <button type="button" id="desk-bulk-move-btn" class="btn btn-green"><i class="ri-folder-transfer-line" aria-hidden="true"></i> {{ 'desk.bulk_move_submit'|trans }}</button>
+            <button type="button" id="desk-bulk-delete-btn" class="btn btn-red"><i class="ri-delete-bin-line" aria-hidden="true"></i> {{ 'desk.bulk_delete_submit'|trans }}</button>
+        </div>
+        <form id="desk-bulk-move-form" method="get" action="{{ path('desk_files', {space: space, folder: currentFolder.id}) }}" hidden>
+            <input type="hidden" name="bulk_move" value="1">
+        </form>
+        <form id="desk-bulk-delete-form" method="post" action="{{ path('bulk_delete', {space: space}) }}" hidden>
+            <input type="hidden" name="folder" value="{{ currentFolder.id }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('bulk_delete' ~ space) }}">
+        </form>
+        <script src="{{ asset('desk/bulk-actions.js') }}"></script>
+        <script src="{{ asset('desk/drag-move.js') }}"></script>
+    {% endif %}
 
     {% if documents|length > 0 %}
         {# Visionneuse commune (image/pdf/audio/vidéo) : évite de forcer un
@@ -208,7 +353,7 @@
         <script src="{{ asset('desk/file-preview.js') }}"></script>
     {% endif %}
 
-    {% if not moving %}
+    {% if not anyMoving and not searching %}
         <script src="{{ asset('desk/quick-upload.js') }}"></script>
     {% endif %}
 {% endblock %}
