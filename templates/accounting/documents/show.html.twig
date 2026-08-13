@@ -11,11 +11,27 @@
 <div class="container mt-2 no-print">
     {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'documents'}) }}
 
-    <div class="desk-actions mb-3">
+    <div class="accounting-actions">
         <button type="button" onclick="window.print()" class="btn btn-green"><i class="ri-printer-fill" aria-hidden="true"></i> {{ 'accounting.print'|trans }}</button>
         <a href="{{ path('accounting_document_edit', {id: document.id}) }}" class="btn btn-green"><i class="ri-edit-line" aria-hidden="true"></i> {{ 'accounting.edit'|trans }}</a>
+        {% if document.type == 'quote' %}
+            <a href="{{ path('accounting_document_new_from_quote', {quote: document.id}) }}" class="btn btn-green"><i class="ri-file-transfer-line" aria-hidden="true"></i> {{ 'accounting.invoice_this_quote'|trans }}</a>
+        {% endif %}
         <a href="{{ path('accounting_documents_index') }}" class="btn btn-link">{{ 'accounting.back_to_list'|trans }}</a>
     </div>
+
+    {% if document.type == 'quote' and document.invoices is not empty %}
+        <p>
+            {{ 'accounting.invoices_from_quote'|trans }}
+            {% for invoice in document.invoices %}
+                <a href="{{ path('accounting_document_show', {id: invoice.id}) }}">{{ invoice.reference }}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    {% if document.type == 'invoice' and document.sourceQuote %}
+        <p>{{ 'accounting.invoice_from_quote'|trans }} <a href="{{ path('accounting_document_show', {id: document.sourceQuote.id}) }}">{{ document.sourceQuote.reference }}</a></p>
+    {% endif %}
 </div>
 
 {# Mise en page calquée sur les modèles PDF de référence (cf. todoCompta.md),

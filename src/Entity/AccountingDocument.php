@@ -47,6 +47,15 @@ class AccountingDocument
     #[ORM\Column(type: 'date_immutable')]
     private $date;
 
+    /**
+     * Fiche client sélectionnée à la création (facultative, cf. Client) :
+     * ne sert qu'à préremplir clientName/clientAddress/clientContact
+     * ci-dessous, qui restent les champs réellement affichés/imprimés.
+     */
+    #[ORM\ManyToOne(targetEntity: Client::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private $client;
+
     #[ORM\Column(type: 'string', length: 255)]
     private $clientName;
 
@@ -78,6 +87,35 @@ class AccountingDocument
     private $createdAt;
 
     /**
+     * Devis d'origine si ce document est une facture créée via
+     * AccountingController::documentNewFromQuote() : client et lignes sont
+     * copiés une seule fois à la création (snapshot, cf. $client plus haut),
+     * ce lien ne sert qu'à la traçabilité affichée sur les deux documents,
+     * pas à les garder synchronisés après coup.
+     */
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'invoices')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private $sourceQuote;
+
+    /**
+     * @var Collection|self[]
+     */
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'sourceQuote')]
+    private $invoices;
+
+    /**
+     * Devis retiré du sélecteur "Nouvelle facture -> choisir un devis"
+     * (AccountingController::invoiceChooseQuote()) sans supprimer le devis
+     * lui-même : retour utilisatrice explicite (2026-08-13) "je veux pas
+     * supprimer, je veux l'enlever de la liste", tous les devis ne sont pas
+     * destinés à être facturés et le sélecteur deviendrait illisible à la
+     * longue sans un moyen de l'alléger. Reste visible/éditable partout
+     * ailleurs (accounting_documents_index...), et réversible (toggle).
+     */
+    #[ORM\Column(type: 'boolean')]
+    private $excludedFromInvoicing = false;
+
+    /**
      * #[Assert\Valid] indispensable ici : sans elle, Symfony ne valide que
      * AccountingDocument lui-même, pas les AccountingDocumentLine qu'il
      * contient (pas de cascade de validation automatique sur les
@@ -92,6 +130,7 @@ class AccountingDocument
     public function __construct()
     {
         $this->lines = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -147,6 +186,18 @@ class AccountingDocument
     public function setDate(\DateTimeImmutable $date): self
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
 
         return $this;
     }
@@ -238,6 +289,38 @@ class AccountingDocument
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function getSourceQuote(): ?self
+    {
+        return $this->sourceQuote;
+    }
+
+    public function setSourceQuote(?self $sourceQuote): self
+    {
+        $this->sourceQuote = $sourceQuote;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getInvoices(): Collection
+    {
+        return $this->invoices;
+    }
+
+    public function isExcludedFromInvoicing(): bool
+    {
+        return $this->excludedFromInvoicing;
+    }
+
+    public function setExcludedFromInvoicing(bool $excludedFromInvoicing): self
+    {
+        $this->excludedFromInvoicing = $excludedFromInvoicing;
+
+        return $this;
     }
 
     /**

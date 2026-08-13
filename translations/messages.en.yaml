@@ -281,6 +281,7 @@ accounting:
     tabs_label: "Accounting section navigation"
     tab_files: Statements
     tab_documents: "Quotes & Invoices"
+    tab_clients: Clients
     tab_treasury: Treasury
     new_quote: New quote
     new_invoice: New invoice
@@ -288,6 +289,8 @@ accounting:
     field_reference: Reference
     field_type: Type
     field_date: Date
+    field_client: "Client record"
+    field_client_placeholder: "One-off client (no record)"
     field_client_name: "Client name"
     field_client_name_placeholder: "E.g. Conservatoire de Musique"
     field_client_address: "Client address"
@@ -318,6 +321,23 @@ accounting:
     remove_line_aria: "Remove this line"
     save_document: Save
     back_to_list: "back to the list"
+    invoice_this_quote: "Invoice this quote"
+    invoice_this_quote_aria: "Invoice quote « %reference% »"
+    invoices_from_quote: "Invoice(s) from this quote:"
+    invoice_from_quote: "Invoice from quote"
+    choose_quote_intro: "Pick a quote to invoice, or start from a blank invoice."
+    no_quotes_to_invoice: "No quote yet."
+    free_invoice: "Blank invoice (no quote)"
+    hide_from_invoicing_aria: "Remove « %reference% » from the invoicing picker"
+    show_in_invoicing_aria: "Add « %reference% » back to the invoicing picker"
+    excluded_from_invoicing_badge: "hidden from the invoicing picker"
+    new_client: "New client"
+    no_clients: "No client yet."
+    edit_client: "Edit « %name% »"
+    edit_client_aria: "Edit « %name% »"
+    delete_client_aria: "Delete « %name% »"
+    confirm_delete_client: "Delete « %name% »?"
+    save_client: Save
     vat_mention: "VAT not applicable, article 293 B of the French tax code"
     balance: "Treasury balance"
     new_entry: "New entry"

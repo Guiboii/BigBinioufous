@@ -1,0 +1,28 @@
+{% extends 'desk/base.html.twig' %}
+
+{% set isNew = client is not defined or client.id is null %}
+{% set heading = isNew ? 'accounting.new_client'|trans : 'accounting.edit_client'|trans({'%name%': client.name}) %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ heading }}</h1>
+
+    {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'clients'}) }}
+
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_row(form.name) }}
+            {{ form_row(form.address) }}
+            {{ form_row(form.contact) }}
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-green">{{ 'accounting.save_client'|trans }}</button>
+        </div>
+    {{ form_end(form) }}
+
+    <a href="{{ path('accounting_clients_index') }}" class="text-green">{{ 'accounting.back_to_list'|trans }}</a>
+</div>
+{% endblock %}

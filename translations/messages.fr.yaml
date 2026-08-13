@@ -281,6 +281,7 @@ accounting:
     tabs_label: "Navigation de l'espace Comptabilité"
     tab_files: Relevés
     tab_documents: "Devis & Factures"
+    tab_clients: Clients
     tab_treasury: Trésorerie
     new_quote: Nouveau devis
     new_invoice: Nouvelle facture
@@ -288,6 +289,8 @@ accounting:
     field_reference: Référence
     field_type: Type
     field_date: Date
+    field_client: "Fiche client"
+    field_client_placeholder: "Client ponctuel (sans fiche)"
     field_client_name: "Nom du commanditaire"
     field_client_name_placeholder: "Ex. Conservatoire de Musique"
     field_client_address: "Adresse du commanditaire"
@@ -318,6 +321,23 @@ accounting:
     remove_line_aria: "Retirer cette ligne"
     save_document: Enregistrer
     back_to_list: "retour à la liste"
+    invoice_this_quote: "Facturer ce devis"
+    invoice_this_quote_aria: "Facturer le devis « %reference% »"
+    invoices_from_quote: "Facture(s) issue(s) de ce devis :"
+    invoice_from_quote: "Facture issue du devis"
+    choose_quote_intro: "Choisis un devis à facturer, ou pars d'une facture vierge."
+    no_quotes_to_invoice: "Aucun devis pour l'instant."
+    free_invoice: "Facture libre (sans devis)"
+    hide_from_invoicing_aria: "Retirer « %reference% » du sélecteur de facturation"
+    show_in_invoicing_aria: "Remettre « %reference% » dans le sélecteur de facturation"
+    excluded_from_invoicing_badge: "masqué du sélecteur de facturation"
+    new_client: "Nouveau client"
+    no_clients: "Aucun client pour l'instant."
+    edit_client: "Modifier « %name% »"
+    edit_client_aria: "Modifier « %name% »"
+    delete_client_aria: "Supprimer « %name% »"
+    confirm_delete_client: "Supprimer « %name% » ?"
+    save_client: Enregistrer
     vat_mention: "TVA non applicable, article 293 B du CGI"
     balance: "Solde de trésorerie"
     new_entry: "Nouvelle écriture"

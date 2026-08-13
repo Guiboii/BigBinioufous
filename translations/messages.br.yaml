@@ -121,6 +121,7 @@ accounting:
     tabs_label: "Merdeiñ e rannad ar gontabilite"
     tab_files: Teulioù
     tab_documents: "Prizioù & Fakturioù"
+    tab_clients: Kliantoù
     tab_treasury: Arc'hant
     new_quote: Priz nevez
     new_invoice: Faktur nevez
@@ -128,6 +129,8 @@ accounting:
     field_reference: Niverenn
     field_type: Doare
     field_date: Deiziad
+    field_client: Kliant
+    field_client_placeholder: "Hep follenn gliant"
     field_client_name: "Anv ar c'homandour"
     field_client_name_placeholder: "Da skouer : Konservatoar Sonerezh"
     field_client_address: "Chomlec'h ar c'homandour"
@@ -158,6 +161,23 @@ accounting:
     remove_line_aria: "Dilemel al linenn-mañ"
     save_document: Enrollañ
     back_to_list: "distro d'ar roll"
+    invoice_this_quote: "Fakturiñ ar priz-mañ"
+    invoice_this_quote_aria: "Fakturiñ ar priz « %reference% »"
+    invoices_from_quote: "Faktur(ioù) diwar ar priz-mañ :"
+    invoice_from_quote: "Faktur diwar ar priz"
+    choose_quote_intro: "Dibab ur priz da fakturiñ, pe krog gant ur faktur goullo."
+    no_quotes_to_invoice: "Priz ebet c'hoazh."
+    free_invoice: "Faktur digevrek (hep priz)"
+    hide_from_invoicing_aria: "Dilemel « %reference% » eus roll ar prizioù da fakturiñ"
+    show_in_invoicing_aria: "Adlakaat « %reference% » e roll ar prizioù da fakturiñ"
+    excluded_from_invoicing_badge: "kuzhet e roll ar prizioù da fakturiñ"
+    new_client: "Kliant nevez"
+    no_clients: "Kliant ebet c'hoazh."
+    edit_client: "Kemmañ « %name% »"
+    edit_client_aria: "Kemmañ « %name% »"
+    delete_client_aria: "Dilemel « %name% »"
+    confirm_delete_client: "Dilemel « %name% » ?"
+    save_client: Enrollañ
     vat_mention: "TVA n'eo ket arveret, pennad 293 B eus ar CGI"
     balance: "Soubl an arc'hant"
     new_entry: "Enskrivadenn nevez"

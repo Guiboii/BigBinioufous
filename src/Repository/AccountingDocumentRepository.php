@@ -56,4 +56,24 @@ class AccountingDocumentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Devis proposés dans le sélecteur "Nouvelle facture" (cf.
+     * AccountingController::invoiceChooseQuote()) : $excludedFromInvoicing
+     * exclu ici seulement, le devis reste par ailleurs visible/éditable
+     * normalement via findAllOrdered().
+     *
+     * @return AccountingDocument[]
+     */
+    public function findQuotesForInvoicing(): array
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.type = :type')
+            ->andWhere('d.excludedFromInvoicing = false')
+            ->setParameter('type', AccountingDocument::TYPE_QUOTE)
+            ->orderBy('d.date', 'DESC')
+            ->addOrderBy('d.number', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

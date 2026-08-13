@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\AccountingDocument;
+use App\Entity\Client;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -25,6 +27,24 @@ class AccountingDocumentType extends ApplicationType
                 $this->getConfiguration('accounting.field_date', ''),
                 ['widget' => 'single_text']
             ))
+            ->add('client', EntityType::class, [
+                'class' => Client::class,
+                'choice_label' => 'name',
+                'label' => $this->trans('accounting.field_client'),
+                'required' => false,
+                'placeholder' => 'accounting.field_client_placeholder',
+                /*
+                 * clientName/clientAddress/clientContact restent les champs
+                 * réellement soumis (cf. AccountingDocument) : ce select ne
+                 * sert qu'à les préremplir côté client (assets/accounting/
+                 * client-autofill.js), d'où ces attributs data plutôt qu'un
+                 * mapping recalculé côté serveur au submit.
+                 */
+                'choice_attr' => fn (Client $client) => [
+                    'data-address' => $client->getAddress(),
+                    'data-contact' => $client->getContact(),
+                ],
+            ])
             ->add('clientName', TextType::class, $this->getConfiguration('accounting.field_client_name', 'accounting.field_client_name_placeholder'))
             ->add('clientAddress', TextareaType::class, $this->getConfiguration('accounting.field_client_address', 'accounting.field_client_address_placeholder'))
             ->add('clientContact', TextType::class, array_merge(
