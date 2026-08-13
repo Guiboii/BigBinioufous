@@ -76,10 +76,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // The playlist links
-  var links = document.querySelectorAll('#playlist a');
+  // The playlist links. Recalculés à chaque usage (pas de NodeList mise en
+  // cache) : la modale "Gérer la setlist" (assets/music/setlist-manage.js)
+  // rafraîchit #playlist en innerHTML après un ajout/édition/suppression,
+  // sans recharger toute la page, ce qui remplace les <a> existants par de
+  // nouveaux nœuds DOM. Un cache pris une seule fois au chargement
+  // pointerait alors vers des éléments disparus.
+  var playlist = document.getElementById('playlist');
   var currentTrack = 0;
   var nowPlaying = document.querySelector('#now-playing');
+
+  function getLinks() {
+    return playlist ? playlist.querySelectorAll('a') : [];
+  }
 
   // Load a track by index and highlight the corresponding link
   // aria-current="true" en plus de la classe .active : la classe seule ne
@@ -87,29 +96,56 @@ document.addEventListener('DOMContentLoaded', function () {
   // peut pas la détecter. nowPlaying (aria-live) annonce le changement pour
   // qui ne regarde pas la playlist à ce moment-là (clic ou piste suivante
   // automatique).
-  var setCurrentSong = function (index) {
-    links[currentTrack].classList.remove('active');
-    links[currentTrack].removeAttribute('aria-current');
+  //
+  // autoplay (2e argument, true par défaut) : faux uniquement pour le
+  // chargement initial de la page (retour utilisatrice, 2026-08-13 : "la
+  // musique ne devrait pas se jouer dès qu'on arrive sur l'écran"). Un clic
+  // sur un morceau ou l'enchaînement automatique en fin de piste (event
+  // "finish" plus bas) restent une vraie lecture, donc autoplay=true.
+  var pendingAutoplay = true;
+  var setCurrentSong = function (index, autoplay) {
+    var links = getLinks();
+    if (!links.length || !links[index]) {
+      return;
+    }
+    if (links[currentTrack]) {
+      links[currentTrack].classList.remove('active');
+      links[currentTrack].removeAttribute('aria-current');
+    }
     currentTrack = index;
     links[currentTrack].classList.add('active');
     links[currentTrack].setAttribute('aria-current', 'true');
     if (nowPlaying) {
       nowPlaying.textContent = links[currentTrack].dataset.trackTitle || '';
     }
+    pendingAutoplay = false !== autoplay;
     wavesurfer.load(links[currentTrack].href);
   };
 
-  // Load the track on click
-  Array.prototype.forEach.call(links, function (link, index) {
-    link.addEventListener('click', function (e) {
+  // Délégation sur le conteneur plutôt qu'un listener par <a> : reste valide
+  // même après un rafraîchissement en innerHTML de #playlist (cf. commentaire
+  // sur getLinks() ci-dessus), sans quoi les liens recréés n'auraient jamais
+  // de listener (celui-ci n'est posé qu'une fois, au chargement de la page).
+  if (playlist) {
+    playlist.addEventListener('click', function (e) {
+      var link = e.target.closest('a');
+      if (!link) {
+        return;
+      }
       e.preventDefault();
-      setCurrentSong(index);
+      var index = Array.prototype.indexOf.call(getLinks(), link);
+      if (-1 !== index) {
+        setCurrentSong(index);
+      }
     });
-  });
+  }
 
-  // Play on audio load
+  // Play on audio load, sauf pour le chargement initial (cf. pendingAutoplay
+  // ci-dessus).
   wavesurfer.on('ready', function () {
-    wavesurfer.play();
+    if (pendingAutoplay) {
+      wavesurfer.play();
+    }
   });
 
   wavesurfer.on('error', function (e) {
@@ -118,15 +154,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Go to the next track on finish
   wavesurfer.on('finish', function () {
+    var links = getLinks();
     if (links.length) {
       setCurrentSong((currentTrack + 1) % links.length);
     }
   });
 
   // Load the first track (rien à charger si la playlist est vide : sans
-  // cette garde, links[0] est undefined et ça plante au chargement)
-  if (links.length) {
-    setCurrentSong(currentTrack);
+  // cette garde, ça plante au chargement). autoplay=false : juste préparer
+  // le lecteur, pas déclencher la lecture toute seule à l'arrivée sur la
+  // page.
+  if (getLinks().length) {
+    setCurrentSong(0, false);
   }
 });
 

@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import './Player.js';
+import './setlist-manage.js';
 
 var canvas,
   clock,
@@ -324,11 +325,22 @@ function getFocusable(container) {
     });
 }
 
-function initDialog(triggerId, dialogId) {
-  var trigger = document.getElementById(triggerId);
+// triggerIds : un id, ou un tableau d'ids pour plusieurs boutons ouvrant la
+// même modale (cf. #uploadNew + #setlistManageTrigger, tous deux liés à
+// #setlistManageDialog, retour utilisatrice le 2026-08-13). Le focus à la
+// fermeture revient au 1er déclencheur trouvé sur la page plutôt qu'à celui
+// réellement cliqué (pas suivi individuellement) : repli raisonnable, les
+// deux sont de toute façon équivalents fonctionnellement.
+function initDialog(triggerIds, dialogId) {
+  var ids = Array.isArray(triggerIds) ? triggerIds : [triggerIds];
+  var triggers = ids
+    .map(function (id) {
+      return document.getElementById(id);
+    })
+    .filter(Boolean);
   var dialog = document.getElementById(dialogId);
 
-  if (!trigger || !dialog) {
+  if (!triggers.length || !dialog) {
     return;
   }
 
@@ -342,10 +354,12 @@ function initDialog(triggerId, dialogId) {
 
   function close() {
     dialog.classList.add('d-none');
-    trigger.focus();
+    triggers[0].focus();
   }
 
-  trigger.addEventListener('click', open);
+  triggers.forEach(function (trigger) {
+    trigger.addEventListener('click', open);
+  });
 
   Array.prototype.slice.call(dialog.querySelectorAll('[data-close]')).forEach(function (el) {
     el.addEventListener('click', close);
@@ -359,4 +373,4 @@ function initDialog(triggerId, dialogId) {
 }
 
 initDialog('musicLoginTrigger', 'musicLoginForm');
-initDialog('setlistManageTrigger', 'setlistManageDialog');
+initDialog(['setlistManageTrigger', 'uploadNew'], 'setlistManageDialog');

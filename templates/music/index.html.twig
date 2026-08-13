@@ -45,11 +45,20 @@
             <div
                 class="row playerButtons" role="region" aria-label="{{ 'music.player_region'|trans }}">
                 {% if is_granted('FOLDER_WRITE', 'music') %}
-                    <a id="uploadNew" href="{{ path('desk_files', {space: 'music'}) }}">
+                    {# Rond jaune près des commandes du lecteur : servait avant
+                       de lien direct vers /desk/files/music, repris comme 2e
+                       déclencheur de la modale "Gérer la setlist" ci-dessous
+                       (retour utilisatrice, 2026-08-13 : plus visible/accessible
+                       ici que le bouton du même nom planqué dans "Espace
+                       membres" plus bas). Vrai <button> plutôt que <a href>
+                       puisqu'il n'ouvre plus qu'une modale JS, cf.
+                       initDialog() dans music.js qui accepte maintenant
+                       plusieurs déclencheurs pour une même modale. #}
+                    <button type="button" id="uploadNew" class="player-btn">
                         <span id="upload">
                             <svg class="bi bi-circle-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="8"/></svg>
-                            {{ 'music.upload'|trans }}</span>
-                    </a>
+                            {{ 'music.manage_setlist'|trans }}</span>
+                    </button>
                 {% endif %}
 
                 {# Avant : <div id="stopTrack">/<div id="playPause">/<div id="loopRegion">
