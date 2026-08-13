@@ -185,7 +185,7 @@
                             <i class="ri-music-2-line" aria-hidden="true"></i> {{ 'music.manage_setlist'|trans }}
                         </button>
                     {% endif %}
-                    <a href="{{ path('desk_files', {space: 'music'}) }}" class="btn btn-secondary">{{ 'music.files_link'|trans }}</a>
+                    <a href="{{ path('desk_files', {space: 'music'}) }}" class="btn btn-green">{{ 'music.files_link'|trans }}</a>
                 {% elseif app.user %}
                     <div class="members-prompt">
                         <p>{{ 'music.members_prompt'|trans }}</p>
