@@ -39,6 +39,18 @@ class Document
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'favoriteDocuments')]
     private $favoritedBy;
 
+    /**
+     * Membres qui jouent cette partie (documents audio de l'espace musique,
+     * cf. User::$playedDocuments). Remplace Voice::$users depuis la fusion
+     * Track/Voice dans Folder/Document. JoinTable nommée explicitement :
+     * sans ça, Doctrine nomme par défaut la table de jonction d'après les 2
+     * entités seules ("document_user"), qui entrerait en collision avec
+     * celle déjà utilisée par $favoritedBy ci-dessus.
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'playedDocuments')]
+    #[ORM\JoinTable(name: 'document_played_by')]
+    private $playedBy;
+
     #[ORM\PrePersist]
     public function initializeCreatedAt(): void
     {
@@ -50,6 +62,7 @@ class Document
     public function __construct()
     {
         $this->favoritedBy = new ArrayCollection();
+        $this->playedBy = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,6 +201,32 @@ class Document
     {
         if ($this->favoritedBy->contains($user)) {
             $this->favoritedBy->removeElement($user);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getPlayedBy(): Collection
+    {
+        return $this->playedBy;
+    }
+
+    public function addPlayedBy(User $user): self
+    {
+        if (!$this->playedBy->contains($user)) {
+            $this->playedBy[] = $user;
+        }
+
+        return $this;
+    }
+
+    public function removePlayedBy(User $user): self
+    {
+        if ($this->playedBy->contains($user)) {
+            $this->playedBy->removeElement($user);
         }
 
         return $this;

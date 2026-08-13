@@ -37,6 +37,7 @@ class FolderRepository extends ServiceEntityRepository
             Folder::SPACE_MUSIC => 'Musique',
             Folder::SPACE_ADMIN => 'Administratif',
             Folder::SPACE_ACCOUNTING => 'Comptabilité',
+            Folder::SPACE_OTHER => 'Autre',
         ];
 
         $root = new Folder();
@@ -45,6 +46,36 @@ class FolderRepository extends ServiceEntityRepository
         $manager->flush();
 
         return $root;
+    }
+
+    /**
+     * "02 Medley XXI/Hautbois Facile" -> crée/retrouve les 2 Folder imbriqués
+     * sous la racine de l'espace, et renvoie le plus profond. Vide -> racine.
+     * Partagé par DocumentController::upload() (chemin du glisser-déposer)
+     * et SetlistController (dossier du morceau).
+     */
+    public function findOrCreateByPath(string $space, string $path, EntityManagerInterface $manager): Folder
+    {
+        $parent = $this->findOrCreateRoot($space, $manager);
+
+        $segments = array_filter(explode('/', $path), static fn (string $s) => '' !== trim($s));
+
+        foreach ($segments as $name) {
+            $name = trim($name);
+            $existing = $this->findOneBy(['parent' => $parent, 'name' => $name]);
+            if ($existing) {
+                $parent = $existing;
+                continue;
+            }
+
+            $folder = new Folder();
+            $folder->setName($name)->setParent($parent)->setSpace($space);
+            $manager->persist($folder);
+            $manager->flush();
+            $parent = $folder;
+        }
+
+        return $parent;
     }
 
     /**

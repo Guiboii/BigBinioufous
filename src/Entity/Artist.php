@@ -17,7 +17,7 @@ class Artist
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    #[ORM\OneToMany(targetEntity: Track::class, mappedBy: 'artist')]
+    #[ORM\OneToMany(targetEntity: SetlistItem::class, mappedBy: 'artist')]
     private $songs;
 
     public function __construct()
@@ -43,14 +43,14 @@ class Artist
     }
 
     /**
-     * @return Collection|Track[]
+     * @return Collection|SetlistItem[]
      */
     public function getSongs(): Collection
     {
         return $this->songs;
     }
 
-    public function addSong(Track $song): self
+    public function addSong(SetlistItem $song): self
     {
         if (!$this->songs->contains($song)) {
             $this->songs[] = $song;
@@ -60,7 +60,7 @@ class Artist
         return $this;
     }
 
-    public function removeSong(Track $song): self
+    public function removeSong(SetlistItem $song): self
     {
         if ($this->songs->contains($song)) {
             $this->songs->removeElement($song);

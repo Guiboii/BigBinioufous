@@ -3,14 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Folder;
-use App\Entity\Voice;
 use App\Repository\DocumentRepository;
 use App\Repository\FolderRepository;
 use App\Repository\RoleRepository;
-use App\Repository\TrackRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,11 +74,15 @@ class DeskController extends AbstractController
 
     /**
      * Gestionnaire de fichiers façon Drive pour un espace donné
-     * (?folder=ID pour descendre dans un dossier). L'espace musique affiche
-     * en plus le tas "morceaux + parties favorites", uniquement à sa racine.
+     * (?folder=ID pour descendre dans un dossier). L'espace musique n'a
+     * plus de cas particulier depuis la fusion Track/Voice dans
+     * Folder/Document (cf. plan "Nettoyage de la gestion de
+     * fichiers/dossiers") : la setlist se gère désormais sur /music
+     * (MusicController), ce classeur reste une vue Drive comme les autres
+     * espaces.
      */
-    #[Route('/desk/files/{space}', name: 'desk_files', requirements: ['space' => 'music|admin|accounting'])]
-    public function files(string $space, Request $request, TrackRepository $trackRepository, DocumentRepository $documentRepository, FolderRepository $folderRepository, EntityManagerInterface $manager)
+    #[Route('/desk/files/{space}', name: 'desk_files', requirements: ['space' => 'music|admin|accounting|other'])]
+    public function files(string $space, Request $request, DocumentRepository $documentRepository, FolderRepository $folderRepository, EntityManagerInterface $manager)
     {
         $root = $folderRepository->findOrCreateRoot($space, $manager);
 
@@ -119,7 +120,6 @@ class DeskController extends AbstractController
             'space' => $space,
             'root' => $root,
             'atRoot' => $currentFolder->getId() === $root->getId(),
-            'tracks' => ('music' === $space && $currentFolder->getId() === $root->getId()) ? $trackRepository->findAll() : [],
             'currentFolder' => $currentFolder,
             'currentFolderPath' => implode('/', array_map(static fn (Folder $f) => $f->getName(), $breadcrumb)),
             'breadcrumb' => $breadcrumb,
@@ -128,38 +128,5 @@ class DeskController extends AbstractController
             'movingDocument' => $movingDocument,
             'movingFolder' => $movingFolder,
         ]);
-    }
-
-    /**
-     * Coche/décoche la voix courante comme jouée par le membre connecté.
-     */
-    #[Route('/desk/files/music/voices/{voiceId}/toggle', name: 'desk_voice_toggle', methods: ['POST'])]
-    public function toggleVoice(#[MapEntity(mapping: ['voiceId' => 'id'])] Voice $voice, Request $request, EntityManagerInterface $manager): Response
-    {
-        if ($this->isCsrfTokenValid('toggle_voice'.$voice->getId(), $request->request->get('_token'))) {
-            $user = $this->getUser();
-            if ($voice->getUsers()->contains($user)) {
-                $voice->removeUser($user);
-            } else {
-                $voice->addUser($user);
-
-                // Rappel demandé par l'utilisatrice (2026-08-12, cf.
-                // ROADMAP.md "Facilitons l'inscription") : l'instrument est
-                // facultatif depuis la simplification de l'inscription,
-                // mais mettre une voix en favori sans l'avoir renseigné
-                // laisse l'information incomplète (qui joue quelle partie).
-                // Seulement au moment d'AJOUTER un favori, pas d'en retirer
-                // un (pas la peine de relancer le rappel à ce moment-là).
-                if (!$user->getInstrument()) {
-                    $this->addFlash(
-                        'info',
-                        'N\'oublie pas de renseigner ton instrument sur ton profil, pour qu\'on sache qui joue quoi !'
-                    );
-                }
-            }
-            $manager->flush();
-        }
-
-        return $this->redirectToRoute('desk_files', ['space' => 'music']);
     }
 }

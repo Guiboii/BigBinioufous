@@ -94,23 +94,12 @@ music:
     loop: Adseniñ
     by: gant
     no_records: n'eus bet kavet ton ebet
-    voice_label: "Mouezh :"
-    download: pellgargañ
     no_links: n'eus bet kavet liamm ebet
     members_prompt: "Evit an izili nemetken, evit dibrennañ ar pellgargadurioù :"
-    new_title: Ton nevez
-    create_heading: Krouiñ un ton nevez
-    back_to_list: distro d'ar roll
-    edit_title: Kemmañ an ton
-    edit_heading: Kemmañ an ton
-    update_submit: Hizivaat
-    save_submit: Enrollañ
     confirm_delete: "Sur out da zilemel an dra-mañ ?"
     delete: Dilemel
     track_title: Ton
     artist: Arzour
-    duration: Padelezh
-    edit_link: kemmañ
     zoom_label: "Zoumañ war stumm an don"
     play_label: Seniñ
     pause_label: Ehan

@@ -4,13 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Folder;
 use App\Repository\FolderRepository;
+use App\Security\FolderWriteVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/desk/files/{space}/folders', requirements: ['space' => 'music|admin|accounting'])]
+#[Route('/desk/files/{space}/folders', requirements: ['space' => 'music|admin|accounting|other'])]
 class FolderController extends AbstractController
 {
     /**
@@ -24,6 +25,8 @@ class FolderController extends AbstractController
     #[Route('', name: 'folder_create', methods: ['POST'])]
     public function create(string $space, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
     {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
         $parentId = $request->request->get('parent');
         $parent = $parentId ? $folderRepository->find($parentId) : $folderRepository->findOrCreateRoot($space, $manager);
 
@@ -60,6 +63,8 @@ class FolderController extends AbstractController
     #[Route('/{id}', name: 'folder_delete', methods: ['DELETE'])]
     public function delete(string $space, Folder $folder, Request $request, EntityManagerInterface $manager): Response
     {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
         if ($folder->getSpace() !== $space) {
             throw $this->createNotFoundException();
         }
@@ -82,6 +87,8 @@ class FolderController extends AbstractController
     #[Route('/{id}/move', name: 'folder_move', methods: ['POST'])]
     public function move(string $space, Folder $folder, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
     {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
         if ($folder->getSpace() !== $space) {
             throw $this->createNotFoundException();
         }

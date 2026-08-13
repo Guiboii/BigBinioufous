@@ -199,6 +199,8 @@ desk:
     space_admin_intro: "Comptes-rendus et documents administratifs."
     space_accounting: Comptabilité
     space_accounting_intro: "Relevés et documents comptables."
+    space_other: Autre
+    space_other_intro: "Tout le reste : PDF, photos... en lecture pour les binioufous, en écriture pour les admins."
     move_start: Déplacer
     move_folder_aria: "Déplacer le dossier %name%"
     move_document_aria: "Déplacer le document %name%"
@@ -245,37 +247,28 @@ music:
     loop: Boucle
     by: par
     no_records: aucun morceau trouvé
-    voice_label: "Voix :"
-    download: télécharger
     no_links: aucun lien trouvé
-    members_prompt: "Réservé aux membres, pour débloquer les téléchargements :"
-    new_title: Nouveau morceau
-    create_heading: Créer un nouveau morceau
-    back_to_list: retour à la liste
-    edit_title: Modifier le morceau
-    edit_heading: Modifier le morceau
-    update_submit: Mettre à jour
-    save_submit: Enregistrer
-    confirm_delete: "Tu es sûr·e de vouloir supprimer cet élément ?"
+    members_prompt: "Réservé aux binioufous, pour débloquer les fichiers bruts :"
+    confirm_delete: "Tu es sûr·e de vouloir retirer ce morceau de la setlist ?"
     delete: Supprimer
     track_title: Morceau
     artist: Artiste
-    duration: Durée
-    edit_link: modifier
+    no_artist: "Aucun artiste"
     zoom_label: "Zoom sur la forme d'onde"
     play_label: Lecture
     pause_label: "Mettre en pause"
     stop_label: Arrêter
     player_region: "Lecteur audio"
-    voices_heading: Voix
-    no_voices: "Aucune voix pour l'instant"
+    no_voices: "Aucun fichier pour l'instant"
     voice_listen: écouter
-    voice_add_submit: Ajouter la voix
-    voice_name: Nom de la voix
-    voice_name_placeholder: "ex. Hautbois 1"
-    voice_file: "Fichier audio de la voix (mp3, facultatif)"
-    invalid_mp3: "Merci d'envoyer un fichier mp3 valide"
-    confirm_delete_voice: "Tu es sûr·e de vouloir supprimer cette voix ?"
+    youtube_link: "Voir sur YouTube"
+    youtube_url_label: "Lien YouTube (facultatif)"
+    folder_path_label: "Dossier des fichiers audio (facultatif)"
+    folder_path_placeholder: "ex. 10 Rasputin"
+    files_link: "Voir tous les fichiers de l'espace musique"
+    add_song: "Ajouter un morceau à la setlist"
+    move_up: "Monter dans la setlist"
+    move_down: "Descendre dans la setlist"
 
 accounting:
     tabs_label: "Navigation de l'espace Comptabilité"

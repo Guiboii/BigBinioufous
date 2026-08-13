@@ -4,6 +4,10 @@
 
 {% block body %}
     {% set moving = movingDocument or movingFolder %}
+    {# Écriture (créer/déplacer/supprimer/uploader) distincte de la lecture
+       de l'espace : cf. FolderWriteVoter, un membre binioufous peut lire un
+       espace sans forcément pouvoir y écrire (ex. espace "autre"). #}
+    {% set writable = is_granted('FOLDER_WRITE', space) %}
     {% set moveParams = {} %}
     {% if movingDocument %}{% set moveParams = moveParams|merge({move_document: movingDocument.id}) %}{% endif %}
     {% if movingFolder %}{% set moveParams = moveParams|merge({move_folder: movingFolder.id}) %}{% endif %}
@@ -42,7 +46,7 @@
             </ol>
         </nav>
 
-        {% if moving %}
+        {% if moving and writable %}
             <div class="desk-move-banner" role="status">
                 <p>
                     {% if movingDocument %}
@@ -60,11 +64,15 @@
                     <a href="{{ path('desk_files', {space: space, folder: currentFolder.id}) }}" class="btn-link">{{ 'desk.move_cancel'|trans }}</a>
                 </div>
             </div>
-        {% else %}
+        {% elseif writable %}
             {# .desk-actions regroupe les 2 actions les plus probables en arrivant
                dans un dossier (créer un dossier / déposer des fichiers), à poids
                visuel égal côte à côte plutôt qu'un enchaînement vertical qui
-               écrasait "Nouveau dossier" sous la grande zone de dépôt. #}
+               écrasait "Nouveau dossier" sous la grande zone de dépôt.
+               Masqué en lecture seule (FOLDER_WRITE, cf. FolderWriteVoter) :
+               un membre binioufous peut lire un espace sans pouvoir y écrire
+               (ex. futur espace "autre"), pas la peine de lui montrer une
+               action qui serait refusée au clic. #}
             <div class="desk-actions">
                 <form method="post" action="{{ path('folder_create', {space: space}) }}" class="desk-new-folder">
                     <label for="new-folder-name">{{ 'desk.new_folder_label'|trans }}</label>
@@ -113,13 +121,13 @@
                             <a href="{{ path('desk_files', {space: space, folder: folder.id}|merge(moveParams)) }}">
                                 <i class="ri-folder-fill" aria-hidden="true"></i> {{ folder.name }}
                             </a>
-                            {% if moving %}
+                            {% if moving and writable %}
                                 <form method="post" action="{{ path(movingDocument ? 'document_move' : 'folder_move', {space: space, id: movingDocument ? movingDocument.id : movingFolder.id}) }}" class="btn-form">
                                     <input type="hidden" name="target" value="{{ folder.id }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token((movingDocument ? 'move_document' : 'move_folder') ~ (movingDocument ? movingDocument.id : movingFolder.id)) }}">
                                     <button type="submit" class="btn btn-green" aria-label="{{ 'desk.move_here_aria'|trans({'%name%': folder.name}) }}"><i class="ri-folder-transfer-line" aria-hidden="true"></i></button>
                                 </form>
-                            {% else %}
+                            {% elseif not moving and writable %}
                                 <a href="{{ path('desk_files', {space: space, folder: currentFolder.id, move_folder: folder.id}) }}" class="desk-move-start" aria-label="{{ 'desk.move_folder_aria'|trans({'%name%': folder.name}) }}"><i class="ri-drag-move-2-line" aria-hidden="true"></i></a>
                                 <form method="post" action="{{ path('folder_delete', {space: space, id: folder.id, folder: currentFolder.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_folder'|trans({'%name%': folder.name})|e('js') }}');">
                                     <input type="hidden" name="_method" value="DELETE">
@@ -159,7 +167,7 @@
                             </form>
                         {% endif %}
 
-                        {% if not moving %}
+                        {% if not moving and writable %}
                             <a href="{{ path('desk_files', {space: space, folder: currentFolder.id, move_document: document.id}) }}" class="desk-move-start" aria-label="{{ 'desk.move_document_aria'|trans({'%name%': document.name}) }}"><i class="ri-drag-move-2-line" aria-hidden="true"></i></a>
                             <form method="post" action="{{ path('document_delete', {space: space, id: document.id, folder: currentFolder.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'desk.confirm_delete_document'|trans|e('js') }}');">
                                 <input type="hidden" name="_method" value="DELETE">
@@ -174,46 +182,6 @@
 
         {% if subfolders|length == 0 and documents|length == 0 %}
             <p class="desk-empty">{{ 'desk.folder_empty'|trans }}</p>
-        {% endif %}
-
-        {% if 'music' == space and atRoot %}
-            {% for track in tracks %}
-                <div class="desk-track">
-                    <h2>{{ track.title }} {% if track.artist %}<small>{{ 'music.by'|trans }} {{ track.artist.name }}</small>{% endif %}</h2>
-
-                    <ul class="desk-voices">
-                        {% for voice in track.voices %}
-                            {% set playing = voice.users.contains(app.user) %}
-                            <li>
-                                <form method="post" action="{{ path('desk_voice_toggle', {voiceId: voice.id}) }}" class="btn-form">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_voice' ~ voice.id) }}">
-                                    <button type="submit" class="desk-voice-toggle{{ playing ? ' active' : '' }}" aria-pressed="{{ playing ? 'true' : 'false' }}">
-                                        {{ voice.name }}
-                                        {% if playing %}
-                                            <span class="sr-only">{{ 'desk.voice_playing'|trans }}</span>
-                                        {% endif %}
-                                    </button>
-                                </form>
-                                {% if voice.filename %}
-                                    <a href="{{ asset('uploads/music/voices/' ~ voice.filename) }}">{{ 'music.voice_listen'|trans }}</a>
-                                {% endif %}
-                                <span class="desk-voice-players">
-                                    {% if voice.users|length > 0 %}
-                                        {{ 'desk.voice_played_by'|trans }}
-                                        {% for user in voice.users %}{{ user.nickname }}{% if not loop.last %}, {% endif %}{% endfor %}
-                                    {% else %}
-                                        {{ 'desk.voice_no_players'|trans }}
-                                    {% endif %}
-                                </span>
-                            </li>
-                        {% else %}
-                            <li>{{ 'music.no_voices'|trans }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% else %}
-                <p class="desk-empty">{{ 'music.no_records'|trans }}</p>
-            {% endfor %}
         {% endif %}
     </div>
 

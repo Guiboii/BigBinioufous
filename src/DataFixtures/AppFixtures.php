@@ -6,8 +6,8 @@ use App\Entity\Artist;
 use App\Entity\Event;
 use App\Entity\Instrument;
 use App\Entity\Role;
+use App\Entity\SetlistItem;
 use App\Entity\StorySection;
-use App\Entity\Track;
 use App\Entity\User;
 use Cocur\Slugify\Slugify;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -222,26 +222,20 @@ class AppFixtures extends Fixture
             $artists[] = $artist;
         }
 
-        // ajout de titres
-        // Fichiers réels déjà présents dans public/uploads/music/ (pas de nouveau
-        // binaire ajouté), sinon trackFilename restait vide et aucun morceau
-        // de démo n'était jouable (cf. ROADMAP.md).
-        $demoFiles = ['Oi-Tate-A2.mp3', 'test.mpga'];
-
+        // ajout de morceaux à la setlist (sans fichier audio de démo : pas
+        // de vrai binaire à fournir ici, cf. SetlistItem::$folder nullable,
+        // "juste un titre + éventuellement un lien YouTube" est un cas
+        // normal, pas un état incomplet).
         for ($i = 1; $i <= 10; ++$i) {
-            $track = new Track();
+            $item = new SetlistItem();
 
             $artist = $artists[mt_rand(0, count($artists) - 1)];
-            $minutes = mt_rand(1, 4);
-            $seconds = mt_rand(1, 59);
 
-            $track->setTitle($faker->realText($maxNbChars = 30, $indexSize = 2))
+            $item->setTitle($faker->realText($maxNbChars = 30, $indexSize = 2))
                     ->setArtist($artist)
-                    ->setMinutes($minutes)
-                    ->setSeconds($seconds)
-                    ->setTrackFilename($demoFiles[$i % count($demoFiles)]);
+                    ->setPosition($i - 1);
 
-            $manager->persist($track);
+            $manager->persist($item);
         }
 
         // ajout du planning saison 2026-2027 (communiqué par l'utilisatrice

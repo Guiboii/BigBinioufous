@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Document;
 use App\Entity\Folder;
 use App\Repository\FolderRepository;
+use App\Security\FolderWriteVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -14,37 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-#[Route('/desk/files/{space}/documents', requirements: ['space' => 'music|admin|accounting'])]
+#[Route('/desk/files/{space}/documents', requirements: ['space' => 'music|admin|accounting|other'])]
 class DocumentController extends AbstractController
 {
-    private const ALLOWED_MIME_TYPES = [
-        'application/pdf',
-        'video/mp4',
-        'video/quicktime',
-        'video/webm',
-        'video/x-msvideo',
-        'image/jpeg',
-        'image/png',
-        'image/webp',
-        'image/gif',
-        'audio/mpeg',
-        'audio/mp3',
-        'audio/mp4',
-        'audio/x-m4a',
-        'audio/wav',
-        'audio/x-wav',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        'text/plain',
-    ];
-
     /**
-     * Dépose glisser-déposer, cf. TrackController::quickUpload() pour le
-     * même mécanisme côté mp3 : un fichier = un Document créé direct (nom
+     * Dépose glisser-déposer : un fichier = un Document créé direct (nom
      * = nom de fichier), pas de métadonnées à saisir avant coup. Le champ
      * "path" (optionnel, ex. "02 Medley XXI/Hautbois Facile") vient du
      * glisser-déposer d'un dossier entier (assets/desk/quick-upload.js,
@@ -54,6 +29,8 @@ class DocumentController extends AbstractController
     #[Route('', name: 'document_upload', methods: ['POST'])]
     public function upload(string $space, Request $request, EntityManagerInterface $manager, SluggerInterface $slugger, FolderRepository $folderRepository): JsonResponse
     {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
         if (!$this->isCsrfTokenValid('quick_upload', $request->request->get('_token'))) {
             return $this->json(['error' => 'invalid_token'], 403);
         }
@@ -68,7 +45,7 @@ class DocumentController extends AbstractController
         // après coup viserait le fichier temporaire déjà déplacé/disparu.
         $mimeType = $file->getMimeType();
 
-        if (!\in_array($mimeType, self::ALLOWED_MIME_TYPES, true)) {
+        if (!\in_array($mimeType, Folder::ALLOWED_MIME_TYPES[$space] ?? [], true)) {
             return $this->json(['error' => 'invalid_mimetype'], 400);
         }
 
@@ -82,7 +59,7 @@ class DocumentController extends AbstractController
             return $this->json(['error' => 'upload_failed'], 500);
         }
 
-        $folder = $this->resolveFolder($space, (string) $request->request->get('path'), $manager, $folderRepository);
+        $folder = $folderRepository->findOrCreateByPath($space, (string) $request->request->get('path'), $manager);
 
         $document = new Document();
         $document->setName($originalFilename)
@@ -97,37 +74,11 @@ class DocumentController extends AbstractController
         return $this->json(['success' => true, 'id' => $document->getId()]);
     }
 
-    /**
-     * "02 Medley XXI/Hautbois Facile" -> crée/retrouve les 2 Folder imbriqués
-     * sous la racine de l'espace, et renvoie le plus profond. Vide -> racine.
-     */
-    private function resolveFolder(string $space, string $path, EntityManagerInterface $manager, FolderRepository $folderRepository): Folder
-    {
-        $parent = $folderRepository->findOrCreateRoot($space, $manager);
-
-        $segments = array_filter(explode('/', $path), static fn (string $s) => '' !== trim($s));
-
-        foreach ($segments as $name) {
-            $name = trim($name);
-            $existing = $folderRepository->findOneBy(['parent' => $parent, 'name' => $name]);
-            if ($existing) {
-                $parent = $existing;
-                continue;
-            }
-
-            $folder = new Folder();
-            $folder->setName($name)->setParent($parent)->setSpace($space);
-            $manager->persist($folder);
-            $manager->flush();
-            $parent = $folder;
-        }
-
-        return $parent;
-    }
-
     #[Route('/{id}', name: 'document_delete', methods: ['DELETE'])]
     public function delete(string $space, Document $document, Request $request, EntityManagerInterface $manager): Response
     {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
         if ($document->getFolder()->getSpace() !== $space) {
             throw $this->createNotFoundException();
         }
@@ -169,6 +120,44 @@ class DocumentController extends AbstractController
     }
 
     /**
+     * "Je joue cette partie" : coché par un membre sur un document audio de
+     * l'espace musique (remplace desk_voice_toggle, cf. User::$playedDocuments).
+     * Ouvert à tout membre pouvant voir l'espace, même règle que toggleFavorite
+     * ci-dessus : préférence personnelle, pas une écriture sur le fichier.
+     * Utilisé uniquement depuis /music (MusicController), d'où le retour au
+     * referer plutôt qu'à desk_files.
+     */
+    #[Route('/{id}/played', name: 'document_played_toggle', methods: ['POST'])]
+    public function togglePlayed(string $space, Document $document, Request $request, EntityManagerInterface $manager): Response
+    {
+        if ($document->getFolder()->getSpace() !== $space) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($this->isCsrfTokenValid('toggle_played'.$document->getId(), $request->request->get('_token'))) {
+            $user = $this->getUser();
+            if ($document->getPlayedBy()->contains($user)) {
+                $document->removePlayedBy($user);
+            } else {
+                $document->addPlayedBy($user);
+
+                // Même rappel que l'ancien desk_voice_toggle : l'instrument
+                // est facultatif sur le profil, mais se déclarer sur une
+                // partie sans l'avoir renseigné laisse l'info incomplète.
+                if (!$user->getInstrument()) {
+                    $this->addFlash(
+                        'info',
+                        'N\'oublie pas de renseigner ton instrument sur ton profil, pour qu\'on sache qui joue quoi !'
+                    );
+                }
+            }
+            $manager->flush();
+        }
+
+        return $this->redirect($request->headers->get('referer') ?: $this->generateUrl('music'));
+    }
+
+    /**
      * Déplace un document vers un autre dossier du même espace (ou sa
      * racine si target absent). Pas de risque de cycle ici contrairement à
      * FolderController::move() : un document n'a pas de descendants.
@@ -176,6 +165,8 @@ class DocumentController extends AbstractController
     #[Route('/{id}/move', name: 'document_move', methods: ['POST'])]
     public function move(string $space, Document $document, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
     {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
         if ($document->getFolder()->getSpace() !== $space) {
             throw $this->createNotFoundException();
         }

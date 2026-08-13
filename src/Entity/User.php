@@ -67,8 +67,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'users')]
     private $roles;
 
-    #[ORM\ManyToMany(targetEntity: Voice::class, mappedBy: 'users')]
-    private $voices;
+    /**
+     * "Je joue cette partie" : coché par le membre sur un document audio de
+     * l'espace musique (desk_voice_toggle avant la fusion Track/Voice dans
+     * Folder/Document). Distinct de $favoriteDocuments (un simple repère
+     * personnel, disponible sur tout document, pas juste audio/musique).
+     */
+    #[ORM\ManyToMany(targetEntity: Document::class, mappedBy: 'playedBy')]
+    private $playedDocuments;
 
     #[ORM\ManyToMany(targetEntity: Document::class, mappedBy: 'favoritedBy')]
     private $favoriteDocuments;
@@ -136,7 +142,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->roles = new ArrayCollection();
-        $this->voices = new ArrayCollection();
+        $this->playedDocuments = new ArrayCollection();
         $this->favoriteDocuments = new ArrayCollection();
     }
 
@@ -402,27 +408,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Voice[]
+     * @return Collection|Document[]
      */
-    public function getVoices(): Collection
+    public function getPlayedDocuments(): Collection
     {
-        return $this->voices;
+        return $this->playedDocuments;
     }
 
-    public function addVoice(Voice $voice): self
+    public function addPlayedDocument(Document $document): self
     {
-        if (!$this->voices->contains($voice)) {
-            $this->voices[] = $voice;
-            $voice->addUser($this);
+        if (!$this->playedDocuments->contains($document)) {
+            $this->playedDocuments[] = $document;
+            $document->addPlayedBy($this);
         }
 
         return $this;
     }
 
-    public function removeVoice(Voice $voice): self
+    public function removePlayedDocument(Document $document): self
     {
-        if ($this->voices->removeElement($voice)) {
-            $voice->removeUser($this);
+        if ($this->playedDocuments->removeElement($document)) {
+            $document->removePlayedBy($this);
         }
 
         return $this;
