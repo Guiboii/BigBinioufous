@@ -3,14 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Folder;
-use App\Entity\Voice;
 use App\Repository\DocumentRepository;
 use App\Repository\FolderRepository;
 use App\Repository\RoleRepository;
-use App\Repository\TrackRepository;
 use App\Repository\UserRepository;
+use App\Security\FolderWriteVoter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,27 +75,47 @@ class DeskController extends AbstractController
 
     /**
      * Gestionnaire de fichiers façon Drive pour un espace donné
-     * (?folder=ID pour descendre dans un dossier). L'espace musique affiche
-     * en plus le tas "morceaux + parties favorites", uniquement à sa racine.
+     * (?folder=ID pour descendre dans un dossier). L'espace musique n'a
+     * plus de cas particulier depuis la fusion Track/Voice dans
+     * Folder/Document (cf. plan "Nettoyage de la gestion de
+     * fichiers/dossiers") : la setlist se gère désormais sur /music
+     * (MusicController), ce classeur reste une vue Drive comme les autres
+     * espaces.
      */
-    #[Route('/desk/files/{space}', name: 'desk_files', requirements: ['space' => 'music|admin|accounting'])]
-    public function files(string $space, Request $request, TrackRepository $trackRepository, DocumentRepository $documentRepository, FolderRepository $folderRepository, EntityManagerInterface $manager)
+    #[Route('/desk/files/{space}', name: 'desk_files', requirements: ['space' => 'music|admin|accounting|other'])]
+    public function files(string $space, Request $request, DocumentRepository $documentRepository, FolderRepository $folderRepository, EntityManagerInterface $manager)
     {
         $root = $folderRepository->findOrCreateRoot($space, $manager);
 
         $folderId = $request->query->get('folder');
         $currentFolder = $folderId ? $folderRepository->find($folderId) : $root;
 
-        if (!$currentFolder || $space !== $currentFolder->getSpace()) {
+        if (!$currentFolder || $space !== $currentFolder->getSpace() || $currentFolder->isDeleted()) {
             throw $this->createNotFoundException();
         }
 
-        $breadcrumb = [];
-        $ancestor = $currentFolder;
-        while ($ancestor && $ancestor->getParent()) {
-            array_unshift($breadcrumb, $ancestor);
-            $ancestor = $ancestor->getParent();
+        // Un dossier dont le parent (ou un ancêtre plus lointain) est en
+        // corbeille ne doit pas rester consultable par URL directe
+        // (?folder=ID) : il n'apparaît plus nulle part dans la navigation
+        // normale, cf. FolderRepository::hasDeletedAncestor().
+        if ($folderRepository->hasDeletedAncestor($currentFolder)) {
+            throw $this->createNotFoundException();
         }
+
+        // Folder::getAncestors() remonte jusqu'à la racine incluse (utile
+        // tel quel pour le "chemin" d'un résultat de recherche, cf.
+        // templates/desk/files.html.twig en mode recherche) : ici la racine
+        // est déjà affichée séparément ("Fichiers", 1er maillon du fil
+        // d'Ariane en dur dans le template), et il manque le dossier
+        // courant lui-même (page affichée). Sans ce filtre, le fil d'Ariane
+        // d'un sous-dossier n'affichait jamais son propre nom, seulement
+        // celui de la racine en double — et currentFolderPath ci-dessous
+        // (utilisé par quick-upload.js pour préfixer le chemin d'upload)
+        // valait "Musique" au lieu du vrai sous-dossier, un upload dans
+        // n'importe quel sous-dossier créait un dossier "Musique" errant à
+        // l'intérieur au lieu d'uploader directement là où on était.
+        $atRoot = $currentFolder->getId() === $root->getId();
+        $breadcrumb = $atRoot ? [] : array_merge(array_slice($currentFolder->getAncestors(), 1), [$currentFolder]);
 
         $movingDocument = null;
         if ($moveDocumentId = $request->query->get('move_document')) {
@@ -115,51 +133,133 @@ class DeskController extends AbstractController
             }
         }
 
+        // Mode recherche : ?q= bascule l'affichage sur les résultats de tout
+        // l'espace (récursif) plutôt que le contenu du dossier courant.
+        $query = trim((string) $request->query->get('q', ''));
+        $searching = '' !== $query;
+
+        $sort = $request->query->get('sort', 'name');
+        $dir = $request->query->get('dir', 'asc');
+
+        // Déplacement groupé : ?bulk_move=1 + folder_ids[]/document_ids[]
+        // (cochés dans templates/desk/files.html.twig, soumis en GET pour
+        // rester une simple navigation, cf. le formulaire "bulk-form").
+        // Généralise le mode de déplacement "clic à clic" déjà en place
+        // (movingDocument/movingFolder ci-dessus) à un ensemble d'éléments,
+        // sans toucher à ce mode existant (2 mécanismes distincts, cf. plan).
+        $bulkMovingFolders = [];
+        $bulkMovingDocuments = [];
+        if ($request->query->getBoolean('bulk_move')) {
+            foreach ((array) $request->query->all('folder_ids') as $id) {
+                $candidate = $folderRepository->find($id);
+                if ($candidate && $space === $candidate->getSpace() && !$candidate->isDeleted() && $candidate->getId() !== $root->getId()) {
+                    $bulkMovingFolders[] = $candidate;
+                }
+            }
+            foreach ((array) $request->query->all('document_ids') as $id) {
+                $candidate = $documentRepository->find($id);
+                if ($candidate && $space === $candidate->getFolder()->getSpace() && !$candidate->isDeleted()) {
+                    $bulkMovingDocuments[] = $candidate;
+                }
+            }
+        }
+        $bulkMoving = [] !== $bulkMovingFolders || [] !== $bulkMovingDocuments;
+
         return $this->render('desk/files.html.twig', [
             'space' => $space,
             'root' => $root,
-            'atRoot' => $currentFolder->getId() === $root->getId(),
-            'tracks' => ('music' === $space && $currentFolder->getId() === $root->getId()) ? $trackRepository->findAll() : [],
+            'atRoot' => $atRoot,
             'currentFolder' => $currentFolder,
             'currentFolderPath' => implode('/', array_map(static fn (Folder $f) => $f->getName(), $breadcrumb)),
             'breadcrumb' => $breadcrumb,
-            'subfolders' => $folderRepository->findBy(['parent' => $currentFolder], ['name' => 'ASC']),
-            'documents' => $documentRepository->findBy(['folder' => $currentFolder], ['name' => 'ASC']),
+            'query' => $query,
+            'searching' => $searching,
+            'sort' => $sort,
+            'dir' => $dir,
+            'subfolders' => $searching ? $folderRepository->search($space, $query) : $folderRepository->findActiveChildren($currentFolder),
+            'documents' => $searching ? $documentRepository->search($space, $query) : $documentRepository->findActiveByFolder($currentFolder, $sort, $dir),
             'movingDocument' => $movingDocument,
             'movingFolder' => $movingFolder,
+            'bulkMovingFolders' => $bulkMovingFolders,
+            'bulkMovingDocuments' => $bulkMovingDocuments,
+            'bulkMoving' => $bulkMoving,
         ]);
     }
 
     /**
-     * Coche/décoche la voix courante comme jouée par le membre connecté.
+     * Corbeille d'un espace (dossiers/documents avec deletedAt non nul,
+     * cf. Folder::$deletedAt) : liste à plat, pas d'arborescence puisqu'un
+     * élément en corbeille n'a par définition plus sa place dans l'arbre
+     * actif. Chaque ligne affiche son chemin d'origine pour se repérer.
      */
-    #[Route('/desk/files/music/voices/{voiceId}/toggle', name: 'desk_voice_toggle', methods: ['POST'])]
-    public function toggleVoice(#[MapEntity(mapping: ['voiceId' => 'id'])] Voice $voice, Request $request, EntityManagerInterface $manager): Response
+    #[Route('/desk/files/{space}/trash', name: 'desk_files_trash', requirements: ['space' => 'music|admin|accounting|other'])]
+    public function trash(string $space, FolderRepository $folderRepository, DocumentRepository $documentRepository): Response
     {
-        if ($this->isCsrfTokenValid('toggle_voice'.$voice->getId(), $request->request->get('_token'))) {
-            $user = $this->getUser();
-            if ($voice->getUsers()->contains($user)) {
-                $voice->removeUser($user);
-            } else {
-                $voice->addUser($user);
+        return $this->render('desk/files_trash.html.twig', [
+            'space' => $space,
+            'trashedFolders' => $folderRepository->findTrashed($space),
+            'trashedDocuments' => $documentRepository->findTrashed($space),
+        ]);
+    }
 
-                // Rappel demandé par l'utilisatrice (2026-08-12, cf.
-                // ROADMAP.md "Facilitons l'inscription") : l'instrument est
-                // facultatif depuis la simplification de l'inscription,
-                // mais mettre une voix en favori sans l'avoir renseigné
-                // laisse l'information incomplète (qui joue quelle partie).
-                // Seulement au moment d'AJOUTER un favori, pas d'en retirer
-                // un (pas la peine de relancer le rappel à ce moment-là).
-                if (!$user->getInstrument()) {
-                    $this->addFlash(
-                        'info',
-                        'N\'oublie pas de renseigner ton instrument sur ton profil, pour qu\'on sache qui joue quoi !'
-                    );
+    /**
+     * Vide la corbeille d'un espace d'un coup (dossiers en corbeille +
+     * documents supprimés individuellement) : même logique de suppression
+     * définitive que FolderController::purge()/DocumentController::purge()
+     * (fichiers physiques retirés après le flush Doctrine confirmé).
+     */
+    #[Route('/desk/files/{space}/trash/empty', name: 'desk_files_trash_empty', methods: ['POST'], requirements: ['space' => 'music|admin|accounting|other'])]
+    public function emptyTrash(string $space, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository, DocumentRepository $documentRepository): Response
+    {
+        $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
+
+        if ($this->isCsrfTokenValid('empty_trash'.$space, $request->request->get('_token'))) {
+            $filenames = [];
+
+            foreach ($folderRepository->findTrashed($space) as $folder) {
+                $filenames = array_merge($filenames, $this->collectDescendantFilenames($folder));
+                $manager->remove($folder);
+            }
+
+            foreach ($documentRepository->findTrashed($space) as $document) {
+                $filenames[] = $document->getFilename();
+                $manager->remove($document);
+            }
+
+            $manager->flush();
+
+            foreach ($filenames as $filename) {
+                $path = $this->getParameter('documents_directory').'/'.$filename;
+                if (is_file($path)) {
+                    unlink($path);
                 }
             }
-            $manager->flush();
+
+            $this->addFlash('success', 'Corbeille vidée');
         }
 
-        return $this->redirectToRoute('desk_files', ['space' => 'music']);
+        return $this->redirectToRoute('desk_files_trash', ['space' => $space]);
+    }
+
+    /**
+     * @return string[] noms de fichiers physiques de tous les documents
+     *                  sous ce dossier, récursivement (même logique que
+     *                  FolderController::collectDescendantFilenames(), un
+     *                  dossier en corbeille peut avoir des enfants actifs
+     *                  dont les fichiers doivent aussi disparaître du disque)
+     */
+    private function collectDescendantFilenames(Folder $folder): array
+    {
+        $filenames = [];
+
+        foreach ($folder->getDocuments() as $document) {
+            $filenames[] = $document->getFilename();
+        }
+
+        foreach ($folder->getChildren() as $child) {
+            $filenames = array_merge($filenames, $this->collectDescendantFilenames($child));
+        }
+
+        return $filenames;
     }
 }

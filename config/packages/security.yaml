@@ -42,6 +42,11 @@ security:
         - { path: ^/desk/files/music, roles: [ROLE_BINIOUFOUS, ROLE_ADMIN] }
         - { path: ^/desk/files/admin, roles: ROLE_ADMIN }
         - { path: ^/desk/files/accounting, roles: [ROLE_COMPTA, ROLE_ADMIN] }
+        # Espace "autre" (PDF, images...) : lecture ouverte aux binioufous
+        # comme musique/compta, mais écriture réservée aux admins (contrairement
+        # aux autres espaces où lecture et écriture suivent la même règle),
+        # gérée par FolderWriteVoter (Folder::WRITE_ROLES) plutôt qu'ici.
+        - { path: ^/desk/files/other, roles: [ROLE_BINIOUFOUS, ROLE_ADMIN] }
         # Le reste de /desk n'exige aucun rôle métier particulier, juste
         # d'être connecté : IS_AUTHENTICATED_FULLY (attribut Symfony natif,
         # évalué sur le token d'authentification, pas sur un rôle) plutôt

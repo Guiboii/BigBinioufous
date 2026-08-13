@@ -11,8 +11,6 @@ parameters:
     # send(). Transport "null" officiel de Symfony (silencieux, n'envoie
     # rien nulle part) le temps que MAILER_DSN soit configuré pour de vrai.
     env(MAILER_DSN): 'null://null'
-    mp3: '%kernel.project_dir%/public/uploads/music'
-    voices_directory: '%kernel.project_dir%/public/uploads/music/voices'
     documents_directory: '%kernel.project_dir%/public/uploads/documents'
     pictures_directory : '%kernel.project_dir%/public/uploads/pictures'
     event_posters: '%kernel.project_dir%/public/uploads/events'

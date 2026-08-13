@@ -195,10 +195,14 @@ desk:
     hub_intro: "Pick a files space."
     space_music: Music
     space_music_intro: "Tracks, sheet music, recordings... and pick the voice(s) you play on each song."
+    music_help_intro: "This folder only holds the audio files: each song's title, artist and YouTube link are managed on the Music page, not here. The folder name you give there (e.g. \"10 Rasputin\") automatically creates a folder here: that's where the mp3s/videos need to go."
+    music_help_link: "Manage the setlist on the Music page"
     space_admin: Administrative
     space_admin_intro: "Meeting minutes and administrative documents."
     space_accounting: Accounting
     space_accounting_intro: "Statements and accounting documents."
+    space_other: Other
+    space_other_intro: "Everything else: PDFs, photos... readable by binioufous, writable by admins."
     move_start: Move
     move_folder_aria: "Move folder %name%"
     move_document_aria: "Move document %name%"
@@ -227,6 +231,35 @@ desk:
     breadcrumb: "Folder breadcrumb"
     files_root: Files
     folder_empty: "This folder is empty."
+    search_label: "Search a file or folder"
+    search_placeholder: "Search..."
+    search_submit: Search
+    search_clear: "Clear search"
+    search_results: "%count% result(s) for \"%query%\""
+    search_empty: "No results for this search."
+    result_path: "In %path%"
+    trash_link: Trash
+    trash_title: Trash
+    trash_intro: "Deleted files and folders stay here until restored or permanently deleted."
+    trash_back_link: "Back to files"
+    trash_empty_confirm: "Permanently empty the trash? This action cannot be undone."
+    trash_empty_submit: "Empty trash"
+    trash_restore_aria: "Restore %name%"
+    trash_purge_confirm: "Permanently delete \"%name%\"? This action cannot be undone."
+    trash_purge_aria: "Permanently delete %name%"
+    trash_deleted_at: "Deleted on"
+    trash_no_items: "The trash is empty."
+    sort_label: "Sort by:"
+    sort_name: Name
+    sort_date: Modified
+    sort_size: Size
+    select_all: "Select all"
+    select_folder_aria: "Select folder %name%"
+    select_document_aria: "Select document %name%"
+    bulk_move_submit: "Move selection"
+    bulk_delete_submit: "Delete selection"
+    bulk_selected_count: "%count% selected"
+    bulk_move_banner: "Moving %count% item(s): pick a destination folder, or move them here."
     favorite: Add to favorites
     unfavorite: Remove from favorites
     change_password: Change your password
@@ -245,37 +278,38 @@ music:
     loop: Loop
     by: by
     no_records: no records found
-    voice_label: "Voice:"
-    download: download
     no_links: no link found
-    members_prompt: "Members only, to unlock downloads:"
-    new_title: New Track
-    create_heading: Create new Track
-    back_to_list: back to list
-    edit_title: Edit Track
-    edit_heading: Edit Track
-    update_submit: Update
-    save_submit: Save
-    confirm_delete: Are you sure you want to delete this item?
+    members_prompt: "Binioufous only, to unlock the raw files:"
+    confirm_delete: Are you sure you want to remove this song from the setlist?
     delete: Delete
     track_title: Track
     artist: Artist
-    duration: Duration
-    edit_link: edit
+    no_artist: "No artist"
+    new_artist_label: "Or new artist:"
+    new_artist_placeholder: "New artist name"
+    edit_submit: Save
     zoom_label: Zoom waveform
     play_label: Play
     pause_label: Pause
     stop_label: Stop
     player_region: Audio player
-    voices_heading: Voices
-    no_voices: "No voice yet"
+    no_voices: "No file yet"
     voice_listen: listen
-    voice_add_submit: Add voice
-    voice_name: Voice name
-    voice_name_placeholder: "e.g. Oboe 1"
-    voice_file: "Voice audio file (mp3, optional)"
-    invalid_mp3: "Please upload a valid mp3 file"
-    confirm_delete_voice: "Are you sure you want to delete this voice?"
+    youtube_link: "Watch on YouTube"
+    youtube_url_label: "YouTube link (optional)"
+    folder_path_label: "Audio files folder (optional)"
+    folder_path_placeholder: "e.g. 10 Rasputin"
+    folder_path_hint: "Then drop the audio files into this folder from the Files page."
+    files_link: "See all files in the music space"
+    add_song: "Add a song to the setlist"
+    move_up: "Move up in the setlist"
+    move_down: "Move down in the setlist"
+    manage_setlist: "Manage the setlist"
+    setlist_list_heading: "Songs in the setlist"
+    view_files: "View its files"
+    player_heading: Player
+    playlist_heading: Setlist
+    members_heading: "Members area"
 
 accounting:
     tabs_label: "Accounting section navigation"

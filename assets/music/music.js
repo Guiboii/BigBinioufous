@@ -310,40 +310,53 @@ function render() {
   renderer.render(scene, camera);
 }
 
-// Gestion de la popup de connexion (réutilise le composant form-dialog)
-var loginTrigger = document.getElementById('musicLoginTrigger');
-var loginForm = document.getElementById('musicLoginForm');
+// Gestion des popups (connexion + gestion de la setlist, cf.
+// templates/music/index.html.twig) : même pattern trigger/dialog réutilisé 2
+// fois sur cette page, factorisé plutôt que dupliqué. Chaque dialog se ferme
+// via n'importe quel élément [data-close] à l'intérieur (bouton "fermer" du
+// composant form-dialog, ou le fond semi-transparent pour la modale de
+// setlist qui n'a pas d'équivalent form-dialog réutilisable, cf. plan).
+function getFocusable(container) {
+  return Array.prototype.slice
+    .call(container.querySelectorAll('input, textarea, select, button, a[href]'))
+    .filter(function (el) {
+      return !el.disabled && el.offsetParent !== null;
+    });
+}
 
-if (loginTrigger && loginForm) {
-  function getFocusable(container) {
-    return Array.prototype.slice
-      .call(container.querySelectorAll('input, textarea, select, button, a[href]'))
-      .filter(function (el) {
-        return !el.disabled && el.offsetParent !== null;
-      });
+function initDialog(triggerId, dialogId) {
+  var trigger = document.getElementById(triggerId);
+  var dialog = document.getElementById(dialogId);
+
+  if (!trigger || !dialog) {
+    return;
   }
 
-  loginTrigger.addEventListener('click', function () {
-    loginForm.classList.remove('d-none');
-    var focusable = getFocusable(loginForm);
+  function open() {
+    dialog.classList.remove('d-none');
+    var focusable = getFocusable(dialog);
     if (focusable.length) {
       focusable[0].focus();
     }
-  });
-
-  var closeBtn = loginForm.querySelector('.close');
-  if (closeBtn) {
-    closeBtn.addEventListener('click', function () {
-      loginForm.classList.add('d-none');
-      loginTrigger.focus();
-    });
   }
 
-  // Fermeture à l'Échap
+  function close() {
+    dialog.classList.add('d-none');
+    trigger.focus();
+  }
+
+  trigger.addEventListener('click', open);
+
+  Array.prototype.slice.call(dialog.querySelectorAll('[data-close]')).forEach(function (el) {
+    el.addEventListener('click', close);
+  });
+
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !loginForm.classList.contains('d-none')) {
-      loginForm.classList.add('d-none');
-      loginTrigger.focus();
+    if (e.key === 'Escape' && !dialog.classList.contains('d-none')) {
+      close();
     }
   });
 }
+
+initDialog('musicLoginTrigger', 'musicLoginForm');
+initDialog('setlistManageTrigger', 'setlistManageDialog');

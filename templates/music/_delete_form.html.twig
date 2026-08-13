@@ -1,5 +1,0 @@
-<form method="post" action="{{ path('track_delete', {id: track.id}) }}" onsubmit="return confirm('{{ 'music.confirm_delete'|trans|e('js') }}');">
-    <input type="hidden" name="_method" value="DELETE">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ track.id) }}">
-    <button class="btn">{{ 'music.delete'|trans }}</button>
-</form>

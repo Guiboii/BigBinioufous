@@ -195,10 +195,14 @@ desk:
     hub_intro: "Choisis un espace de fichiers."
     space_music: Musique
     space_music_intro: "Morceaux, partitions, enregistrements... et choisis la ou les voix que tu joues sur chaque morceau."
+    music_help_intro: "Ce classeur ne contient que les fichiers audio : le titre, l'artiste et le lien YouTube de chaque morceau se gèrent sur la page Musique, pas ici. Le nom de dossier que tu donnes là-bas (ex. « 10 Rasputin ») crée automatiquement un dossier ici : c'est dedans qu'il faut déposer les mp3/vidéos."
+    music_help_link: "Gérer la setlist sur la page Musique"
     space_admin: Administratif
     space_admin_intro: "Comptes-rendus et documents administratifs."
     space_accounting: Comptabilité
     space_accounting_intro: "Relevés et documents comptables."
+    space_other: Autre
+    space_other_intro: "Tout le reste : PDF, photos... en lecture pour les binioufous, en écriture pour les admins."
     move_start: Déplacer
     move_folder_aria: "Déplacer le dossier %name%"
     move_document_aria: "Déplacer le document %name%"
@@ -227,6 +231,35 @@ desk:
     breadcrumb: "Fil d'Ariane des dossiers"
     files_root: Fichiers
     folder_empty: "Ce dossier est vide."
+    search_label: "Rechercher un fichier ou un dossier"
+    search_placeholder: "Rechercher..."
+    search_submit: Rechercher
+    search_clear: "Effacer la recherche"
+    search_results: "%count% résultat(s) pour « %query% »"
+    search_empty: "Aucun résultat pour cette recherche."
+    result_path: "Dans %path%"
+    trash_link: Corbeille
+    trash_title: Corbeille
+    trash_intro: "Les fichiers et dossiers supprimés restent ici jusqu'à restauration ou suppression définitive."
+    trash_back_link: "Retour aux fichiers"
+    trash_empty_confirm: "Vider définitivement la corbeille ? Cette action est irréversible."
+    trash_empty_submit: "Vider la corbeille"
+    trash_restore_aria: "Restaurer %name%"
+    trash_purge_confirm: "Supprimer définitivement « %name% » ? Cette action est irréversible."
+    trash_purge_aria: "Supprimer définitivement %name%"
+    trash_deleted_at: "Supprimé le"
+    trash_no_items: "La corbeille est vide."
+    sort_label: "Trier par :"
+    sort_name: Nom
+    sort_date: Modifié
+    sort_size: Taille
+    select_all: "Tout sélectionner"
+    select_folder_aria: "Sélectionner le dossier %name%"
+    select_document_aria: "Sélectionner le document %name%"
+    bulk_move_submit: "Déplacer la sélection"
+    bulk_delete_submit: "Supprimer la sélection"
+    bulk_selected_count: "%count% sélectionné(s)"
+    bulk_move_banner: "Déplacement de %count% élément(s) : choisis un dossier de destination, ou déplace-les ici."
     favorite: Mettre en favori
     unfavorite: Retirer des favoris
     change_password: Changer ton mot de passe
@@ -245,37 +278,38 @@ music:
     loop: Boucle
     by: par
     no_records: aucun morceau trouvé
-    voice_label: "Voix :"
-    download: télécharger
     no_links: aucun lien trouvé
-    members_prompt: "Réservé aux membres, pour débloquer les téléchargements :"
-    new_title: Nouveau morceau
-    create_heading: Créer un nouveau morceau
-    back_to_list: retour à la liste
-    edit_title: Modifier le morceau
-    edit_heading: Modifier le morceau
-    update_submit: Mettre à jour
-    save_submit: Enregistrer
-    confirm_delete: "Tu es sûr·e de vouloir supprimer cet élément ?"
+    members_prompt: "Réservé aux binioufous, pour débloquer les fichiers bruts :"
+    confirm_delete: "Tu es sûr·e de vouloir retirer ce morceau de la setlist ?"
     delete: Supprimer
     track_title: Morceau
     artist: Artiste
-    duration: Durée
-    edit_link: modifier
+    no_artist: "Aucun artiste"
+    new_artist_label: "Ou nouvel artiste :"
+    new_artist_placeholder: "Nom du nouvel artiste"
+    edit_submit: Enregistrer
     zoom_label: "Zoom sur la forme d'onde"
     play_label: Lecture
     pause_label: "Mettre en pause"
     stop_label: Arrêter
     player_region: "Lecteur audio"
-    voices_heading: Voix
-    no_voices: "Aucune voix pour l'instant"
+    no_voices: "Aucun fichier pour l'instant"
     voice_listen: écouter
-    voice_add_submit: Ajouter la voix
-    voice_name: Nom de la voix
-    voice_name_placeholder: "ex. Hautbois 1"
-    voice_file: "Fichier audio de la voix (mp3, facultatif)"
-    invalid_mp3: "Merci d'envoyer un fichier mp3 valide"
-    confirm_delete_voice: "Tu es sûr·e de vouloir supprimer cette voix ?"
+    youtube_link: "Voir sur YouTube"
+    youtube_url_label: "Lien YouTube (facultatif)"
+    folder_path_label: "Dossier des fichiers audio (facultatif)"
+    folder_path_placeholder: "ex. 10 Rasputin"
+    folder_path_hint: "Dépose ensuite les fichiers audio dans ce dossier depuis la page Fichiers."
+    files_link: "Voir tous les fichiers de l'espace musique"
+    add_song: "Ajouter un morceau à la setlist"
+    move_up: "Monter dans la setlist"
+    move_down: "Descendre dans la setlist"
+    manage_setlist: "Gérer la setlist"
+    setlist_list_heading: "Morceaux de la setlist"
+    view_files: "Voir ses fichiers"
+    player_heading: Lecteur
+    playlist_heading: Setlist
+    members_heading: "Espace membres"
 
 accounting:
     tabs_label: "Navigation de l'espace Comptabilité"

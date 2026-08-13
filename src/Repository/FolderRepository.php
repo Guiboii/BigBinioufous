@@ -37,6 +37,7 @@ class FolderRepository extends ServiceEntityRepository
             Folder::SPACE_MUSIC => 'Musique',
             Folder::SPACE_ADMIN => 'Administratif',
             Folder::SPACE_ACCOUNTING => 'Comptabilité',
+            Folder::SPACE_OTHER => 'Autre',
         ];
 
         $root = new Folder();
@@ -45,6 +46,39 @@ class FolderRepository extends ServiceEntityRepository
         $manager->flush();
 
         return $root;
+    }
+
+    /**
+     * "02 Medley XXI/Hautbois Facile" -> crée/retrouve les 2 Folder imbriqués
+     * sous la racine de l'espace, et renvoie le plus profond. Vide -> racine.
+     * Partagé par DocumentController::upload() (chemin du glisser-déposer)
+     * et SetlistController (dossier du morceau). Ignore les dossiers en
+     * corbeille dans sa recherche par nom : sinon un upload/une création
+     * "ressusciterait" silencieusement un ancien dossier supprimé au lieu
+     * d'en recréer un propre.
+     */
+    public function findOrCreateByPath(string $space, string $path, EntityManagerInterface $manager): Folder
+    {
+        $parent = $this->findOrCreateRoot($space, $manager);
+
+        $segments = array_filter(explode('/', $path), static fn (string $s) => '' !== trim($s));
+
+        foreach ($segments as $name) {
+            $name = trim($name);
+            $existing = $this->findOneBy(['parent' => $parent, 'name' => $name, 'deletedAt' => null]);
+            if ($existing) {
+                $parent = $existing;
+                continue;
+            }
+
+            $folder = new Folder();
+            $folder->setName($name)->setParent($parent)->setSpace($space);
+            $manager->persist($folder);
+            $manager->flush();
+            $parent = $folder;
+        }
+
+        return $parent;
     }
 
     /**
@@ -63,5 +97,75 @@ class FolderRepository extends ServiceEntityRepository
         }
 
         return false;
+    }
+
+    /**
+     * Vrai si $folder ou l'un de ses ancêtres est en corbeille : sert à
+     * bloquer l'accès direct par URL (?folder=ID) à un sous-dossier dont le
+     * parent a été supprimé (DeskController::files()), plutôt que de
+     * laisser un dossier "orphelin caché" rester consultable.
+     */
+    public function hasDeletedAncestor(Folder $folder): bool
+    {
+        $current = $folder->getParent();
+        while ($current) {
+            if ($current->isDeleted()) {
+                return true;
+            }
+            $current = $current->getParent();
+        }
+
+        return false;
+    }
+
+    /**
+     * Sous-dossiers actifs (hors corbeille) d'un dossier, triés par nom :
+     * remplace le findBy(['parent' => ...]) brut de DeskController::files()
+     * pour exclure ce qui est en corbeille.
+     *
+     * @return Folder[]
+     */
+    public function findActiveChildren(Folder $parent): array
+    {
+        return $this->findBy(['parent' => $parent, 'deletedAt' => null], ['name' => 'ASC']);
+    }
+
+    /**
+     * Dossiers en corbeille d'un espace, les plus récemment supprimés
+     * d'abord : DeskController::trash().
+     *
+     * @return Folder[]
+     */
+    public function findTrashed(string $space): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.space = :space')
+            ->andWhere('f.deletedAt IS NOT NULL')
+            ->setParameter('space', $space)
+            ->orderBy('f.deletedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Recherche récursive par nom sur tout l'espace (pas juste le dossier
+     * courant), cf. DeskController::files() en mode recherche. % et _ du
+     * terme utilisateur sont échappés (backslash, comportement par défaut
+     * de LIKE sous MySQL) pour qu'ils ne soient pas interprétés comme des
+     * jokers.
+     *
+     * @return Folder[]
+     */
+    public function search(string $space, string $query): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.space = :space')
+            ->andWhere('f.deletedAt IS NULL')
+            ->andWhere('LOWER(f.name) LIKE LOWER(:query)')
+            ->setParameter('space', $space)
+            ->setParameter('query', '%'.addcslashes($query, '%_').'%')
+            ->orderBy('f.name', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 }

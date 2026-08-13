@@ -1202,6 +1202,30 @@ li.nav-item.active, li.nav-item:hover,
 .desk-intro {
     margin-bottom: 1rem;
 }
+/* Encart d'explication du lien /desk/files/music <-> /music (seul espace
+   relié à une 2e page), cf. templates/desk/files.html.twig. Bordure gauche
+   + fond légèrement assombri sur le doré du body plutôt qu'un grand panneau
+   plein --bb-ink (cf. commentaire ci-dessus, jugé "moche" ailleurs sur
+   cette page) : --bb-ink sur ce fond composité tient largement l'AAA. */
+.desk-music-help {
+    margin-bottom: 1.5rem;
+    padding: 0.85rem 1rem;
+    background: rgba(0, 0, 0, 0.06);
+    border-left: 4px solid var(--bb-green-mid);
+    border-radius: 6px;
+    color: var(--bb-ink);
+}
+.desk-music-help p {
+    margin: 0 0 0.5rem;
+}
+.desk-music-help a {
+    font-weight: bold;
+    color: var(--bb-green-mid);
+}
+.desk-music-help a:hover,
+.desk-music-help a:focus-visible {
+    color: var(--bb-green-deep);
+}
 .desk-breadcrumb,
 .desk-actions,
 .desk-folders,
@@ -1728,6 +1752,158 @@ li.nav-item.active, li.nav-item:hover,
 .desk-move-actions .btn-link:focus-visible {
     outline: 3px solid var(--bb-white);
     outline-offset: 2px;
+}
+
+/* Recherche (2026-08-13, reprise du gestionnaire de fichiers, AGENTS.md) :
+   même style de champ que .desk-new-folder input[type="text"] juste au-dessus,
+   pour rester dans le même vocabulaire de formulaire "carte" de cette page. */
+.desk-search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+.desk-search input[type="search"] {
+    flex: 1 1 14rem;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--bb-ink);
+    border-radius: 8px;
+    background: var(--bb-white);
+    color: var(--bb-ink);
+}
+.desk-search input[type="search"]:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 1px;
+}
+/* Poussée à droite du reste de la barre : action secondaire (accès à la
+   corbeille), pas liée à la recherche elle-même. */
+.desk-trash-link {
+    margin-left: auto;
+}
+.desk-search-summary {
+    color: var(--bb-ink);
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+/* Chemin d'un résultat de recherche (dans quel dossier il se trouve),
+   sous le nom, même traitement discret que .desk-document-meta. */
+.desk-result-path {
+    display: block;
+    color: var(--bb-ink);
+    font-size: 0.8rem;
+    opacity: 0.75;
+}
+
+/* Tri des documents : liens texte, vert au repos comme le reste des liens
+   d'action de cette page (.desk-breadcrumb a), plein/gras une fois actif
+   plutôt qu'une pastille en plus (déjà beaucoup de pastilles sur cette
+   page, cf. .desk-folder-badge/.desk-voice-toggle). */
+.desk-sort-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+.desk-sort-bar-label {
+    color: var(--bb-ink);
+    opacity: 0.75;
+}
+.desk-sort-link {
+    color: var(--bb-green-mid);
+    font-weight: bold;
+}
+.desk-sort-link.active {
+    color: var(--bb-ink);
+    text-decoration: underline;
+}
+.desk-sort-link:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
+}
+
+/* Multi-sélection : case à cocher par ligne (dossier/document), cf.
+   assets/desk/bulk-actions.js. Taille confortable directement par défaut
+   (pas seulement sous @media mobile comme les boutons icône du bloc
+   au-dessus) : une checkbox isolée sans label adjacent visible profite
+   d'une cible plus généreuse que le 1em habituel d'une case native. */
+.desk-select {
+    width: 1.3rem;
+    height: 1.3rem;
+    flex-shrink: 0;
+    accent-color: var(--bb-green-mid);
+}
+.desk-select:focus-visible {
+    outline: 3px solid var(--bb-ink);
+    outline-offset: 2px;
+}
+.desk-bulk-toolbar {
+    margin-bottom: 0.75rem;
+}
+.desk-select-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--bb-ink);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Barre d'actions groupées : collée en bas de l'écran (pas dans le flux,
+   pour rester visible même en ayant scrollé une longue liste), même vert
+   "action possible" que .desk-move-banner pour rester dans la même famille
+   visuelle de bandeau d'action active. */
+.desk-bulk-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem;
+    margin: 1.5rem auto 0;
+    max-width: 40rem;
+    padding: 0.9rem 1.3rem;
+    border-radius: 10px;
+    background: var(--bb-green-mid);
+    color: var(--bb-white);
+    box-shadow: var(--bb-shadow-soft);
+}
+#desk-bulk-count {
+    font-weight: bold;
+    margin-right: auto;
+}
+.desk-bulk-bar .btn-green {
+    background: var(--bb-white);
+    color: var(--bb-green-deep);
+}
+.desk-bulk-bar .btn-green:hover,
+.desk-bulk-bar .btn-green:focus-visible {
+    background: var(--bb-gold-pale);
+}
+
+/* Glisser-déposer pour déplacer (assets/desk/drag-move.js) : le dossier
+   survolé pendant le glisser change nettement de fond, seul repère visuel
+   fiable puisqu'on ne peut pas compter sur le curseur pendant un drag natif
+   HTML5. */
+.desk-dropzone-active {
+    background: var(--bb-green-deep) !important;
+    outline: 3px dashed var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Corbeille (templates/desk/files_trash.html.twig) : mêmes classes
+   .desk-folders/.desk-documents/.desk-folder-badge/.desk-document que la
+   vue normale, seuls quelques éléments propres à cette page. */
+.desk-trash-back {
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+.desk-trash-empty {
+    margin-bottom: 1.5rem;
 }
 
 /* Hub /desk/files (templates/desk/files_hub.html.twig) : une carte par
