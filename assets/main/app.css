@@ -2039,3 +2039,52 @@ li.nav-item.active, li.nav-item:hover,
 .accounting-line-row .form-group:not(:first-child) {
     flex: 1 1 6rem;
 }
+
+/* body.desk h2 par défaut (--bb-ink, quasi noir) illisible sur le fond vert
+   foncé du <form> devis/facture (body.desk form, --bb-green-mid) : même bug
+   que .profile-form-card h2 plus haut dans ce fichier, même correctif
+   (blanc, AAA sur ce fond). Signalé par l'utilisatrice le 2026-08-13 sur le
+   titre "Lignes".
+   1re tentative ratée : la classe seule (.accounting-lines-heading, poids
+   0,1,0) perdait contre body.desk h2 (0,1,2) qui la définit en noir plus
+   haut dans ce fichier, elle ne l'emportait jamais réellement. Repris avec
+   "body.desk" devant, comme body.desk .profile-form-card h2 déjà en place :
+   2 classes + 0 type (0,2,0) bat body.desk h2 (0,1,2) dès la comparaison du
+   nombre de classes, peu importe le nombre de types. */
+body.desk .accounting-lines-heading {
+    color: var(--bb-white);
+}
+
+/* Lien "Nouveau client" dans le formulaire devis/facture : .text-green
+   (--bb-green-deep) est pensé pour du texte sur le fond doré de la page
+   (cf. plus haut dans ce fichier), pas sur le fond --bb-green-mid du <form>
+   qui le contient ici, vert foncé sur vert, quasi illisible (signalé par
+   l'utilisatrice le 2026-08-13). --bb-gold-pale : même choix que
+   body.desk form .invalid-feedback plus haut, déjà vérifié à 5.04:1 (AA)
+   sur --bb-green-mid, et se distingue du blanc des labels environnants. */
+.accounting-form-link {
+    color: var(--bb-gold-pale);
+    text-decoration: underline;
+}
+.accounting-form-link:hover,
+.accounting-form-link:focus-visible {
+    color: var(--bb-white);
+}
+
+/* Rangée de boutons d'action des pages Devis/Factures/Clients (1 à 4
+   boutons selon le contexte) : .desk-actions (plus haut dans ce fichier)
+   est une grille à 2 colonnes pensée spécifiquement pour les 2 blocs à
+   poids égal de "Nouveau dossier" (formulaire + zone de dépôt), pas pour un
+   nombre variable de simples boutons. Réutilisée ici par erreur, elle
+   étirait le 3e bouton d'une rangée ("Facturer ce devis" sur la page d'un
+   devis) sur toute la largeur de sa colonne au lieu de sa taille naturelle
+   (signalé par l'utilisatrice le 2026-08-13). Flex qui retombe simplement à
+   la ligne, chaque bouton gardant sa largeur de contenu (.btn-green a déjà
+   width: fit-content). */
+.accounting-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}

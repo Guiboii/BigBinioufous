@@ -10,6 +10,9 @@
     <a href="{{ path('accounting_documents_index') }}" class="accounting-tab{% if activeTab == 'documents' %} active{% endif %}"{% if activeTab == 'documents' %} aria-current="page"{% endif %}>
         <i class="ri-file-text-fill" aria-hidden="true"></i> {{ 'accounting.tab_documents'|trans }}
     </a>
+    <a href="{{ path('accounting_clients_index') }}" class="accounting-tab{% if activeTab == 'clients' %} active{% endif %}"{% if activeTab == 'clients' %} aria-current="page"{% endif %}>
+        <i class="ri-team-fill" aria-hidden="true"></i> {{ 'accounting.tab_clients'|trans }}
+    </a>
     <a href="{{ path('accounting_treasury_index') }}" class="accounting-tab{% if activeTab == 'treasury' %} active{% endif %}"{% if activeTab == 'treasury' %} aria-current="page"{% endif %}>
         <i class="ri-wallet-3-fill" aria-hidden="true"></i> {{ 'accounting.tab_treasury'|trans }}
     </a>

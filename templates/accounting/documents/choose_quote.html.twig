@@ -1,0 +1,51 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'accounting.new_invoice'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'accounting.new_invoice'|trans }}</h1>
+
+    {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'documents'}) }}
+
+    <p>{{ 'accounting.choose_quote_intro'|trans }}</p>
+
+    {% if quotes is empty %}
+        <p><em>{{ 'accounting.no_quotes_to_invoice'|trans }}</em></p>
+    {% else %}
+        <table class="table table-hover text-center">
+            <thead>
+                <tr>
+                    <th>{{ 'accounting.field_reference'|trans }}</th>
+                    <th>{{ 'accounting.field_date'|trans }}</th>
+                    <th>{{ 'accounting.field_client_name'|trans }}</th>
+                    <th>{{ 'accounting.field_total'|trans }}</th>
+                    <th>{{ 'Actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quote in quotes %}
+                    <tr>
+                        <td>{{ quote.reference }}</td>
+                        <td>{{ quote.date|date('d/m/Y') }}</td>
+                        <td>{{ quote.clientName }}</td>
+                        <td>{{ quote.total|number_format(2, ',', ' ') }}&nbsp;€</td>
+                        <td>
+                            <a href="{{ path('accounting_document_new_from_quote', {quote: quote.id}) }}" class="btn btn-green" aria-label="{{ 'accounting.invoice_this_quote_aria'|trans({'%reference%': quote.reference}) }}"><i class="ri-file-transfer-line" aria-hidden="true"></i></a>
+                            <form method="post" action="{{ path('accounting_document_toggle_invoicing', {id: quote.id}) }}" class="btn-form">
+                                <input type="hidden" name="redirect" value="choose_quote">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_invoicing' ~ quote.id) }}">
+                                <button type="submit" class="btn btn-red" aria-label="{{ 'accounting.hide_from_invoicing_aria'|trans({'%reference%': quote.reference}) }}"><i class="ri-eye-off-line" aria-hidden="true"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <p><a href="{{ path('accounting_document_new', {type: 'invoice'}) }}" class="text-green">{{ 'accounting.free_invoice'|trans }}</a></p>
+
+    <a href="{{ path('accounting_documents_index') }}" class="text-green">{{ 'accounting.back_to_list'|trans }}</a>
+</div>
+{% endblock %}

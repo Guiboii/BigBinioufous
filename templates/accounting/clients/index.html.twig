@@ -1,0 +1,47 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'accounting.tab_clients'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'desk.space_accounting'|trans }}</h1>
+
+    {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'clients'}) }}
+
+    <div class="accounting-actions">
+        <a href="{{ path('accounting_client_new') }}" class="btn btn-green">{{ 'accounting.new_client'|trans }}</a>
+    </div>
+
+    {% if clients is empty %}
+        <p><em>{{ 'accounting.no_clients'|trans }}</em></p>
+    {% else %}
+        <table class="table table-hover text-center">
+            <thead>
+                <tr>
+                    <th>{{ 'accounting.field_client_name'|trans }}</th>
+                    <th>{{ 'accounting.field_client_address'|trans }}</th>
+                    <th>{{ 'accounting.field_client_contact'|trans }}</th>
+                    <th>{{ 'Actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                    <tr>
+                        <td>{{ client.name }}</td>
+                        <td>{{ client.address|nl2br }}</td>
+                        <td>{{ client.contact }}</td>
+                        <td>
+                            <a href="{{ path('accounting_client_edit', {id: client.id}) }}" class="btn btn-green" aria-label="{{ 'accounting.edit_client_aria'|trans({'%name%': client.name}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
+                            <form method="post" action="{{ path('accounting_client_delete', {id: client.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'accounting.confirm_delete_client'|trans({'%name%': client.name})|e('js') }}');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_client' ~ client.id) }}">
+                                <button type="submit" class="btn btn-red" aria-label="{{ 'accounting.delete_client_aria'|trans({'%name%': client.name}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

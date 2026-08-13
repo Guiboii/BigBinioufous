@@ -8,9 +8,9 @@
 
     {{ include('desk/partials/accounting_tabs.html.twig', {activeTab: 'documents'}) }}
 
-    <div class="desk-actions">
+    <div class="accounting-actions">
         <a href="{{ path('accounting_document_new', {type: 'quote'}) }}" class="btn btn-green">{{ 'accounting.new_quote'|trans }}</a>
-        <a href="{{ path('accounting_document_new', {type: 'invoice'}) }}" class="btn btn-green">{{ 'accounting.new_invoice'|trans }}</a>
+        <a href="{{ path('accounting_invoice_choose_quote') }}" class="btn btn-green">{{ 'accounting.new_invoice'|trans }}</a>
     </div>
 
     {% if documents is empty %}
@@ -30,7 +30,12 @@
             <tbody>
                 {% for document in documents %}
                     <tr>
-                        <td>{{ document.reference }}</td>
+                        <td>
+                            {{ document.reference }}
+                            {% if document.type == 'quote' and document.excludedFromInvoicing %}
+                                <br><small>{{ 'accounting.excluded_from_invoicing_badge'|trans }}</small>
+                            {% endif %}
+                        </td>
                         <td>{{ ('accounting.type_' ~ document.type)|trans }}</td>
                         <td>{{ document.date|date('d/m/Y') }}</td>
                         <td>{{ document.clientName }}</td>
@@ -38,6 +43,16 @@
                         <td>
                             <a href="{{ path('accounting_document_show', {id: document.id}) }}" class="btn btn-green" aria-label="{{ 'accounting.view_aria'|trans({'%reference%': document.reference}) }}"><i class="ri-eye-line" aria-hidden="true"></i></a>
                             <a href="{{ path('accounting_document_edit', {id: document.id}) }}" class="btn btn-green" aria-label="{{ 'accounting.edit_aria'|trans({'%reference%': document.reference}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a>
+                            {% if document.type == 'quote' %}
+                                <form method="post" action="{{ path('accounting_document_toggle_invoicing', {id: document.id}) }}" class="btn-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_invoicing' ~ document.id) }}">
+                                    {% if document.excludedFromInvoicing %}
+                                        <button type="submit" class="btn btn-green" aria-label="{{ 'accounting.show_in_invoicing_aria'|trans({'%reference%': document.reference}) }}"><i class="ri-eye-line" aria-hidden="true"></i></button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-red" aria-label="{{ 'accounting.hide_from_invoicing_aria'|trans({'%reference%': document.reference}) }}"><i class="ri-eye-off-line" aria-hidden="true"></i></button>
+                                    {% endif %}
+                                </form>
+                            {% endif %}
                             <form method="post" action="{{ path('accounting_document_delete', {id: document.id}) }}" class="btn-form" onsubmit="return confirm('{{ 'accounting.confirm_delete_document'|trans({'%reference%': document.reference})|e('js') }}');">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete_accounting_document' ~ document.id) }}">
