@@ -40,6 +40,17 @@ class DocumentController extends AbstractController
             return $this->json(['error' => 'invalid_input'], 400);
         }
 
+        // Sans ce contrôle, un fichier au-delà de upload_max_filesize/
+        // post_max_size arrive quand même ici (PHP remplit $_FILES avec un
+        // code d'erreur plutôt que de l'omettre) : getMimeType()/move()
+        // plus bas viseraient un fichier temporaire absent et planteraient
+        // en exception non gérée (500 HTML, pas de JSON exploitable côté
+        // JS), symptôme confondu avec "aucune erreur" côté utilisatrice
+        // (bug du 2026-08-13, cf. CLAUDE.md sur upload_max_filesize).
+        if (!$file->isValid()) {
+            return $this->json(['error' => 'file_too_large'], 400);
+        }
+
         // Capturés avant move() : File::move() renvoie un nouvel objet et ne
         // modifie pas $file sur place, un 2e appel à $file->getMimeType()/
         // getSize() après coup viserait le fichier temporaire déjà

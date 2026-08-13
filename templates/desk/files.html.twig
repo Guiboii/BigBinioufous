@@ -168,6 +168,13 @@
                         data-uploading="{{ 'desk.quick_upload_uploading'|trans }}"
                         data-success="{{ 'desk.quick_upload_success'|trans }}"
                         data-error="{{ 'desk.quick_upload_error'|trans }}"
+                        data-error-messages="{{ {
+                            invalid_mimetype: 'desk.quick_upload_error_invalid_mimetype'|trans,
+                            file_too_large: 'desk.quick_upload_error_file_too_large'|trans,
+                            invalid_input: 'desk.quick_upload_error_invalid_input'|trans,
+                            upload_failed: 'desk.quick_upload_error_upload_failed'|trans,
+                            invalid_token: 'desk.quick_upload_error_invalid_token'|trans,
+                        }|json_encode|e('html_attr') }}"
                     >
                         <i class="ri-upload-cloud-2-line" aria-hidden="true"></i>
                         <span class="quick-upload-zone-label">{{ 'desk.quick_upload_zone'|trans }}</span>

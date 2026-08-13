@@ -371,8 +371,12 @@ body.desk h2 {
    générique leur collait quand même son fond vert + sa bordure épaisse
    derrière un simple bouton, "horrible" selon l'utilisatrice une fois
    l'icône seule (sans texte pour meubler visuellement la boîte). Remplace
-   le style="display:inline-block" qui était sur ces <form>. */
-body.desk .btn-form {
+   le style="display:inline-block" qui était sur ces <form>. Pas scopé à
+   body.desk (contrairement à la règle de couleur juste au-dessus) : .btn-form
+   sert aussi hors du desk, sur /music (togglePlayed/toggleFavorite), où le
+   même bug traînait encore (repéré le 2026-08-13, la 1re passe l'avait scopé
+   par erreur en pensant /music déjà couvert par un style séparé). */
+.btn-form {
     display: inline-block;
     background: transparent;
     border: none;

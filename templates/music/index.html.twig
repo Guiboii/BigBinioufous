@@ -45,11 +45,20 @@
             <div
                 class="row playerButtons" role="region" aria-label="{{ 'music.player_region'|trans }}">
                 {% if is_granted('FOLDER_WRITE', 'music') %}
-                    <a id="uploadNew" href="{{ path('desk_files', {space: 'music'}) }}">
+                    {# Rond jaune près des commandes du lecteur : servait avant
+                       de lien direct vers /desk/files/music, repris comme 2e
+                       déclencheur de la modale "Gérer la setlist" ci-dessous
+                       (retour utilisatrice, 2026-08-13 : plus visible/accessible
+                       ici que le bouton du même nom planqué dans "Espace
+                       membres" plus bas). Vrai <button> plutôt que <a href>
+                       puisqu'il n'ouvre plus qu'une modale JS, cf.
+                       initDialog() dans music.js qui accepte maintenant
+                       plusieurs déclencheurs pour une même modale. #}
+                    <button type="button" id="uploadNew" class="player-btn">
                         <span id="upload">
                             <svg class="bi bi-circle-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="8"/></svg>
-                            {{ 'music.upload'|trans }}</span>
-                    </a>
+                            {{ 'music.manage_setlist'|trans }}</span>
+                    </button>
                 {% endif %}
 
                 {# Avant : <div id="stopTrack">/<div id="playPause">/<div id="loopRegion">
@@ -224,10 +233,14 @@
                 </div>
 
                 <div class="dialog-body">
-                    {# "path" reprend le même mécanisme que le glisser-déposer
-                       de /desk/files/music (FolderRepository::findOrCreateByPath),
-                       pour rattacher direct le morceau au dossier qui contient
-                       déjà ses fichiers audio. #}
+                    {# "folder" lie direct au Folder choisi (select rempli par
+                       MusicController::index() via FolderRepository::findTopLevel()),
+                       plutôt que de créer un dossier à la volée par un champ
+                       texte libre (source de doublons par faute de frappe,
+                       retour utilisatrice le 2026-08-13) : le dossier et ses
+                       fichiers audio doivent déjà exister (créés/déposés
+                       depuis "Voir tous les fichiers" ci-dessous) avant de
+                       pouvoir être liés ici, cf. .field-hint plus bas. #}
                     <h3>{{ 'music.add_song'|trans }}</h3>
                     <form method="post" action="{{ path('setlist_new') }}">
                         <label for="setlist-title">{{ 'music.track_title'|trans }}</label>
@@ -252,9 +265,21 @@
                         <label for="setlist-youtube">{{ 'music.youtube_url_label'|trans }}</label>
                         <input type="url" id="setlist-youtube" name="youtubeUrl">
 
-                        <label for="setlist-path">{{ 'music.folder_path_label'|trans }}</label>
-                        <input type="text" id="setlist-path" name="path" placeholder="{{ 'music.folder_path_placeholder'|trans }}" aria-describedby="setlist-path-hint">
-                        <p id="setlist-path-hint" class="field-hint">{{ 'music.folder_path_hint'|trans }}</p>
+                        <label for="setlist-folder">{{ 'music.folder_label'|trans }}</label>
+                        <select id="setlist-folder" name="folder" aria-describedby="setlist-folder-hint">
+                            <option value="">{{ 'music.folder_empty_option'|trans }}</option>
+                            {% for folder in musicFolders %}
+                                <option value="{{ folder.id }}">{{ folder.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <p id="setlist-folder-hint" class="field-hint">
+                            {% if musicFolders|length > 0 %}
+                                {{ 'music.folder_hint'|trans }}
+                            {% else %}
+                                {{ 'music.folder_hint_empty'|trans }}
+                            {% endif %}
+                            <a href="{{ path('desk_files', {space: 'music'}) }}">{{ 'music.files_link'|trans }}</a>
+                        </p>
 
                         <input type="hidden" name="_token" value="{{ csrf_token('create_setlist_item') }}">
                         <button type="submit" class="btn btn-green">{{ 'music.add_song'|trans }}</button>
@@ -283,6 +308,24 @@
 
                                         <label for="edit-youtube-{{ item.id }}">{{ 'music.youtube_url_label'|trans }}</label>
                                         <input type="url" id="edit-youtube-{{ item.id }}" name="youtubeUrl" value="{{ item.youtubeUrl }}">
+
+                                        <label for="edit-folder-{{ item.id }}">{{ 'music.folder_label'|trans }}</label>
+                                        <select id="edit-folder-{{ item.id }}" name="folder">
+                                            <option value="">{{ 'music.folder_empty_option'|trans }}</option>
+                                            {% set folderStillListed = false %}
+                                            {% for folder in musicFolders %}
+                                                {% if item.folder and item.folder.id == folder.id %}{% set folderStillListed = true %}{% endif %}
+                                                <option value="{{ folder.id }}"{{ item.folder and item.folder.id == folder.id ? ' selected' : '' }}>{{ folder.name }}</option>
+                                            {% endfor %}
+                                            {% if item.folder and not folderStillListed %}
+                                                {# Dossier lié pas en 1er niveau (créé avant ce chantier, ou
+                                                   sous-dossier) : gardé en option sélectionnée par défaut pour
+                                                   ne pas délier silencieusement en enregistrant sans y toucher. #}
+                                                <option value="{{ item.folder.id }}" selected>
+                                                    {%- for ancestor in item.folder.ancestors[1:] -%}{{ ancestor.name }} / {%- endfor -%}{{ item.folder.name }}
+                                                </option>
+                                            {% endif %}
+                                        </select>
 
                                         <input type="hidden" name="_token" value="{{ csrf_token('edit_setlist_item' ~ item.id) }}">
                                         <button type="submit" class="btn btn-green">{{ 'music.edit_submit'|trans }}</button>

@@ -82,6 +82,28 @@ class FolderRepository extends ServiceEntityRepository
     }
 
     /**
+     * Dossiers de 1er niveau (enfants directs de la racine) d'un espace,
+     * actifs, triés par nom : sert au select "dossier du morceau" de
+     * /music (SetlistController), pour lier un morceau à un dossier déjà
+     * créé (et déjà rempli via /desk/files/music) plutôt que d'en faire
+     * créer un à la volée par un champ texte libre (source de doublons par
+     * faute de frappe, retour utilisatrice le 2026-08-13). Ne crée pas la
+     * racine si elle n'existe pas encore (contrairement à
+     * findOrCreateRoot()) : lecture seule, pas d'effet de bord sur un GET.
+     *
+     * @return Folder[]
+     */
+    public function findTopLevel(string $space): array
+    {
+        $root = $this->findOneBy(['space' => $space, 'parent' => null]);
+        if (!$root) {
+            return [];
+        }
+
+        return $this->findActiveChildren($root);
+    }
+
+    /**
      * Vrai si $candidate est $ancestor lui-même ou un de ses descendants :
      * sert à refuser un déplacement de dossier qui créerait un cycle
      * (déplacer un dossier dans un de ses propres sous-dossiers).
