@@ -299,24 +299,30 @@ function closeContactForm() {
 var close = document.querySelector('.close');
 close.addEventListener('click', closeContactForm);
 
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape' && !contactForm.classList.contains('d-none')) {
-    closeContactForm();
-  }
-});
-
-var contactFeedback = contactForm.querySelector('.contact-feedback');
+// Soumission en fetch (pas de navigation, la popup reste ouverte) : le
+// honeypot/piège temporel/CSRF sont vérifiés côté serveur
+// (App\Controller\ContactController), ce handler ne fait qu'afficher le
+// résultat. data-messages (posé côté Twig) porte les libellés déjà traduits,
+// indexés par le code d'erreur renvoyé par le contrôleur.
+var contactStatus = contactForm.querySelector('.contact-status');
 var contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
+var contactMessages = {};
+try {
+  contactMessages = JSON.parse(contactForm.dataset.messages || '{}');
+} catch (e) {
+  contactMessages = {};
+}
 
 contactForm.addEventListener('submit', function (e) {
   e.preventDefault();
+
   contactSubmitBtn.disabled = true;
-  contactFeedback.textContent = contactFeedback.dataset.sending;
+  contactStatus.classList.remove('is-error');
+  contactStatus.textContent = contactMessages.sending || '';
 
   fetch(contactForm.action, {
     method: 'POST',
     body: new FormData(contactForm),
-    headers: { Accept: 'application/json' },
   })
     .then(function (response) {
       return response.json().then(function (data) {
@@ -326,16 +332,26 @@ contactForm.addEventListener('submit', function (e) {
     .then(function (result) {
       contactSubmitBtn.disabled = false;
       if (result.ok && result.data.success) {
-        contactFeedback.textContent = contactFeedback.dataset.success;
+        contactStatus.classList.remove('is-error');
+        contactStatus.textContent = contactMessages.success || '';
         contactForm.reset();
       } else {
-        contactFeedback.textContent = contactFeedback.dataset.error;
+        contactStatus.classList.add('is-error');
+        contactStatus.textContent =
+          contactMessages[result.data.error] || contactMessages.generic || '';
       }
     })
     .catch(function () {
       contactSubmitBtn.disabled = false;
-      contactFeedback.textContent = contactFeedback.dataset.error;
+      contactStatus.classList.add('is-error');
+      contactStatus.textContent = contactMessages.generic || '';
     });
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !contactForm.classList.contains('d-none')) {
+    closeContactForm();
+  }
 });
 
 function playModifierAnimation(from, fSpeed, to, tSpeed) {

@@ -208,6 +208,13 @@ canvas {
     border-color: var(--bb-green-mid);
 }
 
+/* Même bug de contraste que body.desk form/join.css/register (cf. commentaire
+   plus bas), jamais corrigé ici précisément malgré ce qu'affirmait ce
+   commentaire : #contactForm n'avait jamais eu son propre override de
+   couleur, il héritait donc du doré (--bb-gold) à 3.63:1 sur --bb-green-mid
+   via la règle "form" générique juste en dessous. Trouvé en ajoutant le
+   message de statut du formulaire (honeypot/piège temporel), corrigé au
+   passage (blanc, 6.83:1, AA). */
 #contactForm {
     position: absolute;
     z-index: 1100;
@@ -217,18 +224,28 @@ canvas {
     left: 50%;
     margin-left: -290px;
     top: 23px;
+    color: var(--bb-white);
 }
 
-/* Honeypot anti-bot : hors écran plutôt que display:none, certains bots
-   ignorent déjà display:none mais lisent quand même le champ pour le
-   remplir "au cas où" un lecteur d'écran le montre. */
-.honeypot-field {
+/* Honeypot anti-spam (#contactForm, minisite-contact-form) : hors écran
+   plutôt que display:none (certains bots l'ignorent spécifiquement) et
+   retiré de l'arbre d'accessibilité côté HTML (aria-hidden + tabindex="-1"
+   sur le champ lui-même, cf. templates). */
+.hp-field {
     position: absolute;
     left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
 }
 
-.contact-feedback {
+.contact-status {
+    font-weight: 600;
     min-height: 1.2em;
+}
+
+.contact-status.is-error {
+    color: var(--bb-gold-pale);
 }
 
 form {

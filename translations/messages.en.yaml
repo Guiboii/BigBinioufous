@@ -31,8 +31,10 @@ contact:
     message_label: What do you want to tell us
     submit: OK
     sending: Sending...
-    success: Message sent, thank you!
-    error: The message couldn't be sent, please try again later.
+    success: Message sent, thanks!
+    error_invalid_email: Invalid email address.
+    error_empty_message: Don't forget your message.
+    error_generic: Something went wrong, try again later.
 
 story:
     title: Story

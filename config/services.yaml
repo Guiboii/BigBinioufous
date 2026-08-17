@@ -14,7 +14,6 @@ parameters:
     documents_directory: '%kernel.project_dir%/public/uploads/documents'
     pictures_directory : '%kernel.project_dir%/public/uploads/pictures'
     event_posters: '%kernel.project_dir%/public/uploads/events'
-    contact_email: '%env(CONTACT_EMAIL)%'
 
     # Adresse prévenue par mail à chaque nouvelle inscription (squelette,
     # cf. LoginController::notifyAdminsOfNewRegistration()) : PLACEHOLDER,
@@ -25,6 +24,14 @@ parameters:
     # MAILER_DSN lui-même n'est pas configuré (cf. ROADMAP.md "Emails
     # fonctionnels").
     admin_notification_email: 'contact@binioufous.fr'
+
+    # Adresse from/to des emails de contact (ContactController) et
+    # d'inscription/validation (RegistrationMailer). CONTACT_EMAIL n'est pas
+    # dans .env (accès à une vraie boîte mail toujours pas fourni, cf.
+    # .env.example) : processeur "default" en repli sur le même placeholder
+    # qu'admin_notification_email plutôt que de planter tout le conteneur
+    # (EnvNotFoundException) tant que CONTACT_EMAIL n'est pas défini.
+    contact_email: '%env(default:admin_notification_email:CONTACT_EMAIL)%'
 
 services:
     # default configuration for services in *this* file

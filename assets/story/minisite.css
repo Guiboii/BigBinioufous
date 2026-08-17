@@ -485,6 +485,35 @@ li::marker {
     font-weight: bold;
     cursor: pointer;
 }
+.term-submit:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* Honeypot anti-spam : hors écran plutôt que display:none (certains bots
+   l'ignorent spécifiquement), même technique que assets/main/app.css. */
+.hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* --term-fg dans les deux cas (12.2:1 AAA, cf. en-tête de fichier) : la
+   distinction succès/erreur passe par le texte lui-même et par ce liseré,
+   jamais par la seule couleur du texte (cf. règle du projet sur le
+   daltonisme). */
+.contact-status {
+    margin: 0.75rem 0 0;
+    color: var(--term-fg);
+    font-weight: 600;
+    min-height: 1.2em;
+}
+.contact-status.is-error {
+    border-left: 3px solid var(--term-red);
+    padding-left: 0.5rem;
+}
 .term-submit:hover {
     background: var(--term-green);
     color: var(--term-bg);
@@ -492,17 +521,6 @@ li::marker {
 .term-submit:focus-visible {
     outline: 2px solid var(--term-focus);
     outline-offset: 2px;
-}
-/* Honeypot anti-bot, cf. .honeypot-field dans assets/main/app.css pour le
-   même mécanisme côté page /story principale. */
-.honeypot-field {
-    position: absolute;
-    left: -9999px;
-}
-.term-field-feedback {
-    min-height: 1.2em;
-    margin: 0.5rem 0;
-    color: var(--term-fg);
 }
 
 @media (max-width: 700px) {

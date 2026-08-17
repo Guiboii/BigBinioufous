@@ -29,11 +29,25 @@
        l'iframe). Celle-ci reste quand même gérée proprement une fois ouverte
        (role dialog, Echap, focus) pour les personnes qui l'ouvrent à la souris
        puis continuent au clavier. #}
-    <form id="contactForm" class="d-none" role="dialog" aria-modal="true" aria-labelledby="contactFormTitle" method="post" action="{{ path('contact_submit') }}">
+    <form id="contactForm" class="d-none" role="dialog" aria-modal="true" aria-labelledby="contactFormTitle" action="{{ path('contact_submit') }}" method="post" data-messages="{{ {
+        sending: 'contact.sending'|trans,
+        success: 'contact.success'|trans,
+        invalid_email: 'contact.error_invalid_email'|trans,
+        empty_message: 'contact.error_empty_message'|trans,
+        generic: 'contact.error_generic'|trans,
+    }|json_encode }}">
         <button type="button" class="close" aria-label="{{ 'common.close'|trans }}">
             <span aria-hidden="true">&times;</span>
         </button>
         <h4 id="contactFormTitle">{{ 'contact.title'|trans }}</h4>
+        <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
+        <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
+        {# Honeypot : champ invisible pour un humain (hors écran en CSS, pas
+           display:none, certains bots l'ignorent spécifiquement) et retiré de
+           l'arbre d'accessibilité (aria-hidden + tabindex="-1", jamais atteint
+           au clavier ni annoncé par un lecteur d'écran). Un bot qui remplit
+           tous les champs d'un formulaire sans distinction se trahit ici. #}
+        <input type="text" class="hp-field" id="contactHp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="form-group">
             {# Avant : id="exampleFormControlInput1" dupliqué sur les 2 champs
                (nom ET email), donc le label "nom" pointait aussi vers le champ
@@ -52,17 +66,7 @@
             <label for="exampleFormControlTextarea1">{{ 'contact.message_label'|trans }}</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" name="message" rows="2"></textarea>
         </div>
-        {# Honeypot anti-bot : champ invisible pour une personne (CSS + hors tabulation),
-           un bot qui remplit tout le formulaire à l'aveugle le remplit aussi. #}
-        <div class="honeypot-field" aria-hidden="true">
-            <label for="contactWebsite">Site web</label>
-            <input type="text" id="contactWebsite" name="website" tabindex="-1" autocomplete="off">
-        </div>
-        <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
-        <p class="contact-feedback" role="status" aria-live="polite"
-           data-sending="{{ 'contact.sending'|trans }}"
-           data-success="{{ 'contact.success'|trans }}"
-           data-error="{{ 'contact.error'|trans }}"></p>
+        <p class="contact-status" aria-live="polite"></p>
         <button type="submit" class="btn btn-dark">{{ 'contact.submit'|trans }}</button>
     </form>
     <div class="loading" id="js-loader" aria-hidden="true">

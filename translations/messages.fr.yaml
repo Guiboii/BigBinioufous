@@ -30,9 +30,11 @@ contact:
     email_label: Ton email
     message_label: Qu'est-ce que tu veux nous dire
     submit: OK
-    sending: Envoi en cours...
+    sending: Envoi...
     success: Message envoyé, merci !
-    error: Le message n'a pas pu être envoyé, réessaie plus tard.
+    error_invalid_email: Adresse email invalide.
+    error_empty_message: N'oublie pas ton message.
+    error_generic: Un souci est survenu, réessaie plus tard.
 
 story:
     title: Histoire

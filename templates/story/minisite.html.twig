@@ -69,7 +69,18 @@
 
                     <section id="contact">
                         <h2>{{ 'contact.title'|trans }}</h2>
-                        <form class="term-form" id="minisite-contact-form" method="post" action="{{ path('contact_submit') }}">
+                        <form class="term-form" id="minisite-contact-form" action="{{ path('contact_submit') }}" method="post" data-messages="{{ {
+                            sending: 'contact.sending'|trans,
+                            success: 'contact.success'|trans,
+                            invalid_email: 'contact.error_invalid_email'|trans,
+                            empty_message: 'contact.error_empty_message'|trans,
+                            generic: 'contact.error_generic'|trans,
+                        }|json_encode }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
+                            <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
+                            {# Honeypot, cf. le commentaire équivalent dans
+                               story/index.html.twig (même piège, même raison). #}
+                            <input type="text" class="hp-field" id="minisite-contact-hp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                             <div class="term-field">
                                 <label for="minisite-contact-name">{{ 'contact.name_label'|trans }}</label>
                                 <input type="text" id="minisite-contact-name" name="name" placeholder="John Doe">
@@ -82,16 +93,7 @@
                                 <label for="minisite-contact-message">{{ 'contact.message_label'|trans }}</label>
                                 <textarea id="minisite-contact-message" name="message" rows="3"></textarea>
                             </div>
-                            {# Honeypot anti-bot, cf. story/index.html.twig pour le même mécanisme. #}
-                            <div class="honeypot-field" aria-hidden="true">
-                                <label for="minisite-contact-website">Site web</label>
-                                <input type="text" id="minisite-contact-website" name="website" tabindex="-1" autocomplete="off">
-                            </div>
-                            <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
-                            <p class="term-field-feedback" role="status" aria-live="polite"
-                               data-sending="{{ 'contact.sending'|trans }}"
-                               data-success="{{ 'contact.success'|trans }}"
-                               data-error="{{ 'contact.error'|trans }}"></p>
+                            <p class="contact-status" id="minisite-contact-status" aria-live="polite"></p>
                             <button type="submit" class="term-submit">{{ 'contact.submit'|trans }}</button>
                         </form>
                     </section>
@@ -118,6 +120,10 @@
             updateClock();
             setInterval(updateClock, 1000 * 15);
         </script>
-        <script src="{{ asset('story/minisite-contact.js') }}"></script>
+        {# Page autonome sans importmap (cf. CLAUDE.md "Frontend"), donc pas
+           d'entrée importmap.php pour ce petit script : servi tel quel par
+           AssetMapper via asset(), même logique que minisite.css juste
+           au-dessus. #}
+        <script src="{{ asset('story/minisite.js') }}" defer></script>
     </body>
 </html>
