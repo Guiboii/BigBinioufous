@@ -46,7 +46,7 @@ class SetlistController extends AbstractController
         $item = new SetlistItem();
         $item->setTitle($title)
             ->setArtist($artist)
-            ->setYoutubeUrl('' !== (string) $request->request->get('youtubeUrl') ? $request->request->get('youtubeUrl') : null)
+            ->setYoutubeUrl($this->resolveYoutubeUrl($request))
             ->setPosition($setlistItemRepository->nextPosition())
             ->setFolder($folder);
 
@@ -80,7 +80,7 @@ class SetlistController extends AbstractController
         $item->setTitle($title)
             ->setArtist($artist)
             ->setFolder($folder)
-            ->setYoutubeUrl('' !== (string) $request->request->get('youtubeUrl') ? $request->request->get('youtubeUrl') : null);
+            ->setYoutubeUrl($this->resolveYoutubeUrl($request));
 
         $manager->flush();
 
@@ -142,6 +142,23 @@ class SetlistController extends AbstractController
         }
 
         return $folder;
+    }
+
+    /**
+     * Restreint aux liens YouTube en https (allowlist de domaine/schéma) :
+     * champ libre auparavant, ça permettait de stocker n'importe quelle URL
+     * (y compris javascript:...) affichée ensuite en `href` sur /music,
+     * publique (XSS stockée, cf. /security-review du 2026-08-17). Lien
+     * invalide -> pas de lien enregistré, plutôt qu'une erreur bloquante.
+     */
+    private function resolveYoutubeUrl(Request $request): ?string
+    {
+        $url = trim((string) $request->request->get('youtubeUrl'));
+        if ('' === $url || !preg_match('#^https://(www\.)?(youtube\.com/watch\?v=|youtu\.be/)#', $url)) {
+            return null;
+        }
+
+        return $url;
     }
 
     /**
