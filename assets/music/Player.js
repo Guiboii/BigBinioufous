@@ -86,8 +86,14 @@ document.addEventListener('DOMContentLoaded', function () {
   var currentTrack = 0;
   var nowPlaying = document.querySelector('#now-playing');
 
+  // a.list-group-item seulement : un item de playlist peut aussi contenir un
+  // lien YouTube (.badge, cf. music/index.html.twig), pas destiné à
+  // wavesurfer. Un simple querySelectorAll('a') le comptait comme une piste
+  // (index décalés, wavesurfer.load() appelé avec une URL YouTube) et le
+  // rendait aussi impossible à ouvrir normalement (cf. délégation de clic
+  // ci-dessous, qui appelait preventDefault() sur son clic aussi).
   function getLinks() {
-    return playlist ? playlist.querySelectorAll('a') : [];
+    return playlist ? playlist.querySelectorAll('a.list-group-item') : [];
   }
 
   // Load a track by index and highlight the corresponding link
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // de listener (celui-ci n'est posé qu'une fois, au chargement de la page).
   if (playlist) {
     playlist.addEventListener('click', function (e) {
-      var link = e.target.closest('a');
+      var link = e.target.closest('a.list-group-item');
       if (!link) {
         return;
       }
