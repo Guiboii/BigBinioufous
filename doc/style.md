@@ -69,18 +69,26 @@ Pas de Webpack : `symfony/asset-mapper` (natif Symfony, zéro build Node en prod
 
 | Entry | Fichier source | Contenu |
 |---|---|---|
-| `app` | `assets/main/app.js` | jQuery, Bootstrap JS/CSS, Font Awesome, Remixicon, `app.css` : chargé sur **toutes** les pages |
+| `app` | `assets/main/app.js` | jQuery, Bootstrap JS/CSS, Remixicon, `app.css` : chargé sur **toutes** les pages |
 | `index` | `assets/mascotte/mascotte.js` | Mascotte 3D (Three.js + modèles `.gltf`) |
 | `music` | `assets/music/music.js` (+ `Player.js`) | Lecteur audio wavesurfer.js **`@6.6.4` épinglé** (chargé en CDN, pas par AssetMapper) : sans version, unpkg résout la 7.x (API différente), le lecteur ne fonctionne alors plus du tout. Piège corrigé le 2026-08-10, cf. Gotchas |
 | `schedule` | `assets/schedule/schedule.js` | Page planning + éléments 3D |
 | `story` | `assets/story/story.js` | Page histoire (scène 3D uniquement ; la minisite affichée dedans est une page à part, hors AssetMapper, cf. plus haut) |
 | `join` | `assets/login/join.js` | Page login/register |
+| `story-admin` | `assets/desk/story-admin.js` | Transforme le `<textarea>` de `StorySectionType` en éditeur Markdown EasyMDE (aperçu live), chargé seulement sur `/admin/story/new`\|`/edit` |
+| `note-admin` | `assets/desk/note-admin.js` | Même fabrique qu'au-dessus (EasyMDE) pour `NoteType`, chargé sur `/desk/notes/new`\|`/edit` |
+| `avatar-preview` | `assets/desk/avatar-preview.js` | Aperçu live du champ photo (`RegistrationType`/`AccountType`/`EditUserType`) avant upload |
 
 Three.js et ses modules (`GLTFLoader`, `OrbitControls`) viennent du package npm `three` via `importmap:require`, **épinglé à `0.128.0`** (pas de libs vendorisées à la main dans `assets/libs/`, ce dossier n'existe plus).
 
+## Éditeur Markdown : EasyMDE + CodeMirror
+
+`NoteType`/`StorySectionType` (contenu de `/desk/notes` et `/admin/story`) utilisent un simple `TextareaType` côté formulaire, transformé en éditeur Markdown avec aperçu live et correction orthographique **côté client uniquement** par `story-admin.js`/`note-admin.js` (fabrique commune) : reste utilisable en `<textarea>` brut si le JS ne charge pas pour une raison ou une autre. Libs concernées dans `importmap.php` : `easymde`, `codemirror` (+ plusieurs de ses addons), `codemirror-spell-checker`, `marked` (rendu Markdown→HTML de l'aperçu), `typo-js` (dictionnaire de correction). Aucune n'a de version dans une URL CDN à surveiller (tout vient de npm via `importmap:require`), contrairement à wavesurfer.js/Google Fonts plus bas.
+
 ## Gotchas à retenir
 
-- **Trois systèmes d'icônes cohabitent** (voir plus haut) : ne pas mélanger les syntaxes, et vérifier que la classe existe bien avant de l'utiliser (`grep` dans `assets/vendor/<lib>/` après un `importmap:install`, ce dossier est gitignoré donc pas toujours présent).
+- **Deux systèmes d'icônes cohabitent** (voir plus haut) : ne pas mélanger les syntaxes, et vérifier que la classe existe bien avant de l'utiliser (`grep` dans `assets/vendor/<lib>/` après un `importmap:install`, ce dossier est gitignoré donc pas toujours présent).
+- **`.navbar-admin` (navbar `/desk`) passe en `position: fixed` à partir de 768px** (retour utilisatrice : "le texte passe derrière"), `body.desk main` récupère un `padding-top: 58px` pour compenser. Tout élément rendu **avant** `<main>` dans `templates/desk/base.html.twig` (les messages flash notamment) est hors de cette compensation et doit recevoir son propre `margin-top: 58px` en desktop, sinon il passe sous la navbar (bug trouvé et corrigé le 2026-08-17, cf. `.flash-messages` dans `assets/main/app.css`).
 - **Ne jamais superposer rouge et vert pour du texte sur un fond** (ou l'inverse) : plusieurs bugs de contraste de ce type ont été trouvés et corrigés le 2026-08-10 (navbar, boutons `.btn-red`/`.btn-green`, pills actives du planning/histoire, `.red-hover`/`.green-hover`), un cas allant même jusqu'au texte totalement invisible (vert sur vert, couleur héritée de la règle globale `a { color: var(--bb-green-mid) }`). Si tu ajoutes un état hover/actif avec un fond rouge ou vert, mets du texte blanc (`var(--bb-white)`) ou clair, pas une autre couleur saturée de la palette.
 - Si tu ajoutes une couleur, réutilise une variable `--bb-*` existante plutôt que d'en inventer une nouvelle ; si vraiment aucune ne convient, ajoute-la au bloc `:root` de `assets/main/app.css` avec un nom `--bb-*` cohérent.
 - `templates/desk/index.html.twig` avait un bug de typo sur les noms de rôles (`ROLE_BINOUFOUS`/`ROLE_SIMPLE` au lieu de `ROLE_BINIOUFOUS`/`ROLE_Simple`) : corrigé, voir [role.md](role.md).
