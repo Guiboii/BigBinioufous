@@ -29,7 +29,10 @@
                    note pour ne pas laisser croire que la liste est complète. #}
                 <div class="schedule-login-note">
                     <i class="ri-lock-2-fill" aria-hidden="true"></i>
-                    <p>{{ 'schedule.login_note'|trans }} <a href="{{ path('join') }}">{{ 'schedule.login_note_cta'|trans }}</a></p>
+                    {# CTA "Rejoindre / se connecter" retiré : espace membre coupé sur
+                       cette branche prod_prov (cf. MemberAreaDisabledSubscriber), lien
+                       mort sinon. #}
+                    <p>{{ 'schedule.login_note'|trans }}</p>
                 </div>
             {% endif %}
             {% for monthNum, month in eventsByMonth %}

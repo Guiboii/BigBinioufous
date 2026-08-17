@@ -109,15 +109,6 @@ function init() {
       console.error(e);
     },
   );
-  var planecontact = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(1.5, 0.5),
-    new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0 }),
-  );
-  planecontact.position.set(5.3, 2.3, -6.8);
-  planecontact.rotateY(Math.PI);
-  planecontact.name = 'contactPlane';
-  scene.add(planecontact);
-
   // desk
   var loader = new GLTFLoader();
   loader.load(
@@ -243,21 +234,10 @@ function raycast(e, touch = false) {
   var intersects = raycaster.intersectObjects(scene.children, true);
   console.log(intersects);
 
-  // les trieurs (fine tranche de la pile) peuvent être occultés par le
-  // reste du bureau à distance quasi identique : on les cherche dans tous
-  // les objets touchés par le rayon, pas seulement le plus proche
-  var trieurSpaces = {
-    trieurAccounting: 'accounting',
-    trieurMusic: 'music',
-    trieurAdmin: 'admin',
-    trieurOther: 'other',
-  };
-  var trieurHit = intersects.find((i) => trieurSpaces[i.object.name]);
-  if (trieurHit) {
-    location.href = '/desk/files/' + trieurSpaces[trieurHit.object.name];
-    return;
-  }
-
+  // Avant : clic sur un "trieur" (classeur du bureau) -> /desk/files/{espace},
+  // clic sur la soucoupe -> /join. Espace membre coupé sur cette branche
+  // prod_prov (cf. MemberAreaDisabledSubscriber), retirés pour ne pas
+  // surprendre avec une redirection vers l'accueil.
   if (intersects[0]) {
     var object = intersects[0].object;
     console.log(object.name);
@@ -266,93 +246,9 @@ function raycast(e, touch = false) {
         currentlyAnimating = true;
         playModifierAnimation(idle, 0.25, next, 0.25);
       }
-    } else if (object.name === 'contactPlane') {
-      openContactForm();
-    } else if (object.parent.name === 'Soucoupe') {
-      location.href = '/join';
     }
   }
 }
-
-// #contactForm (role="dialog", cf. story/index.html.twig) : géré comme une
-// vraie boîte de dialogue une fois ouverte, même si son seul déclencheur
-// actuel est un clic 3D (raycast) sans équivalent clavier direct (cf.
-// commentaire dans le template : le vrai formulaire de contact accessible
-// au clavier est celui de la minisite, atteignable via la navbar). Focus
-// posé sur le 1er champ à l'ouverture, Echap referme et rend le focus au
-// canvas 3D (pas de bouton déclencheur à qui le rendre ici).
-var contactForm = document.getElementById('contactForm');
-
-function openContactForm() {
-  contactForm.classList.remove('d-none');
-  var firstField = contactForm.querySelector('input, textarea');
-  if (firstField) {
-    firstField.focus();
-  }
-}
-
-function closeContactForm() {
-  contactForm.classList.add('d-none');
-  canvas.focus();
-}
-
-var close = document.querySelector('.close');
-close.addEventListener('click', closeContactForm);
-
-// Soumission en fetch (pas de navigation, la popup reste ouverte) : le
-// honeypot/piège temporel/CSRF sont vérifiés côté serveur
-// (App\Controller\ContactController), ce handler ne fait qu'afficher le
-// résultat. data-messages (posé côté Twig) porte les libellés déjà traduits,
-// indexés par le code d'erreur renvoyé par le contrôleur.
-var contactStatus = contactForm.querySelector('.contact-status');
-var contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
-var contactMessages = {};
-try {
-  contactMessages = JSON.parse(contactForm.dataset.messages || '{}');
-} catch (e) {
-  contactMessages = {};
-}
-
-contactForm.addEventListener('submit', function (e) {
-  e.preventDefault();
-
-  contactSubmitBtn.disabled = true;
-  contactStatus.classList.remove('is-error');
-  contactStatus.textContent = contactMessages.sending || '';
-
-  fetch(contactForm.action, {
-    method: 'POST',
-    body: new FormData(contactForm),
-  })
-    .then(function (response) {
-      return response.json().then(function (data) {
-        return { ok: response.ok, data: data };
-      });
-    })
-    .then(function (result) {
-      contactSubmitBtn.disabled = false;
-      if (result.ok && result.data.success) {
-        contactStatus.classList.remove('is-error');
-        contactStatus.textContent = contactMessages.success || '';
-        contactForm.reset();
-      } else {
-        contactStatus.classList.add('is-error');
-        contactStatus.textContent =
-          contactMessages[result.data.error] || contactMessages.generic || '';
-      }
-    })
-    .catch(function () {
-      contactSubmitBtn.disabled = false;
-      contactStatus.classList.add('is-error');
-      contactStatus.textContent = contactMessages.generic || '';
-    });
-});
-
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape' && !contactForm.classList.contains('d-none')) {
-    closeContactForm();
-  }
-});
 
 function playModifierAnimation(from, fSpeed, to, tSpeed) {
   to.setLoop(THREE.LoopOnce);

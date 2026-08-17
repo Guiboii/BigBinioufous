@@ -22,60 +22,14 @@
     {# title obligatoire sur une iframe : sans nom accessible, un lecteur
        d'écran l'annonce juste "iframe" sans indiquer ce qu'elle contient. #}
     <iframe id="miniSite" src="{{ path('minisite') }}" title="{{ 'story.title'|trans }}"></iframe>
-    {# Cette popup n'est atteignable qu'en cliquant un objet 3D précis (raycast,
-       cf. story.js) : pas de déclencheur clavier direct. Le vrai formulaire de
-       contact accessible au clavier/lecteur d'écran est celui de la minisite
-       (#contact dans story/minisite.html.twig, atteignable via la navbar de
-       l'iframe). Celle-ci reste quand même gérée proprement une fois ouverte
-       (role dialog, Echap, focus) pour les personnes qui l'ouvrent à la souris
-       puis continuent au clavier. #}
-    <form id="contactForm" class="d-none" role="dialog" aria-modal="true" aria-labelledby="contactFormTitle" action="{{ path('contact_submit') }}" method="post" data-messages="{{ {
-        sending: 'contact.sending'|trans,
-        success: 'contact.success'|trans,
-        invalid_email: 'contact.error_invalid_email'|trans,
-        empty_message: 'contact.error_empty_message'|trans,
-        generic: 'contact.error_generic'|trans,
-    }|json_encode }}">
-        <button type="button" class="close" aria-label="{{ 'common.close'|trans }}">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 id="contactFormTitle">{{ 'contact.title'|trans }}</h4>
-        <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
-        <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
-        {# Honeypot : champ invisible pour un humain (hors écran en CSS, pas
-           display:none, certains bots l'ignorent spécifiquement) et retiré de
-           l'arbre d'accessibilité (aria-hidden + tabindex="-1", jamais atteint
-           au clavier ni annoncé par un lecteur d'écran). Un bot qui remplit
-           tous les champs d'un formulaire sans distinction se trahit ici. #}
-        <input type="text" class="hp-field" id="contactHp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="form-group">
-            {# Avant : id="exampleFormControlInput1" dupliqué sur les 2 champs
-               (nom ET email), donc le label "nom" pointait aussi vers le champ
-               email (2e id gagne, 1er jamais atteint par un clic sur son label
-               ni par un lecteur d'écran). Avant aussi : type="email" sur le
-               champ nom (validation navigateur au mauvais endroit). #}
-            <label for="contactName">{{ 'contact.name_label'|trans }}</label>
-            <input type="text" class="form-control" id="contactName" name="name" autocomplete="name" placeholder="John Doe">
-        </div>
-        <div class="form-group">
-            <label for="contactEmail">{{ 'contact.email_label'|trans }}</label>
-            <input type="email" class="form-control" id="contactEmail" name="email" autocomplete="email" placeholder="name@example.com">
-        </div>
-
-        <div class="form-group">
-            <label for="exampleFormControlTextarea1">{{ 'contact.message_label'|trans }}</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" name="message" rows="2"></textarea>
-        </div>
-        <p class="contact-status" aria-live="polite"></p>
-        <button type="submit" class="btn btn-dark">{{ 'contact.submit'|trans }}</button>
-    </form>
+    {# #contactForm retiré : le formulaire envoyait un mail via ContactController,
+       jamais réellement délivré tant que MAILER_DSN reste sur null://null (cf.
+       CLAUDE.md prod_prov). Le clic 3D sur contactPlane (assets/story/story.js)
+       est désactivé en conséquence. #}
     <div class="loading" id="js-loader" aria-hidden="true">
         <div class="loader"></div>
     </div>
     <div class="mascotte" aria-hidden="true">
-        {# tabindex="-1" : cible de script uniquement (story.js y renvoie le
-           focus à la fermeture de #contactForm), jamais atteint par Tab
-           (cohérent avec aria-hidden sur le parent). #}
         <canvas id="c" tabindex="-1"></canvas>
     </div>
 

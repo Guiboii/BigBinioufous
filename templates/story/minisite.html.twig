@@ -24,11 +24,9 @@
                 <a href="{{ path('home') }}">{{ 'nav.home'|trans }}</a>
                 <a href="{{ path('music') }}">{{ 'nav.music'|trans }}</a>
                 <a href="{{ path('schedule') }}">{{ 'nav.schedule'|trans }}</a>
-                {% if app.user %}
-                    <a href="{{ path('desk') }}">{{ 'nav.desk'|trans }}</a>
-                {% else %}
-                    <a href="{{ path('join') }}">{{ 'nav.join_or_login'|trans }}</a>
-                {% endif %}
+                {# Espace membre (desk/connexion) coupé sur cette branche prod_prov,
+                   cf. MemberAreaDisabledSubscriber : pas de lien mort ici tant que
+                   /desk et /join redirigent vers l'accueil. #}
             </div>
         </nav>
 
@@ -49,7 +47,9 @@
                     {% for section in sections %}
                         <a href="#{{ section.slug }}">{{ section.title }}</a>
                     {% endfor %}
-                    <a href="#contact">{{ 'story.nav_contact'|trans }}</a>
+                    {# Lien "Contact" retiré : le formulaire envoyait un mail via
+                       ContactController, jamais réellement délivré tant que
+                       MAILER_DSN reste sur null://null (cf. CLAUDE.md prod_prov). #}
                 </nav>
 
                 <main>
@@ -66,37 +66,6 @@
                             {{ section.content|markdown_to_html }}
                         </section>
                     {% endfor %}
-
-                    <section id="contact">
-                        <h2>{{ 'contact.title'|trans }}</h2>
-                        <form class="term-form" id="minisite-contact-form" action="{{ path('contact_submit') }}" method="post" data-messages="{{ {
-                            sending: 'contact.sending'|trans,
-                            success: 'contact.success'|trans,
-                            invalid_email: 'contact.error_invalid_email'|trans,
-                            empty_message: 'contact.error_empty_message'|trans,
-                            generic: 'contact.error_generic'|trans,
-                        }|json_encode }}">
-                            <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
-                            <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
-                            {# Honeypot, cf. le commentaire équivalent dans
-                               story/index.html.twig (même piège, même raison). #}
-                            <input type="text" class="hp-field" id="minisite-contact-hp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-                            <div class="term-field">
-                                <label for="minisite-contact-name">{{ 'contact.name_label'|trans }}</label>
-                                <input type="text" id="minisite-contact-name" name="name" placeholder="John Doe">
-                            </div>
-                            <div class="term-field">
-                                <label for="minisite-contact-email">{{ 'contact.email_label'|trans }}</label>
-                                <input type="email" id="minisite-contact-email" name="email" placeholder="name@example.com">
-                            </div>
-                            <div class="term-field">
-                                <label for="minisite-contact-message">{{ 'contact.message_label'|trans }}</label>
-                                <textarea id="minisite-contact-message" name="message" rows="3"></textarea>
-                            </div>
-                            <p class="contact-status" id="minisite-contact-status" aria-live="polite"></p>
-                            <button type="submit" class="term-submit">{{ 'contact.submit'|trans }}</button>
-                        </form>
-                    </section>
                 </main>
             </div>
 
@@ -120,10 +89,5 @@
             updateClock();
             setInterval(updateClock, 1000 * 15);
         </script>
-        {# Page autonome sans importmap (cf. CLAUDE.md "Frontend"), donc pas
-           d'entrée importmap.php pour ce petit script : servi tel quel par
-           AssetMapper via asset(), même logique que minisite.css juste
-           au-dessus. #}
-        <script src="{{ asset('story/minisite.js') }}" defer></script>
     </body>
 </html>

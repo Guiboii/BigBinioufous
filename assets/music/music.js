@@ -372,5 +372,4 @@ function initDialog(triggerIds, dialogId) {
   });
 }
 
-initDialog('musicLoginTrigger', 'musicLoginForm');
 initDialog(['setlistManageTrigger', 'uploadNew'], 'setlistManageDialog');

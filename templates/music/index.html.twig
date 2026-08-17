@@ -195,18 +195,12 @@
                         </button>
                     {% endif %}
                     <a href="{{ path('desk_files', {space: 'music'}) }}" class="btn btn-green">{{ 'music.files_link'|trans }}</a>
-                {% elseif app.user %}
-                    <div class="members-prompt">
-                        <p>{{ 'music.members_prompt'|trans }}</p>
-                    </div>
-                {% else %}
-                    <div class="members-prompt">
-                        <p>{{ 'music.members_prompt'|trans }}</p>
-                        <button type="button" id="musicLoginTrigger" class="btn btn-primary">
-                            {{ 'nav.join_or_login'|trans }}
-                        </button>
-                    </div>
                 {% endif %}
+                {# Avant : bloc "elseif app.user"/"else" avec bouton musicLoginTrigger
+                   ouvrant la modale de connexion (musicLoginForm plus bas). Espace
+                   membre coupé sur cette branche prod_prov (cf. MemberAreaDisabledSubscriber),
+                   donc plus de connexion possible : le bouton et la modale associée sont
+                   retirés plutôt que de laisser un lien mort. #}
             </div>
         </div>
 
@@ -356,13 +350,6 @@
             </div>
         </div>
     {% endif %}
-
-    {{ include('components/form-dialog.html.twig', {
-        id: 'musicLoginForm',
-        action: path('join'),
-        title: 'join.login_title',
-        content: include('join/_login-generic.html.twig'),
-    }) }}
 
     <div class="loading" id="js-loader" aria-hidden="true">
         <div class="loader"></div>
