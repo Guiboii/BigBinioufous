@@ -1,0 +1,10 @@
+# Désactive la 2FA en dev (retour explicite utilisatrice, 2026-08-17) :
+# ip_whitelist plutôt que enabled: false sur totp (qui casserait le login
+# d'un compte ayant déjà un secret TOTP enregistré, faute de provider
+# disponible pour le traiter). Toute requête venant de localhost saute la
+# vérification 2FA, quel que soit le compte utilisé. N'affecte que
+# APP_ENV=dev (ce fichier n'existe pas sous config/packages/prod/).
+scheb_two_factor:
+    ip_whitelist:
+        - 127.0.0.1
+        - ::1

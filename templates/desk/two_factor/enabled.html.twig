@@ -1,0 +1,23 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'two_factor.title'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ 'two_factor.title'|trans }}</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <p>
+                    <i class="ri-shield-check-fill" aria-hidden="true"></i>
+                    {{ 'two_factor.already_enabled'|trans }}
+                </p>
+
+                <form method="post" action="{{ path('two_factor_disable') }}" onsubmit="return confirm('{{ 'two_factor.disable_confirm'|trans|e('js') }}');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('two_factor_disable') }}">
+                    <button type="submit" class="btn btn-red">{{ 'two_factor.disable_submit'|trans }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

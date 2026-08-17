@@ -322,6 +322,18 @@ desk:
         binioufous_title: Les Binioufous
         simples_title: Les simples utilisateurs
 
+two_factor:
+    title: "Double authentification"
+    nav_link: "Double authentification"
+    setup_intro: "Scanne ce QR code avec ton application d'authentification (Google Authenticator, Aegis, andOTP...), puis saisis le code à 6 chiffres qu'elle affiche pour confirmer."
+    qr_alt: "QR code de configuration de la double authentification"
+    manual_secret: "Impossible de scanner ? Saisis ce code à la main dans ton application :"
+    code_label: "Code à 6 chiffres"
+    enable_submit: "Activer la double authentification"
+    already_enabled: "La double authentification est activée sur ton compte."
+    disable_submit: "Désactiver la double authentification"
+    disable_confirm: "Désactiver la double authentification sur ton compte ?"
+
 music:
     title: Liste des morceaux
     mobile_note: "Vue simplifiée pour mobile : le lecteur complet avec le meuble 3D t'attend sur ordinateur."

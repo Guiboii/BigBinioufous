@@ -1,0 +1,14 @@
+# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/6.x/configuration.html
+scheb_two_factor:
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+
+    # TOTP (Google Authenticator, Aegis, etc.) plutôt qu'un code par email :
+    # MAILER_DSN n'est toujours pas configuré (cf. ROADMAP.md "Emails
+    # fonctionnels", mail non fonctionnel côté OVH), un 2e facteur par email
+    # serait donc muet en pratique. TOTP ne dépend que de l'app installée
+    # sur le téléphone, aucune dépendance externe.
+    totp:
+        enabled: true
+        issuer: 'BigBinioufous'

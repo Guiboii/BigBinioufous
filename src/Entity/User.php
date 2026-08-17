@@ -6,6 +6,9 @@ use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
+use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
+use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface as TotpTwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -14,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'This email is already used by another user, please change')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwoFactorInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -110,6 +113,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime')]
     private $createdAt;
+
+    /**
+     * Secret TOTP (2FA, scheb/2fa-bundle), encodé Base32. Null = 2FA
+     * désactivée pour ce compte : le choix reste à l'utilisateur·ice, pas
+     * forcé à la création (cf. ROADMAP.md phase 8 "2FA"). Réservé en
+     * pratique aux ROLE_ADMIN côté UI (/desk/profile), mais rien n'empêche
+     * un autre compte de l'activer, le champ n'est pas restreint par rôle.
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $totpSecret;
 
     /**
      * Permet d'initialiser le slug. Basé sur le pseudo (nickname) plutôt
@@ -241,6 +254,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
+    }
+
+    public function getTotpSecret(): ?string
+    {
+        return $this->totpSecret;
+    }
+
+    public function setTotpSecret(?string $totpSecret): self
+    {
+        $this->totpSecret = $totpSecret;
+
+        return $this;
+    }
+
+    public function isTotpAuthenticationEnabled(): bool
+    {
+        return null !== $this->totpSecret;
+    }
+
+    public function getTotpAuthenticationUsername(): ?string
+    {
+        return $this->nickname;
+    }
+
+    public function getTotpAuthenticationConfiguration(): ?TotpConfigurationInterface
+    {
+        if (null === $this->totpSecret) {
+            return null;
+        }
+
+        return new TotpConfiguration($this->totpSecret, TotpConfiguration::ALGORITHM_SHA1, 30, 6);
     }
 
     public function getNickname(): ?string

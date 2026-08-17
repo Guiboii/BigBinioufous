@@ -11,6 +11,9 @@
         {{ include('desk/_user_form_fields.html.twig', {form: form, user: user}) }}
         <button type="submit" class="btn btn-green">{{ 'desk.update_submit'|trans }}</button>
         <a class="btn btn-red" href="{{ path('update-password') }}">{{ 'desk.change_password'|trans }}</a>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a class="btn btn-red" href="{{ path('two_factor_setup') }}">{{ 'two_factor.nav_link'|trans }}</a>
+        {% endif %}
         {{ form_end(form) }}
     </div>
 {% endblock %}

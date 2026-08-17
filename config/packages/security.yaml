@@ -30,6 +30,18 @@ security:
                 max_attempts: 5
                 interval: '15 minutes'
 
+            # 2FA (scheb/2fa-bundle + scheb/2fa-totp) pour les comptes
+            # ROLE_ADMIN (accès le plus sensible : membres, finances).
+            # Optionnel côté User::isTotpAuthenticationEnabled() (activé
+            # seulement si un secret TOTP est enregistré, cf. User.php) :
+            # un compte admin nouvellement créé n'est pas bloqué tant qu'il
+            # n'a pas configuré son application d'authentification depuis
+            # /desk/profile. Chemins par défaut du bundle (2fa_login/
+            # 2fa_login_check, cf. config/routes/scheb_2fa.yaml), CSRF activé
+            # comme sur le reste du site.
+            two_factor:
+                enable_csrf: true
+
             logout:
                 path: logout
                 target: home

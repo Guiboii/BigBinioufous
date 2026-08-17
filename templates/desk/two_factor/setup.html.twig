@@ -1,0 +1,37 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'two_factor.title'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ 'two_factor.title'|trans }}</h1>
+
+        <div class="card">
+            <div class="card-body">
+                <p>{{ 'two_factor.setup_intro'|trans }}</p>
+
+                <img src="{{ qrDataUri }}" alt="{{ 'two_factor.qr_alt'|trans }}" width="240" height="240">
+
+                <p>{{ 'two_factor.manual_secret'|trans }} <code>{{ secret }}</code></p>
+
+                <form method="post" action="{{ path('two_factor_enable') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('two_factor_enable') }}">
+                    <div class="form-group">
+                        <label for="totp-code">{{ 'two_factor.code_label'|trans }}</label>
+                        <input
+                            type="text"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            autocomplete="one-time-code"
+                            class="form-control"
+                            id="totp-code"
+                            name="code"
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-green">{{ 'two_factor.enable_submit'|trans }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

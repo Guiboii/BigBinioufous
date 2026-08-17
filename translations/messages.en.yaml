@@ -322,6 +322,18 @@ desk:
         binioufous_title: The Binioufous
         simples_title: Simple users
 
+two_factor:
+    title: "Two-factor authentication"
+    nav_link: "Two-factor authentication"
+    setup_intro: "Scan this QR code with your authenticator app (Google Authenticator, Aegis, andOTP...), then enter the 6-digit code it shows to confirm."
+    qr_alt: "Two-factor authentication setup QR code"
+    manual_secret: "Can't scan it? Enter this code manually in your app:"
+    code_label: "6-digit code"
+    enable_submit: "Enable two-factor authentication"
+    already_enabled: "Two-factor authentication is enabled on your account."
+    disable_submit: "Disable two-factor authentication"
+    disable_confirm: "Disable two-factor authentication on your account?"
+
 music:
     title: Track index
     mobile_note: "Simplified mobile view: the full player with the 3D cabinet is waiting for you on a computer."
