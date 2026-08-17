@@ -1,0 +1,10 @@
+framework:
+    rate_limiter:
+        # Anti-flood du formulaire de contact (ContactController::submit) :
+        # 1 envoi/minute/IP, en plus du honeypot/piège temporel/CSRF déjà en
+        # place (ceux-ci filtrent les bots, pas un humain qui spamme le
+        # bouton). Cf. ROADMAP.md phase 8 "Rate limiting".
+        contact:
+            policy: sliding_window
+            limit: 1
+            interval: '1 minute'

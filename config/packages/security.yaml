@@ -21,6 +21,15 @@ security:
                 check_path : join
                 default_target_path : desk
 
+            # Anti brute-force natif Symfony (security-http + rate-limiter,
+            # aucune config à la main dans rate_limiter.yaml) : limite les
+            # tentatives par IP+identifiant ET par IP seule (empêche de
+            # contourner la 1re limite en variant l'email). Cf. ROADMAP.md
+            # phase 8 "Rate limiting".
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
+
             logout:
                 path: logout
                 target: home

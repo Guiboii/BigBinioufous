@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ContactController extends AbstractController
@@ -28,10 +29,17 @@ class ContactController extends AbstractController
      * dès maintenant.
      */
     #[Route('/contact', name: 'contact_submit', methods: ['POST'])]
-    public function submit(Request $request, MailerInterface $mailer, LoggerInterface $logger, string $contactEmail): JsonResponse
+    public function submit(Request $request, MailerInterface $mailer, LoggerInterface $logger, RateLimiterFactoryInterface $contactLimiter, string $contactEmail): JsonResponse
     {
         if (!$this->isCsrfTokenValid('contact', $request->request->get('_token'))) {
             return $this->json(['error' => 'invalid_token'], 403);
+        }
+
+        // Anti-flood (1 envoi/minute/IP, cf. config/packages/rate_limiter.yaml) :
+        // contrairement au honeypot/piège temporel, un humain qui dépasse cette
+        // limite a le droit de savoir pourquoi son message n'est pas parti.
+        if (!$contactLimiter->create($request->getClientIp())->consume(1)->isAccepted()) {
+            return $this->json(['error' => 'rate_limited'], 429);
         }
 
         // Honeypot rempli, ou soumis trop vite : signature de bot. On répond
