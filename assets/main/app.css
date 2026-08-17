@@ -1157,6 +1157,13 @@ body.desk .table td {
     body.desk main {
         padding-top: 58px;
     }
+    /* Les messages flash sont rendus entre le header et <main> (cf.
+       templates/desk/base.html.twig), donc en dehors du padding-top
+       ci-dessus : sans ce margin-top ils passent sous la navbar fixe,
+       peu lisibles (retour utilisatrice 2026-08-17). */
+    body.desk .flash-messages {
+        margin-top: 58px;
+    }
 }
 
 /* Bootstrap 4 .container plafonne à 1140px et centre : sur un grand écran
