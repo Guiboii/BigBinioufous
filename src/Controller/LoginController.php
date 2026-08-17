@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\AccountType;
 use App\Form\PasswordUpdateType;
 use App\Form\RegistrationType;
+use App\Mailer\RegistrationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -73,7 +74,7 @@ class LoginController extends AbstractController
      * @return Response
      */
     #[Route('/register', name: 'register')]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, MailerInterface $mailer, LoggerInterface $logger, #[Autowire(param: 'admin_notification_email')] string $adminNotificationEmail)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, MailerInterface $mailer, LoggerInterface $logger, #[Autowire(param: 'admin_notification_email')] string $adminNotificationEmail, RegistrationMailer $registrationMailer)
     {
         $user = new User();
 
@@ -89,6 +90,7 @@ class LoginController extends AbstractController
             $manager->flush();
 
             $this->notifyAdminsOfNewRegistration($mailer, $logger, $adminNotificationEmail, $user);
+            $registrationMailer->sendPendingValidation($user);
 
             $this->addFlash(
                 'success',

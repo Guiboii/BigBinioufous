@@ -30,6 +30,9 @@ contact:
     email_label: Ton email
     message_label: Qu'est-ce que tu veux nous dire
     submit: OK
+    sending: Envoi en cours...
+    success: Message envoyé, merci !
+    error: Le message n'a pas pu être envoyé, réessaie plus tard.
 
 story:
     title: Histoire

@@ -6,16 +6,14 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Form\EditUserType;
 use App\Form\ValidRoleType;
+use App\Mailer\RegistrationMailer;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 
 class AdminController extends AbstractController
@@ -186,7 +184,7 @@ class AdminController extends AbstractController
      * rôle explicite.
      */
     #[Route('/admin/{slug}/valid', name: 'user_valid')]
-    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, MailerInterface $mailer, LoggerInterface $logger, Request $request)
+    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, Request $request, RegistrationMailer $registrationMailer)
     {
         $form = $this->createForm(ValidRoleType::class, $user);
 
@@ -198,7 +196,7 @@ class AdminController extends AbstractController
             $manager->persist($user);
             $manager->flush();
 
-            $this->notifyUserOfAcceptance($mailer, $logger, $user);
+            $registrationMailer->sendValidated($user);
 
             $this->addFlash(
                 'success',
@@ -212,27 +210,6 @@ class AdminController extends AbstractController
             'user' => $user,
             'form' => $form->createView(),
         ]);
-    }
-
-    /**
-     * Squelette d'envoi de mail (même contrainte que
-     * LoginController::notifyAdminsOfNewRegistration() : MAILER_DSN pas
-     * configuré en prod, transport "null" de repli, cf.
-     * config/services.yaml). Ne doit jamais faire échouer la validation
-     * elle-même, déjà enregistrée en base à ce stade.
-     */
-    private function notifyUserOfAcceptance(MailerInterface $mailer, LoggerInterface $logger, User $user): void
-    {
-        try {
-            $email = (new Email())
-                ->to($user->getEmail())
-                ->subject('Ton compte Binioufous a été accepté !')
-                ->text(sprintf("Salut %s,\n\nTon compte a été validé, tu peux dès maintenant te connecter sur le site.\n\nÀ bientôt !", $user->getNickname()));
-
-            $mailer->send($email);
-        } catch (\Throwable $e) {
-            $logger->error('Échec de l\'envoi du mail d\'acceptation : '.$e->getMessage(), ['exception' => $e]);
-        }
     }
 
     /**

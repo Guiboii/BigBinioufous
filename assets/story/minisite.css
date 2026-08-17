@@ -493,6 +493,17 @@ li::marker {
     outline: 2px solid var(--term-focus);
     outline-offset: 2px;
 }
+/* Honeypot anti-bot, cf. .honeypot-field dans assets/main/app.css pour le
+   même mécanisme côté page /story principale. */
+.honeypot-field {
+    position: absolute;
+    left: -9999px;
+}
+.term-field-feedback {
+    min-height: 1.2em;
+    margin: 0.5rem 0;
+    color: var(--term-fg);
+}
 
 @media (max-width: 700px) {
     /* Le bureau derrière n'a plus de sens sur petit écran (pas la place

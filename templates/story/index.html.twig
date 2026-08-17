@@ -29,7 +29,7 @@
        l'iframe). Celle-ci reste quand même gérée proprement une fois ouverte
        (role dialog, Echap, focus) pour les personnes qui l'ouvrent à la souris
        puis continuent au clavier. #}
-    <form id="contactForm" class="d-none" role="dialog" aria-modal="true" aria-labelledby="contactFormTitle">
+    <form id="contactForm" class="d-none" role="dialog" aria-modal="true" aria-labelledby="contactFormTitle" method="post" action="{{ path('contact_submit') }}">
         <button type="button" class="close" aria-label="{{ 'common.close'|trans }}">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -52,7 +52,18 @@
             <label for="exampleFormControlTextarea1">{{ 'contact.message_label'|trans }}</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" name="message" rows="2"></textarea>
         </div>
-        <button type="button" class="btn btn-dark">{{ 'contact.submit'|trans }}</button>
+        {# Honeypot anti-bot : champ invisible pour une personne (CSS + hors tabulation),
+           un bot qui remplit tout le formulaire à l'aveugle le remplit aussi. #}
+        <div class="honeypot-field" aria-hidden="true">
+            <label for="contactWebsite">Site web</label>
+            <input type="text" id="contactWebsite" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
+        <p class="contact-feedback" role="status" aria-live="polite"
+           data-sending="{{ 'contact.sending'|trans }}"
+           data-success="{{ 'contact.success'|trans }}"
+           data-error="{{ 'contact.error'|trans }}"></p>
+        <button type="submit" class="btn btn-dark">{{ 'contact.submit'|trans }}</button>
     </form>
     <div class="loading" id="js-loader" aria-hidden="true">
         <div class="loader"></div>
