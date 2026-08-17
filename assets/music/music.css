@@ -140,8 +140,22 @@ table {
     flex: 0 0 auto;
     opacity: 0.8;
 }
+/* Sans couleur explicite, ce lien hérite de la règle globale "a { color:
+   var(--bb-green-mid) }" (~1:1 sur le marron très sombre #4a3d37 de
+   .playlist-wrap), illisible : même repli --bb-gold-pale que le reste de
+   cette zone (cf. .list-group-item juste au-dessus). */
 .playlist .list-group-item .badge {
     margin-left: auto;
+    color: var(--bb-gold-pale);
+    text-decoration: underline;
+}
+.playlist .list-group-item .badge:hover,
+.playlist .list-group-item .badge:focus-visible {
+    color: var(--bb-gold);
+}
+.playlist .list-group-item .badge:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: 2px;
 }
 .playlist .list-group-item:hover,
 .playlist .list-group-item:focus-visible {
