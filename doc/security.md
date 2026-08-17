@@ -13,10 +13,7 @@
   - `^/desk/files/other` → `ROLE_BINIOUFOUS` ou `ROLE_ADMIN` (lecture ; l'écriture est réservée `ROLE_ADMIN` seul via `FolderWriteVoter`, 1er espace où lecture et écriture divergent)
   - `^/desk/notes` → `ROLE_ADMIN` ou `ROLE_COMPTA`
   - `^/desk` → `IS_AUTHENTICATED_FULLY` (couvre tout le reste de `/desk`, y compris le hub `/desk/files`). Attribut Symfony natif évalué sur le token d'authentification, pas un rôle : un compte sans aucun rôle métier (`getRoles()` vide) passe cette règle normalement, authentification et rôles sont deux notions distinctes pour l'`AuthorizationChecker`. Voir [role.md](role.md) "Historique : les rôles retirés".
-  - `^/music/new`, `^/music/[^/]+/edit`, `^/music/[^/]+/voice`, `^/music/quick-upload`, `^/music` en méthode `DELETE` → `ROLE_ADMIN` (ou `ROLE_BINIOUFOUS` pour `quick-upload`)
-  - Tout le reste (`/`, `/music` en `GET`, `/story`, `/schedule`, `/join`, `/login`, `/register`, `/contact`...) : public, aucune règle de rôle.
-
-  ⚠️ **Les 5 règles `^/music/*` ci-dessus sont mortes** : elles visaient l'ancien `TrackController`/`VoiceController`, supprimés le 2026-08-13 lors de la fusion du gestionnaire de fichiers (cf. `CLAUDE.md` "Gestion de fichiers unifiée"). Aucune route ne matche plus ces chemins (`php bin/console debug:router` ne les liste pas) : ces lignes n'ont plus d'effet, ni positif ni négatif, mais n'ont pas été retirées de `security.yaml`. À nettoyer si une prochaine tâche touche à ce fichier.
+  - Tout le reste (`/`, `/music`, `/story`, `/schedule`, `/join`, `/login`, `/register`, `/contact`...) : public, aucune règle de rôle. `/music` n'a plus de route d'écriture depuis la fusion du gestionnaire de fichiers (2026-08-13, cf. `CLAUDE.md` "Gestion de fichiers unifiée") : gérer la setlist passe désormais par `/desk/files/music/setlist` (`SetlistController`), déjà couvert par la règle `^/desk/files/music` ci-dessus. 5 règles `^/music/*` (write, réservées `ROLE_ADMIN`/`ROLE_BINIOUFOUS`) visant l'ancien `TrackController`/`VoiceController` ont été retirées de `security.yaml` le 2026-08-17, devenues mortes après cette fusion.
 
   Détail métier complet (qui a accès à quoi, comment un rôle est obtenu, comportement des comptes multi-rôles) : [role.md](role.md).
 

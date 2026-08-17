@@ -79,10 +79,3 @@ security:
         # User::getRoles() rien que pour ça (retiré le 2026-08-12, cf.
         # ROADMAP.md "ROLE_USER retiré").
         - { path: ^/desk, roles: IS_AUTHENTICATED_FULLY }
-        # Gestion des morceaux/voix (écriture) réservée aux admins ; la liste
-        # et la fiche d'un morceau (GET) restent publiques, non concernées.
-        - { path: ^/music/new, roles: ROLE_ADMIN }
-        - { path: ^/music/quick-upload, roles: ROLE_BINIOUFOUS }
-        - { path: ^/music/[^/]+/edit, roles: ROLE_ADMIN }
-        - { path: ^/music/[^/]+/voice, roles: ROLE_ADMIN }
-        - { path: ^/music, methods: [DELETE], roles: ROLE_ADMIN }

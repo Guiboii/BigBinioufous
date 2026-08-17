@@ -38,7 +38,6 @@ Basé sur `config/packages/security.yaml` (`access_control`), plus quelques vér
 | `/desk/notes/*` | `ROLE_ADMIN` ou `ROLE_COMPTA` (lecture/liste) | Modifier/supprimer une note réservé à son auteur·ice, même si elle est partagée en lecture (`NoteController::denyUnlessAuthor`, vérifié en dur, pas dans `access_control`). |
 | `/desk/profile/2fa/*` | `ROLE_ADMIN` (vérifié en dur en plus de `^/desk`) | Activation/désactivation de la 2FA TOTP, optionnelle côté compte. |
 | `/admin/*` (validation des inscriptions, promotion/retrait de rôle, fiche utilisateur, planning `/admin/event/*`, contenu Histoire `/admin/story/*`) | `ROLE_ADMIN` | Une seule règle générique `^/admin`, pas de règle dédiée par sous-section. |
-| `/music/new`, `/music/*/edit`, `/music/*/voice`, `/music/quick-upload`, `/music` en `DELETE` | `ROLE_ADMIN` (ou `ROLE_BINIOUFOUS` pour `quick-upload`) | **Règles mortes** : visaient l'ancien `TrackController`/`VoiceController`, supprimés le 2026-08-13. Plus aucune route ne matche ces chemins. Voir [security.md](security.md). |
 
 ## Comportement des comptes multi-rôles
 
@@ -61,6 +60,5 @@ Deux logiques différentes cohabitent, pas interchangeables :
 
 ## Points d'attention
 
-- **Les 5 règles `access_control` `^/music/*` sont mortes** (`/music/new`, `/music/[^/]+/edit`, `/music/[^/]+/voice`, `/music/quick-upload`, `/music` en `DELETE`) : visaient `TrackController`/`VoiceController`, supprimés le 2026-08-13. Ne cause aucun problème (aucune route derrière), mais à nettoyer dans `security.yaml` si une prochaine tâche touche à ce fichier. Voir [security.md](security.md).
 - Le hub `/desk/files` est **atteignable** par tout compte connecté, y compris un compte qui n'a accès à aucun espace : la page s'affiche simplement sans aucune carte plutôt que de renvoyer un 403. Comportement volontaire, pas un bug.
 - L'espace "Autre" (`/desk/files/other`) est le seul où lecture et écriture divergent (`ROLE_BINIOUFOUS`/`ROLE_ADMIN` en lecture, `ROLE_ADMIN` seul en écriture) : à garder en tête si un futur espace suit le même besoin, `FolderWriteVoter` généralise déjà le mécanisme.
