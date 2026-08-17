@@ -1,0 +1,13 @@
+# Défense en profondeur : même si un fichier malveillant passait malgré la
+# restriction de type MIME/extension déjà faite côté application (cf.
+# DocumentController::upload()/EventController::handlePosterUpload()/
+# LoginController, ROADMAP.md phase 8 "Uploads"), interdit toute exécution
+# PHP dans ce dossier de fichiers déposés par les utilisateur·ices.
+# Effectif seulement si le VPS de prod choisit Apache (Phase 3, décision
+# webserver toujours ouverte à ce jour) : l'équivalent Nginx (bloc
+# `location ~* ^/uploads/.*\.php$ { deny all; }` dans le vhost) reste à
+# écrire une fois ce choix fait, cette configuration n'existe pas encore
+# dans le repo.
+<FilesMatch "\.ph(p[3457]?|t|tml)$">
+    Require all denied
+</FilesMatch>
