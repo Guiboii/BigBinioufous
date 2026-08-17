@@ -1,3 +1,11 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+# Reçoit les rapports de violation CSP (mode "report" pour l'instant, cf.
+# config/packages/nelmio_security.yaml), journalisés via report_logger_service
+# plutôt que d'exposer un service tiers.
+nelmio_security_csp_report:
+    path: /csp-report
+    defaults: { _controller: nelmio_security.csp_reporter_controller::indexAction }
+    methods: [POST]

@@ -1,0 +1,64 @@
+nelmio_security:
+    # DENY (valeur par défaut de la recette Flex) casserait /story : la page
+    # embarque sa propre minisite dans un <iframe id="miniSite"> même origine
+    # (cf. CLAUDE.md "Cadrage d'un overlay 2D..."). SAMEORIGIN autorise ce
+    # cas et bloque toujours le framing par un site tiers.
+    clickjacking:
+        paths:
+            '^/.*': SAMEORIGIN
+
+    # disables content type sniffing for script resources
+    content_type:
+        nosniff: true
+
+    # Send a full URL in the `Referer` header when performing a same-origin request,
+    # only send the origin of the document to secure destination (HTTPS->HTTPS),
+    # and send no header to a less secure destination (HTTPS->HTTP).
+    # If `strict-origin-when-cross-origin` is not supported, use `no-referrer` policy,
+    # no referrer information is sent along with requests.
+    referrer_policy:
+        enabled: true
+        policies:
+            - 'no-referrer'
+            - 'strict-origin-when-cross-origin'
+
+    # CSP en mode "report" uniquement pour l'instant (rien n'est bloqué) :
+    # inventaire des sources externes réellement utilisées (cf. ROADMAP.md
+    # phase 8 "Headers de sécurité HTTP"), à durcir en "enforce" une fois les
+    # rapports de violation observés en conditions réelles.
+    # - script-src : unpkg.com uniquement pour wavesurfer.js (page /music,
+    #   seul CDN du projet, tout le reste passe par AssetMapper donc 'self').
+    # - style-src/font-src : Google Fonts (Bungee/VT323/IBM Plex Mono).
+    # - 'unsafe-inline' sur script-src/style-src : <script type="importmap">
+    #   injecté par `importmap()` (base.html.twig et consorts) et plusieurs
+    #   attributs style= existants, non auditables un par un ici sans casser
+    #   des pages ; à retirer progressivement (nonce/hash) si l'enforce est
+    #   activé un jour.
+    csp:
+        report_logger_service: monolog.logger.security
+        report:
+            default-src:
+                - 'self'
+            script-src:
+                - 'self'
+                - 'unsafe-inline'
+                - 'https://unpkg.com'
+            style-src:
+                - 'self'
+                - 'unsafe-inline'
+                - 'https://fonts.googleapis.com'
+            font-src:
+                - 'self'
+                - 'https://fonts.gstatic.com'
+            img-src:
+                - 'self'
+                - 'data:'
+            connect-src:
+                - 'self'
+            frame-src:
+                - 'self'
+            object-src:
+                - "'none'"
+            base-uri:
+                - 'self'
+            report-uri: '%router.request_context.base_url%/csp-report'
