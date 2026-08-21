@@ -1,0 +1,15 @@
+.contact-page section {
+  margin-top: 2.5rem;
+}
+
+.contact-page section:first-of-type {
+  margin-top: 1.5rem;
+}
+
+/* Largeur imposée par le widget HelloAsso lui-même, la hauteur est ajustée
+   dynamiquement par contact.js une fois le contenu chargé (postMessage). */
+.ha-widget {
+  width: 100%;
+  height: 750px;
+  border: none;
+}

@@ -23,8 +23,10 @@ nav:
     planning: Planning
     notes: Notes
     toggle: Basculer la navigation
+    contact: Contact
 
 contact:
+    page_title: Contact
     title: Hello
     name_label: Ton nom
     email_label: Ton email
@@ -35,6 +37,10 @@ contact:
     error_invalid_email: Adresse email invalide.
     error_empty_message: N'oublie pas ton message.
     error_generic: Un souci est survenu, réessaie plus tard.
+    join_heading: Adhérer
+    join_intro: Envie de nous rejoindre ? L'adhésion se fait directement ci-dessous, via HelloAsso.
+    donate_heading: Faire un don
+    donate_intro: Vous pouvez aussi soutenir le groupe par un don, via HelloAsso.
 
 story:
     title: Histoire

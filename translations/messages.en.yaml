@@ -23,8 +23,10 @@ nav:
     planning: Schedule
     notes: Notes
     toggle: Toggle navigation
+    contact: Contact
 
 contact:
+    page_title: Contact
     title: Hello
     name_label: Your name
     email_label: Your email
@@ -35,6 +37,10 @@ contact:
     error_invalid_email: Invalid email address.
     error_empty_message: Don't forget your message.
     error_generic: Something went wrong, try again later.
+    join_heading: Join us
+    join_intro: Want to join the band? Membership is handled right below, via HelloAsso.
+    donate_heading: Make a donation
+    donate_intro: You can also support the band with a donation, via HelloAsso.
 
 story:
     title: Story
