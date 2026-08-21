@@ -1,11 +1,4 @@
-/*
- * Welcome to your app's main JavaScript file!
- *
- * We recommend including the built version of this JavaScript file
- * (and its CSS file) in your base layout (base.html.twig).
- */
-
-// any CSS you import will output into a single css file (app.css in this case)
+// Global JS/CSS entry point, imported on every page via base.html.twig.
 
 import 'jquery';
 import 'bootstrap';
@@ -34,9 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-  // Remet le panneau replié dans l'état "fermé" tel que le ferait Bootstrap
-  // au clic sur le toggler : factorisé car réutilisé à la fois par Échap et
-  // par le clic sur le lien de la page courante ci-dessous.
+  // Puts the panel back in the "closed" state Bootstrap would apply on a toggler click; shared by both the Escape handler and the current-page-link handler below.
   function closeMenu() {
     menu.classList.remove('show');
     toggler.setAttribute('aria-expanded', 'false');
@@ -49,15 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Lien de la page courante (aria-current="page", posé côté Twig d'après la
-  // route active) : cliquer dessus ne doit pas recharger la page pour rien,
-  // mais doit quand même fermer le panneau replié comme n'importe quel autre
-  // lien de la navbar (qui, eux, s'en chargent "gratuitement" via la
-  // navigation qui recharge la page). Écouteur posé sur le panneau plutôt
-  // que sur chaque lien : un seul <a aria-current="page"> existe par page,
-  // et ça marche aussi bien pour la navbar admin dépliée en desktop (aucune
-  // classe 'show' à retirer dans ce cas, closeMenu() n'a alors aucun effet
-  // visible, ce qui est le comportement voulu).
+  // The current-page link shouldn't reload the page for nothing, but must still close the panel like any other navbar link (which get that "for free" via the navigation that reloads the page). Listener on the panel rather than each link: only one aria-current="page" link exists per page, and it's a no-op on the desktop admin navbar where there's no 'show' class to remove.
   menu.addEventListener('click', function (e) {
     var currentLink = e.target.closest('a[aria-current="page"]');
     if (!currentLink) {

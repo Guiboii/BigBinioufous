@@ -1,16 +1,6 @@
-// Ouvre un grand lecteur vidéo YouTube en overlay par-dessus la scène 3D
-// quand on clique sur le badge YouTube d'un morceau, plutôt qu'un nouvel
-// onglet (retour utilisatrice, 2026-08-21 : d'abord "un player en mode écran
-// plasma au lieu du son pour les liens ytb", puis précisé "c'est juste
-// l'écran, quand c'est une vidéo ytb qui doit apparaître par-dessus" - le
-// petit écran audio inline, lui, reste posé sur le meuble 3D, cf.
-// music/index.html.twig et Player.js, complètement indépendant de cet
-// overlay). Ouvert à tout le monde (contrairement au lecteur audio, réservé
-// aux binioufous/admins) et pour n'importe quel morceau ayant un lien
-// YouTube, avec ou sans fichier audio associé.
+// Opens a large YouTube video overlay over the 3D scene when a song's YouTube badge is clicked, rather than a new tab. Open to everyone (unlike the audio player, reserved to binioufous/admins), for any song with a YouTube link, with or without an audio file.
 //
-// Communication avec Player.js/music.js via CustomEvent sur document plutôt
-// qu'un import direct : les scripts tournent en parallèle sans se connaître.
+// Communicates with Player.js/music.js via CustomEvent on document rather than a direct import: the scripts run in parallel without knowing about each other.
 document.addEventListener('DOMContentLoaded', function () {
   var playlist = document.getElementById('playlist');
   var embed = document.getElementById('youtube-embed');
@@ -22,19 +12,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var titlePrefix = embed.dataset.embedTitlePrefix || '';
 
-  // Pas de bouton fermer propre à la vidéo : #videoOverlay (music.js) porte
-  // déjà le sien (backdrop/bouton/Échap).
+  // No dedicated close button for the video itself: #videoOverlay (music.js) already provides one (backdrop/button/Escape).
   function hideVideo() {
     embed.textContent = '';
   }
 
-  // DOM construit via createElement/textContent plutôt qu'innerHTML : le
-  // titre du morceau (data-youtube-title) vient d'un champ libre saisi par
-  // un·e binioufous/admin (SetlistController), pas une source qu'on veut
-  // interpoler brute dans du HTML.
+  // DOM built via createElement/textContent rather than innerHTML: the track title comes from a free-text field, not a source to interpolate raw into HTML.
   function showVideo(videoId, trackTitle) {
-    // Prévient Player.js : l'audio en cours doit s'arrêter. Prévient aussi
-    // music.js : ouvre le grand écran en overlay (#videoOverlay).
+    // Notifies Player.js to stop any current audio, and music.js to open the overlay screen.
     document.dispatchEvent(new CustomEvent('music:show-video'));
 
     embed.textContent = '';
@@ -53,12 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Un morceau lancé au petit lecteur audio (Player.js) ferme la vidéo en
-  // cours : les deux ne jouent jamais en même temps.
+  // Starting a track on the audio player closes the running video: the two never play at once.
   document.addEventListener('music:audio-playing', hideVideo);
 
-  // Fermer le grand écran (bouton fermer/backdrop/Échap, cf. music.js) doit
-  // couper la vidéo plutôt que la laisser tourner cachée.
+  // Closing the overlay screen must stop the video rather than leaving it running hidden.
   document.addEventListener('music:close-video', function () {
     hideVideo();
     if (nowPlaying) {

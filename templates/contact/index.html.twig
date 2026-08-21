@@ -8,18 +8,10 @@
 {% endblock %}
 
 {% block body %}
-    {# Pas de .container Bootstrap ici (plafonné à 1140px, cf. CLAUDE.md) :
-       .contact-flyers gère elle-même sa largeur (min(94vw, 1400px)), comme
-       .scroll-wrapper.schedule sur /schedule (même page de référence,
-       également hors .container). Un .contact-flyers plus large que
-       .container aurait vu ses marges auto ramenées à 0 par la spec CSS
-       (enfant plus large que son parent), cassant le centrage. #}
+    {# No Bootstrap .container here (capped at 1140px): .contact-flyers manages its own width instead, same as .scroll-wrapper.schedule on /schedule. A .contact-flyers wider than .container would have its auto margins collapsed to 0 by the CSS spec, breaking centering. #}
     <div class="contact-page">
         <div class="contact-header">
-            {# Décorative : même mascotte 3D animée que /home (modèle
-               Binioufou_Final4.gltf), en vignette plutôt qu'en scène plein
-               écran ici (cf. assets/contact/contact-mascotte.js). Le titre
-               juste à côté porte déjà l'information. #}
+            {# Decorative: the same animated 3D mascot as /home, as a small thumbnail rather than a full-screen scene here. The heading right next to it already carries the information. #}
             <canvas id="contact-mascotte" aria-hidden="true"></canvas>
             <h1>{{ 'contact.page_title'|trans }}</h1>
         </div>
@@ -36,8 +28,7 @@
                 }|json_encode }}">
                     <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
                     <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
-                    {# Honeypot : invisible pour un humain et retiré de l'arbre d'accessibilité
-                       (même piège que templates/story/index.html.twig et templates/story/minisite.html.twig). #}
+                    {# Honeypot: invisible to a human and removed from the accessibility tree. #}
                     <input type="text" class="hp-field" id="contact-hp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                     <div class="form-group">
                         <label for="contact-name">{{ 'contact.name_label'|trans }}</label>

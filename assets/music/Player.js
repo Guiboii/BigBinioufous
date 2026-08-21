@@ -10,20 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
     cursorColor: '#ffffff',
     barWidth: 1,
     height: 91,
-    // MediaElement plutôt que le backend webaudio par défaut : webaudio
-    // télécharge et décode le fichier entier avant de déclencher "ready"
-    // (donc avant que play() ait un effet), ~13,5s mesurés en local sur un
-    // mp3 de 22 Mo (assets/music/, cf. CLAUDE.md). MediaElement s'appuie sur
-    // <audio> natif, qui streame et joue dès que les premières données
-    // arrivent (retour utilisatrice, 2026-08-21 : "giga délai" avant que le
-    // son se lance) : ~300ms mesurés sur le même fichier.
+    // MediaElement rather than the default webaudio backend: webaudio downloads and decodes the whole file before firing "ready" (~13.5s measured locally on a 22 Mo mp3). MediaElement streams via native <audio> and starts playing as soon as the first data arrives (~300ms on the same file).
     backend: 'MediaElement',
     plugins: [WaveSurfer.regions.create()],
   });
 
-  // Symétrique de l'event "music:audio-playing" plus bas : une vidéo YouTube
-  // ouverte en grand (assets/music/youtube-embed.js) doit couper l'audio en
-  // cours.
+  // Mirror of the "music:audio-playing" event below: an opened YouTube video overlay must stop the current audio.
   document.addEventListener('music:show-video', function () {
     wavesurfer.pause();
   });
@@ -33,14 +25,7 @@ document.querySelector('#slider').oninput = function () {
   wavesurfer.zoom(Number(this.value));
 };
 
-// Bind controls
-//
-// #stopTrack/#playPause/#loopRegion sont maintenant de vrais <button>
-// (avant : <div> avec juste un handler click, ni focusables ni activables
-// au clavier, cf. music/index.html.twig). Le handler écoute directement sur
-// le bouton plutôt que sur l'ancien <span id="stop"> interne : un clic
-// clavier (Entrée/Espace) déclenche l'événement "click" avec le bouton
-// lui-même comme cible, pas un de ses enfants.
+// Bind controls: #stopTrack/#playPause/#loopRegion are real <button> elements (not focusable/keyboard-activatable <div>s), so the handler listens on the button itself and a keyboard activation (Enter/Space) fires "click" with the button as target.
 document.addEventListener('DOMContentLoaded', function () {
   var playPause = document.querySelector('#playPause');
   playPause.addEventListener('click', function () {
@@ -52,12 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
     wavesurfer.stop();
   });
 
-  // Toggle play/pause icon + nom accessible (le bouton n'a pas de texte
-  // visible, seulement une icône : sans aria-label à jour, un lecteur
-  // d'écran annoncerait toujours "Lecture" même une fois en pause).
-  // Témoin "écran plasma" (habillage visuel, cf. music/index.html.twig) :
-  // pastille rouge allumée seulement pendant une lecture réelle, pas juste
-  // "un morceau est chargé".
+  // Toggles the play/pause icon and accessible name: the button has no visible text, so aria-label must stay in sync or a screen reader would always announce "Play". The power LED lights up only during actual playback, not just "a track is loaded".
   var powerLed = document.querySelector('#powerLed');
   wavesurfer.on('play', function () {
     document.querySelector('#play').style.display = 'none';
@@ -66,9 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (powerLed) {
       powerLed.classList.add('is-playing');
     }
-    // Prévient assets/music/youtube-embed.js : une vidéo YouTube ouverte
-    // occupe le même espace à l'écran que la waveform, elle doit se fermer
-    // si l'audio (re)démarre.
+    // Notifies youtube-embed.js: an open YouTube video occupies the same screen space as the waveform and must close if audio (re)starts.
     document.dispatchEvent(new CustomEvent('music:audio-playing'));
   });
   wavesurfer.on('pause', function () {
@@ -104,12 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // The playlist links. Recalculés à chaque usage (pas de NodeList mise en
-  // cache) : la modale "Gérer la setlist" (assets/music/setlist-manage.js)
-  // rafraîchit #playlist en innerHTML après un ajout/édition/suppression,
-  // sans recharger toute la page, ce qui remplace les <a> existants par de
-  // nouveaux nœuds DOM. Un cache pris une seule fois au chargement
-  // pointerait alors vers des éléments disparus.
+  // The playlist links, recalculated on every use rather than cached: setlist-manage.js refreshes #playlist's innerHTML in place, replacing the existing <a> elements, so a NodeList cached once at load would point to stale nodes.
   var playlist = document.getElementById('playlist');
   var currentTrack = 0;
   var nowPlaying = document.querySelector('#now-playing');
@@ -117,28 +90,14 @@ document.addEventListener('DOMContentLoaded', function () {
   var screenTicker = document.querySelector('#screenTicker');
   var waveW = document.querySelector('.waveW');
 
-  // a.list-group-item seulement : un item de playlist peut aussi contenir un
-  // lien YouTube (.badge, cf. music/index.html.twig), pas destiné à
-  // wavesurfer. Un simple querySelectorAll('a') le comptait comme une piste
-  // (index décalés, wavesurfer.load() appelé avec une URL YouTube) et le
-  // rendait aussi impossible à ouvrir normalement (cf. délégation de clic
-  // ci-dessous, qui appelait preventDefault() sur son clic aussi).
+  // Only a.list-group-item: a playlist item can also contain a YouTube badge link not meant for wavesurfer. A plain querySelectorAll('a') would count it as a track (offsetting indexes, loading a YouTube URL as audio) and also break its own click handling.
   function getLinks() {
     return playlist ? playlist.querySelectorAll('a.list-group-item') : [];
   }
 
-  // Load a track by index and highlight the corresponding link
-  // aria-current="true" en plus de la classe .active : la classe seule ne
-  // porte l'info que visuellement (couleur de fond), un lecteur d'écran ne
-  // peut pas la détecter. nowPlaying (aria-live) annonce le changement pour
-  // qui ne regarde pas la playlist à ce moment-là (clic ou piste suivante
-  // automatique).
+  // Loads a track by index and highlights the corresponding link. aria-current="true" is set alongside the .active class since the class alone is only a visual cue; nowPlaying (aria-live) announces the change for anyone not looking at the playlist.
   //
-  // autoplay (2e argument, true par défaut) : faux uniquement pour le
-  // chargement initial de la page (retour utilisatrice, 2026-08-13 : "la
-  // musique ne devrait pas se jouer dès qu'on arrive sur l'écran"). Un clic
-  // sur un morceau ou l'enchaînement automatique en fin de piste (event
-  // "finish" plus bas) restent une vraie lecture, donc autoplay=true.
+  // autoplay (2nd argument, true by default) is false only for the page's initial load: music shouldn't start playing the moment the screen appears. A click on a track or the automatic next-track on finish are real playback intents, so they default to autoplay=true.
   var pendingAutoplay = true;
   var setCurrentSong = function (index, autoplay) {
     var links = getLinks();
@@ -163,22 +122,17 @@ document.addEventListener('DOMContentLoaded', function () {
       trackCounter.textContent =
         String(currentTrack + 1).padStart(2, '0') + ' / ' + String(links.length).padStart(2, '0');
     }
-    // Sursaut bref (cf. @keyframes bb-screen-flicker, music.css), retiré
-    // après coup pour pouvoir se redéclencher au morceau suivant (une classe
-    // laissée en place ne rejoue pas son animation).
+    // Brief flicker effect, removed then re-added so it can retrigger on the next track: a class left in place never replays its animation.
     if (waveW) {
       waveW.classList.remove('screen-flicker');
-      void waveW.offsetWidth; // force le reflow, sinon le navigateur fusionne le remove+add et l'animation ne repart pas
+      void waveW.offsetWidth; // force a reflow, otherwise the browser coalesces remove+add and the animation never restarts
       waveW.classList.add('screen-flicker');
     }
     pendingAutoplay = false !== autoplay;
     wavesurfer.load(links[currentTrack].href);
   };
 
-  // Délégation sur le conteneur plutôt qu'un listener par <a> : reste valide
-  // même après un rafraîchissement en innerHTML de #playlist (cf. commentaire
-  // sur getLinks() ci-dessus), sans quoi les liens recréés n'auraient jamais
-  // de listener (celui-ci n'est posé qu'une fois, au chargement de la page).
+  // Delegated on the container rather than one listener per <a>: stays valid after an innerHTML refresh of #playlist, since re-created links would otherwise never get a listener (this one is bound only once, at page load).
   if (playlist) {
     playlist.addEventListener('click', function (e) {
       var link = e.target.closest('a.list-group-item');
@@ -193,8 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Play on audio load, sauf pour le chargement initial (cf. pendingAutoplay
-  // ci-dessus).
+  // Play on audio load, except for the initial page load (see pendingAutoplay above).
   wavesurfer.on('ready', function () {
     if (pendingAutoplay) {
       wavesurfer.play();
@@ -213,10 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Load the first track (rien à charger si la playlist est vide : sans
-  // cette garde, ça plante au chargement). autoplay=false : juste préparer
-  // le lecteur, pas déclencher la lecture toute seule à l'arrivée sur la
-  // page.
+  // Loads the first track (guarded, since an empty playlist has nothing to load). autoplay=false: just prepare the player, don't start playback on page arrival.
   if (getLinks().length) {
     setCurrentSong(0, false);
   }

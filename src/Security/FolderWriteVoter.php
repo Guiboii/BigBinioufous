@@ -7,11 +7,7 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-/**
- * Écriture (créer/déplacer/supprimer/uploader) dans un espace de
- * /desk/files/{space}, distincte de la lecture (gérée par access_control
- * dans security.yaml). Sujet = le space (string), cf. Folder::WRITE_ROLES.
- */
+// Write access (create/move/delete/upload) to a /desk/files/{space}, separate from read access, which is handled by access_control in security.yaml. Subject is the space name (string).
 class FolderWriteVoter extends Voter
 {
     public const WRITE = 'FOLDER_WRITE';

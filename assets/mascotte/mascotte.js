@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+// 3D scene for /home: a room whose walls/objects are clickable links to the other main pages (music, story, schedule, contact, join, file spaces).
 var canvas,
   clock,
   mixer,
@@ -208,12 +209,7 @@ function init() {
     },
   );
 
-  // trieurs (pile de classeurs posée sur le bureau) : 4 rayures du modèle
-  // (Desk.gltf, sous-mesh Cube011_7/Cube011_8) rendues cliquables via des
-  // volumes invisibles superposés, faute de sous-objets nommés dans le
-  // modèle 3D (une seule pile fusionnée, cf. contactPlane dans story.js
-  // pour le même principe). Coordonnées monde relevées par raycast/
-  // Box3Helper sur la pile visible (x:7.42-8.70, z:-5.52 à -4.03).
+  // The stack of binders on the desk is a single merged mesh in the GLTF model with no named sub-objects, so each binder's clickable area is an invisible box overlaid on it, positioned from world coordinates measured on the visible stack.
   addTrieur('trieurAccounting', 2.2, 2.58);
   addTrieur('trieurMusic', 2.58, 2.96);
   addTrieur('trieurAdmin', 2.96, 3.34);
@@ -268,9 +264,7 @@ function roomGeo(width, height, scaleY) {
   planeBack.name = 'planeBack';
   scene.add(planeBack);
 
-  // Mur gauche : seul mur de la pièce sans flyer/écran dessus (droite =
-  // schedule, fond = joinUS, avant hors champ caméra). Reste couleur unie
-  // (pas de texture ajoutée) et cliquable vers /contact, cf. raycast().
+  // Left wall: the only wall with no flyer/screen on it, stays plain colored and clickable to /contact.
   var planeLeft = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: red_wall }));
   planeLeft.position.x = -height;
   planeLeft.position.y = -planeLeft.position.x / 2;
@@ -309,9 +303,7 @@ function raycast(e, touch = false) {
   var intersects = raycaster.intersectObjects(scene.children, true);
   console.log(intersects);
 
-  // les trieurs (fine tranche de la pile) peuvent être occultés par le
-  // reste du bureau à distance quasi identique : on les cherche dans tous
-  // les objets touchés par le rayon, pas seulement le plus proche
+  // The binders are thin slices that can be occluded by the rest of the desk at nearly the same distance, so they're searched across every hit object, not just the closest.
   var trieurSpaces = {
     trieurAccounting: 'accounting',
     trieurMusic: 'music',
@@ -354,12 +346,7 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// GLTFLoader renomme les nœuds en collision avec le nom de la scène GLTF
-// d'origine (Desk.gltf a une scène ET un nœud tous deux nommés "Desk" :
-// le nœud devient "Desk_1" au chargement), donc object.parent.name ne
-// vaut jamais "Desk" pour les meshes du bureau. On remonte l'arborescence
-// jusqu'au groupe qu'on a nommé nous-mêmes (model.name = 'desk') plutôt
-// que de dépendre de ce renommage interne.
+// GLTFLoader renames nodes that collide with the source GLTF scene's own name (Desk.gltf has both a scene and a node named "Desk", so the node becomes "Desk_1" on load), so object.parent.name is never "Desk". This walks up to the group named explicitly in code (model.name = 'desk') instead of relying on that internal renaming.
 function isDescendantOf(object, name) {
   var current = object;
   while (current) {

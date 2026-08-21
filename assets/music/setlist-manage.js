@@ -1,14 +1,4 @@
-// Formulaires de la modale "Gérer la setlist" (ajout/édition/suppression/
-// ordre, cf. templates/music/index.html.twig) : soumis en fetch plutôt
-// qu'en navigation complète (retour utilisatrice, 2026-08-13 : "si tu peux
-// faire en sorte que ça reload pas tt la page à chaque clic"), pour garder
-// la modale ouverte et éviter de relancer toute la scène 3D à chaque petite
-// action. Après succès, seuls le contenu de la modale et la playlist
-// publique (#playlist) sont rafraîchis en re-fetchant /music et en extrayant
-// le HTML à jour : la liste des voix dans "Espace membres" n'est pas
-// retouchée ici (reste à jour seulement au prochain vrai rechargement),
-// compromis assumé pour rester simple, cas rare d'édition ET écoute
-// simultanées par la même personne.
+// The "Manage setlist" modal's forms (add/edit/delete/reorder), submitted via fetch rather than a full navigation, to keep the modal open and avoid restarting the whole 3D scene on every small action. On success, only the modal content and the public #playlist are refreshed by re-fetching /music and swapping in the fresh HTML; the "member area" voice list isn't touched here and stays stale until a real reload, an accepted tradeoff for the rare case of editing and listening at once.
 var setlistDialog = document.getElementById('setlistManageDialog');
 
 if (setlistDialog) {

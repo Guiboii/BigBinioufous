@@ -2,16 +2,7 @@
 
 namespace App\DataFixtures;
 
-/**
- * Contenu Markdown initial des sections de la page Histoire, repris de
- * l'ancien contenu codé en dur (translations/messages.fr.yaml, clés
- * story.*) lors du passage à un contenu éditable en base (StorySection).
- * Les <s> HTML d'origine deviennent des ~~texte~~ (strikethrough Markdown).
- * Utilisé par AppFixtures.php pour survivre à un futur `fixtures:load`
- * (cf. le bug déjà rencontré sur les dates du planning, ROADMAP.md Phase 6).
- * A aussi servi, une seule fois, à peupler la base locale déjà existante via
- * une commande jetable (app:seed-story-sections, supprimée après usage).
- */
+// Initial Markdown content of the Story page sections, used by AppFixtures.php so it survives a future fixtures:load.
 class StorySectionSeedData
 {
     /** @var array<int, array{0: string, 1: string}> */

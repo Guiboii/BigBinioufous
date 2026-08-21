@@ -7,19 +7,7 @@ table {
     display: block;
 }
 
-/* Grand écran vidéo en overlay (retour utilisatrice, 2026-08-21 : après un
-   essai de mise en page permanente avec la scène 3D réduite à côté - jugé
-   "casse le thème, nique le travail 3D" - puis un essai d'overlay pour
-   audio ET vidéo - jugé "le petit écran audio sur la chaîne était super",
-   recentré sur la vidéo YouTube seule). La scène 3D reste plein écran et
-   permanente (cf. .mascotte plus bas), le petit écran audio reste posé
-   dessus (cf. .player-wrap .row:first-child plus bas, calé en 3D par
-   updateOverlayPosition() dans music.js) : ce grand écran ne concerne QUE
-   la vidéo YouTube, ouvert par-dessus tout au clic sur un badge (cf.
-   youtube-embed.js). Même famille visuelle que .setlist-dialog (backdrop +
-   carte centrée), z-index 950 : au-dessus de la scène 3D et du petit écran
-   audio (tous deux 800/900), sous la modale de gestion de la setlist
-   (1000) si jamais les deux étaient ouvertes en même temps. */
+/* Large video overlay: the 3D scene stays full-screen and permanent, and the small audio screen stays glued to the furniture; this overlay is only for the YouTube video, opened over everything on a badge click. Same visual family as .setlist-dialog (backdrop + centered card). z-index 950: above the 3D scene and small screen (800/900), below the setlist management modal (1000) in case both were open at once. */
 .video-overlay {
     position: fixed;
     inset: 0;
@@ -68,12 +56,7 @@ table {
     background: transparent;
 }
 
-/* .row:first-child = la vitre (waveform) : positionnée/dimensionnée par
-   updateOverlayPosition() (music.js, position:fixed + left/top/width/height
-   posés en JS), le padding ci-dessous grignote quelques px vers l'intérieur
-   pour révéler un cadre "métal/bois" autour d'elle plutôt qu'un simple
-   rectangle plat. z-index:900 : au-dessus de la scène 3D (800) une fois
-   passée en position:fixed par le JS. */
+/* .row:first-child is the "screen" (waveform), positioned/sized by updateOverlayPosition() in music.js (position:fixed + left/top/width/height set in JS); the padding below eats a few px inward to reveal a "metal/wood" frame around it. z-index:900: above the 3D scene (800) once switched to position:fixed by JS. */
 .player-wrap .row:first-child {
     background: linear-gradient(155deg, #8a6a4c 0%, #695044 45%, #382c26 100%);
     padding: 5px;
@@ -86,9 +69,7 @@ table {
         0 0 20px 2px rgba(var(--bb-gold-rgb), 0.22);
     z-index: 900;
 }
-/* Vis aux coins du cadre : détail "meuble bricolé" cohérent avec le reste du
-   site (mascotte/soundsystem faits main), pas juste décoratif au hasard -
-   léger, jamais au-dessus du texte réel. */
+/* Screws at the frame corners: a "handmade furniture" detail consistent with the rest of the site, kept subtle and never overlapping real text. */
 .player-wrap .row:first-child::before,
 .player-wrap .row:first-child::after {
     content: '';
@@ -106,13 +87,7 @@ table {
 .player-wrap .row:first-child::after {
     right: 7px;
 }
-/* flex + align-items:center : sans ça les enfants (liens, svg, input range)
-   s'alignent sur leur baseline par défaut, très différente d'un élément à
-   l'autre (le slider en particulier partait visiblement plus haut que les
-   boutons à côté). Même langage "façade de meuble" que .row:first-child
-   juste au-dessus (dégradé bois/métal, liseré clair en haut, vis aux coins) :
-   sans ça la rangée de boutons restait plate à côté d'un écran retravaillé,
-   lisible comme "pas fini" plutôt que comme un seul appareil cohérent. */
+/* flex + align-items:center: without it, children (links, svg, range input) align on their default baseline, wildly different from one element to the next. Same "furniture facade" language as .row:first-child above (wood/metal gradient, screws) so the button row doesn't look flat next to a reworked screen. */
 .player-wrap .row.playerButtons {
     display: flex;
     align-items: center;
@@ -144,17 +119,7 @@ table {
 }
 
 
-/* Avant : cadre figé à 237px avec 2 colonnes ayant chacune leur propre
-   scrollbar (+ celle du player-wrap au-dessus, jamais nécessaire vu que
-   son contenu tient largement dedans) : 3 scrollbars imbriquées au total.
-   Réduit à une seule à l'origine, sur .playlist, en supposant .members-only
-   toujours assez court pour ne pas déborder. Faux dès qu'un morceau a
-   plusieurs voix (ex. 10 mp3 uploadés dans un même dossier) : sans overflow
-   ni scrollbar propres, le bas de la liste des voix était juste rogné par
-   .playlist-wrap (overflow: hidden ci-dessous), sans aucun moyen de
-   défiler pour l'atteindre (retour utilisatrice, 2026-08-13 : "à droite on
-   voit pas tt les musiques, et rien pour descendre"). .members-only reprend
-   donc le même traitement que .playlist. */
+/* Both .playlist and .members-only get their own scroll/overflow treatment: a song with several voices (e.g. 10 mp3s in one folder) can overflow, and without it the bottom of the voice list was simply cropped by this wrapper's overflow:hidden with no way to reach it. */
 .playlist-wrap {
     background: #4a3d37;
     border: 5px solid;
@@ -165,9 +130,7 @@ table {
     box-shadow: 0 0 20px 2px rgba(var(--bb-gold-rgb), 0.12);
 }
 
-/* Étiquette "console" décorative en tête de la playlist, même famille que le
-   compteur de piste de la vitre (.track-counter) : lie visuellement les 2
-   boîtes en un seul "poste" plutôt que 2 blocs sans rapport. */
+/* Decorative "console" label above the playlist, same family as the screen's track counter, visually tying the two boxes into one "device" rather than two unrelated blocks. */
 .console-label {
     margin: 0 0 0.4rem;
     font-family: "IBM Plex Mono", "Courier New", monospace;
@@ -211,11 +174,7 @@ table {
     background: var(--bb-gold);
 }
 
-/* Fond hérité de .playlist-wrap (#4a3d37, marron très sombre, L≈0.05) :
-   sans couleur explicite, le texte serait noir par défaut et les liens
-   hériteraient du vert --bb-green-mid (règle globale "a { color: ... }"),
-   l'un comme l'autre illisibles ici (~1:1). Même logique pour .playlist
-   .list-group-item et .loggedinContent ci-dessous. */
+/* Background inherited from .playlist-wrap (#4a3d37, very dark brown, L≈0.05): without an explicit color, text would default to black and links would inherit the global green (~1:1, unreadable here). Same reasoning applies to .list-group-item and .loggedinContent below. */
 .members-prompt {
     margin: 0;
     color: var(--bb-gold-pale);
@@ -238,9 +197,7 @@ table {
     font-size: 13px;
 }
 
-/* Bootstrap donne un fond blanc à .list-group-item par défaut, indépendamment
-   du .card qu'on n'utilise plus ici : sans le retirer, le texte doré atterrit
-   sur du blanc (~1.35:1, illisible) au lieu du marron voulu. */
+/* Bootstrap gives .list-group-item a white background by default, unrelated to the .card wrapper no longer used here: without removing it, the gold text lands on white (~1.35:1, unreadable) instead of the intended brown. */
 .playlist .list-group-item {
     display: flex;
     align-items: center;
@@ -257,10 +214,7 @@ table {
     flex: 0 0 auto;
     opacity: 0.8;
 }
-/* Sans couleur explicite, ce lien hérite de la règle globale "a { color:
-   var(--bb-green-mid) }" (~1:1 sur le marron très sombre #4a3d37 de
-   .playlist-wrap), illisible : même repli --bb-gold-pale que le reste de
-   cette zone (cf. .list-group-item juste au-dessus). */
+/* Without an explicit color, this link would inherit the global green (~1:1 on the very dark brown background, unreadable), so it falls back to --bb-gold-pale like the rest of this area. */
 .playlist .list-group-item .badge {
     margin-left: auto;
     color: var(--bb-gold-pale);
@@ -304,15 +258,7 @@ table {
     color: var(--bb-gold);
 }
 
-/* .desk-voice-toggle/.desk-voice-players (assets/main/app.css) pensées pour
-   le fond clair du gestionnaire de fichiers : --bb-green-deep (texte pastille
-   non active) et --bb-ink (texte "Joué par ...") y tiennent leur contraste,
-   mais sur le marron très sombre de .members-only (#4a3d37, L≈0.05) c'est
-   quasi illisible (~1.5:1 et ~1:1), même bug que .playlist/.loggedinContent
-   ci-dessus (retour utilisatrice, 2026-08-13 : "tjr du noir sur marron").
-   --bb-gold-pale (7.71:1 sur ce fond, AAA) déjà la couleur de repli établie
-   ici. L'état .active (fond plein --bb-green-mid, texte --bb-white, 6.82:1)
-   n'a pas ce problème, pas retouché. */
+/* .desk-voice-toggle/.desk-voice-players were designed for the light file manager background; on this very dark brown (#4a3d37, L≈0.05) they're nearly unreadable (~1.5:1 and ~1:1). --bb-gold-pale (7.71:1 here, AAA) is the established fallback color for this area. The .active state (solid --bb-green-mid fill, --bb-white text, 6.82:1) doesn't have this problem and is left untouched. */
 .members-only .desk-voice-toggle {
     border-color: var(--bb-gold-pale);
     color: var(--bb-gold-pale);
@@ -329,10 +275,7 @@ table {
     border-radius: 3px;
     box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55);
 }
-/* Vitre : lignes de balayage + vignette, purement visuelles (pseudo-élément,
-   jamais exposé à l'arbre d'accessibilité, contrairement à un <div>). Reste
-   discret (opacité faible) : la waveform en dessous doit rester lisible,
-   l'effet CRT est une texture, pas un filtre qui dégrade l'usage. */
+/* Screen scanlines + vignette, purely visual (pseudo-element, never exposed to the accessibility tree unlike a <div>). Kept subtle: the waveform underneath must stay readable, this CRT effect is a texture, not a filter degrading usability. */
 .waveW::after {
     content: '';
     position: absolute;
@@ -354,9 +297,7 @@ table {
     height: 100%;
 }
 
-/* Vit dans #videoOverlay (cf. plus haut), pas dans .waveW : plein le
-   conteneur, sans bezel/scanlines (registre visuel différent du petit écran
-   audio, une vidéo YouTube porte déjà ses propres contrôles). */
+/* Lives in #videoOverlay, not .waveW: fills the container plainly, no bezel/scanlines since a YouTube video already has its own controls. */
 #youtube-embed {
     width: 100%;
     height: 100%;
@@ -367,10 +308,7 @@ table {
     height: 100%;
     border: 0;
 }
-/* wavesurfer.js crée un <wave> interne (overflow-x:auto, pas de classe/id)
-   pour le défilement horizontal quand on zoome (#slider) au-delà de la
-   largeur du cadre : sans ça, scrollbar grise par défaut du navigateur,
-   flèches ◄► comprises, qui jure complètement avec le thème. */
+/* wavesurfer.js creates an internal <wave> element (overflow-x:auto, no class/id) for horizontal scrolling when zoomed past the frame width; without this, its default gray browser scrollbar clashes with the theme. */
 #waveform wave {
     scrollbar-width: thin;
     scrollbar-color: var(--bb-gold-pale) transparent;
@@ -389,8 +327,7 @@ table {
     background: var(--bb-gold);
 }
 
-/* Témoin/compteur superposés en coin de la vitre (jamais d'espace propre
-   réservé, cf. commentaire sur .row:first-child plus haut). */
+/* LED/counter overlaid in a screen corner, no dedicated space reserved for them. */
 .screen-chrome {
     position: absolute;
     inset: 0;
@@ -409,11 +346,7 @@ table {
     background: #4a1414;
     box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.6);
 }
-/* Rouge (--bb-red), jamais la seule différence entre les 2 états : la
-   pastille change aussi de taille/lueur, pas que de teinte (cf. règle
-   "jamais la seule teinte" du CLAUDE.md a11y - decorative/aria-hidden ici
-   donc pas un enjeu de lecteur d'écran, mais s'applique aussi au daltonisme
-   en simple lecture visuelle). */
+/* Red is never the only difference between the two states: the LED also changes size/glow, not just hue, since meaning should never rest on color alone even for a purely decorative element. */
 .power-led.is-playing {
     background: var(--bb-red);
     box-shadow: 0 0 6px 2px rgba(188, 39, 39, 0.85);
@@ -432,11 +365,7 @@ table {
     border-radius: 3px;
 }
 
-/* Titre du morceau en cours, doublon visuel de #now-playing (aria-live,
-   sr-only) : celui-ci reste purement décoratif (aria-hidden), l'annonce
-   vocale passe par l'autre élément. Ellipsis plutôt qu'un défilement
-   automatique : un titre long tronqué reste lisible sans animation
-   continue à l'écran (cf. section motion du plan). */
+/* Current track title, a visual duplicate of #now-playing (aria-live, sr-only): this one is purely decorative (aria-hidden), the screen reader announcement goes through the other element. Ellipsis rather than auto-scroll: a truncated long title stays readable without a continuous on-screen animation. */
 .screen-ticker {
     position: absolute;
     left: 0;
@@ -467,9 +396,7 @@ table {
     }
 }
 
-/* Bref sursaut de luminosité au changement de piste (posé/retiré par
-   Player.js), écho discret du "changement de chaîne" d'un vrai poste :
-   ~200ms, jamais répété tant qu'on ne change pas de piste. */
+/* Brief brightness flicker on track change (added/removed by Player.js), a subtle echo of a real device's "channel change": ~200ms, never repeated unless the track changes again. */
 @keyframes bb-screen-flicker {
     0% {
         filter: brightness(1);
@@ -499,8 +426,7 @@ table {
     width: 35%;
 }
 
-/* Slider de zoom natif : par défaut, rendu générique gris du navigateur qui
-   ne s'intègre pas au thème, même topo que les scrollbars. */
+/* Native zoom slider: by default a generic gray browser control that doesn't fit the theme, same story as the scrollbars. */
 input#slider {
     width: 15%;
     margin-left: 10px;
@@ -551,11 +477,7 @@ input#slider:focus-visible {
     margin-top: 5px;
 }
 
-/* #stopTrack/#playPause/#loopRegion sont maintenant de vrais <button>
-   (avant : <div>, cf. music/index.html.twig) : reset des styles par défaut
-   du navigateur (border/background/font), le reste de leur apparence (icônes,
-   couleurs, espacement) était déjà porté par les règles ci-dessous qui
-   ciblent les mêmes ids et n'ont pas besoin de changer. */
+/* #stopTrack/#playPause/#loopRegion are real <button> elements: this resets default browser button styling (border/background/font), the rest of their appearance is carried by the id-based rules below unchanged. */
 .player-btn {
     display: inline-flex;
     align-items: center;
@@ -566,10 +488,7 @@ input#slider:focus-visible {
     cursor: pointer;
 }
 
-/* Icônes du lecteur : fond #695044 (marron moyen, L≈0.09) derrière tout ça.
-   Avant : rgba(0,0,0,0.4) et --bb-green-mid/--bb-red-dark/--bb-ink, tous des
-   tons sombres sur un fond déjà sombre (~1.1-1.7:1, sous le minimum 3:1 des
-   icônes/UI WCAG). --bb-gold-pale tient ~5.5:1 dessus. */
+/* Player icons sit on a #695044 background (medium brown, L≈0.09). Dark tones there fall under the 3:1 WCAG minimum for icons/UI, while --bb-gold-pale reaches ~5.5:1. */
 #loopRegion, a#loopRegion:hover {
     margin-left: 5px;
     color: var(--bb-gold-pale);
@@ -613,47 +532,27 @@ input#slider:focus-visible {
 }
 
 
-/* Avant : button:focus { outline: none; } sans remplacement, donc aucun
-   indicateur de focus clavier visible sur les boutons du lecteur une fois
-   convertis en vrais <button> (cf. .player-btn ci-dessus). Même traitement
-   :focus-visible que le reste du site (fond sombre #695044 ici, L≈0.09 :
-   blanc tient largement le 3:1 minimum d'un indicateur de focus). */
+/* Same :focus-visible treatment as the rest of the site: white comfortably clears the 3:1 minimum for a focus indicator on this dark #695044 background. */
 .player-btn:focus-visible,
 #uploadNew:focus-visible {
     outline: 2px solid var(--bb-white);
     outline-offset: 2px;
 }
 
-/* Playlist/liste "voix" désormais de vraies <ul>/<li> (cf. audit
-   accessibilité, un lecteur d'écran annonce "liste de N éléments" alors
-   qu'un flux de <a>/<span> ne dit rien) : neutralise le style de liste par
-   défaut du navigateur (puces, marge/padding gauche), qui n'a jamais existé
-   avant que ces conteneurs soient de vraies listes. */
+/* The playlist/voice list are real <ul>/<li> elements, so a screen reader announces "list of N items" instead of saying nothing for a plain <a>/<span> stream; this neutralizes the browser's default list styling. */
 .playlist,
 .loggedinContent {
     list-style: none;
     margin: 0;
 }
 
-/* Bouton "Gérer la setlist" : dans .members-only (cf.
-   templates/music/index.html.twig, à côté de "Voir tous les fichiers"), donc
-   pas de position propre à poser ici — il hérite du positionnement déjà
-   fonctionnel de .playlist-wrap (fixed desktop via projection 3D, static
-   mobile, cf. règles plus haut/plus bas dans ce fichier). Seule la modale
-   elle-même (.setlist-dialog) reste hors de ce système, cf. plus bas. */
+/* "Manage setlist" trigger button lives inside .members-only, so it needs no positioning of its own; it inherits .playlist-wrap's already-functional layout. Only the modal itself (.setlist-dialog) stays outside that system. */
 .setlist-manage-trigger {
     display: block;
     margin-bottom: 0.6rem;
 }
 
-/* Modale de gestion de la setlist. z-index 1000 : au-dessus du canvas 3D
-   (800) et du player/playlist (900), jamais en compétition avec eux. Fond
-   clair --bb-gold-pale + texte --bb-ink (13.6:1, AAA) plutôt que le vert
-   sombre hérité par défaut d'un <form> "nu" (règle globale "form" tout en
-   haut de assets/main/app.css, --bb-gold sur --bb-green-mid, 3.63:1, sous le
-   minimum AA — bug confirmé par l'audit) : cohérent avec .mobile-note déjà
-   présent sur cette page, et la modale n'est de toute façon plus "dans" le
-   décor sombre de la scène. */
+/* Setlist management modal. z-index 1000: above the 3D canvas (800) and player/playlist (900), never competing with them. Light --bb-gold-pale background + --bb-ink text (13.6:1, AAA) rather than the dark green a bare <form> inherits by default (--bb-gold on --bb-green-mid only reaches 3.63:1, below AA). */
 .setlist-dialog {
     position: fixed;
     inset: 0;
@@ -722,10 +621,7 @@ input#slider:focus-visible {
     margin-top: 0;
 }
 
-/* <form> internes à la modale : neutralise l'héritage de la règle globale
-   "form" (fond --bb-green-mid + texte --bb-gold, le même bug de contraste
-   que ci-dessus) puisque le fond clair de la modale porte déjà sa propre
-   lisibilité. */
+/* Forms inside the modal: neutralizes the inherited global "form" styling, since the modal's light background already carries its own readability. */
 .setlist-dialog form {
     background: transparent;
     color: var(--bb-ink);
@@ -766,11 +662,7 @@ input#slider:focus-visible {
     margin-top: 1rem;
 }
 
-/* Liste des morceaux (ordre significatif : les boutons monter/descendre le
-   confirment, cf. audit) : chaque item garde son <details> d'édition
-   (contenu secondaire, la modale est déjà masquée par défaut) stylé comme un
-   vrai bouton repliable plutôt qu'un texte discret — <summary> est nativement
-   focusable/actionnable au clavier (Entrée/Espace), pas de JS requis pour ça. */
+/* Song list with meaningful order (the move up/down buttons confirm it): each item's edit <details> is styled as a real collapsible button, since <summary> is natively keyboard-focusable/actionable with no JS required. */
 .setlist-admin-list {
     list-style: none;
     margin: 0;
@@ -835,8 +727,7 @@ input#slider:focus-visible {
     outline-offset: 2px;
 }
 
-/* Boutons monter/descendre : avant, des glyphes nus (↑/↓) sans aucun style,
-   largement sous les 44px recommandés (cf. audit). */
+/* Move up/down buttons sized to the recommended 44px minimum tap target. */
 .setlist-order-btn {
     width: 44px;
     height: 44px;
@@ -862,25 +753,8 @@ input#slider:focus-visible {
     min-height: 44px;
 }
 
-/* Mode mobile (<=700px, cf. le script dans music/index.html.twig qui pose
-   .is-mobile sur <html> avant le 1er rendu) : music.js saute l'init Three.js
-   dans ce cas (meuble 3D + personnage illisibles en petit), donc le lecteur
-   (Player.js, indépendant du 3D) et la playlist restent affichés tels quels
-   mais en flux normal plutôt qu'en position:fixed calculée par projection
-   3D->2D (qui n'a plus de sens sans scène 3D à projeter). Fond clair
-   --bb-gold-pale + texte --bb-ink (13.6:1, largement AAA) plutôt qu'un vert
-   sombre : sur le fond --bb-gold du body, un bandeau clair s'intègre mieux
-   qu'un pavé vert foncé qui tranche fort.
-   Le bouton hamburger (.navbar-toggler, position:fixed sans top explicite)
-   n'a pas de top posé en dur : son "static position" fallback se calcule
-   à partir du 1er contenu du flux de <body>, ici .mobile-note (piège
-   vérifié empiriquement : augmenter le margin-top de .mobile-note pousse
-   le bouton vers le bas d'autant, alors qu'ils n'ont aucun lien direct en
-   CSS). Un margin-top généreux sur .mobile-note pousserait donc aussi le
-   bouton, sans jamais réellement les désuperposer (l'écart entre les deux
-   reste ~constant). Solution : décaler la bannière horizontalement après
-   le bouton (left: ~86px, sa largeur + marge) plutôt que verticalement en
-   dessous, et garder un margin-top modeste comme sur le reste du site. */
+/* Mobile mode (<=700px): music.js skips the Three.js init in this case (the 3D furniture is unreadable small), so the player and playlist stay displayed as normal document flow instead of the position:fixed computed by 3D->2D projection.
+   The hamburger button (.navbar-toggler, position:fixed with no explicit top) computes its static-position fallback from the first content in <body>'s flow, here .mobile-note: increasing this note's margin-top pushes the button down by the same amount, since they have no direct CSS relationship but the gap between them stays roughly constant. So the banner is shifted horizontally past the button (left: ~86px) instead of vertically below it. */
 .mobile-note {
     display: none;
 }
@@ -925,9 +799,7 @@ html.is-mobile .playlist-wrap {
 html.is-mobile .video-overlay {
     padding: 0.5rem;
 }
-/* 2 colonnes de 50% deviennent illisibles sous ~500px (cas du .members-only
-   vide la plupart du temps, mais .playlist doit rester lisible même seule) :
-   empilées à la place, .members-only après puisqu'elle est secondaire. */
+/* Two 50% columns become unreadable below ~500px, so they're stacked instead, with .members-only after .playlist since it's secondary. */
 html.is-mobile .playlist,
 html.is-mobile .members-only {
     display: block;

@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+// A schedule entry (rehearsal, concert, other) shown on /schedule.
 #[ORM\Entity(repositoryClass: \App\Repository\EventRepository::class)]
 class Event
 {
@@ -19,23 +20,14 @@ class Event
     #[ORM\Column(type: 'string', length: 255)]
     private $location;
 
-    /**
-     * Valeurs internes en anglais ('rehearsal'/'concert'/'other'), même
-     * convention que les rôles/choix existants (ex. ROLE_ADMIN, le champ
-     * `wish` de RegistrationType) : le libellé affiché est traduit
-     * (event.type_*), la valeur stockée en base ne l'est pas.
-     */
+    // Stored as an English internal value ('rehearsal'/'concert'/'other'); the displayed label is translated separately (event.type_*).
     #[ORM\Column(type: 'string', length: 20)]
     private $type;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private $date;
 
-    /**
-     * Facultatif : heure de fin (même jour). Sans elle, l'export .ics/
-     * Google/Outlook (ScheduleController) part sur une durée par défaut de
-     * 2h plutôt que d'inventer une heure de fin.
-     */
+    // Optional end time (same day). When absent, calendar export (.ics/Google/Outlook) falls back to a default 2h duration instead of guessing.
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $endDate;
 

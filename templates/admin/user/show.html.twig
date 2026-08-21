@@ -25,12 +25,7 @@
         </div>
 
         <h2>{{ 'admin.current_roles_title'|trans }}</h2>
-        {# Plus de garde "role.title != 'ROLE_USER'" ici : ROLE_USER est
-           implicite (User::getRoles() l'ajoute en dur, jamais stocké en
-           base), il n'a jamais de ligne correspondante dans `roles` depuis
-           le retrait de sa ligne Role cosmétique (cf. ROADMAP.md "Rôles
-           legacy et implicite nettoyés", 2026-08-12) : cette boucle ne
-           contient donc plus que des rôles réellement retirables. #}
+        {# No guard needed here: ROLE_USER is implicit and never has a corresponding row in `roles`, so this loop only ever contains roles that can actually be removed. #}
         <div class="role-pills">
             {% for role in roles %}
                 <span class="role-badge">

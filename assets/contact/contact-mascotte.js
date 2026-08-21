@@ -1,11 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-// Mascotte 3D animée (même modèle que /home, cf. assets/mascotte/mascotte.js)
-// en vignette dans l'en-tête de /contact, sans reconstruire toute la pièce
-// autour (cette page reste en flux 2D, pas de scène plein écran). Fond
-// transparent (alpha:true, pas de scene.background) : le personnage semble
-// posé directement sur le rose du mur plutôt que dans un cadre.
+// The same animated 3D mascot as /home, shown as a small thumbnail in the /contact header without rebuilding the room around it. Transparent background (alpha:true, no scene.background) so the character sits directly on the page's pink rather than in a frame.
 var canvas = document.getElementById('contact-mascotte');
 
 if (canvas) {

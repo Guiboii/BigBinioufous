@@ -13,6 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Folder[]    findAll()
  * @method Folder[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries and tree helpers for Folder: root lookup/creation, trash, search, cycle detection.
 class FolderRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -20,12 +21,7 @@ class FolderRepository extends ServiceEntityRepository
         parent::__construct($registry, Folder::class);
     }
 
-    /**
-     * Chaque espace (musique/admin/compta) a une racine dédiée, créée à la
-     * volée au premier accès plutôt que seedée en fixtures : même logique
-     * que DocumentController::resolveFolder() pour les sous-dossiers créés
-     * par glisser-déposer.
-     */
+    // Each space has a dedicated root folder, lazily created on first access rather than seeded in fixtures.
     public function findOrCreateRoot(string $space, EntityManagerInterface $manager): Folder
     {
         $root = $this->findOneBy(['space' => $space, 'parent' => null]);
@@ -48,15 +44,7 @@ class FolderRepository extends ServiceEntityRepository
         return $root;
     }
 
-    /**
-     * "02 Medley XXI/Hautbois Facile" -> crée/retrouve les 2 Folder imbriqués
-     * sous la racine de l'espace, et renvoie le plus profond. Vide -> racine.
-     * Partagé par DocumentController::upload() (chemin du glisser-déposer)
-     * et SetlistController (dossier du morceau). Ignore les dossiers en
-     * corbeille dans sa recherche par nom : sinon un upload/une création
-     * "ressusciterait" silencieusement un ancien dossier supprimé au lieu
-     * d'en recréer un propre.
-     */
+    // Resolves a slash-separated path (e.g. "Medley/Oboe") into nested folders under the space's root, creating what's missing, and returns the deepest one. Ignores trashed folders when matching by name, otherwise a new upload would silently resurrect a deleted folder.
     public function findOrCreateByPath(string $space, string $path, EntityManagerInterface $manager): Folder
     {
         $parent = $this->findOrCreateRoot($space, $manager);
@@ -82,14 +70,7 @@ class FolderRepository extends ServiceEntityRepository
     }
 
     /**
-     * Dossiers de 1er niveau (enfants directs de la racine) d'un espace,
-     * actifs, triés par nom : sert au select "dossier du morceau" de
-     * /music (SetlistController), pour lier un morceau à un dossier déjà
-     * créé (et déjà rempli via /desk/files/music) plutôt que d'en faire
-     * créer un à la volée par un champ texte libre (source de doublons par
-     * faute de frappe, retour utilisatrice le 2026-08-13). Ne crée pas la
-     * racine si elle n'existe pas encore (contrairement à
-     * findOrCreateRoot()) : lecture seule, pas d'effet de bord sur un GET.
+     * Active top-level folders (direct children of the root) of a space, sorted by name. Read-only: unlike findOrCreateRoot(), it does not create the root if missing, to avoid a side effect on a GET request.
      *
      * @return Folder[]
      */
@@ -103,11 +84,7 @@ class FolderRepository extends ServiceEntityRepository
         return $this->findActiveChildren($root);
     }
 
-    /**
-     * Vrai si $candidate est $ancestor lui-même ou un de ses descendants :
-     * sert à refuser un déplacement de dossier qui créerait un cycle
-     * (déplacer un dossier dans un de ses propres sous-dossiers).
-     */
+    // True when $candidate is $ancestor itself or one of its descendants; used to reject a move that would create a cycle.
     public function isSelfOrDescendantOf(Folder $candidate, Folder $ancestor): bool
     {
         $current = $candidate;
@@ -121,12 +98,7 @@ class FolderRepository extends ServiceEntityRepository
         return false;
     }
 
-    /**
-     * Vrai si $folder ou l'un de ses ancêtres est en corbeille : sert à
-     * bloquer l'accès direct par URL (?folder=ID) à un sous-dossier dont le
-     * parent a été supprimé (DeskController::files()), plutôt que de
-     * laisser un dossier "orphelin caché" rester consultable.
-     */
+    // True when $folder or one of its ancestors is trashed; blocks direct URL access to a subfolder whose parent was deleted.
     public function hasDeletedAncestor(Folder $folder): bool
     {
         $current = $folder->getParent();
@@ -141,9 +113,7 @@ class FolderRepository extends ServiceEntityRepository
     }
 
     /**
-     * Sous-dossiers actifs (hors corbeille) d'un dossier, triés par nom :
-     * remplace le findBy(['parent' => ...]) brut de DeskController::files()
-     * pour exclure ce qui est en corbeille.
+     * Active (non-trashed) subfolders of a folder, sorted by name.
      *
      * @return Folder[]
      */
@@ -153,8 +123,7 @@ class FolderRepository extends ServiceEntityRepository
     }
 
     /**
-     * Dossiers en corbeille d'un espace, les plus récemment supprimés
-     * d'abord : DeskController::trash().
+     * Trashed folders of a space, most recently deleted first.
      *
      * @return Folder[]
      */
@@ -170,11 +139,7 @@ class FolderRepository extends ServiceEntityRepository
     }
 
     /**
-     * Recherche récursive par nom sur tout l'espace (pas juste le dossier
-     * courant), cf. DeskController::files() en mode recherche. % et _ du
-     * terme utilisateur sont échappés (backslash, comportement par défaut
-     * de LIKE sous MySQL) pour qu'ils ne soient pas interprétés comme des
-     * jokers.
+     * Recursive search by name across the whole space, not just the current folder. Escapes % and _ in the query so they aren't treated as LIKE wildcards.
      *
      * @return Folder[]
      */

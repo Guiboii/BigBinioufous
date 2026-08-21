@@ -6,6 +6,7 @@ use App\Repository\StorySectionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 
+// Public /story page and its embedded minisite (rendered standalone on mobile, in an iframe on desktop).
 class StoryController extends AbstractController
 {
     #[Route('/story', name: 'story')]

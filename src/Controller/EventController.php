@@ -13,11 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-/**
- * CRUD des dates du planning, réservé à ROLE_ADMIN (préfixe /admin déjà
- * couvert par access_control dans security.yaml, pas de vérification de
- * rôle en plus à faire ici).
- */
+// CRUD for schedule dates, reserved to ROLE_ADMIN via the /admin prefix in security.yaml, no extra role check needed here.
 #[Route('/admin/event')]
 class EventController extends AbstractController
 {

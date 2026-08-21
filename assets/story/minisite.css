@@ -1,17 +1,11 @@
 /*
- * Page autonome (pas de layout global, cf. minisite.html.twig) : ces
- * variables reprennent volontairement les mêmes noms/valeurs que les
- * --bb-* de assets/main/app.css plutôt que d'en inventer une nouvelle
- * palette, mais sont redéclarées ici pour ne pas charger tout app.css
- * (qui redéfinirait le style des <a>/<form> et casserait ce design).
+ * Standalone page (no global layout): these variables reuse the same names/values as app.css's --bb-* where relevant, but are redeclared here rather than loading all of app.css, which would redefine <a>/<form> styling and break this design.
  *
- * Contrastes vérifiés (WCAG, sur fond --term-bg #0A2A22, L=0.018) :
- *   --term-fg    (corps de texte)      : 12.2:1 (AAA)
- *   --term-green (accent vert biniou)  :  7.7:1 (AAA)
- *   --term-red   (touches de rouge)    :  5.2:1 (AA, cf. note plus bas)
- * Testé en simulation protanopie/deutéranopie/tritanopie/achromatopsie :
- * tout reste lisible, la distinction repose sur la LUMINOSITÉ (fond très
- * sombre / texte clair), jamais sur la teinte seule.
+ * Contrast checked (WCAG, on --term-bg #0A2A22, L=0.018):
+ *   --term-fg    (body text)   : 12.2:1 (AAA)
+ *   --term-green (accent)      :  7.7:1 (AAA)
+ *   --term-red   (red accents) :  5.2:1 (AA, see note below)
+ * Verified under protanopia/deuteranopia/tritanopia/achromatopsia simulation: everything stays readable, since the distinction relies on LIGHTNESS (very dark background / light text), never on hue alone.
  */
 :root {
     --bb-green-deep: #0F352C;
@@ -21,39 +15,21 @@
     --term-bg: #0A2A22;
     --term-bg-panel: #0D3229;
 
-    /* Corps de texte : un blanc à peine teinté de vert plutôt que le vert
-       saturé ci-dessous. Sur de gros blocs de paragraphe, du vert vif sur
-       fond vert reste techniquement contrasté mais fatigue l'œil et se lit
-       "flou" (deux teintes de la même famille) ; ce ton clair règle ça tout
-       en gardant l'ambiance verte du fond. */
+    /* Body text: a white barely tinted with green rather than the saturated green below. Vivid green on a green background is technically contrasted but tiring and "blurry" to read (two shades of the same hue); this light tone fixes that while keeping the green mood. */
     --term-fg: #D9E8E4;
 
-    /* Vert phosphore ("vert biniou") : même teinte que --bb-green-mid
-       (~163°), éclairci et saturé façon vieil écran cathodique. Réservé
-       aux petits accents (puces, bordures, curseur, prompts ">") plutôt
-       qu'au texte courant, pour éviter l'effet "tout est vert". */
+    /* Phosphor green, same hue as --bb-green-mid, lightened and saturated like an old CRT screen. Reserved for small accents (bullets, borders, cursor, "$" prompts) rather than body text, to avoid an "everything is green" look. */
     --term-green: #3CDCAF;
 
-    /* Touches de rouge, à la place du jaune/or utilisé sur la navbar
-       principale. Volontairement plus clair que le rouge de marque
-       (--bb-red #BC2727, ~1.2:1 sur ce fond, illisible) : un rouge de
-       marque saturé ne passe pas sur un fond aussi sombre sans virer au
-       rose une fois suffisamment éclairci pour être lisible. --term-red
-       est le compromis le plus saturé qui tienne 5.2:1 (AA, texte normal)
-       en restant reconnaissable comme rouge. */
+    /* Red accent, replacing the gold used on the main navbar. Deliberately lighter than the brand red (--bb-red, ~1.2:1 on this background, unreadable): a saturated brand red can't pass on such a dark background without turning pink once lightened enough to be readable. --term-red is the most saturated compromise that still holds 5.2:1 (AA) while staying recognizably red. */
     --term-red: #EB7070;
-    /* Rouge de marque original : utilisé UNIQUEMENT en fond plein derrière
-       du texte blanc (jamais comme couleur de texte sur fond sombre), même
-       principe que le reste du site depuis le ménage CSS du 2026-08-10. */
+    /* Original brand red: used ONLY as a solid fill behind white text, never as a text color on a dark background. */
     --term-red-deep: #BC2727;
 
-    /* Anneau de focus clavier : toujours blanc pur, indépendant de la
-       palette rouge/vert du contenu, pour rester visible en toute
-       circonstance (WCAG 2.4.11). */
+    /* Keyboard focus ring: always pure white, independent of the red/green content palette, to stay visible in every circumstance (WCAG 2.4.11). */
     --term-focus: #FFFFFF;
 
-    /* "Bureau" derrière la fenêtre terminal (dégradé, pas une image :
-       gratuit à ajuster, fidèle à la palette du site). */
+    /* "Desktop" behind the terminal window: a gradient rather than an image, free to adjust and consistent with the site palette. */
     --desktop-a: #163F33;
     --desktop-b: #081D17;
     --taskbar-bg: #06140F;
@@ -63,9 +39,7 @@
     box-sizing: border-box;
 }
 
-/* Scrollbar aux couleurs du terminal plutôt que la barre grise par défaut
-   du navigateur. Firefox n'a que 2 couleurs à offrir (piste/pouce), le
-   reste (WebKit : Chrome/Safari/Edge) peut être détaillé un peu plus. */
+/* Scrollbar themed to the terminal colors rather than the browser's default gray. Firefox only takes 2 colors (track/thumb), the WebKit rules below can be more detailed. */
 * {
     scrollbar-width: thin;
     scrollbar-color: var(--term-green) var(--term-bg-panel);
@@ -110,11 +84,7 @@ body {
     color: var(--term-bg);
 }
 
-/* Navbar du site + petite note, seulement quand cette page est ouverte
-   directement (redirigée depuis /story sur mobile), jamais quand elle
-   est affichée dans l'iframe #miniSite sur l'écran 3D (desktop) : sinon
-   on retombe dans le bug "page dans la page" déjà corrigé une fois.
-   .is-standalone/.is-embedded posée en <head>, avant le premier rendu. */
+/* Site navbar + note, shown only when this page is opened directly (redirected from /story on mobile), never when displayed in the #miniSite iframe on the 3D screen (desktop), to avoid a "page inside a page" duplication. .is-standalone/.is-embedded is set in <head>, before the first render. */
 .site-nav {
     display: none;
 }
@@ -154,10 +124,7 @@ html.is-standalone .site-nav {
     outline-offset: 2px;
 }
 
-/* "Bureau" : le fond visible tout autour de la fenêtre terminal (~20%
-   de l'écran, la fenêtre en occupe 80%), avec quelques icônes et une
-   barre des tâches pour lire clairement "poste de travail ouvert",
-   pas juste une bordure de couleur. */
+/* "Desktop": the visible background around the terminal window (~20% of the screen, the window takes 80%), with a few icons and a taskbar to read clearly as "an open computer" rather than just a colored border. */
 .desktop {
     position: relative;
     width: 100%;
@@ -264,8 +231,7 @@ html.is-standalone .site-nav {
     opacity: 0.85;
 }
 
-/* La fenêtre terminal elle-même : 80% de l'écran pour laisser voir le
-   "bureau" autour, façon fenêtre d'application plutôt que plein écran. */
+/* The terminal window itself: 80% of the screen to let the "desktop" show around it, app-window style rather than full screen. */
 .term-window {
     position: relative;
     width: 80%;
@@ -288,10 +254,7 @@ a:focus-visible {
     color: var(--term-red);
 }
 
-/* Barre de titre façon vieux terminal, avec curseur clignotant rouge.
-   Les 3 points sont une décoration de chrome de fenêtre (pas des boutons
-   fonctionnels) : leur couleur n'a pas besoin d'être distinguée à la
-   teinte près par tout le monde, contrairement au reste de la page. */
+/* Old-terminal-style title bar with a blinking red cursor. The 3 dots are pure window-chrome decoration, not functional buttons, so their exact hue doesn't need to be distinguishable by everyone the way the rest of the page does. */
 .term-titlebar {
     flex: 0 0 auto;
     display: flex;
@@ -333,7 +296,7 @@ a:focus-visible {
     50%, 100% { opacity: 0; }
 }
 
-/* Menu d'ancres : liens directs vers les sections, pas de JS requis */
+/* Anchor menu: direct links to sections, no JS required */
 .term-nav {
     flex: 0 0 auto;
     display: flex;
@@ -343,8 +306,7 @@ a:focus-visible {
     background: var(--bb-green-mid);
     font-size: 0.95rem;
 }
-/* padding vertical généreux : zone de tap confortable au doigt (le texte
-   seul ne fait que ~22px de haut, sous le minimum recommandé de 24px) */
+/* Generous vertical padding: a comfortable tap target, since the text alone is only ~22px tall, below the recommended 24px minimum. */
 .term-nav a {
     display: inline-block;
     padding: 0.55rem 0.2rem;
@@ -415,11 +377,7 @@ p {
     margin: 0 0 1rem;
 }
 
-/* Texte barré (~~texte~~ en Markdown, rendu en <del> par league/commonmark,
-   contenu éditable de StorySection) : sert de blague récurrente dans le
-   texte d'origine ("y'en a ils savent jouer... non en fait ils savent
-   tous") : un rouge discret renforce la correction/le gag plutôt que de
-   décorer au hasard. */
+/* Strikethrough text (~~text~~ in Markdown, editable StorySection content) is used as a recurring joke/self-correction in the original text: a subtle red reinforces that rather than decorating at random. */
 s,
 del {
     color: var(--term-red);
@@ -437,7 +395,7 @@ li::marker {
     color: var(--term-green);
 }
 
-/* Formulaire de contact façon invite de commande */
+/* Contact form styled like a command prompt */
 .term-form {
     margin-top: 1rem;
     padding: 1.25rem;
@@ -490,8 +448,7 @@ li::marker {
     cursor: default;
 }
 
-/* Honeypot anti-spam : hors écran plutôt que display:none (certains bots
-   l'ignorent spécifiquement), même technique que assets/main/app.css. */
+/* Anti-spam honeypot: moved off-screen rather than display:none, since some bots specifically ignore that. */
 .hp-field {
     position: absolute;
     left: -9999px;
@@ -500,10 +457,7 @@ li::marker {
     overflow: hidden;
 }
 
-/* --term-fg dans les deux cas (12.2:1 AAA, cf. en-tête de fichier) : la
-   distinction succès/erreur passe par le texte lui-même et par ce liseré,
-   jamais par la seule couleur du texte (cf. règle du projet sur le
-   daltonisme). */
+/* --term-fg in both cases (12.2:1 AAA): the success/error distinction comes from the text itself and this left border, never from text color alone. */
 .contact-status {
     margin: 0.75rem 0 0;
     color: var(--term-fg);
@@ -524,8 +478,7 @@ li::marker {
 }
 
 @media (max-width: 700px) {
-    /* Le bureau derrière n'a plus de sens sur petit écran (pas la place
-       de le voir) : la fenêtre prend tout l'espace, façon app plein écran. */
+    /* The desktop behind no longer makes sense on a small screen, so the window takes the full space instead, app-style. */
     .desktop {
         padding-bottom: 0;
         display: block;

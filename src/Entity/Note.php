@@ -5,13 +5,7 @@ namespace App\Entity;
 use App\Repository\NoteRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Outil de prise de note du bureau/conseil (ROADMAP.md "espace
- * administratif"), volontairement pas collaboratif : une note a un seul
- * auteur, qui reste seul·e à pouvoir la modifier/supprimer même si elle est
- * partagée (cf. NoteController). $shared ne change que la visibilité en
- * lecture pour le reste du bureau/conseil (ROLE_ADMIN/ROLE_COMPTA).
- */
+// A board note, deliberately not collaborative: only its author can edit/delete it. $shared only affects read visibility for other admins/compta.
 #[ORM\Entity(repositoryClass: NoteRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Note

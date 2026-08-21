@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
+// Switches the session locale (fr/en/br) and redirects back to where the request came from.
 class LocaleController extends AbstractController
 {
     #[Route('/locale/{locale}', name: 'app_locale', requirements: ['locale' => 'fr|en|br'])]

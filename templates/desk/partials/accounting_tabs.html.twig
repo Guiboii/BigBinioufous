@@ -1,8 +1,4 @@
-{# Sous-navigation de l'espace Comptabilité (fusion de l'ancien /accountant
-   dans /desk/files/accounting, cf. ROADMAP.md "Espace compta") : Relevés
-   (gestionnaire de fichiers déjà existant), Devis & Factures et Trésorerie.
-   Incluse par desk/files.html.twig (uniquement pour space == 'accounting')
-   et par les templates accounting/*, avec activeTab pour l'onglet courant. #}
+{# Sub-navigation for the accounting space: Files, Quotes & Invoices, Treasury. Included by desk/files.html.twig (only for space == 'accounting') and by the accounting/* templates, with activeTab marking the current one. #}
 <nav class="accounting-tabs" aria-label="{{ 'accounting.tabs_label'|trans }}">
     <a href="{{ path('desk_files', {space: 'accounting'}) }}" class="accounting-tab{% if activeTab == 'files' %} active{% endif %}"{% if activeTab == 'files' %} aria-current="page"{% endif %}>
         <i class="ri-folder-3-fill" aria-hidden="true"></i> {{ 'accounting.tab_files'|trans }}

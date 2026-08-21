@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method AccountingDocumentLine[]    findAll()
  * @method AccountingDocumentLine[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for AccountingDocumentLine (no custom queries yet, lines are always accessed through their parent document).
 class AccountingDocumentLineRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

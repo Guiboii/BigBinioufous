@@ -23,11 +23,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
+// Authentication: login page, registration, password change, profile picture upload.
 class LoginController extends AbstractController
 {
-    /**
-     * page to join.
-     */
     #[Route('/join', name: 'join')]
     public function index(AuthenticationUtils $utils, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder)
     {
@@ -40,51 +38,23 @@ class LoginController extends AbstractController
         ]);
     }
 
-    /**
-     * /login redirects to /join: security.yaml's login_path/check_path already
-     * point to the "join" route, /login is never used by the real auth flow.
-     * join/login.html.twig used to be rendered here as a standalone document
-     * (via popup.html.twig) but is now a fragment included inline in
-     * join/index.html.twig, so it can no longer be rendered on its own.
-     */
+    // security.yaml's login_path/check_path point to "join", so /login is never used by the real auth flow and just redirects there.
     #[Route('/login', name: 'login')]
     public function login(): Response
     {
         return $this->redirectToRoute('join');
     }
 
-    /**
-     * to logout.
-     *
-     * @return void
-     */
+    // Intercepted by the security firewall before this body ever runs.
     #[Route('/logout', name: 'logout')]
     public function logout()
     {
     }
 
     /**
-     * Inscription simplifiée (2026-08-12, cf. ROADMAP.md) : juste pseudo/
-     * email/mot de passe (RegistrationType). Le compte n'est jamais validé
-     * automatiquement (avant : "Simple" auto-validé selon le souhait wish,
-     * retiré) : chaque inscription attend une validation manuelle par un·e
-     * admin, quel que soit le profil, cf. AdminController::index()/
-     * validUser(). Identité/instrument/adhésion se complètent après coup
-     * sur /desk/profile.
+     * Registration only asks for nickname/email/password. The account is never auto-validated; it always waits on manual admin approval. Auto-logs the account in right after signup, then redirects to the profile page to complete it.
      *
-     * Connexion automatique après inscription (2026-08-21, retour utilisatrice
-     * "je veux arriver direct sur le profil en étant connecté·e") : cohérent
-     * avec le fait que la connexion elle-même n'a jamais été bloquée avant
-     * validation admin (cf. bandeau "en cours de vérification" sur /desk,
-     * ROADMAP.md "Inscription simplifiée"). Security::login() nécessite le
-     * nom explicite de l'authenticator ('form_login') car le firewall main
-     * en expose deux (form_login + le two_factor de scheb/2fa-bundle) ;
-     * sans le préciser, Security::login() lève une LogicException
-     * "Too many authenticators". Sans incidence sur le 2FA lui-même : un
-     * compte tout juste créé n'a jamais de secret TOTP enregistré
-     * (User::isTotpAuthenticationEnabled()), donc rien ne l'interrompt ici.
-     *
-     * @return Response
+     * Security::login() needs the authenticator name spelled out ('form_login') because the main firewall exposes two (form_login + scheb/2fa-bundle's two_factor); omitting it throws "Too many authenticators". No 2FA interference here since a brand new account never has a TOTP secret yet.
      */
     #[Route('/register', name: 'register')]
     public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, MailerInterface $mailer, LoggerInterface $logger, #[Autowire(param: 'admin_notification_email')] string $adminNotificationEmail, RegistrationMailer $registrationMailer, Security $security)
@@ -120,17 +90,7 @@ class LoginController extends AbstractController
         ]);
     }
 
-    /**
-     * Squelette d'envoi de mail (demande explicite de l'utilisatrice,
-     * 2026-08-12 : "mets le squelette, le reste on verra après") :
-     * MAILER_DSN n'est pas encore configuré en prod (cf. ROADMAP.md "Emails
-     * fonctionnels", bloqué sans accès mail), donc rien ne part réellement
-     * pour l'instant. Erreur attrapée et loguée (pas silencieuse) plutôt que
-     * laissée remonter : ne doit jamais faire échouer l'inscription
-     * elle-même, déjà enregistrée en base à ce stade. admin_notification_email
-     * (config/services.yaml) est un placeholder à remplacer par la vraie
-     * adresse une fois le mail configuré.
-     */
+    // MAILER_DSN isn't configured in prod yet, so nothing actually sends for now. Errors are caught and logged rather than left to bubble up: this must never fail the registration itself, already saved to the database at this point.
     private function notifyAdminsOfNewRegistration(MailerInterface $mailer, LoggerInterface $logger, string $adminNotificationEmail, User $user): void
     {
         try {
@@ -150,11 +110,6 @@ class LoginController extends AbstractController
         }
     }
 
-    /**
-     * update profile.
-     *
-     * @return Response
-     */
     #[Route('/desk/profile', name: 'profile')]
     public function profile(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger)
     {
@@ -164,29 +119,22 @@ class LoginController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $brochureFile */
             $pictureFile = $form->get('picture')->getData();
 
-            // this condition is needed because the 'brochure' field is not required
-            // so the PDF file must be processed only when a file is uploaded
+            // The picture field is optional, only process a file when one was actually uploaded.
             if ($pictureFile) {
                 $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureFile->guessExtension();
 
-                // Move the file to the directory where brochures are stored
                 try {
                     $pictureFile->move(
                         $this->getParameter('pictures_directory'),
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
                 }
 
-                // updates the 'brochureFilename' property to store the PDF file name
-                // instead of its contents
                 $user->setPicture($newFilename);
             }
 
@@ -204,11 +152,6 @@ class LoginController extends AbstractController
         ]);
     }
 
-    /**
-     * Update the password.
-     *
-     * @return void
-     */
     #[Route('/desk/update-password', name: 'update-password')]
     public function updatePassword(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager)
     {

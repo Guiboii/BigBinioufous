@@ -11,17 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+// Create, trash, restore, purge, and move on Folder.
 #[Route('/desk/files/{space}/folders', requirements: ['space' => 'music|admin|accounting|other'])]
 class FolderController extends AbstractController
 {
-    /**
-     * Crée un sous-dossier vide dans le dossier courant (formulaire dédié,
-     * cf. templates/desk/files.html.twig) : sert notamment à préparer une
-     * destination avant de déplacer des fichiers dedans (document_move/
-     * folder_move). Refuse un doublon plutôt que de fusionner en silence
-     * (contrairement à DocumentController::resolveFolder(), utilisé lui pour
-     * reconstituer un chemin de glisser-déposer sans intervention explicite).
-     */
+    // Creates an empty subfolder. Rejects a duplicate name rather than silently merging, unlike the path-based auto-creation used for drag-and-drop uploads.
     #[Route('', name: 'folder_create', methods: ['POST'])]
     public function create(string $space, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
     {
@@ -54,12 +48,7 @@ class FolderController extends AbstractController
         return $this->redirectToRoute('desk_files', ['space' => $space, 'folder' => $parent->getId()]);
     }
 
-    /**
-     * Met un dossier à la corbeille (non récursif : cf. Folder::$deletedAt,
-     * ses sous-dossiers/documents ne sont pas touchés, la restauration
-     * ramène tout l'arbre d'un coup). Suppression définitive : voir
-     * purge() ci-dessous.
-     */
+    // Moves a folder to the trash, non-recursively: children are untouched so a restore brings the whole subtree back at once. See purge() for permanent deletion.
     #[Route('/{id}', name: 'folder_delete', methods: ['DELETE'])]
     public function delete(string $space, Folder $folder, Request $request, EntityManagerInterface $manager): Response
     {
@@ -79,12 +68,7 @@ class FolderController extends AbstractController
         return $this->redirectToRoute('desk_files', array_merge(['space' => $space], $request->query->all()));
     }
 
-    /**
-     * Sort un dossier de la corbeille. Si son parent (ou un ancêtre plus
-     * lointain) est lui-même toujours supprimé, il repart à la racine de
-     * l'espace plutôt que de rester un "orphelin caché" invisible
-     * (cf. FolderRepository::hasDeletedAncestor()).
-     */
+    // Restores a trashed folder. If its parent is still trashed, it goes back to the space's root instead of staying a hidden orphan.
     #[Route('/{id}/restore', name: 'folder_restore', methods: ['POST'])]
     public function restore(string $space, Folder $folder, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
     {
@@ -108,14 +92,7 @@ class FolderController extends AbstractController
         return $this->redirectToRoute('desk_files_trash', ['space' => $space]);
     }
 
-    /**
-     * Suppression définitive d'un dossier et de tout son contenu : seul
-     * endroit du gestionnaire de fichiers qui touche vraiment au disque
-     * (les fichiers physiques des documents descendants sont supprimés
-     * après le flush Doctrine, une fois la suppression en base confirmée).
-     * La cascade Doctrine (Folder::$children/$documents,
-     * cascade+orphanRemoval) supprime déjà les lignes en base.
-     */
+    // Permanent deletion of a folder and everything under it. Doctrine cascade removes the rows; physical files are removed only after that flush is confirmed.
     #[Route('/{id}/purge', name: 'folder_purge', methods: ['DELETE'])]
     public function purge(string $space, Folder $folder, Request $request, EntityManagerInterface $manager): Response
     {
@@ -145,9 +122,9 @@ class FolderController extends AbstractController
     }
 
     /**
-     * @return string[] noms de fichiers physiques de tous les documents
-     *                  sous ce dossier, récursivement, à récupérer avant
-     *                  le remove() Doctrine qui les efface de la base
+     * Physical filenames of every document under this folder, recursively, collected before Doctrine's remove() erases the rows.
+     *
+     * @return string[]
      */
     private function collectDescendantFilenames(Folder $folder): array
     {
@@ -164,11 +141,7 @@ class FolderController extends AbstractController
         return $filenames;
     }
 
-    /**
-     * Déplace un dossier (et tout son contenu) vers un autre dossier du
-     * même espace. Refuse un déplacement dans lui-même ou un de ses propres
-     * descendants (cycle dans l'arbre), cf. FolderRepository::isSelfOrDescendantOf().
-     */
+    // Moves a folder (and its contents) into another folder of the same space. Rejects a move into itself or one of its own descendants.
     #[Route('/{id}/move', name: 'folder_move', methods: ['POST'])]
     public function move(string $space, Folder $folder, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
     {

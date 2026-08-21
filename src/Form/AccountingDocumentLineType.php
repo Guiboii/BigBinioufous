@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+// Form for a single AccountingDocumentLine, embedded as a CollectionType entry in AccountingDocumentType.
 class AccountingDocumentLineType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)

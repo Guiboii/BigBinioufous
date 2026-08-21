@@ -1,8 +1,4 @@
-/* Export imprimable des notes (templates/note/export.html.twig), même
-   raisonnement que assets/accounting/document-print.css : noir sur blanc,
-   bouton "Exporter en PDF" -> window.print() (pas de génération PDF côté
-   serveur, cf. ROADMAP.md pour la même décision côté devis/factures).
-   Chargée uniquement sur cette page. */
+/* Printable note export, same reasoning as document-print.css: plain black on white, "Export to PDF" button triggers window.print(), no server-side PDF generation. Loaded only on this page. */
 
 .note-print {
     max-width: 210mm;
@@ -41,9 +37,7 @@
     body {
         background: #ffffff;
     }
-    /* body > header (pas juste "header") : même piège que document-print.css,
-       la navbar du site est un <header> enfant direct de <body>, distinct de
-       tout <header>/titre propre à cette page. */
+    /* body > header, not just "header": same pitfall as document-print.css, the site navbar is a <header> direct child of <body>, distinct from any header of this page's own content. */
     body > header,
     .skip-link,
     .alert,

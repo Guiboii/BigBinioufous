@@ -11,22 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Actions groupées sur une sélection de dossiers/documents (multi-sélection,
- * cf. templates/desk/files.html.twig, formulaire "bulk-form"). Contrôleur
- * séparé de FolderController/DocumentController plutôt que d'y ajouter une
- * 2e logique : les routes individuelles existantes (folder_delete,
- * document_move...) restent inchangées, ceci n'est qu'un ajout qui les
- * appelle en boucle.
- */
+// Bulk actions on a multi-selection of folders/documents. Kept separate from FolderController/DocumentController: it just loops over their same underlying logic rather than duplicating routes.
 #[Route('/desk/files/{space}/bulk', requirements: ['space' => 'music|admin|accounting|other'])]
 class BulkActionController extends AbstractController
 {
-    /**
-     * Met à la corbeille tous les dossiers/documents cochés (même soft
-     * delete non récursif que FolderController::delete()/
-     * DocumentController::delete(), un par un).
-     */
+    // Trashes every checked folder/document, same non-recursive soft delete as the single-item routes, applied one by one.
     #[Route('/delete', name: 'bulk_delete', methods: ['POST'])]
     public function delete(string $space, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository, DocumentRepository $documentRepository): Response
     {
@@ -61,11 +50,7 @@ class BulkActionController extends AbstractController
         return $this->redirectToRoute('desk_files', ['space' => $space, 'folder' => $request->request->get('folder')]);
     }
 
-    /**
-     * Déplace tous les dossiers/documents cochés vers $target (même
-     * validation anti-cycle que FolderController::move() pour chaque
-     * dossier de la sélection).
-     */
+    // Moves every checked folder/document to $target, with the same cycle check as FolderController::move() applied to each folder in the selection.
     #[Route('/move', name: 'bulk_move', methods: ['POST'])]
     public function move(string $space, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository, DocumentRepository $documentRepository): Response
     {

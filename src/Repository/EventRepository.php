@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Event[]    findAll()
  * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for Event.
 class EventRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -32,10 +33,7 @@ class EventRepository extends ServiceEntityRepository
     }
 
     /**
-     * Pour /schedule (public) : hors connexion, seuls les concerts sont
-     * publics, répétitions/autres réservés aux comptes connectés (n'importe
-     * quel rôle). Les admins gardent une vue complète via
-     * findAllOrderedByDate() sur /admin/event, indépendante de ce filtre.
+     * For the public /schedule page: logged-out visitors only see concerts, rehearsals/other are reserved to logged-in accounts. Admins keep a full view via findAllOrderedByDate() elsewhere, independent of this filter.
      *
      * @return Event[]
      */

@@ -8,19 +8,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+// Form for creating/editing a StorySection.
 class StorySectionType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // Textarea brute par défaut, transformée en éditeur Markdown avec
-        // aperçu live par assets/desk/story-admin.js (EasyMDE) : reste
-        // utilisable même si le JS ne charge pas pour une raison ou une autre.
-        // Pas d'id forcé dans attr : le widget_attributes de Bootstrap 4
-        // imprime déjà "id" à partir de vars.id, un attr.id en plus aurait
-        // juste dupliqué l'attribut HTML sans l'écraser. story-admin.js
-        // cible donc l'id auto-généré par Symfony (story_section_content,
-        // stable entre new/edit : dérivé du nom du FormType, pas de l'id
-        // de l'entité).
+        // Plain textarea by default, upgraded to a Markdown editor with live preview by story-admin.js (EasyMDE), still usable if the JS fails to load. No forced id here: story-admin.js targets Symfony's auto-generated id (story_section_content), stable between new/edit since it's derived from the form type name, not the entity id.
         $contentConfig = $this->getConfiguration('story_admin.field_content', 'story_admin.field_content_placeholder');
         $contentConfig['attr'] = array_merge($contentConfig['attr'], ['rows' => 16]);
 

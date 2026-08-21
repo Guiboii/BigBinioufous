@@ -32,13 +32,7 @@ var green = 0x1f6652;
 var white = 0xffffff;
 var black = 0x000000;
 
-// Ancrages de la face avant du meuble SoundSystem (plan quasi plat, x≈-8.406
-// dans le repère monde), mesurés une fois par raycast caméra->modèle sur un
-// rendu de référence, cf. section "Cadrage d'un overlay 2D..." de CLAUDE.md.
-// Reprojetés à chaque resize via camera.project() : le petit écran audio
-// (waveform + boutons + playlist) reste posé sur le meuble, la scène 3D
-// gardant son plein écran/sa mise en page d'origine (retour utilisatrice,
-// 2026-08-21, après un essai de scène réduite jugé "casse le thème").
+// World-space anchors of the SoundSystem furniture's front panel (a near-flat plane at x≈-8.406), measured once via a camera->model raycast on a reference render. Reprojected on every resize via camera.project() so the small audio screen (waveform + buttons + playlist) stays glued to the furniture while the 3D scene keeps its own full-screen layout.
 var PANEL_PLANE_X = -8.406;
 var PANEL_Z_LEFT = 3.298;
 var PANEL_Z_RIGHT = 0.734;
@@ -49,18 +43,9 @@ var BUTTONS_Y_BOTTOM = 3.82679;
 var PLAYLIST_Y_TOP = 3.82679;
 var PLAYLIST_Y_BOTTOM = 2.871574;
 
-// .is-mobile posée par templates/music/index.html.twig avant le 1er rendu
-// (cf. commentaire là-bas) : sur petit écran, le meuble 3D est illisible,
-// donc on ne l'initialise même pas. Player.js (import plus haut) tourne
-// indépendamment de tout ça et reste actif dans les deux cas.
+// On small screens the 3D furniture is unreadable, so it's never initialized; Player.js keeps running independently either way.
 //
-// Doit rester APRÈS les "var PANEL_*"/"var SCREEN_*" etc. ci-dessus : init()
-// appelle updateOverlayPosition() de façon synchrone à la fin, qui lit ces
-// constantes immédiatement. Un "var" est hoisté (la déclaration existe dès
-// le haut du fichier) mais pas son AFFECTATION : appeler init() avant que
-// ces lignes "var X = ..." aient réellement été exécutées les laisse tous à
-// `undefined`, d'où des positions aberrantes (bug vécu le 2026-08-21 en
-// réorganisant ce fichier : coordonnées de l'ordre de 10^19px).
+// This must stay AFTER the "var PANEL_*"/"var SCREEN_*" declarations above: init() synchronously calls updateOverlayPosition(), which reads those constants immediately. "var" hoists the declaration but not the assignment, so calling init() too early leaves them all `undefined`, producing wildly wrong positions.
 if (!document.documentElement.classList.contains('is-mobile')) {
   init();
   animate();
@@ -157,9 +142,7 @@ function projectPoint(x, y, z) {
   };
 }
 
-// yTop/yBottom : coordonnées monde (repère du plan de la face avant), pas
-// des pixels. Renvoie le rectangle écran correspondant pour la fenêtre
-// actuelle.
+// yTop/yBottom are world-space coordinates on the front panel's plane, not pixels. Returns the matching screen rectangle for the current window.
 function projectPanelBox(yTop, yBottom) {
   var topLeft = projectPoint(PANEL_PLANE_X, yTop, PANEL_Z_LEFT);
   var bottomRight = projectPoint(PANEL_PLANE_X, yBottom, PANEL_Z_RIGHT);
@@ -181,10 +164,7 @@ function applyBox(el, box) {
 }
 
 function updateOverlayPosition() {
-  // camera.matrixWorldInverse n'est recalculée que par le rendu (ou ici,
-  // explicitement) : sans ça, le premier appel (avant la 1re frame rendue
-  // par animate()) projette avec une matrice caméra encore périmée et
-  // produit des positions aberrantes.
+  // camera.matrixWorldInverse is only recalculated by a render (or explicitly here): without this, the first call, before animate()'s first frame, projects with a stale camera matrix and produces wildly wrong positions.
   camera.updateMatrixWorld();
 
   applyBox(
@@ -319,12 +299,7 @@ function render() {
   renderer.render(scene, camera);
 }
 
-// Gestion des popups (connexion + gestion de la setlist, cf.
-// templates/music/index.html.twig) : même pattern trigger/dialog réutilisé 2
-// fois sur cette page, factorisé plutôt que dupliqué. Chaque dialog se ferme
-// via n'importe quel élément [data-close] à l'intérieur (bouton "fermer" du
-// composant form-dialog, ou le fond semi-transparent pour la modale de
-// setlist qui n'a pas d'équivalent form-dialog réutilisable, cf. plan).
+// Popup handling (login + setlist management): the same trigger/dialog pattern is reused twice on this page, factored out here rather than duplicated. Each dialog closes via any [data-close] element inside it.
 function getFocusable(container) {
   return Array.prototype.slice
     .call(container.querySelectorAll('input, textarea, select, button, a[href]'))
@@ -333,12 +308,7 @@ function getFocusable(container) {
     });
 }
 
-// triggerIds : un id, ou un tableau d'ids pour plusieurs boutons ouvrant la
-// même modale (cf. #uploadNew + #setlistManageTrigger, tous deux liés à
-// #setlistManageDialog, retour utilisatrice le 2026-08-13). Le focus à la
-// fermeture revient au 1er déclencheur trouvé sur la page plutôt qu'à celui
-// réellement cliqué (pas suivi individuellement) : repli raisonnable, les
-// deux sont de toute façon équivalents fonctionnellement.
+// triggerIds is either one id, or an array of ids for several buttons opening the same modal. Focus on close always returns to the first trigger found on the page rather than the one actually clicked (not tracked individually): a reasonable fallback since both are functionally equivalent.
 function initDialog(triggerIds, dialogId) {
   var ids = Array.isArray(triggerIds) ? triggerIds : [triggerIds];
   var triggers = ids
@@ -383,25 +353,14 @@ function initDialog(triggerIds, dialogId) {
 initDialog('musicLoginTrigger', 'musicLoginForm');
 initDialog(['setlistManageTrigger', 'uploadNew'], 'setlistManageDialog');
 
-// Grand écran vidéo en overlay par-dessus la scène 3D (retour utilisatrice,
-// 2026-08-21 : "c'est juste l'écran, quand c'est une vidéo ytb qui doit
-// apparaître par-dessus" - le petit écran audio, lui, reste posé sur le
-// meuble via updateOverlayPosition() ci-dessus, inchangé). Pas une modale à
-// déclencheur fixe comme initDialog() ci-dessus : s'ouvre au clic sur
-// N'IMPORTE quel badge YouTube de la playlist (cf. youtube-embed.js), pas un
-// seul bouton connu d'avance. Écoute le même CustomEvent déjà émis par ce
-// script (music:show-video) plutôt qu'un nouveau mécanisme.
+// Large video overlay over the 3D scene, distinct from the small audio screen still glued to the furniture via updateOverlayPosition(). Unlike initDialog() above, it has no fixed trigger button: it opens on a click on ANY YouTube badge in the playlist, listening to the same music:show-video CustomEvent already emitted for that.
 (function () {
   var overlay = document.getElementById('videoOverlay');
   if (!overlay) {
     return;
   }
 
-  // Focus posé sur le bouton fermer à l'ouverture (cohérent avec
-  // getFocusable()/initDialog() plus haut) : pas de déclencheur unique à qui
-  // rendre le focus à la fermeture (n'importe quel badge YouTube de la
-  // playlist peut ouvrir cet écran), le navigateur reprend son focus par
-  // défaut dans ce cas plutôt qu'un retour forcé arbitraire.
+  // Focus goes to the close button on open. There's no single trigger to return focus to on close, since any YouTube badge in the playlist can open this overlay, so the browser falls back to its own default focus handling instead of an arbitrary forced return.
   function open() {
     overlay.classList.remove('d-none');
     var closeBtn = overlay.querySelector('.video-overlay-close');
@@ -412,8 +371,7 @@ initDialog(['setlistManageTrigger', 'uploadNew'], 'setlistManageDialog');
 
   function close() {
     overlay.classList.add('d-none');
-    // youtube-embed.js n'a aucune raison de connaître le mécanisme d'overlay
-    // (backdrop/bouton/Échap) : un seul event, à lui de couper la vidéo.
+    // youtube-embed.js has no reason to know about the overlay mechanism (backdrop/button/Escape): a single event tells it to stop the video.
     document.dispatchEvent(new CustomEvent('music:close-video'));
   }
 

@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Artist[]    findAll()
  * @method Artist[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for Artist.
 class ArtistRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -19,12 +20,7 @@ class ArtistRepository extends ServiceEntityRepository
         parent::__construct($registry, Artist::class);
     }
 
-    /**
-     * Recherche insensible à la casse : sert à retrouver un artiste déjà
-     * existant avant d'en créer un nouveau depuis le formulaire de la
-     * setlist (SetlistController::new()/edit()), pour éviter les doublons
-     * "Metallica"/"metallica" tapés à des moments différents.
-     */
+    // Case-insensitive lookup, used to find an existing artist before creating a new one and avoid duplicates like "Metallica"/"metallica".
     public function findOneByName(string $name): ?Artist
     {
         return $this->createQueryBuilder('a')

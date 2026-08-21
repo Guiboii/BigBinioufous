@@ -18,15 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Fusion de l'ancien /accountant (page d'accueil comptable, quasi vide)
- * dans l'espace /desk/files/accounting (cf. ROADMAP.md "Espace compta") :
- * devis/factures et journal de trésorerie viennent compléter les relevés
- * déjà gérés par DeskController::files()/FolderController/DocumentController
- * pour cet espace. Accès déjà couvert par security.yaml
- * (^/desk/files/accounting -> ROLE_COMPTA, ROLE_ADMIN), pas de vérification
- * de rôle supplémentaire ici, même choix que le reste de /desk/files.
- */
+// Quotes/invoices and the cash journal for the accounting space. Access is already covered by security.yaml (ROLE_COMPTA/ROLE_ADMIN), no extra role check here.
 #[Route('/desk/files/accounting')]
 class AccountingController extends AbstractController
 {
@@ -46,16 +38,7 @@ class AccountingController extends AbstractController
         return $this->handleDocumentForm($document, $request, $manager, $repository);
     }
 
-    /**
-     * Étape intermédiaire avant la facture "libre" ci-dessus : proposer de
-     * partir d'un devis existant plutôt que de foncer sur un formulaire
-     * vide (cf. le lien "Nouvelle facture" de documents/index.html.twig).
-     * Devis non filtrés sur "déjà facturé ou non" : rien n'empêche de
-     * facturer un même devis en plusieurs fois (acompte, tranches...), donc
-     * pas de notion de devis "consommé" à ce stade. En revanche
-     * findQuotesForInvoicing() exclut les devis explicitement retirés de
-     * cette liste (cf. toggleQuoteInvoicing() ci-dessous).
-     */
+    // Lets a new invoice start from an existing quote instead of a blank form. Quotes aren't filtered by "already invoiced": nothing prevents invoicing the same quote multiple times (deposit, installments...).
     #[Route('/documents/new/invoice/choose-quote', name: 'accounting_invoice_choose_quote', methods: ['GET'])]
     public function invoiceChooseQuote(AccountingDocumentRepository $repository): Response
     {
@@ -64,13 +47,7 @@ class AccountingController extends AbstractController
         ]);
     }
 
-    /**
-     * Retire/remet un devis dans le sélecteur ci-dessus (pas une
-     * suppression, cf. AccountingDocument::$excludedFromInvoicing) :
-     * accessible depuis le sélecteur lui-même (pour l'alléger tout de
-     * suite) et depuis la liste complète (pour annuler, un devis masqué n'y
-     * disparaît pas).
-     */
+    // Toggles a quote's visibility in the picker above, not a deletion. Reachable both from the picker itself and from the full list, so it can be undone.
     #[Route('/documents/{id}/toggle-invoicing', name: 'accounting_document_toggle_invoicing', methods: ['POST'])]
     public function toggleQuoteInvoicing(AccountingDocument $document, Request $request, EntityManagerInterface $manager): Response
     {
@@ -81,10 +58,7 @@ class AccountingController extends AbstractController
             $manager->flush();
         }
 
-        // 'redirect' contrôlé par le template (pas la requête utilisatrice
-        // au sens large) : reste volontairement une valeur d'une liste
-        // fermée de noms de route plutôt qu'une URL brute, pas de redirection
-        // ouverte possible.
+        // 'redirect' maps to one of two fixed route names, never a raw URL, so this can't become an open redirect.
         $redirectRoute = 'choose_quote' === $request->request->get('redirect')
             ? 'accounting_invoice_choose_quote'
             : 'accounting_documents_index';
@@ -92,13 +66,7 @@ class AccountingController extends AbstractController
         return $this->redirectToRoute($redirectRoute);
     }
 
-    /**
-     * Facture créée à partir d'un devis existant (cf. le bouton "Facturer ce
-     * devis" sur accounting/documents/show.html.twig) : client et lignes
-     * copiés dans initializeNewDocument() plutôt que de forcer la ressaisie,
-     * l'inscription à la volée (route ci-dessus, sans devis) reste possible
-     * en parallèle.
-     */
+    // Creates an invoice from an existing quote: client and lines are copied in initializeNewDocument() rather than forcing manual re-entry.
     #[Route('/documents/{quote}/invoice', name: 'accounting_document_new_from_quote', methods: ['GET', 'POST'])]
     public function documentNewFromQuote(AccountingDocument $quote, Request $request, EntityManagerInterface $manager, AccountingDocumentRepository $repository): Response
     {
@@ -179,13 +147,7 @@ class AccountingController extends AbstractController
         return $this->handleDocumentForm($document, $request, $manager, $repository);
     }
 
-    /**
-     * Page imprimable (bouton "Imprimer / Enregistrer en PDF" côté client,
-     * cf. templates/accounting/documents/show.html.twig et
-     * assets/accounting/document-print.css) : pas de génération PDF côté
-     * serveur, choix fait avec l'utilisatrice pour ne pas ajouter de
-     * dépendance PHP juste pour ça.
-     */
+    // Printable page (client-side "Print / Save as PDF" button, no server-side PDF generation).
     #[Route('/documents/{id}', name: 'accounting_document_show', methods: ['GET'])]
     public function documentShow(AccountingDocument $document): Response
     {
@@ -311,13 +273,7 @@ class AccountingController extends AbstractController
         return $this->redirectToRoute('accounting_treasury_index');
     }
 
-    /**
-     * CollectionType (lines) arrive dans l'ordre du formulaire mais sans
-     * notion de position tant qu'on ne la fixe pas explicitement :
-     * AccountingDocumentLine::$position (affichage, cf. show.html.twig)
-     * recalculée à chaque sauvegarde plutôt que gérée par un JS de tri
-     * séparé, la seule source d'ordre étant l'ordre de saisie/suppression.
-     */
+    // The form's CollectionType (lines) arrives in form order but with no position set, so it's recalculated on every save rather than tracked by separate JS.
     private function reorderLines(AccountingDocument $document): void
     {
         foreach ($document->getLines() as $index => $line) {

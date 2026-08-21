@@ -11,12 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Outil de prise de note du bureau/conseil (ROADMAP.md "espace
- * administratif"), réservé ROLE_ADMIN/ROLE_COMPTA (^/desk/notes dans
- * security.yaml). Pas collaboratif : seul l'auteur·ice d'une note peut la
- * modifier/supprimer, même partagée (cf. denyUnlessAuthor()).
- */
+// Board note-taking tool, reserved to ROLE_ADMIN/ROLE_COMPTA. Not collaborative: only a note's author can edit/delete it, even when shared.
 #[Route('/desk/notes')]
 class NoteController extends AbstractController
 {

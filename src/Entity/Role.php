@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+// A permission role (ROLE_ADMIN, ROLE_COMPTA, ROLE_BINIOUFOUS) assignable to a User.
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 class Role
 {

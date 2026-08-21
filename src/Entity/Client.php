@@ -6,15 +6,7 @@ use App\Repository\ClientRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Fiche commanditaire réutilisable entre plusieurs devis/factures (cf.
- * AccountingDocument::$client) : évite de ressaisir nom/adresse/contact à
- * chaque nouveau document pour une même entité qui revient régulièrement.
- * Les champs identiques sur AccountingDocument restent la source affichée
- * (recopiés à la sélection, cf. AccountingController::initializeNewDocument()
- * et le JS de préremplissage) : modifier une fiche Client ici n'altère pas
- * les documents déjà émis.
- */
+// A reusable client record shared across quotes/invoices. Fields are copied onto AccountingDocument at selection time, so editing a Client here does not alter documents already issued.
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {

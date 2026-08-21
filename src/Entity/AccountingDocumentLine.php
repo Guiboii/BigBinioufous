@@ -6,6 +6,7 @@ use App\Repository\AccountingDocumentLineRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+// A single line item (label, unit price, quantity) on a quote or invoice.
 #[ORM\Entity(repositoryClass: AccountingDocumentLineRepository::class)]
 class AccountingDocumentLine
 {
@@ -29,11 +30,7 @@ class AccountingDocumentLine
     #[Assert\Positive]
     private $quantity = 1;
 
-    /**
-     * Ordre d'affichage des lignes dans le devis/la facture (l'ordre de
-     * saisie dans le formulaire, cf. AccountingDocumentType), pas d'ordre
-     * alphabétique ou autre qui perdrait la logique métier de la liste.
-     */
+    // Display order matches entry order in the form, not alphabetical or any other sort that would lose the line's business meaning.
     #[ORM\Column(type: 'integer')]
     private $position = 0;
 

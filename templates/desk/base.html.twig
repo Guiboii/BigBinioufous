@@ -6,21 +6,14 @@
         {% block importmap %}
             {{ importmap('app') }}
         {% endblock %}
-        {# Police d'affichage de la marque (Bungee), déjà chargée sur les pages
-           publiques (templates/base.html.twig) : reprise ici pour les titres
-           du desk/admin (body.desk h1/h2, assets/main/app.css), jamais faite
-           jusqu'au 2026-08-11. #}
+        {# Brand display font (Bungee), already loaded on public pages: reused here for desk/admin titles (body.desk h1/h2 in app.css). #}
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
     </head>
 
     <body class="desk">
-        {# 1er élément atteignable au clavier : reste invisible jusqu'à recevoir
-           le focus (Tab), permet de sauter la navbar pour aller directement au
-           contenu principal. Même pattern que templates/base.html.twig
-           (.skip-link dans assets/main/app.css), jamais repris ici jusqu'à
-           présent. #}
+        {# First keyboard-reachable element: stays invisible until it receives Tab focus, letting a keyboard user skip the navbar straight to the main content. Same pattern as templates/base.html.twig. #}
         <a class="skip-link" href="#main-content">{{ 'a11y.skip_to_content'|trans }}</a>
 
         {{ include('desk/partials/header.html.twig') }}

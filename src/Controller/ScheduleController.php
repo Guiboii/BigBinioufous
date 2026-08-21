@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
+// Public /schedule page, plus .ics/Google/Outlook calendar export for each event.
 class ScheduleController extends AbstractController
 {
     private const MONTH_KEYS = [
@@ -30,9 +31,7 @@ class ScheduleController extends AbstractController
                 'calendarLinks' => $this->buildCalendarLinks($event),
             ];
 
-            // Pour le mini-calendrier JS (assets/schedule/schedule.js) : un
-            // jour peut avoir plusieurs événements, d'où le tableau de
-            // titres plutôt qu'un simple booléen (utilisé comme title="").
+            // For the mini-calendar JS: a day can have several events, hence an array of titles rather than a plain boolean, used as a title="" tooltip.
             $eventsByDate[$event->getDate()->format('Y-m-d')][] = $event->getTitle();
         }
 
@@ -42,21 +41,14 @@ class ScheduleController extends AbstractController
         ]);
     }
 
-    /**
-     * Fichier .ics standard (pas d'API externe type Google Calendar : un
-     * fichier iCalendar téléchargeable s'importe partout, Google/Outlook/
-     * Apple Calendar compris). Pas de champ "durée" sur Event, 2h par
-     * défaut (répétitions/concerts durent rarement moins).
-     */
+    // Standard downloadable .ics file rather than a Google Calendar-specific API: imports everywhere (Google/Outlook/Apple Calendar).
     #[Route('/schedule/event/{id}.ics', name: 'event_ics', methods: ['GET'])]
     public function ics(Event $event): Response
     {
         $this->denyAccessUnlessVisible($event);
 
         $start = $event->getDate();
-        // 00:00 = aucune heure connue pour cet événement (pas une vraie
-        // heure de minuit) : événement "journée entière" en iCalendar
-        // (DTSTART/DTEND en VALUE=DATE) plutôt qu'un horaire 00h-02h inventé.
+        // 00:00 means no time was set for this event, not a real midnight: exported as an all-day iCalendar event (DTSTART/DTEND VALUE=DATE) rather than inventing a 00h-02h slot.
         $isAllDay = '00:00' === $start->format('H:i');
 
         $lines = [
@@ -88,13 +80,7 @@ class ScheduleController extends AbstractController
         ]);
     }
 
-    /**
-     * Liens "ajouter à l'agenda" pour Google et Outlook (en plus du .ics
-     * générique, cf. ics() ci-dessus, qui couvre Apple Calendar/Thunderbird/
-     * Outlook desktop) : deep links documentés publiquement par chacun, pas
-     * d'API/OAuth nécessaire, ouvrent directement le formulaire d'ajout
-     * pré-rempli dans un nouvel onglet.
-     */
+    // "Add to calendar" deep links for Google and Outlook, publicly documented by each provider, no API/OAuth needed.
     private function buildCalendarLinks(Event $event): array
     {
         $start = $event->getDate();
@@ -133,14 +119,7 @@ class ScheduleController extends AbstractController
         return ['google' => $google, 'outlook' => $outlook];
     }
 
-    /**
-     * Même règle de visibilité que EventRepository::findVisibleOrderedByDate()
-     * pour la page /schedule, mais appliquée ici à un accès direct par id
-     * (route event_ics) : sans ça, un événement caché sur la page publique
-     * (répétition/autre, hors connexion) restait quand même récupérable en
-     * devinant/connaissant son id. 404 plutôt que 403 pour ne pas confirmer
-     * qu'un événement existe à cet id.
-     */
+    // Same visibility rule as findVisibleOrderedByDate(), applied here to direct access by id so a hidden event can't be fetched by guessing its URL. 404 rather than 403 to avoid confirming the event exists.
     private function denyAccessUnlessVisible(Event $event): void
     {
         if ('concert' !== $event->getType() && null === $this->getUser()) {
@@ -148,20 +127,13 @@ class ScheduleController extends AbstractController
         }
     }
 
-    /**
-     * Heure de fin réelle si elle a été renseignée (Event::$endDate),
-     * sinon repli sur +2h par défaut plutôt que de laisser un champ vide
-     * dans l'export.
-     */
+    // Real end time when set, otherwise a +2h default rather than leaving the export field empty.
     private function resolveEnd(Event $event): \DateTimeImmutable
     {
         return $event->getEndDate() ?? $event->getDate()->modify('+2 hours');
     }
 
-    /**
-     * Échappement texte iCalendar (RFC 5545) : virgule/point-virgule/
-     * antislash/saut de ligne ont un sens spécial dans le format.
-     */
+    // iCalendar text escaping (RFC 5545): comma/semicolon/backslash/newline are special characters in the format.
     private function escapeIcsText(string $text): string
     {
         return str_replace(

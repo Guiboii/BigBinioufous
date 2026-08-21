@@ -1,7 +1,4 @@
-// Aperçu immédiat de la photo choisie sur /desk/profile et admin/user/show
-// (templates/desk/_user_form_fields.html.twig), avant même la soumission du
-// formulaire (le fichier n'est réellement enregistré qu'à ce moment-là) :
-// confirme visuellement le bon fichier sans avoir à valider pour le voir.
+// Instant preview of the chosen picture, before the form is even submitted (the file is only actually saved at that point): confirms visually it's the right file without having to submit to see it.
 document.querySelectorAll('.profile-avatar-frame').forEach(function (frame) {
   var input = frame.querySelector('input[type="file"]');
   if (!input) {

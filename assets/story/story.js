@@ -87,7 +87,7 @@ function init() {
     },
   );
 
-  // Soucoupe 3D MODEL
+  // Saucer 3D model
   var loader = new GLTFLoader();
   loader.load(
     window.BB_ASSETS['story/Soucoupe.gltf'],
@@ -137,9 +137,7 @@ function init() {
     },
   );
 
-  // trieurs (pile de classeurs posée sur le bureau) : cf. le même bloc dans
-  // assets/mascotte/mascotte.js, coordonnées décalées de (-0.5, 0, -1) ici
-  // (Desk.gltf positionné différemment sur cette page).
+  // Same clickable-binder-stack setup as mascotte.js, with coordinates shifted since Desk.gltf is positioned differently on this page.
   addTrieur('trieurAccounting', 2.2, 2.58);
   addTrieur('trieurMusic', 2.58, 2.96);
   addTrieur('trieurAdmin', 2.96, 3.34);
@@ -151,10 +149,7 @@ function init() {
 }
 
 function addTrieur(name, yMin, yMax) {
-  // profondeur (Z) volontairement réduite par rapport au modèle réel
-  // (contrairement à mascotte.js) : caméra ici très proche et quasi dans
-  // l'axe de la pile, une boîte aussi profonde que la pile réelle fait se
-  // chevaucher les zones de clic de deux trieurs adjacents sur un même rayon
+  // Depth (Z) is deliberately shrunk compared to the real model, unlike mascotte.js: the camera here is very close and nearly aligned with the stack, so a box as deep as the real stack would make adjacent binders' click areas overlap on the same ray.
   var trieur = new THREE.Mesh(
     new THREE.BoxBufferGeometry(1.28, yMax - yMin, 0.4),
     new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0 }),
@@ -211,12 +206,7 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// GLTFLoader renomme les nœuds en collision avec le nom de la scène GLTF
-// d'origine (Desk.gltf a une scène ET un nœud tous deux nommés "Desk" :
-// le nœud devient "Desk_1" au chargement), donc object.parent.name ne
-// vaut jamais "Desk" pour les meshes du bureau. On remonte l'arborescence
-// jusqu'au groupe qu'on a nommé nous-mêmes (model.name = 'desk') plutôt
-// que de dépendre de ce renommage interne.
+// GLTFLoader renames nodes that collide with the source GLTF scene's own name (Desk.gltf has both a scene and a node named "Desk", so the node becomes "Desk_1" on load), so object.parent.name is never "Desk". This walks up to the group named explicitly in code instead.
 function isDescendantOf(object, name) {
   var current = object;
   while (current) {
@@ -243,9 +233,7 @@ function raycast(e, touch = false) {
   var intersects = raycaster.intersectObjects(scene.children, true);
   console.log(intersects);
 
-  // les trieurs (fine tranche de la pile) peuvent être occultés par le
-  // reste du bureau à distance quasi identique : on les cherche dans tous
-  // les objets touchés par le rayon, pas seulement le plus proche
+  // The binders are thin slices that can be occluded by the rest of the desk at nearly the same distance, so they're searched across every hit object, not just the closest.
   var trieurSpaces = {
     trieurAccounting: 'accounting',
     trieurMusic: 'music',
@@ -274,13 +262,7 @@ function raycast(e, touch = false) {
   }
 }
 
-// #contactForm (role="dialog", cf. story/index.html.twig) : géré comme une
-// vraie boîte de dialogue une fois ouverte, même si son seul déclencheur
-// actuel est un clic 3D (raycast) sans équivalent clavier direct (cf.
-// commentaire dans le template : le vrai formulaire de contact accessible
-// au clavier est celui de la minisite, atteignable via la navbar). Focus
-// posé sur le 1er champ à l'ouverture, Echap referme et rend le focus au
-// canvas 3D (pas de bouton déclencheur à qui le rendre ici).
+// #contactForm is handled as a real dialog once open, even though its only trigger is a 3D click with no direct keyboard equivalent (the keyboard-accessible contact form is the minisite's, reachable via the navbar). Focus goes to the first field on open; Escape closes it and returns focus to the 3D canvas, since there's no trigger button to return it to here.
 var contactForm = document.getElementById('contactForm');
 
 function openContactForm() {
@@ -299,11 +281,7 @@ function closeContactForm() {
 var close = document.querySelector('.close');
 close.addEventListener('click', closeContactForm);
 
-// Soumission en fetch (pas de navigation, la popup reste ouverte) : le
-// honeypot/piège temporel/CSRF sont vérifiés côté serveur
-// (App\Controller\ContactController), ce handler ne fait qu'afficher le
-// résultat. data-messages (posé côté Twig) porte les libellés déjà traduits,
-// indexés par le code d'erreur renvoyé par le contrôleur.
+// Submitted via fetch so the popup stays open; the server checks honeypot/timing trap/CSRF, this handler only shows the result. data-messages carries already-translated labels indexed by the error code the controller returns.
 var contactStatus = contactForm.querySelector('.contact-status');
 var contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
 var contactMessages = {};

@@ -1,9 +1,4 @@
-{# Bloc de champs partagé entre /desk/profile (self-service, AccountType) et
-   admin/user/show (édition admin, EditUserType) : mêmes champs dans les deux
-   formulaires (cf. commentaire en tête d'EditUserType), même mise en page
-   "photo à gauche, infos à droite, infos en dessous" pour ne pas la dupliquer
-   2 fois (retour utilisatrice "super uxui", 2026-08-12). Attend "form" (la
-   FormView) et "user" (l'entité éditée) en contexte. #}
+{# Field block shared between /desk/profile (self-service) and admin/user/show (admin editing): same fields, same "photo left, info right/below" layout, to avoid duplicating it twice. Expects "form" (the FormView) and "user" (the edited entity) in context. #}
 <div class="profile-form-header">
     <div class="profile-avatar-frame profile-avatar-frame-lg">
         {% if user.picture %}
@@ -16,10 +11,7 @@
         {{ form_widget(form.picture) }}
     </div>
     <div class="profile-form-header-fields profile-field-grid">
-        {# nickname/email absents d'EditUserType (formulaire admin) : pas de
-           raison qu'un·e admin puisse changer l'identifiant de connexion de
-           quelqu'un d'autre (retour utilisatrice 2026-08-12). Affichés en
-           lecture seule à la place, pour garder l'info visible. #}
+        {# nickname/email are absent from EditUserType (admin form): an admin has no reason to change someone else's login identifiers. Shown read-only instead. #}
         {% if form.nickname is defined %}
             {{ form_row(form.nickname) }}
             {{ form_row(form.email) }}
@@ -29,8 +21,7 @@
         {% endif %}
     </div>
 </div>
-{# Erreurs du champ photo affichées ici plutôt que dans le cadre rond
-   (overflow: hidden) juste au-dessus, sans quoi le message serait tronqué. #}
+{# Picture field errors shown here rather than inside the round frame above (overflow: hidden), otherwise the message would be clipped. #}
 {% if form.picture.vars.errors|length > 0 %}
     <div class="invalid-feedback d-block mb-3">{{ form_errors(form.picture) }}</div>
 {% endif %}

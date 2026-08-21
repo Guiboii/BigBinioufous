@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for User, mostly filtering accounts by validation status and role.
 class UserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -19,12 +20,7 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    /**
-     * Triait avant par wish (retiré le 2026-08-12, cf. ROADMAP.md
-     * "Facilitons l'inscription") : par date d'inscription désormais (la
-     * plus ancienne d'abord), déjà affichée en colonne sur
-     * admin/unvalids.html.twig.
-     */
+    // Oldest registration first, matches the date column shown on admin/unvalids.html.twig.
     public function findUnvalids()
     {
         return $this->createQueryBuilder('a')
@@ -67,12 +63,7 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * "Simple" n'est plus un rôle stocké en base (fusionné avec ROLE_USER,
-     * cf. ROADMAP.md "Rôles fusionnés") : un·e simple utilisateur·rice est
-     * désormais défini comme "validé·e, sans ROLE_BINIOUFOUS", plutôt que par
-     * un rôle explicite à assigner/retirer.
-     */
+    // "Simple" is not a stored role: a plain member is defined here as "validated, without ROLE_BINIOUFOUS" rather than an explicit role to assign.
     public function findSimples()
     {
         return $this->createQueryBuilder('u')

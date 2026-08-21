@@ -1,7 +1,4 @@
-// Glisser-déposer sur /desk/music : façon Drive, un fichier (ou un dossier
-// entier) lâché devient direct un Document, en gardant son chemin de
-// dossier (App\Controller\DocumentController::resolveFolder() recrée la
-// même arborescence côté site).
+// Drag-and-drop upload: a dropped file (or whole folder) becomes a Document directly, keeping its folder path, which the server rebuilds as a matching Folder tree.
 var zone = document.getElementById('quick-upload-zone');
 
 if (zone) {
@@ -50,11 +47,7 @@ if (zone) {
       return;
     }
 
-    // Un dossier lâché (ex. glisser tout le dossier "Set") n'apparaît pas
-    // dans e.dataTransfer.files : le navigateur ne le descend pas tout
-    // seul. Il faut passer par DataTransferItem.webkitGetAsEntry() (nom
-    // préfixé "webkit" mais supporté par tous les navigateurs actuels)
-    // pour parcourir récursivement les sous-dossiers, fichier par fichier.
+    // A dropped folder doesn't appear in e.dataTransfer.files: the browser won't flatten it on its own, so DataTransferItem.webkitGetAsEntry() (despite the prefix, supported everywhere) is needed to walk subfolders recursively.
     var items = e.dataTransfer.items;
     if (items && items.length && items[0].webkitGetAsEntry) {
       var entries = [];
@@ -74,16 +67,12 @@ if (zone) {
     handleFiles(Array.from(input.files).map(withRootPath));
   });
 
-  // Si on est déjà dans un dossier (data-current-path posé par
-  // desk/music.html.twig selon ?folder=), tout ce qui est déposé ici doit
-  // atterrir dedans, en plus de son éventuel sous-chemin propre.
+  // When already inside a folder, everything dropped here must land inside it, in addition to its own subpath if any.
   function withRootPath(file) {
     return { file: file, path: zone.dataset.currentPath || '' };
   }
 
-  // entry.fullPath ressemble à "/Set/02 Medley XXI/titre.mp3" : on retire
-  // le nom de fichier et le "/" de tête pour ne garder que le chemin de
-  // dossier ("Set/02 Medley XXI"), préfixé du dossier courant s'il y en a un.
+  // entry.fullPath looks like "/Set/02 Medley XXI/title.mp3": strip the filename and leading slash to keep just the folder path, prefixed with the current folder if any.
   function directoryOf(fullPath) {
     var withoutLeadingSlash = fullPath.replace(/^\//, '');
     var lastSlash = withoutLeadingSlash.lastIndexOf('/');
@@ -147,10 +136,7 @@ if (zone) {
     return readBatch();
   }
 
-  // Envoi un par un (pas Promise.all en parallèle) : plus fiable pour
-  // afficher une vraie progression, et évite un risque réel de doublons
-  // si 2 fichiers du même sous-dossier neuf arrivaient en même temps
-  // (DocumentController::resolveFolder() ferait 2x le "créer si absent").
+  // Uploaded one at a time rather than in parallel: gives an accurate progress bar and avoids two files of the same new subfolder racing to create it at once.
   function handleFiles(entries) {
     if (entries.length === 0) {
       return;

@@ -1,9 +1,4 @@
-// Préremplissage des champs client (texte libre, cf. AccountingDocument)
-// à partir d'une fiche Client sélectionnée dans le formulaire devis/facture
-// (App\Form\AccountingDocumentType::client, choice_attr data-address/
-// data-contact). Les champs texte restent la source réellement soumise :
-// ce script ne fait que gagner du temps de saisie, rien n'empêche de les
-// modifier ensuite pour ce document précis.
+// Prefills the free-text client fields from the selected Client's data-address/data-contact attributes. Those text fields remain the real submitted source, this is just a shortcut, still editable afterwards.
 const clientSelect = document.getElementById('accounting_document_client');
 
 if (clientSelect) {

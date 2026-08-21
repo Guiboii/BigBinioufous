@@ -1,8 +1,4 @@
-// Visionneuse partagée pour les documents de /desk/music : évite de forcer
-// un téléchargement juste pour regarder une image ou un PDF. Seuls
-// image/pdf/audio/vidéo ont un rendu natif fiable dans le navigateur, les
-// autres types (word/sheet/slides) gardent le comportement par défaut du
-// lien (téléchargement/ouverture selon le navigateur).
+// Shared preview modal for file manager documents, avoiding a forced download just to look at an image or PDF. Only image/pdf/audio/video have reliable native browser rendering; other types keep the default link behavior.
 var modal = document.getElementById('file-preview-modal');
 
 if (modal) {

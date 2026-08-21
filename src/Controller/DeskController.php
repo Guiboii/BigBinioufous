@@ -14,28 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Espaces disponibles sous /desk/files/{space}, cf. Folder::SPACES. L'accès
- * (lecture ET écriture, même règle) est géré par space dans security.yaml,
- * pas ici : ce contrôleur ne revérifie pas les rôles, il fait confiance à
- * access_control comme le reste du projet (DocumentController/FolderController
- * pareil).
- */
+// The member area: /desk hub and its /desk/files/{space} file manager. Access per space is enforced by access_control in security.yaml, this controller trusts it rather than re-checking roles.
 class DeskController extends AbstractController
 {
     #[Route('/desk', name: 'desk')]
     public function index(EntityManagerInterface $manager, RoleRepository $repo, UserRepository $repoUser)
     {
-        // Liste "Les Membres" (ROLE_MEMBER) retirée de cette page le
-        // 2026-08-12 : rôle jamais attribué par le toggle Membre/Pas membre
-        // (ROLE_BINIOUFOUS, cf. ROADMAP.md "Facilitons l'inscription"),
-        // gardait juste des comptes historiques ne débloquant aucune
-        // permission propre dans le code, confusion repérée par
-        // l'utilisatrice ("pour moi membre, ben c'est binioufous !").
-        // ROLE_MEMBER supprimé entièrement le même jour (cf. ROADMAP.md
-        // "Rôles legacy et implicite nettoyés", migration
-        // Version20260812180000) : UserRepository::findMembers() retiré,
-        // plus aucun compte ne peut l'avoir.
         $roles = $repo->findAll($manager, $repo);
         $unvalids = $repoUser->findUnvalids($manager, $repoUser);
 
@@ -46,9 +30,7 @@ class DeskController extends AbstractController
         $admins = $repoUser->findAdmins($roleAdmin);
         $accountants = $repoUser->findAccountants($roleAccountant);
         $binioufous = $repoUser->findBinioufous($roleBinioufous);
-        // ROLE_SIMPLE fusionné avec ROLE_USER (cf. ROADMAP.md "Rôles
-        // fusionnés") : plus de rôle à passer, "simple" = validé sans
-        // ROLE_BINIOUFOUS.
+        // "Simple" is not a stored role: validated without ROLE_BINIOUFOUS.
         $simples = $repoUser->findSimples();
 
         return $this->render('desk/index.html.twig', [
@@ -61,27 +43,14 @@ class DeskController extends AbstractController
         ]);
     }
 
-    /**
-     * Hub "Dossiers" : cartes vers les espaces auxquels le membre connecté a
-     * accès. L'accès réel est vérifié par security.yaml sur chaque espace ;
-     * ici on ne fait qu'afficher/masquer les cartes (is_granted côté Twig),
-     * même pattern que les liens conditionnels de desk/partials/header.
-     */
+    // Card hub linking to the spaces the member has access to; actual access is enforced by security.yaml, this only shows/hides cards via is_granted in Twig.
     #[Route('/desk/files', name: 'desk_files_hub')]
     public function filesHub(): Response
     {
         return $this->render('desk/files_hub.html.twig');
     }
 
-    /**
-     * Gestionnaire de fichiers façon Drive pour un espace donné
-     * (?folder=ID pour descendre dans un dossier). L'espace musique n'a
-     * plus de cas particulier depuis la fusion Track/Voice dans
-     * Folder/Document (cf. plan "Nettoyage de la gestion de
-     * fichiers/dossiers") : la setlist se gère désormais sur /music
-     * (MusicController), ce classeur reste une vue Drive comme les autres
-     * espaces.
-     */
+    // Drive-like file manager for a given space (?folder=ID to browse into a subfolder).
     #[Route('/desk/files/{space}', name: 'desk_files', requirements: ['space' => 'music|admin|accounting|other'])]
     public function files(string $space, Request $request, DocumentRepository $documentRepository, FolderRepository $folderRepository, EntityManagerInterface $manager)
     {
@@ -94,26 +63,12 @@ class DeskController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // Un dossier dont le parent (ou un ancêtre plus lointain) est en
-        // corbeille ne doit pas rester consultable par URL directe
-        // (?folder=ID) : il n'apparaît plus nulle part dans la navigation
-        // normale, cf. FolderRepository::hasDeletedAncestor().
+        // A folder whose parent is trashed shouldn't stay reachable via a direct URL, since it no longer appears in normal navigation.
         if ($folderRepository->hasDeletedAncestor($currentFolder)) {
             throw $this->createNotFoundException();
         }
 
-        // Folder::getAncestors() remonte jusqu'à la racine incluse (utile
-        // tel quel pour le "chemin" d'un résultat de recherche, cf.
-        // templates/desk/files.html.twig en mode recherche) : ici la racine
-        // est déjà affichée séparément ("Fichiers", 1er maillon du fil
-        // d'Ariane en dur dans le template), et il manque le dossier
-        // courant lui-même (page affichée). Sans ce filtre, le fil d'Ariane
-        // d'un sous-dossier n'affichait jamais son propre nom, seulement
-        // celui de la racine en double — et currentFolderPath ci-dessous
-        // (utilisé par quick-upload.js pour préfixer le chemin d'upload)
-        // valait "Musique" au lieu du vrai sous-dossier, un upload dans
-        // n'importe quel sous-dossier créait un dossier "Musique" errant à
-        // l'intérieur au lieu d'uploader directement là où on était.
+        // getAncestors() includes the root, which is already shown separately as the first breadcrumb link in the template, so it's sliced off here and the current folder itself is appended.
         $atRoot = $currentFolder->getId() === $root->getId();
         $breadcrumb = $atRoot ? [] : array_merge(array_slice($currentFolder->getAncestors(), 1), [$currentFolder]);
 
@@ -133,20 +88,14 @@ class DeskController extends AbstractController
             }
         }
 
-        // Mode recherche : ?q= bascule l'affichage sur les résultats de tout
-        // l'espace (récursif) plutôt que le contenu du dossier courant.
+        // Search mode: ?q= switches the display to results across the whole space (recursive) instead of the current folder's contents.
         $query = trim((string) $request->query->get('q', ''));
         $searching = '' !== $query;
 
         $sort = $request->query->get('sort', 'name');
         $dir = $request->query->get('dir', 'asc');
 
-        // Déplacement groupé : ?bulk_move=1 + folder_ids[]/document_ids[]
-        // (cochés dans templates/desk/files.html.twig, soumis en GET pour
-        // rester une simple navigation, cf. le formulaire "bulk-form").
-        // Généralise le mode de déplacement "clic à clic" déjà en place
-        // (movingDocument/movingFolder ci-dessus) à un ensemble d'éléments,
-        // sans toucher à ce mode existant (2 mécanismes distincts, cf. plan).
+        // Bulk move: ?bulk_move=1 + folder_ids[]/document_ids[], submitted as a plain GET navigation. Coexists with the click-to-move mode above as a separate mechanism.
         $bulkMovingFolders = [];
         $bulkMovingDocuments = [];
         if ($request->query->getBoolean('bulk_move')) {
@@ -186,12 +135,7 @@ class DeskController extends AbstractController
         ]);
     }
 
-    /**
-     * Corbeille d'un espace (dossiers/documents avec deletedAt non nul,
-     * cf. Folder::$deletedAt) : liste à plat, pas d'arborescence puisqu'un
-     * élément en corbeille n'a par définition plus sa place dans l'arbre
-     * actif. Chaque ligne affiche son chemin d'origine pour se repérer.
-     */
+    // Trash of a space: a flat list, since a trashed item by definition no longer has a place in the active tree.
     #[Route('/desk/files/{space}/trash', name: 'desk_files_trash', requirements: ['space' => 'music|admin|accounting|other'])]
     public function trash(string $space, FolderRepository $folderRepository, DocumentRepository $documentRepository): Response
     {
@@ -202,12 +146,7 @@ class DeskController extends AbstractController
         ]);
     }
 
-    /**
-     * Vide la corbeille d'un espace d'un coup (dossiers en corbeille +
-     * documents supprimés individuellement) : même logique de suppression
-     * définitive que FolderController::purge()/DocumentController::purge()
-     * (fichiers physiques retirés après le flush Doctrine confirmé).
-     */
+    // Empties a space's trash at once. Physical files are removed only after the Doctrine flush is confirmed.
     #[Route('/desk/files/{space}/trash/empty', name: 'desk_files_trash_empty', methods: ['POST'], requirements: ['space' => 'music|admin|accounting|other'])]
     public function emptyTrash(string $space, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository, DocumentRepository $documentRepository): Response
     {
@@ -242,11 +181,9 @@ class DeskController extends AbstractController
     }
 
     /**
-     * @return string[] noms de fichiers physiques de tous les documents
-     *                  sous ce dossier, récursivement (même logique que
-     *                  FolderController::collectDescendantFilenames(), un
-     *                  dossier en corbeille peut avoir des enfants actifs
-     *                  dont les fichiers doivent aussi disparaître du disque)
+     * Physical filenames of every document under this folder, recursively: a trashed folder can have active children whose files must also be removed from disk.
+     *
+     * @return string[]
      */
     private function collectDescendantFilenames(Folder $folder): array
     {

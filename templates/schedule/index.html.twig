@@ -1,9 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block importmap %}
-    {# Même détection qu'sur /music et /story : sous 700px la scène 3D
-       (déjà peu utilisée ici, cf. schedule.css) est illisible/inutile,
-       schedule.js saute son init et le contenu reste en flux normal. #}
+    {# Same detection as /music and /story: below 700px the 3D scene is unreadable/useless, so schedule.js skips its init and content stays in normal flow. #}
     <script>
         document.documentElement.classList.add(window.matchMedia('(max-width: 700px)').matches ? 'is-mobile' : 'is-desktop');
     </script>
@@ -24,9 +22,7 @@
 
         <div class="scroll">
             {% if not app.user %}
-                {# Répétitions/autres événements masqués hors connexion
-                   (ScheduleController::index(), EventRepository::findVisibleOrderedByDate()) :
-                   note pour ne pas laisser croire que la liste est complète. #}
+                {# Rehearsals/other events are hidden while logged out: this note avoids implying the list is complete. #}
                 <div class="schedule-login-note">
                     <i class="ri-lock-2-fill" aria-hidden="true"></i>
                     <p>{{ 'schedule.login_note'|trans }} <a href="{{ path('join') }}">{{ 'schedule.login_note_cta'|trans }}</a></p>
@@ -34,28 +30,18 @@
             {% endif %}
             {% for monthNum, month in eventsByMonth %}
                 <div id="month-{{ monthNum }}" class="event-month">
-                    {# h4/h5 avant : rien entre le h1 (désormais ajouté ci-dessus)
-                       et ces titres de mois, saut de niveau. h2 (mois) > h3
-                       (titre d'événement) suit directement le h1 de page. #}
+                    {# h2 (month) > h3 (event title) follows directly from the page's h1, no heading level skipped. #}
                     <h2>{{ ('schedule.month.' ~ month.label)|trans }}</h2>
                     {% for item in month.events %}
                         {% set event = item.event %}
                         <article class="event-card event-card--{{ event.type }}">
                             {% if event.posterFilename %}
-                                {# Affiche = contenu informatif (pas décoratif) mais
-                                   l'entité Event n'a pas de champ de description
-                                   dédiée pour l'image : le titre de l'événement
-                                   reste la meilleure alternative texte disponible,
-                                   mieux qu'un alt vide qui la rendrait invisible
-                                   pour les lecteurs d'écran. #}
+                                {# The poster is informative content, not decorative, but Event has no dedicated image description field, so the event title is the best available text alternative. #}
                                 <img src="{{ asset('uploads/events/' ~ event.posterFilename) }}" alt="{{ event.title }}">
                             {% endif %}
                             <span class="event-type">{{ ('event.type_' ~ event.type)|trans }}</span>
                             <h3><i class="ri-megaphone-fill" aria-hidden="true"></i> {{ event.title }}</h3>
-                            {# 00:00 = pas d'heure connue plutôt qu'une vraie heure de minuit (aucun
-                               événement ici n'en a une) : afficher juste la date évite de laisser
-                               croire à une heure précise inventée. endDate facultatif : affiché en
-                               "HH:mm-HH:mm" seulement s'il a été renseigné (ex. répétitions). #}
+                            {# 00:00 means no time was set rather than a real midnight, so just the date is shown to avoid implying a made-up time. endDate is optional, shown as "HH:mm-HH:mm" only when set. #}
                             <p class="event-date">
                                 <i class="ri-time-fill" aria-hidden="true"></i>
                                 {% if event.date|date('H:i') == '00:00' %}
@@ -89,21 +75,13 @@
             {% endfor %}
         </div>
 
-        {# Vrai calendrier mois/jours (pas juste des pastilles par mois) :
-           grille rendue en JS (assets/schedule/schedule.js) à partir de
-           #schedule-events-data, navigable à la flèche vers n'importe quel
-           mois (pas seulement ceux qui ont des événements, contrairement
-           aux pastilles avant). Un jour cliquable (en rouge) renvoie vers
-           #month-XX dans .scroll. #}
+        {# A real month/day calendar: grid rendered in JS from #schedule-events-data, navigable by arrow to any month. A clickable (red) day links back to #month-XX in .scroll. #}
         <div id="calendar" class="mini-calendar" role="region" aria-label="{{ 'schedule.title'|trans }}">
             <div class="mini-calendar__header">
                 <button type="button" class="mini-calendar__nav" data-nav="prev" aria-label="{{ 'schedule.prev_month'|trans }}">
                     <i class="ri-arrow-left-s-line" aria-hidden="true"></i>
                 </button>
-                {# aria-live : le changement de mois (schedule.js) n'est déclenché
-                   que par un clic sur un bouton déjà focus, sans changement de
-                   page ; sans ça un lecteur d'écran ne signale pas le nouveau
-                   mois affiché. #}
+                {# aria-live: the month change is triggered by a click on an already-focused button with no page change, so without this a screen reader wouldn't announce the newly shown month. #}
                 <span class="mini-calendar__title" aria-live="polite"></span>
                 <button type="button" class="mini-calendar__nav" data-nav="next" aria-label="{{ 'schedule.next_month'|trans }}">
                     <i class="ri-arrow-right-s-line" aria-hidden="true"></i>

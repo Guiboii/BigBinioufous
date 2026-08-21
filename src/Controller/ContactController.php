@@ -12,35 +12,18 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
+// Public /contact page: contact form plus the HelloAsso membership/donation widgets embedded as-is.
 class ContactController extends AbstractController
 {
-    /**
-     * Page publique /contact : formulaire de contact (même circuit que la
-     * popup /story, cf. plus bas) et les widgets HelloAsso pour adhérer ou
-     * faire un don, embarqués tels que fournis par HelloAsso (iframe qui
-     * s'ajuste en hauteur via postMessage).
-     */
     #[Route('/contact', name: 'contact', methods: ['GET'])]
     public function index(): Response
     {
         return $this->render('contact/index.html.twig');
     }
 
-    /**
-     * Délai minimum entre l'affichage du formulaire (contact_ts, posé côté
-     * Twig au rendu) et sa soumission : un bot qui poste directement sans
-     * jamais avoir "vu" la page est plus rapide que ça, un humain non.
-     */
+    // Minimum delay between the form being rendered (contact_ts) and submitted: a bot posting directly without ever "seeing" the page is faster than this, a human isn't.
     private const MIN_SUBMIT_SECONDS = 3;
 
-    /**
-     * $contactEmail : injecté via le bind global de config/services.yaml
-     * (CONTACT_EMAIL, cf. branche mails fusionnée), même adresse que
-     * App\Mailer\RegistrationMailer. Tant que MAILER_DSN n'est pas configuré
-     * (cf. ROADMAP.md "Emails fonctionnels"), rien ne part réellement, mais
-     * le circuit anti-spam (honeypot + piège temporel + CSRF) est bien réel
-     * dès maintenant.
-     */
     #[Route('/contact', name: 'contact_submit', methods: ['POST'])]
     public function submit(Request $request, MailerInterface $mailer, LoggerInterface $logger, RateLimiterFactoryInterface $contactLimiter, string $contactEmail): JsonResponse
     {
@@ -48,15 +31,12 @@ class ContactController extends AbstractController
             return $this->json(['error' => 'invalid_token'], 403);
         }
 
-        // Anti-flood (1 envoi/minute/IP, cf. config/packages/rate_limiter.yaml) :
-        // contrairement au honeypot/piège temporel, un humain qui dépasse cette
-        // limite a le droit de savoir pourquoi son message n'est pas parti.
+        // Anti-flood (1 submission/minute/IP): unlike the honeypot/timing trap, a human hitting this limit deserves to know why their message didn't send.
         if (!$contactLimiter->create($request->getClientIp())->consume(1)->isAccepted()) {
             return $this->json(['error' => 'rate_limited'], 429);
         }
 
-        // Honeypot rempli, ou soumis trop vite : signature de bot. On répond
-        // un faux succès (jamais révéler le piège à l'appelant) sans rien envoyer.
+        // A filled honeypot or a too-fast submission is a bot signature. Respond with a fake success without sending anything, never reveal the trap to the caller.
         $submittedAt = (int) $request->request->get('contact_ts', 0);
         $tooFast = $submittedAt <= 0 || (time() - $submittedAt) < self::MIN_SUBMIT_SECONDS;
         if ('' !== (string) $request->request->get('contact_hp', '') || $tooFast) {

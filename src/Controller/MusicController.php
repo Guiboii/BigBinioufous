@@ -10,14 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Page publique /music : la setlist (titre/artiste/lien YouTube, cf.
- * SetlistItem) est visible par tout le monde. Les binioufous/admins ont en
- * plus un lien vers /desk/files/music (arbre de fichiers complet) plutôt
- * qu'un second rendu de l'arbre ici : remplace TrackController, fusionné
- * dans Folder/Document (cf. plan "Nettoyage de la gestion de
- * fichiers/dossiers").
- */
+// The public /music page: the setlist (title/artist/YouTube link) is visible to everyone. Binioufous/admins additionally get a link to the full /desk/files/music tree rather than a second render of it here.
 class MusicController extends AbstractController
 {
     #[Route('/music', name: 'music', methods: ['GET'])]

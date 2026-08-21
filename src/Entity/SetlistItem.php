@@ -5,13 +5,7 @@ namespace App\Entity;
 use App\Repository\SetlistItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Un morceau (ou medley) de la setlist affichée sur /music : titre, artiste
- * et lien YouTube facultatifs pour le grand public, plus un Folder (espace
- * musique) qui porte les fichiers audio réels. Un medley = plusieurs
- * Document dans ce même Folder (remplace Track+Voice, fusionnés dans
- * Folder/Document, cf. plan "Nettoyage de la gestion de fichiers/dossiers").
- */
+// A song (or medley) on the /music setlist: title, optional artist/YouTube link for the public, plus a Folder holding the real audio files.
 #[ORM\Entity(repositoryClass: SetlistItemRepository::class)]
 class SetlistItem
 {
@@ -102,12 +96,7 @@ class SetlistItem
     }
 
     /**
-     * Fichiers audio ET vidéo du dossier du morceau (medley = plusieurs),
-     * pour le lecteur/la liste "voix" de /music : l'espace musique accepte
-     * les deux à l'upload (cf. Folder::ALLOWED_MIME_TYPES), une vidéo ne
-     * doit pas rester invisible sur la page publique. Vide si pas de
-     * dossier ou pas encore de fichier dedans (item posé juste avec un lien
-     * YouTube).
+     * Audio and video files in the song's folder, for the /music player and voice list. Empty when there's no folder yet, e.g. an item posted with just a YouTube link.
      *
      * @return Document[]
      */
@@ -128,14 +117,7 @@ class SetlistItem
         return $this->getMediaDocuments()[0] ?? null;
     }
 
-    /**
-     * Id de la vidéo YouTube extrait de $youtubeUrl (déjà restreint aux 2
-     * formats youtube.com/watch?v=ID / youtu.be/ID par
-     * SetlistController::resolveYoutubeUrl(), donc l'extraction n'a pas à
-     * gérer d'autre forme). Sert à embarquer un lecteur vidéo sur l'écran de
-     * /music à la place de la waveform (cf. assets/music/youtube-embed.js),
-     * plutôt qu'un simple lien externe.
-     */
+    // Extracts the video id from $youtubeUrl, already restricted to the youtube.com/watch?v=ID and youtu.be/ID formats upstream. Used to embed a video player in place of the waveform.
     public function getYoutubeId(): ?string
     {
         if (!$this->youtubeUrl) {

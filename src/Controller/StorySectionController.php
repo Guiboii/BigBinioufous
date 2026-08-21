@@ -12,10 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * CRUD des sections de la page Histoire, réservé à ROLE_ADMIN (préfixe
- * /admin déjà couvert par access_control dans security.yaml).
- */
+// CRUD for Story page sections, reserved to ROLE_ADMIN via the /admin prefix in security.yaml.
 #[Route('/admin/story')]
 class StorySectionController extends AbstractController
 {
@@ -50,11 +47,7 @@ class StorySectionController extends AbstractController
         ]);
     }
 
-    /**
-     * Vue en lecture seule d'une section (contenu rendu, comme sur la page
-     * Histoire) : clic sur le titre depuis l'index, distinct du lien
-     * "modifier" (retour utilisatrice, même besoin sur /desk/notes).
-     */
+    // Read-only view of a section's rendered content, distinct from the edit link.
     #[Route('/{id}', name: 'story_section_show', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function show(StorySection $section): Response
     {
@@ -104,11 +97,7 @@ class StorySectionController extends AbstractController
         return $this->swapPosition($request, $section, $storySectionRepository, $entityManager, 1);
     }
 
-    /**
-     * Boutons "monter"/"descendre" plutôt qu'un glisser-déposer non
-     * atteignable au clavier (même choix que le déplacement de fichiers du
-     * gestionnaire de dossiers, ROADMAP.md Phase 7).
-     */
+    // Move up/down buttons rather than drag-and-drop, which isn't keyboard-reachable.
     private function swapPosition(Request $request, StorySection $section, StorySectionRepository $storySectionRepository, EntityManagerInterface $entityManager, int $direction): Response
     {
         if (!$this->isCsrfTokenValid('move'.$section->getId(), $request->request->get('_token'))) {

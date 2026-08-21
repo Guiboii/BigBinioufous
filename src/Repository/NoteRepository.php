@@ -13,6 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Note[]    findAll()
  * @method Note[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for Note.
 class NoteRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -21,8 +22,7 @@ class NoteRepository extends ServiceEntityRepository
     }
 
     /**
-     * Notes visibles pour un compte : les siennes (privées ou partagées) et
-     * celles partagées par le reste du bureau/conseil.
+     * Notes visible to an account: their own (private or shared) plus those shared by the rest of the board.
      *
      * @return Note[]
      */

@@ -8,11 +8,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('story/minisite.css') }}">
-        {# Cette page sert 2 rôles : contenu affiché dans l'iframe #miniSite
-           sur l'écran 3D de /story (desktop), ET page à part entière quand
-           /story redirige ici directement sur mobile (cf. story/index.html.twig).
-           Seul le 2e cas a besoin d'une navbar pour continuer la visite du
-           site : détection avant le premier rendu pour éviter un flash. #}
+        {# This page serves 2 roles: content shown in the #miniSite iframe on /story's 3D screen (desktop), and a standalone page when /story redirects here on mobile. Only the 2nd case needs a navbar, detected before the first render to avoid a flash. #}
         <script>
             document.documentElement.classList.add(window.self !== window.top ? 'is-embedded' : 'is-standalone');
         </script>
@@ -53,9 +49,7 @@
                 </nav>
 
                 <main>
-                    {# Sections éditables par ROLE_ADMIN via /admin/story (StorySection),
-                       contenu Markdown -> HTML. Un seul <h1> par page (a11y, cf. CLAUDE.md) :
-                       la 1ère section le porte, les suivantes sont en <h2>. #}
+                    {# Sections editable by ROLE_ADMIN, Markdown content rendered to HTML. A single h1 per page: the first section carries it, the rest use h2. #}
                     {% for section in sections %}
                         <section id="{{ section.slug }}">
                             {% if loop.first %}
@@ -78,8 +72,7 @@
                         }|json_encode }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
                             <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
-                            {# Honeypot, cf. le commentaire équivalent dans
-                               story/index.html.twig (même piège, même raison). #}
+                            {# Honeypot, same trap and reason as story/index.html.twig. #}
                             <input type="text" class="hp-field" id="minisite-contact-hp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                             <div class="term-field">
                                 <label for="minisite-contact-name">{{ 'contact.name_label'|trans }}</label>
@@ -120,10 +113,7 @@
             updateClock();
             setInterval(updateClock, 1000 * 15);
         </script>
-        {# Page autonome sans importmap (cf. CLAUDE.md "Frontend"), donc pas
-           d'entrée importmap.php pour ce petit script : servi tel quel par
-           AssetMapper via asset(), même logique que minisite.css juste
-           au-dessus. #}
+        {# Standalone page with no importmap, so this small script is served as-is via asset() instead, same as minisite.css above. #}
         <script src="{{ asset('story/minisite.js') }}" defer></script>
     </body>
 </html>

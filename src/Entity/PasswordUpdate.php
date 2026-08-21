@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+// Not a Doctrine entity: a plain form model for the change-password form (old/new/confirm).
 class PasswordUpdate
 {
     private $oldPassword;

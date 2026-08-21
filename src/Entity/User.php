@@ -14,6 +14,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+// A member account: identity, credentials, membership status, roles and instrument.
 #[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'This email is already used by another user, please change')]
@@ -24,13 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * Facultatif depuis la simplification de l'inscription (2026-08-12,
-     * cf. ROADMAP.md) : plus demandé à l'inscription (juste email/pseudo/
-     * mot de passe), à compléter plus tard sur /desk/profile si la personne
-     * le souhaite. Jamais rendu obligatoire même sur le profil ("pas
-     * forcément", retour utilisatrice).
-     */
+    // Nullable: registration only asks for email/nickname/password, identity is optional and filled in later on the profile page.
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $firstName;
 
@@ -47,11 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
     #[Assert\EqualTo(propertyPath: 'hash', message: 'you made a mistake')]
     public $passwordConfirm;
 
-    /**
-     * Pseudo choisi à l'inscription (avec email/mot de passe, seul
-     * identifiant en plus de l'email) : reste obligatoire, contrairement
-     * aux champs facultatifs ci-dessous.
-     */
+    // Chosen at registration alongside email/password; stays required, unlike the optional fields below.
     #[ORM\Column(type: 'string', length: 255)]
     private $nickname;
 
@@ -70,39 +61,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
     #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'users')]
     private $roles;
 
-    /**
-     * "Je joue cette partie" : coché par le membre sur un document audio de
-     * l'espace musique (desk_voice_toggle avant la fusion Track/Voice dans
-     * Folder/Document). Distinct de $favoriteDocuments (un simple repère
-     * personnel, disponible sur tout document, pas juste audio/musique).
-     */
+    // "I play this part": documents a member has flagged as their own part in an audio track. Distinct from $favoriteDocuments, a plain personal bookmark available on any document.
     #[ORM\ManyToMany(targetEntity: Document::class, mappedBy: 'playedBy')]
     private $playedDocuments;
 
     #[ORM\ManyToMany(targetEntity: Document::class, mappedBy: 'favoritedBy')]
     private $favoriteDocuments;
 
-    /**
-     * Compte accepté par un·e admin (accès de base au site). Décorrélé du
-     * rôle (ROLE_BINIOUFOUS et le toggle "Membre"/"Pas membre" côté admin)
-     * depuis la simplification de l'inscription : avant, le champ wish
-     * (retiré) déterminait à la fois le rôle ET si la validation était
-     * automatique.
-     */
+    // Account accepted by an admin (base access to the site). Independent from ROLE_BINIOUFOUS: an account can be validated without being a band member.
     #[ORM\Column(type: 'boolean')]
     private $validation;
 
-    /**
-     * Déclaration facultative à l'inscription ("Es-tu déjà adhérent·e ?") :
-     * la personne dit avoir déjà payé sa cotisation HelloAsso. Purement
-     * informatif, ne donne aucun accès automatiquement : un·e admin vérifie
-     * par ses propres moyens (HelloAsso n'a pas d'API pour vérifier en
-     * direct, colonne affichée sur /admin/valid pour l'aider) puis bascule
-     * le rôle via le toggle "Membre"/"Pas membre". Colonne claims_membership
-     * déjà présente en base (défaut 0) depuis une 1re version de ce champ,
-     * retirée le 2026-08-12 puis remise en place ici à l'inscription plutôt
-     * que sur /desk/profile : pas de nouvelle migration nécessaire.
-     */
+    // Self-declared at registration ("already a member?"); purely informational, grants no access on its own since there's no API to verify HelloAsso payments automatically. An admin checks manually and toggles the real membership role separately.
     #[ORM\Column(type: 'boolean')]
     private $claimsMembership = false;
 
@@ -118,33 +88,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
     #[ORM\ManyToOne(targetEntity: Instrument::class, inversedBy: 'users')]
     private $instrument;
 
-    /**
-     * Précision libre quand $instrument pointe vers l'entrée "Autre"
-     * (cf. AppFixtures.php), sans quoi cette information serait perdue.
-     */
+    // Free-text detail used when $instrument points to the "Other" entry, otherwise that information would be lost.
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $otherInstrumentDetail;
 
     #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
-    /**
-     * Secret TOTP (2FA, scheb/2fa-bundle), encodé Base32. Null = 2FA
-     * désactivée pour ce compte : le choix reste à l'utilisateur·ice, pas
-     * forcé à la création (cf. ROADMAP.md phase 8 "2FA"). Réservé en
-     * pratique aux ROLE_ADMIN côté UI (/desk/profile), mais rien n'empêche
-     * un autre compte de l'activer, le champ n'est pas restreint par rôle.
-     */
+    // Base32-encoded TOTP secret (2FA). Null means 2FA is disabled; it's opt-in and not restricted to any particular role in the code.
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $totpSecret;
 
-    /**
-     * Permet d'initialiser le slug. Basé sur le pseudo (nickname) plutôt
-     * que prénom/nom : depuis la simplification de l'inscription, ces
-     * derniers sont facultatifs et vides à la création du compte (juste
-     * email/pseudo/mot de passe), le pseudo est la seule donnée d'identité
-     * garantie présente à ce stade.
-     */
+    // Slugify from the nickname rather than first/last name: those are optional and often empty right after registration, the nickname is the only identity data guaranteed to exist.
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function initializeSlug(): void
@@ -155,9 +110,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
         }
     }
 
-    /**
-     * Remplis le champ createdAt.
-     */
     #[ORM\PrePersist]
     public function initializeCreatedAt()
     {
@@ -173,12 +125,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
         $this->favoriteDocuments = new ArrayCollection();
     }
 
-    /**
-     * Repli sur le pseudo si prénom/nom ne sont pas renseignés (facultatifs
-     * depuis la simplification de l'inscription) : évite d'afficher juste
-     * un espace vide partout où ce nom "complet" est utilisé (listes admin,
-     * profil...).
-     */
+    // Falls back to the nickname when first/last name are empty, avoids showing a bare space wherever this "full name" is displayed.
     public function getFullName()
     {
         if (empty($this->firstName) && empty($this->lastName)) {
@@ -241,14 +188,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
         return $this;
     }
 
-    /**
-     * Pas de ROLE_USER ajouté en dur ici (retiré le 2026-08-12, cf.
-     * ROADMAP.md "ROLE_USER retiré") : /desk n'exige plus qu'un compte
-     * connecté (access_control roles: IS_AUTHENTICATED_FULLY), pas un rôle
-     * particulier. Un compte sans aucun rôle métier renvoie simplement un
-     * tableau vide, ce qui suffit à Symfony (l'authentification et les
-     * rôles sont deux choses distinctes pour l'AuthorizationChecker).
-     */
+    // No implicit ROLE_USER added here: an account with no business role simply returns an empty array, which is fine since authentication and roles are separate concerns for Symfony's authorization checker.
     public function getRoles(): array
     {
         return $this->roles->map(function ($role) {

@@ -1,10 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block importmap %}
-    {# Sur petit écran, la scène 3D écrase tout et le "moniteur" avec le
-       terminal dedans devient minuscule/illisible : on redirige direct
-       vers le contenu de la minisite (déjà responsive en autonome) avant
-       de charger les assets 3D, plutôt que de les charger pour rien. #}
+    {# On small screens the 3D scene's embedded terminal becomes tiny/unreadable, so this redirects straight to the minisite content instead of loading the 3D assets for nothing. #}
     <script>
         if (window.matchMedia('(max-width: 700px)').matches) {
             window.location.replace('{{ path('minisite') }}');
@@ -19,16 +16,9 @@
 
 {% block body %}
 
-    {# title obligatoire sur une iframe : sans nom accessible, un lecteur
-       d'écran l'annonce juste "iframe" sans indiquer ce qu'elle contient. #}
+    {# title is required on an iframe: without an accessible name, a screen reader just announces "iframe" with no indication of its content. #}
     <iframe id="miniSite" src="{{ path('minisite') }}" title="{{ 'story.title'|trans }}"></iframe>
-    {# Cette popup n'est atteignable qu'en cliquant un objet 3D précis (raycast,
-       cf. story.js) : pas de déclencheur clavier direct. Le vrai formulaire de
-       contact accessible au clavier/lecteur d'écran est celui de la minisite
-       (#contact dans story/minisite.html.twig, atteignable via la navbar de
-       l'iframe). Celle-ci reste quand même gérée proprement une fois ouverte
-       (role dialog, Echap, focus) pour les personnes qui l'ouvrent à la souris
-       puis continuent au clavier. #}
+    {# This popup is only reachable by clicking a specific 3D object, no direct keyboard trigger: the real keyboard/screen-reader-accessible contact form is the minisite's, reachable via the iframe's navbar. Still managed properly once open (role dialog, Escape, focus) for people who open it with the mouse then continue with the keyboard. #}
     <form id="contactForm" class="d-none" role="dialog" aria-modal="true" aria-labelledby="contactFormTitle" action="{{ path('contact_submit') }}" method="post" data-messages="{{ {
         sending: 'contact.sending'|trans,
         success: 'contact.success'|trans,
@@ -42,18 +32,9 @@
         <h4 id="contactFormTitle">{{ 'contact.title'|trans }}</h4>
         <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
         <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
-        {# Honeypot : champ invisible pour un humain (hors écran en CSS, pas
-           display:none, certains bots l'ignorent spécifiquement) et retiré de
-           l'arbre d'accessibilité (aria-hidden + tabindex="-1", jamais atteint
-           au clavier ni annoncé par un lecteur d'écran). Un bot qui remplit
-           tous les champs d'un formulaire sans distinction se trahit ici. #}
+        {# Honeypot field: invisible to a human (off-screen CSS, not display:none, since some bots specifically ignore that) and removed from the accessibility tree. A bot filling every form field indiscriminately gives itself away here. #}
         <input type="text" class="hp-field" id="contactHp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="form-group">
-            {# Avant : id="exampleFormControlInput1" dupliqué sur les 2 champs
-               (nom ET email), donc le label "nom" pointait aussi vers le champ
-               email (2e id gagne, 1er jamais atteint par un clic sur son label
-               ni par un lecteur d'écran). Avant aussi : type="email" sur le
-               champ nom (validation navigateur au mauvais endroit). #}
             <label for="contactName">{{ 'contact.name_label'|trans }}</label>
             <input type="text" class="form-control" id="contactName" name="name" autocomplete="name" placeholder="John Doe">
         </div>
@@ -73,9 +54,7 @@
         <div class="loader"></div>
     </div>
     <div class="mascotte" aria-hidden="true">
-        {# tabindex="-1" : cible de script uniquement (story.js y renvoie le
-           focus à la fermeture de #contactForm), jamais atteint par Tab
-           (cohérent avec aria-hidden sur le parent). #}
+        {# tabindex="-1": a script-only target (story.js returns focus here when #contactForm closes), never reached by Tab, consistent with aria-hidden on the parent. #}
         <canvas id="c" tabindex="-1"></canvas>
     </div>
 

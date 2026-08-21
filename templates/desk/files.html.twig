@@ -5,14 +5,9 @@
 {% block body %}
     {% set moving = movingDocument or movingFolder %}
     {% set anyMoving = moving or bulkMoving %}
-    {# Écriture (créer/déplacer/supprimer/uploader) distincte de la lecture
-       de l'espace : cf. FolderWriteVoter, un membre binioufous peut lire un
-       espace sans forcément pouvoir y écrire (ex. espace "autre"). #}
+    {# Write access (create/move/delete/upload) is distinct from read access to the space: a binioufous member can read a space without necessarily being able to write to it. #}
     {% set writable = is_granted('FOLDER_WRITE', space) %}
-    {# Multi-sélection (checkboxes/barre d'actions groupées) et glisser-
-       déposer pour déplacer : uniquement en navigation normale, pas pendant
-       une recherche ni un déplacement (simple ou groupé) déjà en cours,
-       pour ne pas superposer 2 mécanismes d'interaction à la fois. #}
+    {# Multi-select and drag-and-drop move only apply during normal browsing, not while searching or an existing move is in progress, to avoid stacking two interaction modes at once. #}
     {% set canBulkSelect = writable and not searching and not anyMoving %}
     {% set moveParams = {} %}
     {% if movingDocument %}{% set moveParams = moveParams|merge({move_document: movingDocument.id}) %}{% endif %}
@@ -30,13 +25,7 @@
         <p class="desk-intro">{{ ('desk.space_' ~ space ~ '_intro')|trans }}</p>
 
         {% if 'music' == space %}
-            {# Seul espace relié à une 2e page (/music, la setlist publique) :
-               le lien dossier ↔ morceau n'est pas devinable sans explication
-               (retour utilisatrice : "je comprends pas comment c'est censé
-               marcher"), une phrase noyée dans .desk-intro ne suffisait pas.
-               Encart à part, discret (bordure + fond léger, pas un grand
-               panneau plein --bb-ink : jugé "moche" ailleurs sur cette page,
-               cf. commentaire .desk-intro dans app.css). #}
+            {# The only space tied to a second page (the public /music setlist): the folder <-> song link isn't guessable without explanation, so it gets its own callout rather than a line buried in .desk-intro. #}
             <div class="desk-music-help">
                 <p>{{ 'desk.music_help_intro'|trans }}</p>
                 <a href="{{ path('music') }}">{{ 'desk.music_help_link'|trans }}</a>
@@ -48,11 +37,7 @@
         {% endif %}
 
         {% if 'admin' == space %}
-            {# Outil de prise de note du bureau/conseil (/desk/notes) : pas
-               rangé dans cet espace (accessible ROLE_ADMIN + ROLE_COMPTA,
-               contrairement à cet espace réservé ROLE_ADMIN seul), juste
-               signalé ici pour qu'on le retrouve depuis le gestionnaire de
-               fichiers administratif, même pattern que l'encart musique. #}
+            {# The board note-taking tool isn't stored in this space (it's accessible to ROLE_ADMIN + ROLE_COMPTA, unlike this ROLE_ADMIN-only space), just linked from here for discoverability. #}
             <div class="desk-music-help">
                 <p>{{ 'desk.notes_help_intro'|trans }}</p>
                 <a href="{{ path('note_index') }}">{{ 'desk.notes_help_link'|trans }}</a>
@@ -76,10 +61,7 @@
         {% if searching %}
             <p class="desk-search-summary" role="status">{{ 'desk.search_results'|trans({'%query%': query, '%count%': subfolders|length + documents|length}) }}</p>
         {% else %}
-            {# Pattern WAI-ARIA "Breadcrumb" (https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/) :
-               nav étiqueté + liste ordonnée de liens, le dernier maillon (page
-               courante) n'est pas un lien vers lui-même mais du texte avec
-               aria-current="page". #}
+            {# WAI-ARIA "Breadcrumb" pattern: a labeled nav + ordered link list, the last item (current page) is plain text with aria-current="page" rather than a link to itself. #}
             <nav class="desk-breadcrumb" aria-label="{{ 'desk.breadcrumb'|trans }}">
                 <ol>
                     <li>
@@ -136,14 +118,7 @@
                 </div>
             </div>
         {% elseif writable and not searching %}
-            {# .desk-actions regroupe les 2 actions les plus probables en arrivant
-               dans un dossier (créer un dossier / déposer des fichiers), à poids
-               visuel égal côte à côte plutôt qu'un enchaînement vertical qui
-               écrasait "Nouveau dossier" sous la grande zone de dépôt.
-               Masqué en lecture seule (FOLDER_WRITE, cf. FolderWriteVoter) :
-               un membre binioufous peut lire un espace sans pouvoir y écrire
-               (ex. futur espace "autre"), pas la peine de lui montrer une
-               action qui serait refusée au clic. #}
+            {# .desk-actions groups the two most likely actions on arriving in a folder (new folder / drop files), given equal visual weight side by side. Hidden without FOLDER_WRITE, no point showing an action that would be refused on click. #}
             <div class="desk-actions">
                 <form method="post" action="{{ path('folder_create', {space: space}) }}" class="desk-new-folder">
                     <label for="new-folder-name">{{ 'desk.new_folder_label'|trans }}</label>
@@ -335,14 +310,7 @@
     </div>
 
     {% if canBulkSelect and (subfolders|length > 0 or documents|length > 0) %}
-        {# Barre d'actions groupées : masquée par défaut (hidden), affichée par
-           assets/desk/bulk-actions.js dès qu'au moins une case est cochée.
-           Les 2 formulaires ci-dessous restent vides tant que rien n'est
-           sélectionné (le JS y injecte les folder_ids[]/document_ids[]
-           cochés juste avant de les soumettre) : pas de dégradation utile
-           sans JS ici (une sélection multiple n'a de sens qu'avec du JS pour
-           en afficher l'état), contrairement au reste du gestionnaire de
-           fichiers qui reste utilisable sans JS. #}
+        {# Bulk actions bar: hidden by default, shown by bulk-actions.js once at least one checkbox is checked. The two forms below stay empty until then; unlike the rest of the file manager, this feature has no useful fallback without JS. #}
         <div id="desk-bulk-bar" class="desk-bulk-bar" hidden
             data-count-label="{{ 'desk.bulk_selected_count'|trans({'%count%': '__COUNT__'}) }}"
             data-bulk-move-action="{{ path('bulk_move', {space: space}) }}"
@@ -364,10 +332,7 @@
     {% endif %}
 
     {% if documents|length > 0 %}
-        {# Visionneuse commune (image/pdf/audio/vidéo) : évite de forcer un
-           téléchargement juste pour regarder une photo ou un PDF, cf.
-           assets/desk/file-preview.js pour le remplissage du contenu selon
-           le type. Un seul modal partagé par tous les documents de la page. #}
+        {# Shared preview modal (image/pdf/audio/video), avoiding a forced download just to look at a photo or PDF. One modal shared by every document on the page. #}
         <div id="file-preview-modal" class="file-preview-modal" hidden>
             <div class="file-preview-backdrop" data-close></div>
             <div class="file-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="file-preview-title">

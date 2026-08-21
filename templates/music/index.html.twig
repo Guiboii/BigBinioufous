@@ -1,13 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block importmap %}
-    {# Sur petit écran, le meuble 3D + le personnage deviennent minuscules et
-       la scène mange toute la place utile : plutôt que rediriger vers une
-       autre page (cas /story, qui a un vrai contenu dupliqué en iframe),
-       music.js lit cette classe et saute entièrement l'init Three.js
-       (canvas/GLTF/resize 3D) ; le lecteur (Player.js, indépendant du 3D)
-       et la playlist restent affichés en flux normal, cf. music.css. Posée
-       avant le 1er rendu pour éviter un flash. #}
+    {# On small screens the 3D furniture/character become tiny and the scene eats all the useful space, so music.js reads this class and entirely skips the Three.js init; the player and playlist stay displayed in normal flow. Set before the first render to avoid a flash. #}
     <script>
         document.documentElement.classList.add(window.matchMedia('(max-width: 700px)').matches ? 'is-mobile' : 'is-desktop');
     </script>
@@ -15,10 +9,7 @@
 {% endblock %}
 
 {% block fonts %}
-    {# VT323 (titre/ticker) + IBM Plex Mono (étiquettes/compteur) : même
-       paire déjà utilisée sur /story pour son propre "écran" rétro
-       (assets/story/minisite.css), reprise ici pour l'habillage "écran
-       plasma" du lecteur plutôt qu'une 3e police introduite au hasard. #}
+    {# VT323 (title/ticker) + IBM Plex Mono (labels/counter): the same pair already used on /story for its own retro "screen", reused here rather than introducing a 3rd font. #}
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 {% endblock %}
 
@@ -31,24 +22,11 @@
 
     <p class="mobile-note">{{ 'music.mobile_note'|trans }}</p>
 
-    {# Petit écran audio, inchangé : posé sur le meuble 3D via
-       updateOverlayPosition() (music.js), habillage "écran plasma" (bezel,
-       témoin, compteur, ticker). La vidéo YouTube (plus bas, #videoOverlay)
-       est un grand écran séparé qui s'ouvre par-dessus toute la page à la
-       demande - retour utilisatrice, 2026-08-21 : "c'est juste l'écran,
-       quand c'est une vidéo ytb qui doit apparaître par-dessus", le reste
-       (petit écran audio + scène 3D plein écran) doit rester tel quel. #}
+    {# Small audio screen, glued to the 3D furniture via updateOverlayPosition() in music.js. The YouTube video overlay below (#videoOverlay) is a separate large screen that opens over the whole page on demand, independent of this one. #}
     <div class="overlay">
-        {# h2 hors de .player-wrap volontairement : music.js cible
-           ".player-wrap .row:first-child" (le sélecteur CSS :first-child
-           s'applique au 1er enfant réel de .player-wrap) pour repositionner
-           la waveform par projection 3D, un enfant ajouté avant .row le
-           casserait. #}
+        {# This h2 is deliberately kept outside .player-wrap: music.js targets ".player-wrap .row:first-child" to reposition the waveform via 3D projection, and a child added before .row would break that selector. #}
         <h2 class="sr-only">{{ 'music.player_heading'|trans }}</h2>
-        {# Annonce le morceau en cours à chaque changement (clic ou fin
-           automatique, cf. Player.js) : rien ne le faisait avant pour un
-           utilisateur de lecteur d'écran qui ne regarde pas la playlist à
-           ce moment-là (cf. audit accessibilité). #}
+        {# Announces the current track on every change (click or automatic next), for a screen reader user not looking at the playlist at that moment. #}
         <p id="now-playing" class="sr-only" aria-live="polite"></p>
         <div class="player-wrap">
             <div class="row">
@@ -56,14 +34,7 @@
                 <div class="waveW">
                     <div id="waveform"></div>
 
-                    {# Habillage "écran plasma" (retour utilisatrice,
-                       2026-08-21) : superposé en absolute par-dessus la
-                       waveform, jamais d'espace propre réservé, pour ne pas
-                       toucher au rectangle calé en 3D par
-                       updateOverlayPosition() (music.js). Décoratif -
-                       aria-hidden : le témoin/compteur n'apporte rien de
-                       plus que ce que #now-playing (aria-live, cf. plus
-                       haut) annonce déjà pour un lecteur d'écran. #}
+                    {# "Screen" chrome overlaid absolutely on top of the waveform, never reserving its own space, so it doesn't affect the rectangle positioned in 3D by updateOverlayPosition(). Decorative, aria-hidden: the LED/counter add nothing beyond what #now-playing already announces to a screen reader. #}
                     <div class="screen-chrome" aria-hidden="true">
                         <span class="power-led" id="powerLed"></span>
                         <span class="track-counter" id="trackCounter"></span>
@@ -74,15 +45,7 @@
             <div
                 class="row playerButtons" role="region" aria-label="{{ 'music.player_region'|trans }}">
                 {% if is_granted('FOLDER_WRITE', 'music') %}
-                    {# Rond jaune près des commandes du lecteur : servait avant
-                       de lien direct vers /desk/files/music, repris comme 2e
-                       déclencheur de la modale "Gérer la setlist" ci-dessous
-                       (retour utilisatrice, 2026-08-13 : plus visible/accessible
-                       ici que le bouton du même nom planqué dans "Espace
-                       membres" plus bas). Vrai <button> plutôt que <a href>
-                       puisqu'il n'ouvre plus qu'une modale JS, cf.
-                       initDialog() dans music.js qui accepte maintenant
-                       plusieurs déclencheurs pour une même modale. #}
+                    {# The yellow dot near the player controls is a 2nd trigger for the "Manage setlist" modal below, more visible/accessible here than the same-named button tucked away in "Members area". A real <button> since it only opens a JS modal now, see initDialog() in music.js, which accepts multiple triggers for the same modal. #}
                     <button type="button" id="uploadNew" class="player-btn">
                         <span id="upload">
                             <svg class="bi bi-circle-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="8"/></svg>
@@ -90,23 +53,14 @@
                     </button>
                 {% endif %}
 
-                {# Avant : <div id="stopTrack">/<div id="playPause">/<div id="loopRegion">
-                   avec juste un handler "click" (assets/music/Player.js), donc
-                   inatteignables et inactivables au clavier, sans nom accessible
-                   (icône seule). De vrais <button> : le clic clavier (Entrée/
-                   Espace) déclenche déjà l'événement "click" écouté par
-                   Player.js, aucun changement JS de handler nécessaire pour ça.
-                   aria-label posé ici en solde/repli ; Player.js le met à jour
-                   dynamiquement pour Lecture/Pause selon l'état réel. #}
+                {# Real <button> elements rather than plain <div>s: a keyboard activation (Enter/Space) already fires the "click" event Player.js listens for, no JS handler change needed. aria-label set here as a baseline; Player.js updates it dynamically for Play/Pause based on real state. #}
                 <button type="button" id="stopTrack" class="player-btn" aria-label="{{ 'music.stop_label'|trans }}">
                     <span id="stop" aria-hidden="true">
                         <svg class="bi bi-stop-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5 3.5h6A1.5 1.5 0 0112.5 5v6a1.5 1.5 0 01-1.5 1.5H5A1.5 1.5 0 013.5 11V5A1.5 1.5 0 015 3.5z"/></svg>
                     </span>
                 </button>
 
-                {# data-play-label/data-pause-label : lus par Player.js pour tenir
-                   l'aria-label à jour selon l'état lecture/pause réel (les
-                   traductions restent en Twig, pas codées en dur en JS). #}
+                {# data-play-label/data-pause-label: read by Player.js to keep aria-label in sync with real play/pause state, keeping translations in Twig rather than hardcoded in JS. #}
                 <button type="button" id="playPause" class="player-btn" aria-label="{{ 'music.play_label'|trans }}" data-play-label="{{ 'music.play_label'|trans }}" data-pause-label="{{ 'music.pause_label'|trans }}">
                     <span id="play" aria-hidden="true">
                         <svg class="bi bi-play-fill" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 010 1.393z"/></svg>
@@ -128,13 +82,7 @@
         </div>
     </div>
 
-    {# Grand écran vidéo en overlay par-dessus toute la page (scène 3D
-       comprise), ouvert au clic sur un badge YouTube (assets/music/youtube-embed.js
-       écoute #playlist plus bas) : retour utilisatrice, 2026-08-21 : "c'est
-       juste l'écran, quand c'est une vidéo ytb qui doit apparaître
-       par-dessus". Indépendant du petit écran audio ci-dessus (jamais les
-       deux affichés en même temps, cf. les CustomEvent music:show-video/
-       music:audio-playing échangés entre Player.js et youtube-embed.js). #}
+    {# Large video overlay over the whole page (3D scene included), opened on a YouTube badge click. Independent of the small audio screen above, they're never shown at once (see the music:show-video/music:audio-playing CustomEvents exchanged between Player.js and youtube-embed.js). #}
     <div id="videoOverlay" class="video-overlay d-none" role="dialog" aria-modal="true" aria-labelledby="video-overlay-title">
         <div class="video-overlay-backdrop" data-close></div>
         <div class="video-overlay-content">
@@ -147,18 +95,9 @@
     </div>
 
     <div class="playlist-wrap">
-            {# Un item de la setlist (SetlistItem) sans fichier audio n'a
-               rien à charger dans wavesurfer (Player.js appelle
-               wavesurfer.load() sur chaque href de #playlist a) : rendu en
-               <span> plutôt qu'en lien cliquable dans ce cas, le lien
-               YouTube (s'il existe) reste le seul moyen de l'écouter.
-               <ul>/<li> plutôt qu'un flux de <a>/<span> à plat : sans ça,
-               un lecteur d'écran n'annonce jamais "liste de N éléments",
-               cf. audit accessibilité. #}
+            {# A setlist item with no audio file has nothing to load in wavesurfer, so it's rendered as a <span> rather than a clickable link, leaving the YouTube link (if any) as the only way to hear it. <ul>/<li> rather than a flat <a>/<span> stream so a screen reader announces "list of N items". #}
             <h2 class="sr-only">{{ 'music.playlist_heading'|trans }}</h2>
-            {# Étiquette visuelle décorative : le h2 sr-only ci-dessus porte
-               déjà le nom accessible de la région, doublon volontairement
-               masqué aux lecteurs d'écran. #}
+            {# Decorative visual label: the sr-only h2 above already carries the region's accessible name, this duplicate is deliberately hidden from screen readers. #}
             <p class="console-label" aria-hidden="true">{{ 'music.playlist_heading'|trans }}</p>
             <ul class="playlist float-left" id="playlist">
                 {% for item in items %}
@@ -171,34 +110,14 @@
                             {{ item.artist.name }}
                         {% endif %}
                         {% if item.youtubeUrl %}
-                            {# data-youtube-id : intercepté par
-                               assets/music/youtube-embed.js pour ouvrir la
-                               vidéo directement sur l'écran (mode "plasma",
-                               retour utilisatrice 2026-08-21) plutôt que de
-                               naviguer. href/target=_blank restent en repli
-                               si JS a échoué à charger : navigation normale
-                               vers YouTube dans ce cas. Ouvert à tout le
-                               monde, contrairement au lien audio ci-dessus
-                               (réservé binioufous/admins) : n'importe quel
-                               morceau ayant un lien YouTube peut être vu ici,
-                               avec ou sans fichier audio associé. #}
+                            {# data-youtube-id is intercepted by youtube-embed.js to open the video on-screen rather than navigating; href/target=_blank remain a fallback if JS failed to load. Open to everyone, unlike the audio link above reserved to binioufous/admins. #}
                             <a href="{{ item.youtubeUrl }}" class="badge" target="_blank" rel="noopener" data-youtube-id="{{ item.youtubeId }}" data-youtube-title="{{ item.artist ? (item.title ~ ' ' ~ 'music.by'|trans ~ ' ' ~ item.artist.name) : item.title }}">{{ 'music.youtube_link'|trans }}</a>
                         {% endif %}
                     {% endset %}
                     <li>
-                        {# Écoute du fichier audio réel réservée aux
-                           binioufous/admins (même règle de lecture que
-                           l'espace /desk/files/music, cf. security.yaml) :
-                           le public n'a que le titre/artiste/lien YouTube
-                           ci-dessus, jamais un lien direct vers le mp3
-                           (retour utilisatrice, 2026-08-21 : "public c juste
-                           les liens ytb"). #}
+                        {# Listening to the real audio file is reserved to binioufous/admins, same read rule as the /desk/files/music space: the public only gets the title/artist/YouTube link above, never a direct mp3 link. #}
                         {% if media and (is_granted('ROLE_BINIOUFOUS') or is_granted('ROLE_ADMIN')) %}
-                            {# data-track-title : Player.js l'annonce dans la
-                               zone aria-live à chaque changement de morceau
-                               (clic ou fin automatique) plutôt que de
-                               réutiliser le HTML riche du lien (icône + badge
-                               YouTube), pas adapté à une annonce vocale. #}
+                            {# data-track-title: Player.js announces it in the aria-live region on every track change, rather than reusing the link's rich HTML (icon + YouTube badge), unsuited to a voice announcement. #}
                             <a href="{{ asset('uploads/documents/' ~ media.filename) }}" class="list-group-item" data-track-title="{{ item.artist ? (item.title ~ ' ' ~ 'music.by'|trans ~ ' ' ~ item.artist.name) : item.title }}">{{ songLabel|raw }}</a>
                         {% else %}
                             <span class="list-group-item">{{ songLabel|raw }}</span>
@@ -212,9 +131,7 @@
             <div class="members-only float-left">
                 <h2 class="sr-only">{{ 'music.members_heading'|trans }}</h2>
                 {% if is_granted('ROLE_BINIOUFOUS') or is_granted('ROLE_ADMIN') %}
-                    {# Vue "fichiers bruts" réservée aux binioufous (todoMusique) :
-                       les voix/parts de chaque morceau, plus un lien vers le
-                       classeur complet plutôt qu'un second rendu de l'arbre ici. #}
+                    {# "Raw files" view reserved to binioufous: each song's voices/parts, plus a link to the full file manager rather than a second render of the tree here. #}
                     <ul class="loggedinContent">
                         {% for item in items %}
                             <li class="list-group-item">
@@ -253,14 +170,7 @@
                         {% endfor %}
                     </ul>
                     {% if is_granted('FOLDER_WRITE', 'music') %}
-                        {# Ouvre la modale plus bas en JS (assets/music/music.js,
-                           pattern généralisé depuis musicLoginTrigger). Placé ici
-                           (dans .members-only, déjà repositionné en fixed par
-                           updateOverlayPosition() via .playlist-wrap parent, cf.
-                           music.js) plutôt qu'en bouton fixed séparé : reste dans
-                           le même bloc que "Voir tous les fichiers", cohérent
-                           avec la demande de l'utilisatrice, et hérite du même
-                           positionnement déjà fonctionnel/visible sur desktop. #}
+                        {# Opens the modal below via JS. Placed here, inside .members-only which is already repositioned fixed by updateOverlayPosition() via its parent, rather than as a separate fixed button, so it stays in the same block as "View all files" and inherits the same working positioning. #}
                         <button type="button" id="setlistManageTrigger" class="btn btn-green setlist-manage-trigger">
                             <i class="ri-music-2-line" aria-hidden="true"></i> {{ 'music.manage_setlist'|trans }}
                         </button>
@@ -284,15 +194,7 @@
     </div>
 
     {% if is_granted('FOLDER_WRITE', 'music') %}
-        {# Sortie volontaire du système de projection 3D (cf. plan) : cette
-           modale reste en flux/position normale (pas de position:fixed
-           calculée en JS par updateOverlayPosition()), donc son z-index et
-           sa visibilité ne dépendent jamais du canvas 3D. Même squelette a11y
-           que components/form-dialog.html.twig (role=dialog, aria-modal,
-           aria-labelledby, bouton fermer) sans en réutiliser le composant :
-           form-dialog.html.twig EST lui-même un <form>, alors qu'il faut ici
-           plusieurs <form> distincts (ajout + un par morceau) qui ne peuvent
-           pas s'imbriquer en HTML. #}
+        {# Deliberately outside the 3D projection system: this modal stays in normal flow/position, so its z-index and visibility never depend on the 3D canvas. Same accessibility skeleton as components/form-dialog.html.twig, without reusing that component: form-dialog.html.twig IS itself a <form>, but this needs several distinct <form> elements (add + one per song) that can't nest in HTML. #}
         <div id="setlistManageDialog" class="setlist-dialog d-none" role="dialog" aria-modal="true" aria-labelledby="setlist-dialog-title">
             <div class="setlist-dialog-backdrop" data-close></div>
             <div class="setlist-dialog-content">
@@ -304,14 +206,7 @@
                 </div>
 
                 <div class="dialog-body">
-                    {# "folder" lie direct au Folder choisi (select rempli par
-                       MusicController::index() via FolderRepository::findTopLevel()),
-                       plutôt que de créer un dossier à la volée par un champ
-                       texte libre (source de doublons par faute de frappe,
-                       retour utilisatrice le 2026-08-13) : le dossier et ses
-                       fichiers audio doivent déjà exister (créés/déposés
-                       depuis "Voir tous les fichiers" ci-dessous) avant de
-                       pouvoir être liés ici, cf. .field-hint plus bas. #}
+                    {# "folder" links directly to an existing Folder (select filled from FolderRepository::findTopLevel()) rather than creating one on the fly from free text, which was prone to typo duplicates: the folder and its audio files must already exist before being linked here. #}
                     <h3>{{ 'music.add_song'|trans }}</h3>
                     <form method="post" action="{{ path('setlist_new') }}">
                         <label for="setlist-title">{{ 'music.track_title'|trans }}</label>
@@ -325,11 +220,7 @@
                             {% endfor %}
                         </select>
 
-                        {# Rempli => prioritaire sur le select ci-dessus, cf.
-                           SetlistController::resolveArtist() : crée l'artiste à
-                           la volée (ou réutilise un artiste du même nom déjà
-                           existant) plutôt que de dépendre uniquement des
-                           fixtures pour peupler la liste. #}
+                        {# When filled, takes priority over the select above: creates the artist on the fly (or reuses an existing one with the same name) instead of depending only on fixtures to populate the list. #}
                         <label for="setlist-new-artist">{{ 'music.new_artist_label'|trans }}</label>
                         <input type="text" id="setlist-new-artist" name="new_artist" placeholder="{{ 'music.new_artist_placeholder'|trans }}" maxlength="255">
 
@@ -389,9 +280,7 @@
                                                 <option value="{{ folder.id }}"{{ item.folder and item.folder.id == folder.id ? ' selected' : '' }}>{{ folder.name }}</option>
                                             {% endfor %}
                                             {% if item.folder and not folderStillListed %}
-                                                {# Dossier lié pas en 1er niveau (créé avant ce chantier, ou
-                                                   sous-dossier) : gardé en option sélectionnée par défaut pour
-                                                   ne pas délier silencieusement en enregistrant sans y toucher. #}
+                                                {# Linked folder isn't a top-level one (a subfolder, or created before top-level-only linking existed): kept as the default selected option so saving without touching this field doesn't silently unlink it. #}
                                                 <option value="{{ item.folder.id }}" selected>
                                                     {%- for ancestor in item.folder.ancestors[1:] -%}{{ ancestor.name }} / {%- endfor -%}{{ item.folder.name }}
                                                 </option>
@@ -445,11 +334,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    {# Épinglé à 6.6.4 (dernière version 6.x) : sans version, unpkg résout la
-       dernière release (7.x), une réécriture complète en modules ES qui n'a
-       plus l'API globale WaveSurfer.create()/.regions.create() qu'utilise
-       Player.js. Même piège que bootstrap/three.js, déjà documenté dans
-       CLAUDE.md, jamais appliqué ici avant le 2026-08-10. #}
+    {# Pinned to 6.6.4: without a version, unpkg resolves the latest 7.x release, a full ES modules rewrite that drops the global WaveSurfer.create()/.regions.create() API Player.js relies on. #}
     <script src="https://unpkg.com/wavesurfer.js@6.6.4"></script>
     <script src="https://unpkg.com/wavesurfer.js@6.6.4/dist/plugin/wavesurfer.regions.min.js"></script>
 {% endblock %}

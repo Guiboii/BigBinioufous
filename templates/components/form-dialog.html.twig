@@ -1,17 +1,17 @@
 {#
-Composant réutilisable pour une popup de dialogue avec formulaire.
+Reusable dialog popup with a form.
 
-Params :
-  - id : identifiant unique du formulaire (obligatoire)
-  - action : URL de soumission (optionnel, par défaut current path)
-  - title : clé de traduction du titre (obligatoire)
-  - content : HTML du contenu du formulaire (obligatoire)
+Params:
+  - id: unique form identifier (required)
+  - action: submission URL (optional, defaults to the current path)
+  - title: translation key for the title (required)
+  - content: form content HTML (required)
 
-Structuration a11y :
-  - role="dialog" + aria-modal="true" : expose le rôle au lecteur d'écran
-  - aria-labelledby : lie le formulaire à son titre h2
-  - aria-live="polite" sur les erreurs : annonce les messages au lecteur
-  - Bouton fermer accessible avec aria-label
+Accessibility:
+  - role="dialog" + aria-modal="true" exposes the role to screen readers
+  - aria-labelledby ties the form to its h2 title
+  - aria-live="polite" on errors announces messages to screen readers
+  - accessible close button with aria-label
 #}
 <form
     {% if action is defined and action %}action="{{ action }}"{% endif %}

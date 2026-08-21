@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Instrument[]    findAll()
  * @method Instrument[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for Instrument.
 class InstrumentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

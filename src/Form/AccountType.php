@@ -15,11 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
-/**
- * Formulaire de /desk/profile : identité/instrument/adhésion, tous
- * facultatifs (cf. User, "Facilitons l'inscription", 2026-08-12) sauf le
- * pseudo et l'email, seuls champs déjà obligatoires à l'inscription.
- */
+// Profile form: identity/instrument/membership, all optional except nickname and email, already required at registration.
 class AccountType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)

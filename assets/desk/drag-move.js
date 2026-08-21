@@ -1,7 +1,4 @@
-// Glisser-déposer pour déplacer un dossier/document sur un autre dossier,
-// façon Drive. Coexiste avec le mode "clic pour déplacer" existant
-// (desk-move-start, cf. templates/desk/files.html.twig) : simple ajout, pas
-// un remplacement, pour ne rien casser côté clavier/accessibilité.
+// Drag-and-drop to move a folder/document onto another folder, Drive-style. Coexists with the existing click-to-move mode rather than replacing it, so keyboard/accessibility flows keep working.
 var bulkBar = document.getElementById('desk-bulk-bar');
 
 if (bulkBar) {
@@ -15,8 +12,7 @@ if (bulkBar) {
 
     draggedEl = el;
     e.dataTransfer.effectAllowed = 'move';
-    // Requis par Firefox pour autoriser le glisser (Chrome s'en passe, mais
-    // ignore setData sans dégât si jamais le navigateur ne s'en sert pas).
+    // Required by Firefox to allow the drag; Chrome doesn't need it but ignores it harmlessly.
     e.dataTransfer.setData('text/plain', el.dataset.dragKind + ':' + el.dataset.dragId);
   });
 

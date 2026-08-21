@@ -5,10 +5,7 @@
 {% block body %}
 
 <div class="container">
-    {# Titre en Bungee (même identité que le reste du site, cf. body.desk h1/
-       .navbar-collapse h2 dans app.css) et avertissement regroupés dans une
-       carte ink+gold (.registration-notice), cf. historique de cette page
-       pour le détail des correctifs de thème/contraste. #}
+    {# Title in the brand's Bungee font, warning grouped in a dark green/gold card (.registration-notice). #}
     <div class="registration-header">
         <h1 class="text-green">{{ 'join.registration_heading'|trans }}</h1>
     </div>
@@ -21,34 +18,11 @@
         </div>
     </div>
 
-    {# .registration-form : même bug de contraste que celui déjà corrigé sur
-       body.desk form (cf. assets/main/app.css) mais jamais traité ici. La
-       règle générique "form { color: var(--bb-gold) }" sur fond
-       --bb-green-mid ne tient que 3.63:1, sous le minimum AA (4.5:1) pour du
-       texte normal. Blanc (6.82:1, AAA), même correctif que body.desk, scopé
-       à cette page plutôt que rendu global. #}
+    {# .registration-form: same contrast fix already applied to body.desk form. The generic "form" rule's gold-on-green only reaches 3.63:1, below AA; white reaches 6.82:1 (AAA), scoped to this page rather than made global. #}
     {{ form_start(form, {attr: {class: 'registration-form'}}) }}
-    {# Inscription simplifiée (2026-08-12, cf. ROADMAP.md) : juste pseudo/
-       email/mot de passe. Le reste du profil (identité, instrument...) se
-       complète après coup sur /desk/profile une fois le compte accepté.
-       Seule exception : "Es-tu déjà adhérent·e ?" (User::$claimsMembership,
-       retour utilisatrice 2026-08-21), posée ici pour que l'équipe puisse
-       vérifier les cotisations dès la validation du compte sur /admin/valid,
-       et pour proposer le lien HelloAsso au bon moment à qui n'a pas encore
-       adhéré. Rendue à part (form_label/form_widget manuels) avant le reste
-       du formulaire plutôt que par le form_widget(form) global plus bas :
-       même position "question posée en tête" que sa 1re version sur
-       cette page (2026-08-11), dans une carte détachée (.already-member-step,
-       fond --bb-green-deep + liseré doré, même traitement que
-       .registration-notice ci-dessus) pour vraiment se voir comme LA
-       question à traiter en premier. form_widget(form) plus bas ne la
-       re-rendra pas : Symfony marque un champ comme déjà rendu dès qu'un
-       form_row/form_widget lui est appliqué individuellement. #}
+    {# "Already a member?" is rendered separately (manual form_label/form_widget) ahead of the rest of the form, in its own detached card, so it reads as THE question to answer first. The later form_widget(form) won't re-render it: Symfony marks a field as already rendered once form_row/form_widget has been applied to it individually. #}
     <div class="already-member-step">
-        {# <legend> doit être le tout 1er enfant du <fieldset> pour que
-           l'association accessible (nom du groupe de radios pour un lecteur
-           d'écran) soit fiable : le paragraphe d'aide reste donc à
-           l'intérieur mais après le widget, pas entre les deux. #}
+        {# <legend> must be the fieldset's very first child for the accessible group name to be reliable, so the hint paragraph stays after the widget, not between them. #}
         <fieldset class="already-member-fieldset">
             {{ form_label(form.claimsMembership) }}
             <div class="already-member-toggle">
@@ -57,11 +31,7 @@
             <p class="already-member-hint">{{ 'register.claims_membership_hint'|trans }}</p>
         </fieldset>
 
-        {# Masquée par défaut (pas de flash visible-puis-masqué au
-           chargement), affichée en JS seulement si "Non" est sélectionné.
-           target="_blank"/rel="noopener" : vraie navigation externe vers
-           HelloAsso, on ne veut pas perdre le formulaire d'inscription en
-           cours de remplissage dans le même onglet. #}
+        {# Hidden by default, shown in JS only when "No" is selected. target="_blank"/rel="noopener": a real external navigation to HelloAsso, to avoid losing the in-progress registration form in the same tab. #}
         <div id="notMemberHelpBox" class="already-member-followup d-none">
             <i class="ri-information-fill" aria-hidden="true"></i>
             <div class="already-member-followup-content">
@@ -80,11 +50,7 @@
 
 </div>
 
-{# Toggle minimal (pas de dépendance JS externe, même choix que la 1re
-   version de cette question sur cette page) : affiche le rappel HelloAsso
-   seulement si "Non" est sélectionné. Pas de logique supplémentaire à
-   verrouiller ici (contrairement à 2026-08-11 : plus de champ "wish" à
-   restreindre, le rôle se décide après coup par un·e admin). #}
+{# Minimal toggle, no external JS dependency: shows the HelloAsso reminder only when "No" is selected. #}
 <script>
     (function () {
         var noRadio = document.getElementById('registration_claimsMembership_1');

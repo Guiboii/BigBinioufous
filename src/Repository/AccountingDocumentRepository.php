@@ -12,15 +12,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method AccountingDocument[]    findAll()
  * @method AccountingDocument[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for AccountingDocument, including reference number sequencing.
 class AccountingDocumentRepository extends ServiceEntityRepository
 {
-    /**
-     * Point de départ du compteur choisi par l'utilisatrice (2026-08-12) :
-     * les devis/factures papier existants s'arrêtent à DE045/FA025 (cf. les
-     * modèles PDF dans public/uploads/documents), sans que leur historique
-     * soit ressaisi dans l'appli. Le prochain numéro attribué par
-     * findNextNumber() ne descend jamais sous ce plancher, même base vide.
-     */
+    // Floor for the numbering: existing paper quotes/invoices already reached DE045/FA025 without their history being re-entered in the app, so findNextNumber() never goes below this even on an empty database.
     private const START_NUMBERS = [
         AccountingDocument::TYPE_QUOTE => 46,
         AccountingDocument::TYPE_INVOICE => 26,
@@ -58,10 +53,7 @@ class AccountingDocumentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Devis proposés dans le sélecteur "Nouvelle facture" (cf.
-     * AccountingController::invoiceChooseQuote()) : $excludedFromInvoicing
-     * exclu ici seulement, le devis reste par ailleurs visible/éditable
-     * normalement via findAllOrdered().
+     * Quotes offered in the "new invoice" picker: excludes $excludedFromInvoicing, which otherwise stays visible/editable normally via findAllOrdered().
      *
      * @return AccountingDocument[]
      */

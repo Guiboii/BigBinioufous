@@ -5,6 +5,7 @@ import './join.css';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+// 3D scene for /join: click the carpet/logo/saucer/disco ball to trigger the login popup, go to registration, or go home. Also handles the accessible login popup below.
 var canvas,
   clock,
   mixer,
@@ -113,7 +114,7 @@ function init() {
     },
   );
 
-  // Soucoupe 3D MODEL
+  // Saucer 3D model
   var loader = new GLTFLoader();
   loader.load(
     window.BB_ASSETS['story/Soucoupe.gltf'],
@@ -219,28 +220,17 @@ function raycast(e, touch = false) {
     } else if (object.parent.name === 'LogoB') {
       document.getElementById('loginForm').classList.remove('d-none');
     } else if (object.parent.name === 'Soucoupe') {
-      // Avant : ouvrait le popup intermédiaire #joinForm (supprimé, cf.
-      // join/index.html.twig), même destination que le bouton "Rejoindre".
       location.href = '/register';
     } else if (object.name === 'disco') {
       location.href = '/';
     }
   }
 }
-// show the popup form
-//
-// #loginForm (role="dialog" posé dans join/index.html.twig) est ouverte/
-// fermée en gardant clavier et lecteur d'écran cohérents avec l'état
-// visuel : le bouton "Rejoindre" est désormais un vrai lien vers
-// /register (plus de popup #joinForm intermédiaire, cf. commentaire dans
-// join/index.html.twig), seule la connexion reste en popup ici.
-// - le bouton déclencheur expose son état via aria-expanded
-// - à l'ouverture, le focus part sur le 1er champ du formulaire (ou le
-//   bouton fermer s'il n'y a pas de champ) plutôt que de rester sur place
-// - Echap ferme la popup ouverte et rend le focus au bouton déclencheur
-// - un simple piège de tabulation (Tab/Shift+Tab) empêche de sortir de la
-//   popup pendant qu'elle est ouverte (role="dialog" + aria-modal="true"
-//   sans ça ne suffit pas : rien n'empêche réellement le focus de sortir)
+// Accessible login popup (#loginForm, role="dialog"): only login stays a popup, "Join" is now a plain link to /register.
+// - the trigger button exposes its state via aria-expanded
+// - on open, focus moves to the first field (or the close button if there's none)
+// - Escape closes the popup and returns focus to the trigger
+// - a tab trap keeps focus inside the popup while it's open, since role="dialog" + aria-modal alone don't enforce that
 
 var loginButton = document.querySelector('button.login');
 var loginForm = document.getElementById('loginForm');

@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method PasswordUpdate[]    findAll()
  * @method PasswordUpdate[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for PasswordUpdate (unused in practice, it's a form-only model, kept for consistency with the ServiceEntityRepository pattern).
 class PasswordUpdateRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

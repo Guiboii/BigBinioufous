@@ -13,6 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Document[]    findAll()
  * @method Document[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for Document: folder listing, trash, search.
 class DocumentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -21,10 +22,7 @@ class DocumentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Documents actifs (hors corbeille) d'un dossier, triés selon $sort/$dir
-     * (cf. DeskController::files()). "size" n'a de sens que sur les
-     * documents (pas de calcul récursif sur les dossiers), d'où ce tri géré
-     * ici plutôt que dans le contrôleur.
+     * Active (non-trashed) documents of a folder, sorted per $sort/$dir. "size" only makes sense on documents, not folders, hence the sort logic living here rather than in the controller.
      *
      * @return Document[]
      */
@@ -37,8 +35,7 @@ class DocumentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Documents en corbeille d'un espace, les plus récemment supprimés
-     * d'abord : DeskController::trash().
+     * Trashed documents of a space, most recently deleted first.
      *
      * @return Document[]
      */
@@ -55,8 +52,7 @@ class DocumentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Recherche récursive par nom sur tout l'espace, cf.
-     * FolderRepository::search() pour l'échappement du terme.
+     * Recursive search by name across the whole space. See FolderRepository::search() for the LIKE-escaping logic.
      *
      * @return Document[]
      */

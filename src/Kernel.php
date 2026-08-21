@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
+// Standard Symfony Flex micro-kernel: loads bundles/config/routes from config/, nothing project-specific here.
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;

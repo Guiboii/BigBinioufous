@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method SetlistItem[]    findAll()
  * @method SetlistItem[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for SetlistItem, ordered by manual position.
 class SetlistItemRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -27,9 +28,7 @@ class SetlistItemRepository extends ServiceEntityRepository
         return $this->findBy([], ['position' => 'ASC']);
     }
 
-    /**
-     * Prochaine position libre pour un nouvel item, mis en fin de setlist.
-     */
+    // Next free position for a new item, appended at the end of the setlist.
     public function nextPosition(): int
     {
         $max = $this->createQueryBuilder('s')

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+// A single uploaded file, living inside a Folder, with soft-delete (trash) support.
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Document
@@ -25,12 +26,7 @@ class Document
     #[ORM\Column(type: 'string', length: 100)]
     private $mimeType;
 
-    /**
-     * Taille en octets, capturée à l'upload (DocumentController::upload(),
-     * via $file->getSize() avant move()) plutôt que recalculée à la volée
-     * avec filesize() : évite un accès disque par document à chaque
-     * affichage de dossier, et permet un vrai tri SQL par taille.
-     */
+    // Captured at upload time rather than recomputed with filesize(): avoids a disk read per document on every folder listing and enables SQL sorting by size.
     #[ORM\Column(type: 'integer')]
     private $size = 0;
 
@@ -48,23 +44,12 @@ class Document
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'favoriteDocuments')]
     private $favoritedBy;
 
-    /**
-     * Membres qui jouent cette partie (documents audio de l'espace musique,
-     * cf. User::$playedDocuments). Remplace Voice::$users depuis la fusion
-     * Track/Voice dans Folder/Document. JoinTable nommée explicitement :
-     * sans ça, Doctrine nomme par défaut la table de jonction d'après les 2
-     * entités seules ("document_user"), qui entrerait en collision avec
-     * celle déjà utilisée par $favoritedBy ci-dessus.
-     */
+    // Members who play this part. JoinTable named explicitly: Doctrine's default name would collide with the one already used by $favoritedBy above.
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'playedDocuments')]
     #[ORM\JoinTable(name: 'document_played_by')]
     private $playedBy;
 
-    /**
-     * Corbeille (cf. Folder::$deletedAt pour le fonctionnement d'ensemble).
-     * Un document n'a pas de descendants, donc pas de subtilité récursive
-     * ici contrairement au dossier.
-     */
+    // Trash marker (see Folder::$deletedAt). A document has no descendants, so no recursive concern here unlike folders.
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $deletedAt;
 
@@ -164,11 +149,7 @@ class Document
         return $this;
     }
 
-    /**
-     * Formatage lisible (ex. "2,4 Mo") pour l'affichage, cf.
-     * templates/desk/files.html.twig. Pas de virgule fixe : arrondi à 1
-     * décimale au-delà du Ko, entier en dessous.
-     */
+    // Human-readable size (e.g. "2.4 Mo"): whole number below 1 Ko, 1 decimal above.
     public function getHumanSize(): string
     {
         $units = ['o', 'Ko', 'Mo', 'Go'];
@@ -217,11 +198,7 @@ class Document
         return str_starts_with((string) $this->mimeType, 'video/');
     }
 
-    /**
-     * Icône + repère couleur par type de fichier (assets/main/app.css,
-     * .desk-document--*) : utile pour repérer vite un fichier dans une
-     * grosse arborescence, pas juste décoratif.
-     */
+    // Drives the icon/color coding per file type (see .desk-document--* in assets/main/app.css), used to spot files quickly in a large tree.
     public function getKind(): string
     {
         $mime = (string) $this->mimeType;

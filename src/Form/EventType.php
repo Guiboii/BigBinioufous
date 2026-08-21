@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
+// Form for creating/editing a schedule Event, including poster upload.
 class EventType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)

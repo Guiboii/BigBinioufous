@@ -6,13 +6,7 @@ use App\Repository\LedgerEntryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Ligne du journal de trésorerie (dépenses et recettes), cf.
- * ROADMAP.md "suivi de trésorerie". Nom "LedgerEntry" plutôt que
- * "Transaction" pour éviter tout risque avec le mot réservé SQL du même
- * nom selon le SGBD, et parce que "journal" décrit mieux l'usage ici
- * (aucun lien avec une transaction ORM/DB).
- */
+// A cash journal line (income or expense). Named "LedgerEntry" rather than "Transaction" to avoid any collision with the SQL reserved word.
 #[ORM\Entity(repositoryClass: LedgerEntryRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class LedgerEntry
@@ -35,10 +29,7 @@ class LedgerEntry
     #[ORM\Column(type: 'string', length: 255)]
     private $label;
 
-    /**
-     * Toujours positif : le signe (recette/dépense) vient de $type, pas du
-     * montant lui-même, cf. LedgerEntryRepository::getBalance().
-     */
+    // Always positive: the income/expense sign comes from $type, not from the amount itself.
     #[ORM\Column(type: 'float')]
     #[Assert\Positive]
     private $amount;
@@ -46,11 +37,7 @@ class LedgerEntry
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $category;
 
-    /**
-     * Lien facultatif vers le devis/la facture à l'origine de cette écriture
-     * (ex. le paiement reçu pour une facture), purement informatif : rien
-     * n'automatise sa création à ce stade.
-     */
+    // Optional link to the quote/invoice this entry relates to (e.g. a payment received). Purely informational, nothing creates it automatically.
     #[ORM\ManyToOne(targetEntity: AccountingDocument::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private $relatedDocument;
@@ -169,11 +156,7 @@ class LedgerEntry
         return self::TYPE_INCOME === $this->type;
     }
 
-    /**
-     * Montant signé (positif pour une recette, négatif pour une dépense) :
-     * ce qu'il faut sommer pour obtenir un solde, cf.
-     * LedgerEntryRepository::getBalance().
-     */
+    // Signed amount (positive for income, negative for an expense): what to sum to get a balance.
     public function getSignedAmount(): float
     {
         return $this->isIncome() ? $this->amount : -$this->amount;

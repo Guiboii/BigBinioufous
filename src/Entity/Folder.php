@@ -7,27 +7,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+// A node in the file manager tree (/desk/files/{space}): either a folder or, via Document, a leaf file.
 #[ORM\Entity(repositoryClass: FolderRepository::class)]
 class Folder
 {
-    /**
-     * Un espace = une arborescence isolée (racine dédiée) + un rôle
-     * d'accès dans security.yaml (^/desk/files/{space}). Un sous-dossier
-     * hérite du space de son parent à la création (dénormalisé pour éviter
-     * de remonter l'arbre à chaque requête), cf. FolderRepository::findOrCreateRoot().
-     */
+    // A space is an isolated tree (own root) plus a read access rule in security.yaml. Children denormalize their parent's space to avoid walking up the tree on every request.
     public const SPACE_MUSIC = 'music';
     public const SPACE_ADMIN = 'admin';
     public const SPACE_ACCOUNTING = 'accounting';
     public const SPACE_OTHER = 'other';
     public const SPACES = [self::SPACE_MUSIC, self::SPACE_ADMIN, self::SPACE_ACCOUNTING, self::SPACE_OTHER];
 
-    /**
-     * Rôles autorisés à écrire (créer/déplacer/supprimer un dossier ou
-     * document) dans chaque espace, vérifiés par FolderWriteVoter. Distinct
-     * de l'accès en lecture (^/desk/files/{space} dans security.yaml) : un
-     * espace peut être lisible par plus de monde qu'il n'est écrivable.
-     */
+    // Roles allowed to write (create/move/delete/upload) in each space, checked by FolderWriteVoter. Separate from read access: a space can be readable by more people than it is writable.
     public const WRITE_ROLES = [
         self::SPACE_MUSIC => ['ROLE_BINIOUFOUS', 'ROLE_ADMIN'],
         self::SPACE_ADMIN => ['ROLE_ADMIN'],
@@ -35,13 +26,7 @@ class Folder
         self::SPACE_OTHER => ['ROLE_ADMIN'],
     ];
 
-    /**
-     * Types MIME acceptés à l'upload (DocumentController::upload()) par
-     * espace. Musique restreint au son/vidéo un temps (2026-08-13), mais un
-     * dossier de morceau réel mélange aussi PDF/partitions, docx de
-     * structure, image de pochette : élargi à la même liste large que les
-     * autres espaces (2026-08-13, retour utilisatrice le jour même).
-     */
+    // Accepted upload MIME types, same broad list for every space: a real song folder mixes audio with PDFs (sheet music), docx and cover images, so no space restricts to a narrower subset.
     private const DOCUMENT_MIME_TYPES = [
         'application/pdf',
         'video/mp4',
@@ -95,12 +80,7 @@ class Folder
     #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'folder', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private $documents;
 
-    /**
-     * Corbeille : suppression non récursive (cf. FolderController::delete()) :
-     * seul le dossier lui-même reçoit une date, ses enfants ne sont pas
-     * touchés. La restauration (FolderController::restore()) ramène donc
-     * tout l'arbre d'un coup, sans double entrée dans la corbeille.
-     */
+    // Trash marker. Deletion is non-recursive: only this folder gets a date, children are left untouched, so restoring brings the whole subtree back at once without duplicate trash entries.
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $deletedAt;
 
@@ -185,10 +165,7 @@ class Folder
     }
 
     /**
-     * Parents du plus ancien (racine) au plus proche, sans se compter
-     * elle-même : sert au breadcrumb (DeskController::files()) et à
-     * l'affichage du chemin des résultats de recherche
-     * (FolderRepository::search()/DocumentRepository::search()).
+     * Parents from root to closest, excluding this folder itself. Used for breadcrumbs and search result paths.
      *
      * @return Folder[]
      */

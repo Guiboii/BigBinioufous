@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Role[]    findAll()
  * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for Role.
 class RoleRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -19,13 +20,6 @@ class RoleRepository extends ServiceEntityRepository
         parent::__construct($registry, Role::class);
     }
 
-    /**
-     * Pick the role that you send to the method.
-     *
-     * @param [type] $wish
-     *
-     * @return void
-     */
     public function findOneByDescription($wish)
     {
         return $this->createQueryBuilder('d')

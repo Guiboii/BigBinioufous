@@ -9,6 +9,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
+// Sends the registration lifecycle emails (pending validation, validated, auto-validated). Errors are logged, never left to bubble up and block the registration flow.
 class RegistrationMailer
 {
     public function __construct(

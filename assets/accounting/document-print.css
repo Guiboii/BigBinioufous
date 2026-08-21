@@ -1,12 +1,4 @@
-/* Mise en page du devis/facture imprimable (templates/accounting/documents/
-   show.html.twig), calquée sur les modèles PDF de référence (todoCompta.md) :
-   noir sur blanc, sobre, pensée pour tenir sur une page A4 imprimée depuis
-   le navigateur (bouton "Imprimer" -> window.print()), pas pour matcher le
-   thème doré/vert du reste du site (illisible imprimé, gourmand en encre).
-   Chargée uniquement sur cette page (pas dans app.css), cf. les règles
-   @media print ci-dessous qui masquent aussi la navbar/les messages flash
-   communs à tout /desk (rendus par desk/base.html.twig, hors du contrôle de
-   ce template). */
+/* Printable quote/invoice layout: plain black on white, sized for A4 printed via the browser's window.print(), not the site's gold/green theme (unreadable and ink-heavy on paper). Loaded only on this page; the @media print rules below also hide the shared /desk navbar and flash messages. */
 
 .document-print {
     max-width: 210mm;
@@ -93,14 +85,7 @@
     text-align: center;
 }
 
-/* Marge de page explicite : sans elle, le haut du document (logo + titre
-   DEVIS/FACTURE, tous deux sur la même ligne d'en-tête) pouvait se retrouver
-   collé au bord physique de la page selon les réglages "Marges" du dialogue
-   d'impression du navigateur (ex. "Aucune"), rogné par la zone non
-   imprimable du papier/du moteur PDF (retour utilisatrice : "ça coupe en
-   haut le logo et la partie facture"). @page force une marge cohérente
-   quel que soit ce réglage, plutôt que de compter sur padding:0 + les
-   marges par défaut du navigateur. */
+/* Explicit page margin: without it, the header (logo + DEVIS/FACTURE title) could end up flush against the physical page edge depending on the browser print dialog's margin setting, cropped by the non-printable area. @page forces a consistent margin regardless of that setting. */
 @page {
     size: A4;
     margin: 15mm 12mm;
@@ -110,15 +95,7 @@
     body {
         background: #ffffff;
     }
-    /* body > header (pas juste "header") : la navbar du site
-       (templates/desk/partials/header.html.twig) est bien un <header> enfant
-       direct de <body>, mais le <header class="document-print-header"> du
-       devis/facture lui-même (logo + titre) l'est aussi comme élément HTML.
-       Un sélecteur "header" nu masquait donc les deux à la fois, faisant
-       disparaître entièrement le logo et le titre DEVIS/FACTURE à
-       l'impression au lieu de juste cacher la navbar (retour utilisatrice :
-       "devienis tjr casser en haut", confirmé par export PDF Playwright :
-       la section n'apparaissait plus du tout, pas juste rognée). */
+    /* body > header, not just "header": the site navbar is a <header> direct child of <body>, but the invoice's own header (logo + title) is also a <header> element. A bare "header" selector hid both, wiping out the logo/title on print instead of just the navbar. */
     body > header,
     .skip-link,
     .alert,

@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method StorySection[]    findAll()
  * @method StorySection[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for StorySection, ordered by manual position, plus slug uniqueness check.
 class StorySectionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

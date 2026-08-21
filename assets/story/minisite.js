@@ -1,11 +1,4 @@
-// Soumission du formulaire de contact de la minisite (#minisite-contact-form),
-// en fetch plutôt qu'en navigation complète (même raison que le reste du
-// projet : garder le contexte affiché, ici la fenêtre terminal). Le
-// honeypot/piège temporel/CSRF sont vérifiés côté serveur
-// (App\Controller\ContactController), ce script ne fait qu'afficher le
-// résultat. Fichier séparé de story.js (contexte JS différent : cette page
-// est rendue dans son propre document, en iframe sur /story ou en page à
-// part entière sur mobile, cf. commentaire en tête de minisite.html.twig).
+// Submits the minisite's contact form via fetch to keep the terminal window context displayed. The server checks honeypot/timing trap/CSRF, this script only shows the result. Kept separate from story.js: this page renders in its own document (iframe on /story, standalone on mobile).
 var minisiteContactForm = document.getElementById('minisite-contact-form');
 
 if (minisiteContactForm) {

@@ -1,9 +1,4 @@
-// Ajout/suppression des lignes de prestation du formulaire devis/facture
-// (CollectionType App\Form\AccountingDocumentType::lines), pattern standard
-// Symfony "prototype" : le conteneur porte le HTML d'une ligne vierge en
-// attribut data-prototype, avec __line__ à remplacer par un index qui
-// s'incrémente à chaque ajout (cf. AccountingDocumentType::buildForm,
-// prototype_name '__line__').
+// Add/remove line items on the quote/invoice form, standard Symfony CollectionType "prototype" pattern: the container carries a blank line's HTML in its data-prototype attribute, with __line__ replaced by an incrementing index on each add.
 const container = document.getElementById('accounting-document-lines');
 const addButton = document.getElementById('accounting-add-line');
 

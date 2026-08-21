@@ -8,14 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Devis ou facture, cf. les modèles PDF dans public/uploads/documents
- * (DE045-.../FA025-...) qui ont servi de référence pour les champs et la
- * mise en page (templates/accounting/documents/show.html.twig). Un seul
- * type d'entité pour les deux plutôt que Quote/Invoice séparées : structure
- * strictement identique, seul $type change (préfixe de référence + titre
- * affiché), cf. AccountingDocumentRepository::START_NUMBERS.
- */
+// A quote or an invoice. One entity for both rather than separate Quote/Invoice classes: the structure is identical, only $type (and its reference prefix) differs.
 #[ORM\Entity(repositoryClass: AccountingDocumentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class AccountingDocument
@@ -37,21 +30,14 @@ class AccountingDocument
     #[ORM\Column(type: 'string', length: 20)]
     private $type;
 
-    /**
-     * Partie numérique de la référence (ex. 46 pour "DE046"), attribuée à
-     * la création par AccountingDocumentRepository::findNextNumber().
-     */
+    // Numeric part of the reference (e.g. 46 for "DE046"), assigned at creation.
     #[ORM\Column(type: 'integer')]
     private $number;
 
     #[ORM\Column(type: 'date_immutable')]
     private $date;
 
-    /**
-     * Fiche client sélectionnée à la création (facultative, cf. Client) :
-     * ne sert qu'à préremplir clientName/clientAddress/clientContact
-     * ci-dessous, qui restent les champs réellement affichés/imprimés.
-     */
+    // Only used to prefill clientName/clientAddress/clientContact below at creation; those copied fields remain the ones actually displayed and printed.
     #[ORM\ManyToOne(targetEntity: Client::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private $client;
@@ -65,11 +51,7 @@ class AccountingDocument
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $clientContact;
 
-    /**
-     * Coordonnées de la personne référente pour ce document (pas forcément
-     * qui l'a créé dans l'appli) : pré-remplies depuis le compte connecté à
-     * la création, mais éditables (cf. AccountingDocumentType).
-     */
+    // Contact person for this document, not necessarily who created it in the app. Prefilled from the logged-in account but editable.
     #[ORM\Column(type: 'string', length: 255)]
     private $correspondentName;
 
@@ -86,13 +68,7 @@ class AccountingDocument
     #[ORM\Column(type: 'datetime_immutable')]
     private $createdAt;
 
-    /**
-     * Devis d'origine si ce document est une facture créée via
-     * AccountingController::documentNewFromQuote() : client et lignes sont
-     * copiés une seule fois à la création (snapshot, cf. $client plus haut),
-     * ce lien ne sert qu'à la traçabilité affichée sur les deux documents,
-     * pas à les garder synchronisés après coup.
-     */
+    // Source quote when this document is an invoice created from one. Client and lines are copied once at creation (a snapshot); this link is only for traceability, not for keeping the two in sync afterwards.
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'invoices')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private $sourceQuote;
@@ -103,25 +79,11 @@ class AccountingDocument
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'sourceQuote')]
     private $invoices;
 
-    /**
-     * Devis retiré du sélecteur "Nouvelle facture -> choisir un devis"
-     * (AccountingController::invoiceChooseQuote()) sans supprimer le devis
-     * lui-même : retour utilisatrice explicite (2026-08-13) "je veux pas
-     * supprimer, je veux l'enlever de la liste", tous les devis ne sont pas
-     * destinés à être facturés et le sélecteur deviendrait illisible à la
-     * longue sans un moyen de l'alléger. Reste visible/éditable partout
-     * ailleurs (accounting_documents_index...), et réversible (toggle).
-     */
+    // Hides a quote from the "new invoice from quote" picker without deleting it: not every quote is meant to become an invoice, and a reversible toggle keeps that list manageable. The quote stays visible/editable everywhere else.
     #[ORM\Column(type: 'boolean')]
     private $excludedFromInvoicing = false;
 
-    /**
-     * #[Assert\Valid] indispensable ici : sans elle, Symfony ne valide que
-     * AccountingDocument lui-même, pas les AccountingDocumentLine qu'il
-     * contient (pas de cascade de validation automatique sur les
-     * associations), les contraintes de AccountingDocumentLine (quantité/prix
-     * positifs) ne se déclenchaient donc jamais depuis ce formulaire.
-     */
+    // #[Assert\Valid] is required here: without it Symfony only validates AccountingDocument itself, not the lines it contains, since validation doesn't cascade to associations automatically.
     #[ORM\OneToMany(targetEntity: AccountingDocumentLine::class, mappedBy: 'document', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC'])]
     #[Assert\Valid]
@@ -170,9 +132,7 @@ class AccountingDocument
         return $this;
     }
 
-    /**
-     * Référence affichée type "DE046"/"FA026", cf. les modèles PDF.
-     */
+    // Displayed reference, e.g. "DE046" or "FA026".
     public function getReference(): string
     {
         return (self::PREFIXES[$this->type] ?? '?').str_pad((string) $this->number, 3, '0', STR_PAD_LEFT);

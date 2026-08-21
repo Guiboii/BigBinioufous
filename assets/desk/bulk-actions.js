@@ -1,9 +1,4 @@
-// Multi-sélection + actions groupées sur /desk/files/{space} : les cases
-// à cocher (.desk-select) n'ont pas d'attribut "form", elles ne sont
-// associées à aucun des 2 formulaires cachés (desk-bulk-move-form/
-// desk-bulk-delete-form) déclarés dans templates/desk/files.html.twig.
-// Au clic sur "Déplacer"/"Supprimer la sélection", ce script y injecte les
-// folder_ids[]/document_ids[] cochés juste avant de les soumettre.
+// Multi-select + bulk actions on the file manager. The checkboxes aren't tied to either hidden form (move/delete) via a "form" attribute; this script injects the checked folder_ids[]/document_ids[] into the right form right before submitting it.
 var bulkBar = document.getElementById('desk-bulk-bar');
 
 if (bulkBar) {
@@ -61,10 +56,7 @@ if (bulkBar) {
     });
   }
 
-  // Vide les folder_ids[]/document_ids[] posés par un envoi précédent puis
-  // en recrée un par case cochée : un <form> caché est réutilisé pour
-  // chaque soumission, il ne doit pas accumuler les cases d'une fois sur
-  // l'autre.
+  // Clears the ids left by a previous submission before adding the current selection: the hidden form is reused across submissions, it must not accumulate stale ids.
   function fillForm(form) {
     Array.prototype.slice.call(form.querySelectorAll('.desk-bulk-id')).forEach(function (input) {
       input.remove();

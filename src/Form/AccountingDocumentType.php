@@ -12,12 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Type/numéro ne sont pas dans ce formulaire : le type est choisi via la
- * route (accounting_document_new/quote ou /invoice), le numéro est
- * attribué par AccountingDocumentRepository::findNextNumber() côté
- * contrôleur, aucun des deux n'a de raison d'être modifié après coup.
- */
+// Type/number aren't in this form: type is chosen via the route, number is assigned server-side by the repository, neither needs to be editable.
 class AccountingDocumentType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -33,13 +28,7 @@ class AccountingDocumentType extends ApplicationType
                 'label' => $this->trans('accounting.field_client'),
                 'required' => false,
                 'placeholder' => 'accounting.field_client_placeholder',
-                /*
-                 * clientName/clientAddress/clientContact restent les champs
-                 * réellement soumis (cf. AccountingDocument) : ce select ne
-                 * sert qu'à les préremplir côté client (assets/accounting/
-                 * client-autofill.js), d'où ces attributs data plutôt qu'un
-                 * mapping recalculé côté serveur au submit.
-                 */
+                // clientName/clientAddress/clientContact remain the fields actually submitted; this select only prefills them client-side, hence data attributes rather than a server-side remap on submit.
                 'choice_attr' => fn (Client $client) => [
                     'data-address' => $client->getAddress(),
                     'data-contact' => $client->getContact(),

@@ -9,13 +9,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+// Form for creating/editing a board Note.
 class NoteType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // Textarea brute par défaut, transformée en éditeur Markdown avec
-        // aperçu live par assets/desk/note-admin.js (EasyMDE), même
-        // fabrique que StorySectionType (assets/desk/markdown-editor.js).
+        // Plain textarea by default, upgraded to a Markdown editor with live preview by note-admin.js (EasyMDE).
         $contentConfig = $this->getConfiguration('note.field_content', 'note.field_content_placeholder');
         $contentConfig['attr'] = array_merge($contentConfig['attr'], ['rows' => 16]);
 

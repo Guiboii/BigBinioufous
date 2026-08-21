@@ -1,8 +1,5 @@
 <header>
-    {# Voir templates/partials/header.html.twig pour le pourquoi de ce pattern
-       (aria-current="page" + hook JS assets/main/app.js pour ne pas recharger
-       la page sur un clic sur le lien déjà courant). Cette navbar n'avait
-       jusqu'ici aucune indication de page courante, même fausse. #}
+    {# See templates/partials/header.html.twig for why this pattern exists (aria-current="page" + the app.js hook that skips reloading on a click on the already-current link). #}
     {% set currentRoute = app.request.attributes.get('_route') %}
     <nav class="navbar-admin navbar-expand-md" aria-label="{{ 'nav.desk'|trans }}">
         <div class="container">
@@ -25,8 +22,7 @@
                         {% set accessibleSpaces = (canFilesMusic ? 1 : 0) + (canFilesAdmin ? 1 : 0) + (canFilesAccounting ? 1 : 0) %}
                         {% if accessibleSpaces > 0 %}
                             <li class="nav-item">
-                                {# Un seul espace accessible : lien direct, pas la peine de passer par le
-                                   hub pour un choix qui n'en est pas un (retour utilisatrice 2026-08-11). #}
+                                {# A single accessible space gets a direct link, no point routing through the hub for a choice that isn't one. #}
                                 {% if accessibleSpaces == 1 %}
                                     <a href="{{ path('desk_files', {space: canFilesMusic ? 'music' : (canFilesAdmin ? 'admin' : 'accounting')}) }}" class="nav-link text-yellow"{% if currentRoute == 'desk_files' %} aria-current="page"{% endif %}><i class="ri-folder-3-fill" aria-hidden="true"></i> {{ 'nav.folders'|trans }}</a>
                                 {% else %}
@@ -58,7 +54,7 @@
                         <a class="nav-link text-yellow" href="{{ path('profile') }}"{% if currentRoute == 'profile' %} aria-current="page"{% endif %}><i class="ri-user-fill" aria-hidden="true"></i> {{ 'nav.profile'|trans }}</a>
                     </li>
                     <li class="nav-item">
-                        {# Jamais aria-current, cf. templates/partials/header.html.twig #}
+                        {# Never aria-current, see templates/partials/header.html.twig #}
                         <a class="nav-link text-yellow" href="{{ path('logout') }}"><i class="ri-logout-box-r-fill" aria-hidden="true"></i> {{ 'nav.logout'|trans }}</a>
                     </li>
                 </ul>

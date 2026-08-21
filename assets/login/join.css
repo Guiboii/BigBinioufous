@@ -1,17 +1,7 @@
-/* Avant : .login/.join en texte nu (or/rouge) posé sur les 2 pans du mur 3D
-   (vert à gauche, rouge à droite, cf. join.js), sans fond propre. Sur le pan
-   rouge, le texte rouge de .join devenait illisible (~1:1, contraste WCAG).
-   Ici : vrais boutons pilule avec leur propre fond (indépendants de la
-   couleur du mur derrière), couples texte/fond choisis pour >= 7:1 (AAA) :
-   - .login : fond --bb-gold, texte --bb-ink   (9.81:1)
-   - .join  : fond --bb-red-dark, texte --bb-white (8.56:1)
-   width auto + padding (pas de largeur fixe en px) : le bouton s'adapte à
-   la longueur du texte quelle que soit la langue (fr/en/br), contrairement
-   à l'ancien width:150px qui donnait un pavé de hover mal ajusté dès que la
-   traduction dépassait la largeur prévue. */
-/* .login/.join sont de vrais <button> (avant : <a href="#" role="button">
-   qui ne naviguait nulle part, cf. join/index.html.twig) : reset des styles
-   par défaut du navigateur (border/font/cursor) en plus du positionnement. */
+/* .login/.join are real pill buttons with their own background, independent of the 3D wall color behind them, chosen for >= 7:1 (AAA):
+   - .login: --bb-gold background, --bb-ink text (9.81:1)
+   - .join: --bb-red-dark background, --bb-white text (8.56:1)
+   width auto + padding (not a fixed px width): the button adapts to the text length across languages. Also resets default browser button styling (border/font/cursor) on top of positioning, since these are real <button> elements. */
 .login, .join {
     position: absolute;
     z-index: 900;
@@ -43,16 +33,7 @@
     background: var(--bb-red-dark);
     color: var(--bb-white);
 }
-/* :hover/:focus-visible gardent la même transform de base (translate) pour
-   rester centrés, scale ajouté en plus plutôt qu'un changement de couleur :
-   évite de devoir revalider une nouvelle paire de contrastes, et l'agrandi
-   reste lisible à toutes les langues vu que le bouton se dimensionne déjà
-   sur son texte.
-   color réaffirmé ici (pas juste hérité de .login/.join) : la règle
-   générique "a:hover { color: var(--bb-green-mid) }" (assets/main/app.css)
-   a une spécificité plus forte que .login/.join seuls (élément+pseudo-
-   classe > classe simple) et prenait le dessus au survol, vert sur
-   --bb-red-dark ne tenant qu'1.26:1. */
+/* :hover/:focus-visible keep the same base transform to stay centered, with scale added rather than a color change, avoiding a new contrast pair to validate. color is reasserted here rather than just inherited: the generic "a:hover" rule in app.css has higher specificity and would otherwise win on hover, and green on --bb-red-dark only reaches 1.26:1. */
 .login:hover,
 .login:focus-visible {
     transform: translate(-50%, -50%) scale(1.06);
@@ -69,14 +50,7 @@
     outline-offset: 2px;
 }
 
-/* Avant : centrage en top/left:50% + margin-top/margin-left en px fixes,
-   calculés une fois pour une taille de popup qui ne correspondait déjà pas
-   à la taille réelle (440px de large, margin-left:-170px au lieu de -220px
-   : 50px de décalage constant) et qui de toute façon dérive dès que le
-   contenu change de hauteur (langue, message d'erreur affiché ou non).
-   transform: translate(-50%,-50%) se recalcule sur la taille réelle du
-   popup à chaque rendu, correct dans tous les cas plutôt qu'une seule
-   fois à l'oeil. */
+/* transform: translate(-50%, -50%) recomputes centering from the popup's real rendered size on every render, correct regardless of content height changes (language, whether an error message is shown), unlike a fixed negative margin calculated once. */
 #joinForm, #loginForm {
     position: absolute;
     z-index: 900;
@@ -87,26 +61,19 @@
     width: 440px;
     max-width: 90vw;
     text-align: center;
-    /* Texte blanc plutôt que --bb-gold hérité de la règle "form" globale :
-       or sur rouge tient 3.24:1 (sous le minimum AA 4.5:1 pour du texte
-       normal), blanc sur rouge tient 6.07:1. */
+    /* White text rather than the --bb-gold inherited from the global "form" rule: gold on red only reaches 3.24:1 (below the AA minimum of 4.5:1), white on red reaches 6.07:1. */
     color: var(--bb-white);
 }
 #loginForm {
     background: var(--bb-green-mid);
 }
-/* .text-yellow (assets/main/app.css) fixe sa propre couleur directement sur
-   les <a> qu'elle cible (join/launch.html.twig) : l'héritage du blanc posé
-   sur #joinForm/#loginForm ne s'applique qu'aux éléments qui n'ont pas leur
-   propre règle de couleur, donc sans cette surcharge ciblée le doré-sur-
-   rouge (3.24:1) restait sur ces liens précis malgré le formulaire passé
-   en blanc autour. */
+/* .text-yellow sets its own color directly on the links it targets, so the inherited white from #joinForm/#loginForm doesn't apply to them without this targeted override, leaving the low-contrast gold-on-red (3.24:1) in place otherwise. */
 #joinForm .text-yellow,
 #loginForm .text-yellow {
     color: var(--bb-white);
 }
 
-/* Composant réutilisable form-dialog : en-tête + contenu. */
+/* Reusable form-dialog component: header + content. */
 .dialog-header {
     display: flex;
     justify-content: space-between;
@@ -120,7 +87,7 @@
     flex: 1;
 }
 
-/* Bouton fermer : amélioration a11y (focus-visible clair). */
+/* Close button, with a clear focus-visible outline for accessibility. */
 .dialog-header .close {
     display: flex;
     align-items: center;
@@ -148,12 +115,7 @@
     outline-offset: 2px;
 }
 
-/* Sous 700px : icône seule, comme la navbar principale (assets/main/app.css,
-   même technique sr-only) : les 2 pastilles texte+icône se chevauchaient
-   sur petit écran (position:absolute à 25%/75%, pas assez de place pour
-   les 2 côte à côte une fois le texte ajouté à l'icône). Bouton rond
-   compact plutôt qu'une pilule, le texte reste lisible par les lecteurs
-   d'écran. */
+/* Below 700px: icon only, using the same sr-only technique as the main navbar, since the two text+icon pills overlapped on small screens (fixed 25%/75% positioning left no room for both side by side). The text stays readable to screen readers via sr-only. */
 @media (max-width: 700px) {
     .login, .join {
         padding: 0;

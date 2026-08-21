@@ -15,17 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
+// Upload, trash, restore, purge, move, and per-user toggles (favorite/played) on Document.
 #[Route('/desk/files/{space}/documents', requirements: ['space' => 'music|admin|accounting|other'])]
 class DocumentController extends AbstractController
 {
-    /**
-     * Dépose glisser-déposer : un fichier = un Document créé direct (nom
-     * = nom de fichier), pas de métadonnées à saisir avant coup. Le champ
-     * "path" (optionnel, ex. "02 Medley XXI/Hautbois Facile") vient du
-     * glisser-déposer d'un dossier entier (assets/desk/quick-upload.js,
-     * FileSystemEntry.fullPath) : reconstitue la même arborescence de
-     * Folder côté site plutôt que de tout aplatir à la racine.
-     */
+    // Drag-and-drop upload: one file becomes one Document, named after the file itself. The optional "path" field comes from dropping a whole folder (FileSystemEntry.fullPath) and rebuilds the same Folder tree instead of flattening everything to the root.
     #[Route('', name: 'document_upload', methods: ['POST'])]
     public function upload(string $space, Request $request, EntityManagerInterface $manager, SluggerInterface $slugger, FolderRepository $folderRepository): JsonResponse
     {
@@ -40,21 +34,12 @@ class DocumentController extends AbstractController
             return $this->json(['error' => 'invalid_input'], 400);
         }
 
-        // Sans ce contrôle, un fichier au-delà de upload_max_filesize/
-        // post_max_size arrive quand même ici (PHP remplit $_FILES avec un
-        // code d'erreur plutôt que de l'omettre) : getMimeType()/move()
-        // plus bas viseraient un fichier temporaire absent et planteraient
-        // en exception non gérée (500 HTML, pas de JSON exploitable côté
-        // JS), symptôme confondu avec "aucune erreur" côté utilisatrice
-        // (bug du 2026-08-13, cf. CLAUDE.md sur upload_max_filesize).
+        // Without this check, a file over upload_max_filesize/post_max_size still reaches here (PHP fills $_FILES with an error code rather than omitting it), and getMimeType()/move() below would target a missing temp file and throw an unhandled exception.
         if (!$file->isValid()) {
             return $this->json(['error' => 'file_too_large'], 400);
         }
 
-        // Capturés avant move() : File::move() renvoie un nouvel objet et ne
-        // modifie pas $file sur place, un 2e appel à $file->getMimeType()/
-        // getSize() après coup viserait le fichier temporaire déjà
-        // déplacé/disparu.
+        // Captured before move(): File::move() returns a new object rather than mutating $file, so a later call to getMimeType()/getSize() would target the already-moved temp file.
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
 
@@ -88,10 +73,7 @@ class DocumentController extends AbstractController
         return $this->json(['success' => true, 'id' => $document->getId()]);
     }
 
-    /**
-     * Met un document à la corbeille (cf. Document::$deletedAt). Suppression
-     * définitive : voir purge() ci-dessous.
-     */
+    // Moves a document to the trash; see purge() below for permanent deletion.
     #[Route('/{id}', name: 'document_delete', methods: ['DELETE'])]
     public function delete(string $space, Document $document, Request $request, EntityManagerInterface $manager): Response
     {
@@ -111,11 +93,7 @@ class DocumentController extends AbstractController
         return $this->redirectToRoute('desk_files', array_merge(['space' => $space], $request->query->all()));
     }
 
-    /**
-     * Sort un document de la corbeille. Si son dossier a lui-même été
-     * supprimé (ou un ancêtre du dossier), le document repart à la racine
-     * de l'espace plutôt que de rester invisible.
-     */
+    // Restores a trashed document. If its folder (or an ancestor) is also trashed, the document goes back to the space's root instead of staying invisible.
     #[Route('/{id}/restore', name: 'document_restore', methods: ['POST'])]
     public function restore(string $space, Document $document, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
     {
@@ -140,11 +118,7 @@ class DocumentController extends AbstractController
         return $this->redirectToRoute('desk_files_trash', ['space' => $space]);
     }
 
-    /**
-     * Suppression définitive : seul moment où le fichier physique est
-     * vraiment retiré du disque (documents_directory), une fois la ligne
-     * supprimée en base confirmée.
-     */
+    // Permanent deletion: the only place that actually removes the physical file from disk, and only after the database row is confirmed removed.
     #[Route('/{id}/purge', name: 'document_purge', methods: ['DELETE'])]
     public function purge(string $space, Document $document, Request $request, EntityManagerInterface $manager): Response
     {
@@ -171,12 +145,7 @@ class DocumentController extends AbstractController
         return $this->redirectToRoute('desk_files_trash', ['space' => $space]);
     }
 
-    /**
-     * Étoile/désétoile un document audio pour le membre connecté. Ouvert à
-     * tout membre pouvant voir l'espace (même règle d'accès que le reste de
-     * /desk/files/{space}, cf. security.yaml) : c'est une préférence
-     * personnelle, pas une action d'écriture sur le fichier lui-même.
-     */
+    // Stars/unstars a document for the logged-in member. Open to anyone who can read the space: it's a personal preference, not a write on the file itself.
     #[Route('/{id}/favorite', name: 'document_favorite_toggle', methods: ['POST'])]
     public function toggleFavorite(string $space, Document $document, Request $request, EntityManagerInterface $manager): Response
     {
@@ -197,14 +166,7 @@ class DocumentController extends AbstractController
         return $this->redirectToRoute('desk_files', array_merge(['space' => $space], $request->query->all()));
     }
 
-    /**
-     * "Je joue cette partie" : coché par un membre sur un document audio de
-     * l'espace musique (remplace desk_voice_toggle, cf. User::$playedDocuments).
-     * Ouvert à tout membre pouvant voir l'espace, même règle que toggleFavorite
-     * ci-dessus : préférence personnelle, pas une écriture sur le fichier.
-     * Utilisé uniquement depuis /music (MusicController), d'où le retour au
-     * referer plutôt qu'à desk_files.
-     */
+    // "I play this part": same access rule as toggleFavorite above. Only used from /music, hence redirecting back to the referer rather than desk_files.
     #[Route('/{id}/played', name: 'document_played_toggle', methods: ['POST'])]
     public function togglePlayed(string $space, Document $document, Request $request, EntityManagerInterface $manager): Response
     {
@@ -219,9 +181,7 @@ class DocumentController extends AbstractController
             } else {
                 $document->addPlayedBy($user);
 
-                // Même rappel que l'ancien desk_voice_toggle : l'instrument
-                // est facultatif sur le profil, mais se déclarer sur une
-                // partie sans l'avoir renseigné laisse l'info incomplète.
+                // Instrument is optional on the profile, but flagging a part without it leaves the info incomplete.
                 if (!$user->getInstrument()) {
                     $this->addFlash(
                         'info',
@@ -235,11 +195,7 @@ class DocumentController extends AbstractController
         return $this->redirect($request->headers->get('referer') ?: $this->generateUrl('music'));
     }
 
-    /**
-     * Déplace un document vers un autre dossier du même espace (ou sa
-     * racine si target absent). Pas de risque de cycle ici contrairement à
-     * FolderController::move() : un document n'a pas de descendants.
-     */
+    // Moves a document to another folder in the same space. No cycle risk here unlike FolderController::move(), a document has no descendants.
     #[Route('/{id}/move', name: 'document_move', methods: ['POST'])]
     public function move(string $space, Document $document, Request $request, EntityManagerInterface $manager, FolderRepository $folderRepository): Response
     {

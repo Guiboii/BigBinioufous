@@ -14,14 +14,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
-/**
- * Mêmes champs qu'AccountType (profil self-service), utilisé par
- * AdminController::showUser() pour l'édition côté admin, sauf nickname/email
- * (identifiants de connexion) : pas de raison qu'un·e admin puisse changer
- * l'identifiant de connexion de quelqu'un d'autre en éditant son profil
- * (retour utilisatrice 2026-08-12), affichés en lecture seule côté template
- * (templates/desk/_user_form_fields.html.twig) à la place.
- */
+// Same fields as AccountType, used for admin-side profile editing, minus nickname/email: an admin has no reason to change someone else's login identifiers, shown read-only in the template instead.
 class EditUserType extends ApplicationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)

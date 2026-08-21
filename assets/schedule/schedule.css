@@ -1,11 +1,4 @@
-/* Contenu réel depuis l'entité Event (cf. EventController/ScheduleController),
-   gérée par un·e admin via /admin/event. */
-
-/* Avant : position:absolute en px fixes (margin: 56px 150px, width: 790px),
-   ne suit pas la fenêtre. Comme il n'existe pas de repère 3D clair à viser
-   ici (contrairement à l'écran du bureau sur /story ou au meuble sur
-   /music : la scène /schedule est un mur à peu près vide), pas de vraie
-   projection 3D->2D, juste un flex centré et fluide en vw/%. */
+/* Since /schedule's 3D scene is a mostly empty wall with no clear anchor to project against (unlike /story's desk screen or /music's furniture), this overlay uses a plain centered vw/% flex layout rather than a real 3D->2D projection. */
 .scroll-wrapper.schedule {
     position: absolute;
     z-index: 900;
@@ -29,8 +22,7 @@
     box-sizing: border-box;
 }
 
-/* Scrollbar fine thématisée à la place de la barre grise par défaut du
-   navigateur, même traitement que .playlist sur /music. */
+/* Themed thin scrollbar instead of the browser's default gray bar, same treatment as .playlist on /music. */
 .scroll-wrapper.schedule .scroll {
     scrollbar-width: thin;
     scrollbar-color: var(--bb-green-deep) transparent;
@@ -61,10 +53,7 @@
     opacity: 0.7;
 }
 
-/* Note "connecte-toi pour voir les répétitions" (hors connexion uniquement,
-   cf. schedule/index.html.twig) : même famille visuelle que
-   .event-card .event-description (encadré doré, liseré rouge) plutôt
-   qu'une nouvelle teinte, pour rester dans le thème de la page. */
+/* "Log in to see rehearsals" note (logged-out visitors only): same gold box/red border visual family as .event-card .event-description rather than a new color, to stay in the page's theme. */
 .schedule-login-note {
     display: flex;
     align-items: center;
@@ -90,10 +79,7 @@
 .event-month {
     padding: 0.75rem 1rem 0;
 }
-/* h2 (avant h4, cf. schedule/index.html.twig : hiérarchie de titres corrigée
-   pour suivre le h1 de page sans sauter de niveau). font-size explicite pour
-   garder le même rendu visuel qu'avant (h4 Bootstrap 4 = 1.5rem par défaut,
-   h2 = 2rem : sans ça la taille du titre de mois changerait visuellement). */
+/* Explicit font-size to preserve the previous h4-based visual size after fixing the heading hierarchy to h2 (Bootstrap 4's h2 default is 2rem, not the 1.5rem this page was designed around). */
 .event-month h2 {
     font-size: 1.5rem;
     color: var(--bb-green-deep);
@@ -112,8 +98,7 @@
     border-radius: 4px;
     margin-bottom: 0.5rem;
 }
-/* h3 (avant h5, cf. schedule/index.html.twig). Même logique de font-size
-   explicite que .event-month h2 ci-dessus (h5 Bootstrap 4 = 1.25rem). */
+/* Same explicit font-size logic as .event-month h2 above, after fixing this heading from h5 to h3. */
 .event-card h3 {
     margin: 0 0 0.25rem;
     font-size: 1.25rem;
@@ -127,9 +112,7 @@
 .event-card .event-date {
     font-weight: 600;
 }
-/* Description mise en valeur (demande explicite : doit se voir, pas juste
-   une ligne de texte perdue parmi les autres) : encadré distinct plutôt
-   qu'un <p> de plus, même esprit que .mobile-note. */
+/* The description gets a distinct highlighted box, not just another plain paragraph, so it stands out among the other fields. */
 .event-card .event-description {
     margin: 0.5rem 0;
     padding: 0.5rem 0.6rem;
@@ -144,9 +127,7 @@
     font-style: normal;
     margin-right: 0.15rem;
 }
-/* Icônes Remixicon (même famille que la navbar, assets/main/app.js) devant
-   titre/date/adresse/agenda, en accent rouge pour ressortir sur les cartes
-   claires (>= 3:1 exigé pour un élément graphique, ~5.9:1 ici). */
+/* Icons in red to stand out on the light cards (>= 3:1 required for a graphical element, ~5.9:1 here). */
 .event-card h3 i,
 .event-card .event-date i,
 .event-card .event-location i,
@@ -163,10 +144,7 @@
 .event-location a:focus-visible {
     color: var(--bb-red);
 }
-/* 3 fournisseurs en petits boutons distincts plutôt qu'en liens texte
-   soulignés côte à côte (illisible, "le bordel" au retour utilisatrice) :
-   Google/Outlook ont leur propre formulaire pré-rempli en ligne, Apple
-   Calendar et les autres passent par le .ics. */
+/* Distinct small buttons per calendar provider rather than underlined text links side by side: Google/Outlook get their own prefilled online form, Apple Calendar and others go through the .ics download. */
 .event-add-to-calendar {
     margin-top: 0.5rem;
 }
@@ -205,8 +183,7 @@
     outline: 2px solid var(--bb-red);
     outline-offset: 1px;
 }
-/* Pastille de type : couleurs distinctes ET texte (pas de sens porté par la
-   seule teinte, cf. section Accessibilité de CLAUDE.md). */
+/* Event type badge: distinct colors AND text, meaning is never carried by hue alone. */
 .event-type {
     display: inline-block;
     margin-bottom: 0.35rem;
@@ -229,11 +206,7 @@
     color: var(--bb-white);
 }
 
-/* Vrai calendrier mois/jours (grille rendue en JS, cf. initMiniCalendar()
-   dans schedule.js) plutôt que des pastilles par mois : #calendar n'a plus
-   rien à voir avec .navbar (ancien piège de position:fixed hérité, cf.
-   CLAUDE.md, réglé en repartant d'un <div> propre plutôt qu'en réutilisant
-   la classe Bootstrap générique). */
+/* A real month/day grid, rendered in JS by initMiniCalendar() in schedule.js, built from a plain <div> rather than reusing a generic Bootstrap navbar class. */
 .mini-calendar {
     width: min(100%, 300px);
     background: var(--bb-white);
@@ -308,9 +281,7 @@
 .mini-calendar__day--empty {
     visibility: hidden;
 }
-/* "Aujourd'hui" : contour seul (pas de fond) pour rester distinct des jours
-   à événement, qui eux ont un fond plein rouge (demande explicite : "du
-   rouge sur les jours où ya des events"). */
+/* "Today" gets an outline only, no fill, to stay visually distinct from event days, which use a solid red background. */
 .mini-calendar__day--today {
     border: 2px solid var(--bb-green-deep);
     font-weight: 700;
@@ -329,15 +300,12 @@
     outline: 2px solid var(--bb-green-deep);
     outline-offset: 1px;
 }
-/* Jour à la fois "aujourd'hui" ET avec événement : combine les deux, fond
-   rouge (priorité à l'info la plus utile) + contour distinct. */
+/* A day that's both "today" and has an event: combines both, keeping the red fill (the more useful info) plus a distinct outline. */
 .mini-calendar__day--today.mini-calendar__day--event {
     border: 2px solid var(--bb-ink);
 }
 
-/* Mode mobile (<=700px, même détection .is-mobile que /music et /story) :
-   la scène 3D (déjà peu utilisée ici, cf. commentaire plus haut) n'apporte
-   rien en petit, le flyer/planning restent affichés en flux normal. */
+/* Mobile mode (<=700px): the 3D scene adds nothing on small screens, so content stays displayed as normal document flow. */
 .mobile-note {
     display: none;
 }
@@ -355,9 +323,7 @@ html.is-mobile .mascotte,
 html.is-mobile .loading {
     display: none;
 }
-/* Scrollbar grise par défaut du navigateur pour toute la page (plus de
-   scène 3D plein écran ici pour la masquer, contrairement au desktop) :
-   même thème doré/vert que le reste plutôt que la barre native. */
+/* On mobile there's no full-screen 3D scene to hide the browser's default gray scrollbar behind, so it's themed to match the rest of the page instead. */
 html.is-mobile {
     scrollbar-width: thin;
     scrollbar-color: var(--bb-green-deep) var(--bb-gold);
@@ -385,12 +351,7 @@ html.is-mobile .scroll-wrapper.schedule {
     margin: 0.75rem auto;
     padding: 0 0.75rem;
 }
-/* Avant : .scroll gardait son overflow-y:auto + max-height du mode desktop,
-   donc 2 scrolls imbriqués sur mobile (celui de .scroll ET celui de la
-   page), peu lisible. Un seul scroll (celui de la page) : .scroll prend
-   toute la hauteur de son contenu. Calendrier passé en 1er (order:-1) :
-   plus utile pour se repérer dans le mois avant de dérouler la longue
-   liste d'événements en dessous. */
+/* A single page-level scroll on mobile rather than a nested one, so .scroll takes its full content height instead of keeping the desktop max-height/overflow. The calendar moves first (order:-1): useful to orient in the month before scrolling through the long event list below. */
 html.is-mobile .scroll-wrapper.schedule .scroll {
     order: 1;
     height: auto;

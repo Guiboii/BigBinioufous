@@ -14,14 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Activation/désactivation de la 2FA (TOTP, scheb/2fa-bundle) depuis
- * /desk/profile, réservée ROLE_ADMIN (accès le plus sensible du site, cf.
- * ROADMAP.md phase 8 "2FA"). Le secret est généré à l'affichage mais
- * seulement persisté sur User une fois qu'un code valide a été saisi
- * (App\Security\PendingTotpUser) : évite d'activer une 2FA sur un appareil
- * mal configuré et de bloquer le compte au prochain login.
- */
+// Enable/disable 2FA (TOTP) from the profile page, reserved to ROLE_ADMIN. The secret is generated on display but only persisted to User once a valid code is entered, avoiding a lockout from a misconfigured device.
 #[Route('/desk/profile/2fa')]
 class TwoFactorController extends AbstractController
 {

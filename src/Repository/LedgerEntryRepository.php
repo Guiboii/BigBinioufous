@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method LedgerEntry[]    findAll()
  * @method LedgerEntry[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+// Queries for LedgerEntry: chronological listing and running cash balance.
 class LedgerEntryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

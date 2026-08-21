@@ -1,12 +1,5 @@
 <header>
-    {# app.request.attributes.get('_route') donne le nom de la route active
-       (home, story, music...) : sert à marquer le lien de la page courante
-       avec aria-current="page" (pattern standard, annoncé par les lecteurs
-       d'écran), plutôt que le <span class="sr-only">(current)</span> qui
-       était codé en dur uniquement sur "Accueil" (donc faux dès qu'on
-       quittait la page d'accueil). Ce même attribut sert aussi de hook JS
-       (assets/main/app.js) pour empêcher ce lien précis de recharger la
-       page au clic. #}
+    {# The active route name marks the current page's link with aria-current="page" (announced by screen readers). It also serves as a hook for app.js, which prevents that specific link from reloading the page on click. #}
     {% set currentRoute = app.request.attributes.get('_route') %}
     <nav class="navbar" aria-label="{{ 'nav.tagline'|trans }}">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="{{ 'nav.toggle'|trans }}">
@@ -58,8 +51,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        {# Jamais aria-current : "Déconnexion" est une action, pas une page sur
-                           laquelle on peut se trouver (redirige aussitôt, ne se rend jamais). #}
+                        {# Never aria-current: "Logout" is an action, not a page one can be "on" (redirects immediately, never rendered). #}
                         <a class="nav-link" href="{{ path('logout') }}">
                             <i class="ri-logout-box-r-fill" aria-hidden="true"></i>
                             <h2>{{ 'nav.logout'|trans }}</h2>

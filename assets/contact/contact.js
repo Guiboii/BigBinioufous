@@ -1,10 +1,7 @@
 import './contact.css';
 import './contact-mascotte.js';
 
-// Soumission du formulaire de contact en fetch (même pattern que
-// assets/story/minisite.js) : App\Controller\ContactController vérifie
-// honeypot/piège temporel/CSRF côté serveur, ce script n'affiche que le
-// résultat.
+// Submits the contact form via fetch; the server checks the honeypot/timing trap/CSRF, this script only displays the result.
 var contactForm = document.getElementById('contact-form');
 
 if (contactForm) {
@@ -53,10 +50,7 @@ if (contactForm) {
   });
 }
 
-// Widgets HelloAsso (adhésion + don) : grandissent à la hauteur réelle de
-// leur contenu via postMessage (mécanisme fourni par HelloAsso). e.source
-// identifie l'iframe émettrice : avec 2 widgets sur la page, un message
-// non attribué appliquerait sa hauteur aux deux à la fois.
+// HelloAsso widgets grow to their real content height via postMessage. e.source identifies the sending iframe, needed since there are 2 widgets on the page.
 window.addEventListener('message', function (e) {
   var dataHeight = e.data && e.data.height;
   if (!dataHeight) {

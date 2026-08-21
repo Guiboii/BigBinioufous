@@ -20,12 +20,7 @@
                 </div>
             </div>
         </div>
-        {# wish/numéro de carte retirés (inscription simplifiée, plus rien à
-           vérifier ici à ce stade : cf. AdminController::validUser(), le
-           rôle Membre/Pas membre se décide après coup via le toggle sur les
-           listes desk). Prénom/nom/instrument/pays/ville/naissance
-           facultatifs depuis la même simplification, tous affichés avec un
-           repli "-" plutôt que de planter sur une valeur absente. #}
+{# Identity fields are all optional since registration was simplified to just nickname/email/password, so every one is displayed with a "-" fallback rather than breaking on a missing value. #}
         <div class="row mt-4">
             <div class="col text-center">
                 <table class="table">

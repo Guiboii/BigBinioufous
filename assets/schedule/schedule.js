@@ -28,17 +28,13 @@ var green = 0x1f6652;
 var white = 0xffffff;
 var black = 0x000000;
 
-// .is-mobile posée par templates/schedule/index.html.twig avant le 1er
-// rendu (même pattern que /music et /story) : scène 3D illisible en petit,
-// on ne l'initialise même pas, le contenu (schedule.css) reste affiché en
-// flux normal.
+// On small screens the 3D scene is unreadable, so it's never initialized; the content stays displayed as normal flow.
 if (!document.documentElement.classList.contains('is-mobile')) {
   init();
   animate();
 }
 
-// Indépendant du 3D (comme Player.js sur /music) : tourne dans les deux
-// modes, desktop et mobile.
+// Independent of the 3D scene: runs in both desktop and mobile mode.
 initMiniCalendar();
 
 function initMiniCalendar() {
@@ -62,9 +58,7 @@ function initMiniCalendar() {
   var todayStr = toDateKey(today);
   var current = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  // Si l'URL pointe déjà sur un mois précis (#month-09, lien envoyé par
-  // quelqu'un, retour en arrière du navigateur...), ouvrir directement
-  // dessus plutôt que de revenir au mois du jour.
+  // If the URL already points to a specific month (#month-09, a shared link, browser back...), open directly on it instead of today's month.
   var hashMatch = location.hash.match(/^#month-(\d{2})$/);
   if (hashMatch) {
     var hashMonth = eventMonths.filter(function (m) {
@@ -75,9 +69,7 @@ function initMiniCalendar() {
       current = new Date(hashParts[0], hashParts[1] - 1, 1);
     }
   } else if (eventMonths.indexOf(toDateKey(current).slice(0, 7)) === -1) {
-    // Sinon, si le mois courant n'a aucun événement mais qu'il y en a plus
-    // tard, ouvrir directement dessus plutôt que sur une grille vide
-    // (comportement "agenda pro" classique).
+    // Otherwise, if the current month has no events but a later one does, open directly on it instead of showing an empty grid.
     var nextMonthWithEvents = eventMonths.filter(function (m) {
       return m >= toDateKey(current).slice(0, 7);
     })[0];
@@ -105,7 +97,7 @@ function initMiniCalendar() {
     grid.innerHTML = '';
 
     var firstDay = new Date(year, month, 1);
-    var startOffset = (firstDay.getDay() + 6) % 7; // lundi = 0, comme l'entête L M M J V S D
+    var startOffset = (firstDay.getDay() + 6) % 7; // Monday = 0, matching the M T W T F S S header
     var daysInMonth = new Date(year, month + 1, 0).getDate();
 
     for (var i = 0; i < startOffset; i++) {
@@ -123,17 +115,13 @@ function initMiniCalendar() {
 
       if (dateKey === todayStr) {
         cell.classList.add('mini-calendar__day--today');
-        // aria-current="date" : "aujourd'hui" n'est sinon signalé que par un
-        // contour CSS (cf. .mini-calendar__day--today dans schedule.css),
-        // invisible pour un lecteur d'écran.
+        // "today" would otherwise only be signaled by a CSS outline, invisible to a screen reader.
         cell.setAttribute('aria-current', 'date');
       }
       if (hasEvents) {
         cell.classList.add('mini-calendar__day--event');
         cell.href = '#month-' + monthKey;
-        // title (info-bulle souris) + aria-label (lecteur d'écran) : le
-        // texte visible du lien n'est que le numéro du jour, insuffisant
-        // seul pour savoir qu'un événement y est rattaché.
+        // title (mouse tooltip) + aria-label (screen reader): the link's visible text is just the day number, not enough on its own to know an event is attached.
         var eventNames = eventsByDate[dateKey].join(', ');
         cell.title = eventNames;
         cell.setAttribute('aria-label', dateKey + ' : ' + eventNames);
