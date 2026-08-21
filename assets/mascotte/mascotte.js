@@ -268,10 +268,14 @@ function roomGeo(width, height, scaleY) {
   planeBack.name = 'planeBack';
   scene.add(planeBack);
 
+  // Mur gauche : seul mur de la pièce sans flyer/écran dessus (droite =
+  // schedule, fond = joinUS, avant hors champ caméra). Reste couleur unie
+  // (pas de texture ajoutée) et cliquable vers /contact, cf. raycast().
   var planeLeft = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: red_wall }));
   planeLeft.position.x = -height;
   planeLeft.position.y = -planeLeft.position.x / 2;
   planeLeft.rotateY(Math.PI / 2);
+  planeLeft.name = 'contact';
   scene.add(planeLeft);
 }
 
@@ -337,6 +341,8 @@ function raycast(e, touch = false) {
       location.href = '/schedule';
     } else if (object.name === 'joinUS') {
       location.href = '/join';
+    } else if (object.name === 'contact') {
+      location.href = '/contact';
     }
   }
 }

@@ -1,4 +1,5 @@
 import './contact.css';
+import './contact-mascotte.js';
 
 // Soumission du formulaire de contact en fetch (même pattern que
 // assets/story/minisite.js) : App\Controller\ContactController vérifie

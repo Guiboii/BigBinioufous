@@ -1,15 +1,177 @@
-.contact-page section {
-  margin-top: 2.5rem;
+/* Fond --bb-wall-pink (cf. app.css) plutôt que le doré par défaut du body :
+   /contact s'atteint en cliquant le mur rouge resté nu sur la scène 3D de
+   /home (assets/mascotte/mascotte.js). Posé sur ce wrapper plutôt que sur
+   <body> (pas de mécanisme de classe de body par page dans base.html.twig,
+   cf. body.desk qui est un document entièrement séparé) pour ne pas y
+   toucher juste pour cette page. */
+.contact-page {
+  background: var(--bb-wall-pink);
+  padding: 2rem 0 3rem;
 }
 
-.contact-page section:first-of-type {
-  margin-top: 1.5rem;
+/* Vert foncé plutôt que blanc : --bb-wall-pink est un fond clair (~0.33 de
+   luminance), le blanc n'y tient que 2.74:1 (sous AA). --bb-green-deep tient
+   4.89:1 (AA), déjà la couleur de titre par défaut ailleurs sur fond clair
+   (ex. .event-month h2 sur /schedule, même page de référence pour cette
+   mise en page). */
+.contact-page,
+.contact-page h1,
+.contact-page h2 {
+  color: var(--bb-green-deep);
+}
+
+.contact-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  text-align: center;
+  margin: 0 0 2rem;
+}
+
+/* Fond transparent (cf. contact-mascotte.js) : pas de cadre/ombre comme une
+   photo, le personnage a l'air posé directement sur le rose derrière. */
+.contact-header canvas {
+  width: 180px;
+  height: 220px;
+}
+
+.contact-header h1 {
+  font-family: "Bungee", "Arial Black", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+/* Même esprit que .scroll-wrapper.schedule (assets/schedule/schedule.css,
+   demande explicite : "en mode affiche, réparti sur l'écran") : un flex
+   centré qui laisse les panneaux se répartir 3/2/1 par ligne selon la
+   largeur plutôt qu'une colonne unique, align-items:flex-start pour ne pas
+   forcer une hauteur commune entre le formulaire (court) et les widgets
+   HelloAsso (jusqu'à 750px). */
+.contact-flyers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  width: min(94vw, 1600px);
+  margin: 0 auto;
+}
+
+/* Cartes blanches à liseré doré (même traitement que .registration-notice
+   dans ce fichier, fond blanc en plus pour se détacher du rose derrière).
+   Le <form> vert générique (règle "form" plus haut dans ce fichier) garde
+   son propre encart à l'intérieur, inchangé. */
+.contact-card {
+  width: min(100%, 500px);
+  background: var(--bb-white);
+  border: 2px solid var(--bb-gold);
+  border-radius: 12px;
+  box-shadow: var(--bb-shadow-soft);
+  padding: 1.5rem;
+  color: var(--bb-ink);
+}
+
+.contact-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: "Bungee", "Arial Black", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: 1.1rem;
+  color: var(--bb-green-deep);
+}
+
+/* Icônes en rouge devant les titres de carte : même convention que
+   .event-card h3 i sur /schedule (assets/schedule/schedule.css). */
+.contact-card h2 i {
+  color: var(--bb-red);
+}
+
+/* Le <form> vert/noir générique (règle "form", app.css) est pensé pour une
+   popup flottante (#contactForm sur /story) : posé tel quel dans une carte
+   blanche déjà encadrée, ça faisait une boîte dans la boîte. Repris ici en
+   propre plutôt que réutilisé tel quel, pour rester dans la même famille
+   visuelle que les 2 autres cartes (contenu à même le blanc). */
+.contact-card form {
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--bb-ink);
+}
+
+.contact-card .form-group {
+  margin-bottom: 1.1rem;
+}
+
+.contact-card label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  color: var(--bb-green-deep);
+}
+
+.contact-card .form-control {
+  border: 1.5px solid var(--bb-green-mid);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  color: var(--bb-ink);
+  background: var(--bb-white);
+}
+
+.contact-card .form-control::placeholder {
+  color: rgba(22, 20, 15, 0.45);
+}
+
+.contact-card .form-control:focus {
+  border-color: var(--bb-gold);
+  box-shadow: 0 0 0 3px rgba(var(--bb-gold-rgb), 0.35);
+  outline: none;
+}
+
+/* --bb-gold-pale (couleur d'erreur par défaut de .contact-status, app.css)
+   suppose un fond vert/sombre (popup /story) : illisible sur le blanc de
+   cette carte. --bb-red-dark à la place, AAA sur blanc. */
+.contact-card .contact-status.is-error {
+  color: var(--bb-red-dark);
 }
 
 /* Largeur imposée par le widget HelloAsso lui-même, la hauteur est ajustée
-   dynamiquement par contact.js une fois le contenu chargé (postMessage). */
+   dynamiquement par contact.js une fois le contenu chargé (postMessage). Le
+   scroll interne au widget est du contenu HelloAsso cross-origin : sa
+   scrollbar ne peut pas être re-stylée depuis cette page. */
 .ha-widget {
   width: 100%;
   height: 750px;
   border: none;
+  margin-top: 1rem;
+  border-radius: 8px;
+}
+
+/* Scrollbar de la page elle-même (même thème que .scroll-wrapper.schedule
+   .scroll/html.is-mobile sur /schedule) : :has() plutôt qu'une classe sur
+   <html>/<body>, qu'aucun mécanisme de base.html.twig ne permet de poser
+   par page (cf. commentaire en tête de fichier). Dégrade proprement (barre
+   native) sur les navigateurs sans support de :has(). */
+html:has(.contact-page) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bb-green-deep) var(--bb-wall-pink);
+}
+html:has(.contact-page)::-webkit-scrollbar {
+  width: 10px;
+}
+html:has(.contact-page)::-webkit-scrollbar-track {
+  background: var(--bb-wall-pink);
+}
+html:has(.contact-page)::-webkit-scrollbar-thumb {
+  background: var(--bb-green-deep);
+  border-radius: 5px;
+}
+html:has(.contact-page)::-webkit-scrollbar-thumb:hover {
+  background: var(--bb-red);
 }
