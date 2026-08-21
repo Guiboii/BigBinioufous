@@ -48,6 +48,10 @@ return [
         'path' => './assets/desk/note-admin.js',
         'entrypoint' => true,
     ],
+    'contact' => [
+        'path' => './assets/contact/contact.js',
+        'entrypoint' => true,
+    ],
     'jquery' => [
         'version' => '3.6.0',
     ],

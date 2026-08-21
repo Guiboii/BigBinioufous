@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -13,6 +14,18 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ContactController extends AbstractController
 {
+    /**
+     * Page publique /contact : formulaire de contact (même circuit que la
+     * popup /story, cf. plus bas) et les widgets HelloAsso pour adhérer ou
+     * faire un don, embarqués tels que fournis par HelloAsso (iframe qui
+     * s'ajuste en hauteur via postMessage).
+     */
+    #[Route('/contact', name: 'contact', methods: ['GET'])]
+    public function index(): Response
+    {
+        return $this->render('contact/index.html.twig');
+    }
+
     /**
      * Délai minimum entre l'affichage du formulaire (contact_ts, posé côté
      * Twig au rendu) et sa soumission : un bot qui poste directement sans

@@ -9,6 +9,16 @@
     --bb-ink: #16140F;
     --bb-white: #FFFFFF;
     --bb-border-dark: #23272B;
+    /* Rose/rouge du mur des scènes 3D (red_wall = 0xBC2727 dans mascotte.js/
+       schedule.js/story.js/music.js) tel qu'il apparaît réellement à l'écran
+       une fois éclairé (HemisphereLight + 2 DirectionalLight blanches) :
+       nettement plus clair/rosé que le hex brut --bb-red. Mesuré par scan de
+       pixels sur un screenshot de /schedule (même méthode que celle
+       documentée dans CLAUDE.md pour le cadrage des overlays 2D/3D), moyenne
+       de plusieurs points de mur non obstrués. Utilisé sur /contact pour
+       rappeler visuellement "le mur qu'on vient de traverser" en venant de
+       /home, sans y rejouer une vraie scène 3D. */
+    --bb-wall-pink: #F17870;
     /* Ombre douce partagée par toute la famille "carte" du gestionnaire de
        fichiers (formulaire nouveau dossier, zone de dépôt, cartes du hub,
        bannière de déplacement, panneau mobile de .navbar-admin) : un seul

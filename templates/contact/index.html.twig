@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block importmap %}
+    {{ importmap(['app', 'contact']) }}
+{% endblock %}
+
+{% block title %}{{ 'contact.page_title'|trans }}
+{% endblock %}
+
+{% block body %}
+    {# Pas de .container Bootstrap ici (plafonné à 1140px, cf. CLAUDE.md) :
+       .contact-flyers gère elle-même sa largeur (min(94vw, 1400px)), comme
+       .scroll-wrapper.schedule sur /schedule (même page de référence,
+       également hors .container). Un .contact-flyers plus large que
+       .container aurait vu ses marges auto ramenées à 0 par la spec CSS
+       (enfant plus large que son parent), cassant le centrage. #}
+    <div class="contact-page">
+        <div class="contact-header">
+            {# Décorative : même mascotte 3D animée que /home (modèle
+               Binioufou_Final4.gltf), en vignette plutôt qu'en scène plein
+               écran ici (cf. assets/contact/contact-mascotte.js). Le titre
+               juste à côté porte déjà l'information. #}
+            <canvas id="contact-mascotte" aria-hidden="true"></canvas>
+            <h1>{{ 'contact.page_title'|trans }}</h1>
+        </div>
+
+        <div class="contact-flyers">
+            <section class="contact-card" aria-labelledby="contact-form-heading">
+                <h2 id="contact-form-heading"><i class="ri-mail-fill" aria-hidden="true"></i> {{ 'contact.title'|trans }}</h2>
+                <form id="contact-form" action="{{ path('contact_submit') }}" method="post" data-messages="{{ {
+                    sending: 'contact.sending'|trans,
+                    success: 'contact.success'|trans,
+                    invalid_email: 'contact.error_invalid_email'|trans,
+                    empty_message: 'contact.error_empty_message'|trans,
+                    generic: 'contact.error_generic'|trans,
+                }|json_encode }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
+                    <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
+                    {# Honeypot : invisible pour un humain et retiré de l'arbre d'accessibilité
+                       (même piège que templates/story/index.html.twig et templates/story/minisite.html.twig). #}
+                    <input type="text" class="hp-field" id="contact-hp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                    <div class="form-group">
+                        <label for="contact-name">{{ 'contact.name_label'|trans }}</label>
+                        <input type="text" class="form-control" id="contact-name" name="name" autocomplete="name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">{{ 'contact.email_label'|trans }}</label>
+                        <input type="email" class="form-control" id="contact-email" name="email" autocomplete="email" placeholder="name@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">{{ 'contact.message_label'|trans }}</label>
+                        <textarea class="form-control" id="contact-message" name="message" rows="4"></textarea>
+                    </div>
+                    <p class="contact-status" id="contact-status" aria-live="polite"></p>
+                    <button type="submit" class="btn btn-green">{{ 'contact.submit'|trans }}</button>
+                </form>
+            </section>
+
+            <section class="contact-card" aria-labelledby="contact-join-heading">
+                <h2 id="contact-join-heading"><i class="ri-heart-fill" aria-hidden="true"></i> {{ 'contact.join_heading'|trans }}</h2>
+                <p>{{ 'contact.join_intro'|trans }}</p>
+                <iframe id="haWidgetJoin" class="ha-widget" title="{{ 'contact.join_heading'|trans }}" allowtransparency="true" scrolling="auto" src="https://www.helloasso.com/associations/binioufous/adhesions/cotisations-2026-2027/widget"></iframe>
+            </section>
+
+            <section class="contact-card" aria-labelledby="contact-donate-heading">
+                <h2 id="contact-donate-heading"><i class="ri-gift-fill" aria-hidden="true"></i> {{ 'contact.donate_heading'|trans }}</h2>
+                <p>{{ 'contact.donate_intro'|trans }}</p>
+                <iframe id="haWidgetDonate" class="ha-widget" title="{{ 'contact.donate_heading'|trans }}" allowtransparency="true" scrolling="auto" src="https://www.helloasso.com/associations/binioufous/formulaires/2/widget"></iframe>
+            </section>
+        </div>
+    </div>
+{% endblock %}
