@@ -213,6 +213,57 @@ table {
     background: #4a3d37;
     height: 100%;
 }
+
+/* Prend la place de #waveform en mode vidéo (jamais affichés en même temps,
+   cf. assets/music/youtube-embed.js), dans le même conteneur .waveW donc pas
+   de position propre à poser ici : hérite du fixed calculé par
+   updateOverlayPosition() sur .player-wrap .row:first-child (parent
+   commun). */
+#youtube-embed {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+#youtube-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+.youtube-embed-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 1;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--bb-white);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.youtube-embed-close:hover,
+.youtube-embed-close:focus-visible {
+    background: rgba(0, 0, 0, 0.85);
+}
+.youtube-embed-close:focus-visible {
+    outline: 2px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Boutons de transport audio (stop/lecture/boucle/zoom) sans effet pendant
+   qu'une vidéo YouTube occupe l'écran, cf. .video-mode posée par
+   youtube-embed.js. #uploadNew (déclencheur "Gérer la setlist") volontairement
+   pas dans cette liste : reste utile/visible même pendant une vidéo. */
+.player-wrap.video-mode #stopTrack,
+.player-wrap.video-mode #playPause,
+.player-wrap.video-mode #loopRegion,
+.player-wrap.video-mode input#slider {
+    display: none;
+}
 /* wavesurfer.js crée un <wave> interne (overflow-x:auto, pas de classe/id)
    pour le défilement horizontal quand on zoome (#slider) au-delà de la
    largeur du cadre : sans ça, scrollbar grise par défaut du navigateur,

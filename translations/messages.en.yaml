@@ -370,6 +370,8 @@ music:
     no_voices: "No file yet"
     voice_listen: listen
     youtube_link: "Watch on YouTube"
+    youtube_embed_title_prefix: "YouTube video: "
+    youtube_embed_close: "Close video"
     youtube_url_label: "YouTube link (optional)"
     folder_label: "Audio files folder (optional)"
     folder_empty_option: "None (the song has no folder yet)"

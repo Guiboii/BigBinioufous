@@ -127,4 +127,25 @@ class SetlistItem
     {
         return $this->getMediaDocuments()[0] ?? null;
     }
+
+    /**
+     * Id de la vidéo YouTube extrait de $youtubeUrl (déjà restreint aux 2
+     * formats youtube.com/watch?v=ID / youtu.be/ID par
+     * SetlistController::resolveYoutubeUrl(), donc l'extraction n'a pas à
+     * gérer d'autre forme). Sert à embarquer un lecteur vidéo sur l'écran de
+     * /music à la place de la waveform (cf. assets/music/youtube-embed.js),
+     * plutôt qu'un simple lien externe.
+     */
+    public function getYoutubeId(): ?string
+    {
+        if (!$this->youtubeUrl) {
+            return null;
+        }
+
+        if (preg_match('#(?:youtube\.com/watch\?v=|youtu\.be/)([A-Za-z0-9_-]+)#', $this->youtubeUrl, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
 }

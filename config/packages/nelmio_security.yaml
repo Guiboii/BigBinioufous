@@ -29,7 +29,9 @@ nelmio_security:
     # - script-src : unpkg.com uniquement pour wavesurfer.js (page /music,
     #   seul CDN du projet, tout le reste passe par AssetMapper donc 'self').
     # - style-src/font-src : Google Fonts (Bungee/VT323/IBM Plex Mono).
-    # - frame-src : helloasso.com pour les widgets d'adhésion/don de /contact.
+    # - frame-src : helloasso.com pour les widgets d'adhésion/don de /contact,
+    #   youtube-nocookie.com pour le lecteur vidéo intégré de /music (cf.
+    #   assets/music/youtube-embed.js).
     # - 'unsafe-inline' sur script-src/style-src : <script type="importmap">
     #   injecté par `importmap()` (base.html.twig et consorts) et plusieurs
     #   attributs style= existants, non auditables un par un ici sans casser
@@ -59,6 +61,7 @@ nelmio_security:
             frame-src:
                 - 'self'
                 - 'https://www.helloasso.com'
+                - 'https://www.youtube-nocookie.com'
             object-src:
                 - "'none'"
             base-uri:

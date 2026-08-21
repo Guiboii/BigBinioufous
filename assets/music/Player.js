@@ -20,6 +20,13 @@ document.addEventListener('DOMContentLoaded', function () {
     backend: 'MediaElement',
     plugins: [WaveSurfer.regions.create()],
   });
+
+  // Symétrique de l'event "music:audio-playing" plus bas : une vidéo YouTube
+  // ouverte (assets/music/youtube-embed.js) doit couper l'audio en cours,
+  // les deux occupent le même espace à l'écran.
+  document.addEventListener('music:show-video', function () {
+    wavesurfer.pause();
+  });
 });
 
 document.querySelector('#slider').oninput = function () {
@@ -52,6 +59,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#play').style.display = 'none';
     document.querySelector('#pause').style.display = '';
     playPause.setAttribute('aria-label', playPause.dataset.pauseLabel);
+    // Prévient assets/music/youtube-embed.js : une vidéo YouTube ouverte
+    // occupe le même espace à l'écran que la waveform, elle doit se fermer
+    // si l'audio (re)démarre.
+    document.dispatchEvent(new CustomEvent('music:audio-playing'));
   });
   wavesurfer.on('pause', function () {
     document.querySelector('#play').style.display = '';

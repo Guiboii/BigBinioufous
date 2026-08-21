@@ -40,6 +40,13 @@
 
                 <div class="waveW">
                     <div id="waveform"></div>
+                    {# Prend la place de la waveform (jamais affichés en même
+                       temps, cf. assets/music/youtube-embed.js) quand on
+                       clique sur un badge YouTube : même case (positionnée en
+                       projection 3D par music.js via .player-wrap .row:first-child,
+                       parent commun des deux) donc pas de recalcul de
+                       position nécessaire ici. #}
+                    <div id="youtube-embed" class="d-none" data-embed-title-prefix="{{ 'music.youtube_embed_title_prefix'|trans }}" data-close-label="{{ 'music.youtube_embed_close'|trans }}"></div>
                 </div>
             </div>
             <div
@@ -118,7 +125,18 @@
                             {{ item.artist.name }}
                         {% endif %}
                         {% if item.youtubeUrl %}
-                            <a href="{{ item.youtubeUrl }}" class="badge" target="_blank" rel="noopener">{{ 'music.youtube_link'|trans }}</a>
+                            {# data-youtube-id : intercepté par
+                               assets/music/youtube-embed.js pour ouvrir la
+                               vidéo directement sur l'écran (mode "plasma",
+                               retour utilisatrice 2026-08-21) plutôt que de
+                               naviguer. href/target=_blank restent en repli
+                               si JS a échoué à charger : navigation normale
+                               vers YouTube dans ce cas. Ouvert à tout le
+                               monde, contrairement au lien audio ci-dessus
+                               (réservé binioufous/admins) : n'importe quel
+                               morceau ayant un lien YouTube peut être vu ici,
+                               avec ou sans fichier audio associé. #}
+                            <a href="{{ item.youtubeUrl }}" class="badge" target="_blank" rel="noopener" data-youtube-id="{{ item.youtubeId }}" data-youtube-title="{{ item.artist ? (item.title ~ ' ' ~ 'music.by'|trans ~ ' ' ~ item.artist.name) : item.title }}">{{ 'music.youtube_link'|trans }}</a>
                         {% endif %}
                     {% endset %}
                     <li>

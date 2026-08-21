@@ -7,6 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import './Player.js';
 import './setlist-manage.js';
+import './youtube-embed.js';
 
 var canvas,
   clock,
