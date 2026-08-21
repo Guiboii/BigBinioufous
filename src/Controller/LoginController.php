@@ -11,6 +11,7 @@ use App\Mailer\RegistrationMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -71,10 +72,22 @@ class LoginController extends AbstractController
      * validUser(). Identité/instrument/adhésion se complètent après coup
      * sur /desk/profile.
      *
+     * Connexion automatique après inscription (2026-08-21, retour utilisatrice
+     * "je veux arriver direct sur le profil en étant connecté·e") : cohérent
+     * avec le fait que la connexion elle-même n'a jamais été bloquée avant
+     * validation admin (cf. bandeau "en cours de vérification" sur /desk,
+     * ROADMAP.md "Inscription simplifiée"). Security::login() nécessite le
+     * nom explicite de l'authenticator ('form_login') car le firewall main
+     * en expose deux (form_login + le two_factor de scheb/2fa-bundle) ;
+     * sans le préciser, Security::login() lève une LogicException
+     * "Too many authenticators". Sans incidence sur le 2FA lui-même : un
+     * compte tout juste créé n'a jamais de secret TOTP enregistré
+     * (User::isTotpAuthenticationEnabled()), donc rien ne l'interrompt ici.
+     *
      * @return Response
      */
     #[Route('/register', name: 'register')]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, MailerInterface $mailer, LoggerInterface $logger, #[Autowire(param: 'admin_notification_email')] string $adminNotificationEmail, RegistrationMailer $registrationMailer)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, MailerInterface $mailer, LoggerInterface $logger, #[Autowire(param: 'admin_notification_email')] string $adminNotificationEmail, RegistrationMailer $registrationMailer, Security $security)
     {
         $user = new User();
 
@@ -92,12 +105,14 @@ class LoginController extends AbstractController
             $this->notifyAdminsOfNewRegistration($mailer, $logger, $adminNotificationEmail, $user);
             $registrationMailer->sendPendingValidation($user);
 
+            $security->login($user, 'form_login', 'main');
+
             $this->addFlash(
                 'success',
-                'Ton compte a été créé ! Tu recevras un mail une fois qu\'il aura été accepté par un·e admin. On a prévenu l\'équipe.'
+                'Ton compte a été créé ! Il est en cours de vérification par un·e admin, mais tu peux déjà compléter ton profil.'
             );
 
-            return $this->redirectToRoute('join');
+            return $this->redirectToRoute('profile');
         }
 
         return $this->render('join/registration.html.twig', [
