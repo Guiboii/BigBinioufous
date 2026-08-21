@@ -10,7 +10,14 @@ document.addEventListener('DOMContentLoaded', function () {
     cursorColor: '#ffffff',
     barWidth: 1,
     height: 91,
-    //backend: 'MediaElement',
+    // MediaElement plutôt que le backend webaudio par défaut : webaudio
+    // télécharge et décode le fichier entier avant de déclencher "ready"
+    // (donc avant que play() ait un effet), ~13,5s mesurés en local sur un
+    // mp3 de 22 Mo (assets/music/, cf. CLAUDE.md). MediaElement s'appuie sur
+    // <audio> natif, qui streame et joue dès que les premières données
+    // arrivent (retour utilisatrice, 2026-08-21 : "giga délai" avant que le
+    // son se lance) : ~300ms mesurés sur le même fichier.
+    backend: 'MediaElement',
     plugins: [WaveSurfer.regions.create()],
   });
 });
