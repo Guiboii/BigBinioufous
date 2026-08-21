@@ -207,6 +207,12 @@ register:
     field_password_placeholder: "Choose a password"
     field_password_confirm: "Confirm password"
     field_password_confirm_placeholder: "Type the same password again"
+    claims_membership_question: "Have you already joined?"
+    claims_membership_yes: Yes
+    claims_membership_no: "No"
+    claims_membership_hint: "This helps us check subscriptions when we validate your account."
+    claims_membership_not_member_hint: "Not a member yet? You can pay your subscription right now on HelloAsso."
+    claims_membership_or_later: "You can also do it later, it doesn't block your registration."
 
 profile:
     field_first_name: First name
@@ -498,6 +504,7 @@ City: City
 Instrument: Instrument
 Actions: Actions
 Country: Country
+Membership: "Claimed membership"
 "no picture": no picture
 
 "Your gender": Your gender

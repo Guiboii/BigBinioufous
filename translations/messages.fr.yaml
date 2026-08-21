@@ -207,6 +207,12 @@ register:
     field_password_placeholder: "Choisis un mot de passe"
     field_password_confirm: "Confirmation du mot de passe"
     field_password_confirm_placeholder: "Retape le même mot de passe"
+    claims_membership_question: "Es-tu déjà adhérent·e ?"
+    claims_membership_yes: Oui
+    claims_membership_no: Non
+    claims_membership_hint: "Ça nous aide à vérifier les cotisations au moment de valider ton compte."
+    claims_membership_not_member_hint: "Pas encore adhérent·e ? Tu peux payer ta cotisation dès maintenant sur HelloAsso."
+    claims_membership_or_later: "Tu peux aussi le faire plus tard, ce n'est pas bloquant pour t'inscrire."
 
 profile:
     field_first_name: Prénom
@@ -508,6 +514,7 @@ City: Ville
 Instrument: Instrument
 Actions: Actions
 Country: Pays
+Membership: "Adhésion déclarée"
 "no picture": "pas de photo"
 
 "Your gender": Ton genre

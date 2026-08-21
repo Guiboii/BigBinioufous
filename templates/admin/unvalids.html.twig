@@ -15,6 +15,11 @@
                     <th>{{ 'Instrument'|trans }}</th>
                     <th>{{ 'Country'|trans }}</th>
                     <th>{{ 'City'|trans }}</th>
+                    {# Déclaration faite à l'inscription (User::$claimsMembership,
+                       retour utilisatrice 2026-08-21) : purement informatif,
+                       affiché ici pour que l'admin puisse vérifier la
+                       cotisation par ses propres moyens avant de valider. #}
+                    <th>{{ 'Membership'|trans }}</th>
                     <th>{{ 'admin.created_at'|trans }}</th>
                     <th>{{ 'Actions'|trans }}</th>
                 </tr>
@@ -31,6 +36,11 @@
                     <td>{{ user.instrument.title|default('-') }}</td>
                     <td>{{ user.country|default('-') }}</td>
                     <td>{{ user.city|default('-') }}</td>
+                    <td>{% if user.claimsMembership %}
+                        <span class="badge badge-success"><i class="ri-checkbox-circle-fill" aria-hidden="true"></i> {{ 'Yes'|trans }}</span>
+                    {% else %}
+                        <span class="badge badge-secondary"><i class="ri-close-circle-line" aria-hidden="true"></i> {{ 'No'|trans }}</span>
+                    {% endif %}</td>
                     <td>{{ user.createdAt|date('d/m/Y') }}</td>
                     <td>
                         <a href="{{ path ('user_valid', {slug: user.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.validate_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></a>

@@ -92,6 +92,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
     #[ORM\Column(type: 'boolean')]
     private $validation;
 
+    /**
+     * Déclaration facultative à l'inscription ("Es-tu déjà adhérent·e ?") :
+     * la personne dit avoir déjà payé sa cotisation HelloAsso. Purement
+     * informatif, ne donne aucun accès automatiquement : un·e admin vérifie
+     * par ses propres moyens (HelloAsso n'a pas d'API pour vérifier en
+     * direct, colonne affichée sur /admin/valid pour l'aider) puis bascule
+     * le rôle via le toggle "Membre"/"Pas membre". Colonne claims_membership
+     * déjà présente en base (défaut 0) depuis une 1re version de ce champ,
+     * retirée le 2026-08-12 puis remise en place ici à l'inscription plutôt
+     * que sur /desk/profile : pas de nouvelle migration nécessaire.
+     */
+    #[ORM\Column(type: 'boolean')]
+    private $claimsMembership = false;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $memberCardNumber;
 
@@ -375,6 +389,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
     public function setValidation(bool $validation): self
     {
         $this->validation = $validation;
+
+        return $this;
+    }
+
+    public function getClaimsMembership(): bool
+    {
+        return $this->claimsMembership;
+    }
+
+    public function setClaimsMembership(bool $claimsMembership): self
+    {
+        $this->claimsMembership = $claimsMembership;
 
         return $this;
     }

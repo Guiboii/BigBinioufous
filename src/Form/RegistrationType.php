@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -12,11 +13,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Inscription simplifiée (2026-08-12, cf. ROADMAP.md "Facilitons
  * l'inscription") : juste pseudo/email/mot de passe. Tout le reste
- * (prénom/nom, genre, date de naissance, ville, pays, instrument, photo,
- * adhésion...) déménage sur /desk/profile, facultatif, à compléter après
- * coup si la personne le souhaite. "wish" (rôle souhaité) et le numéro de
- * carte d'adhérent·e sont retirés : le rôle se décide après validation du
- * compte par un·e admin, décorrélé de l'inscription elle-même.
+ * (prénom/nom, genre, date de naissance, ville, pays, instrument, photo...)
+ * déménage sur /desk/profile, facultatif, à compléter après coup si la
+ * personne le souhaite. "wish" (rôle souhaité) et le numéro de carte
+ * d'adhérent·e sont retirés : le rôle se décide après validation du compte
+ * par un·e admin, décorrélé de l'inscription elle-même.
  */
 class RegistrationType extends ApplicationType
 {
@@ -27,6 +28,25 @@ class RegistrationType extends ApplicationType
             ->add('email', EmailType::class, $this->getConfiguration('register.field_email', 'register.field_email_placeholder'))
             ->add('hash', PasswordType::class, $this->getConfiguration('register.field_password', 'register.field_password_placeholder'))
             ->add('passwordConfirm', PasswordType::class, $this->getConfiguration('register.field_password_confirm', 'register.field_password_confirm_placeholder'))
+            // Question "Es-tu déjà adhérent·e ?" (retour utilisatrice
+            // 2026-08-21, cf. User::$claimsMembership) : colonne booléenne
+            // NOT NULL, donc "pas de réponse" n'existe pas dans le modèle de
+            // données, seulement true/false. required: true sans quoi
+            // ChoiceType ajoute un 3e bouton radio "None" (non traduit) pour
+            // représenter cet état qui n'a pas de sens ici. Rendu en toggle
+            // pilule Oui/Non côté template (.already-member-step), pas en
+            // radios nues : même retour utilisatrice que la 1re version de
+            // cette question sur cette page (2026-08-11, "pas beau et pas
+            // clair" en radios brutes dans le flux normal du formulaire).
+            ->add('claimsMembership', ChoiceType::class, [
+                'label' => $this->trans('register.claims_membership_question'),
+                'required' => true,
+                'expanded' => true,
+                'choices' => [
+                    $this->trans('register.claims_membership_yes') => true,
+                    $this->trans('register.claims_membership_no') => false,
+                ],
+            ])
         ;
     }
 

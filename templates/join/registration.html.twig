@@ -29,9 +29,49 @@
        à cette page plutôt que rendu global. #}
     {{ form_start(form, {attr: {class: 'registration-form'}}) }}
     {# Inscription simplifiée (2026-08-12, cf. ROADMAP.md) : juste pseudo/
-       email/mot de passe. Le reste du profil (identité, instrument,
-       adhésion...) se complète après coup sur /desk/profile une fois le
-       compte accepté. #}
+       email/mot de passe. Le reste du profil (identité, instrument...) se
+       complète après coup sur /desk/profile une fois le compte accepté.
+       Seule exception : "Es-tu déjà adhérent·e ?" (User::$claimsMembership,
+       retour utilisatrice 2026-08-21), posée ici pour que l'équipe puisse
+       vérifier les cotisations dès la validation du compte sur /admin/valid,
+       et pour proposer le lien HelloAsso au bon moment à qui n'a pas encore
+       adhéré. Rendue à part (form_label/form_widget manuels) avant le reste
+       du formulaire plutôt que par le form_widget(form) global plus bas :
+       même position "question posée en tête" que sa 1re version sur
+       cette page (2026-08-11), dans une carte détachée (.already-member-step,
+       fond --bb-green-deep + liseré doré, même traitement que
+       .registration-notice ci-dessus) pour vraiment se voir comme LA
+       question à traiter en premier. form_widget(form) plus bas ne la
+       re-rendra pas : Symfony marque un champ comme déjà rendu dès qu'un
+       form_row/form_widget lui est appliqué individuellement. #}
+    <div class="already-member-step">
+        {# <legend> doit être le tout 1er enfant du <fieldset> pour que
+           l'association accessible (nom du groupe de radios pour un lecteur
+           d'écran) soit fiable : le paragraphe d'aide reste donc à
+           l'intérieur mais après le widget, pas entre les deux. #}
+        <fieldset class="already-member-fieldset">
+            {{ form_label(form.claimsMembership) }}
+            <div class="already-member-toggle">
+                {{ form_widget(form.claimsMembership) }}
+            </div>
+            <p class="already-member-hint">{{ 'register.claims_membership_hint'|trans }}</p>
+        </fieldset>
+
+        {# Masquée par défaut (pas de flash visible-puis-masqué au
+           chargement), affichée en JS seulement si "Non" est sélectionné.
+           target="_blank"/rel="noopener" : vraie navigation externe vers
+           HelloAsso, on ne veut pas perdre le formulaire d'inscription en
+           cours de remplissage dans le même onglet. #}
+        <div id="notMemberHelpBox" class="already-member-followup d-none">
+            <i class="ri-information-fill" aria-hidden="true"></i>
+            <div class="already-member-followup-content">
+                <p>{{ 'register.claims_membership_not_member_hint'|trans }}</p>
+                <a href="https://www.helloasso.com/associations/binioufous/adhesions/cotisations-2026-2027" class="btn btn-green" target="_blank" rel="noopener">{{ 'join.pay_subscription'|trans }}</a>
+                <p class="already-member-note">{{ 'register.claims_membership_or_later'|trans }}</p>
+            </div>
+        </div>
+    </div>
+
     {{ form_widget(form) }}
     <div class="nav-item" >
     <button type="submit" class="submit btn btn-success">{{ 'join.submit'|trans }}</button>
@@ -39,4 +79,29 @@
     {{ form_end(form) }}
 
 </div>
+
+{# Toggle minimal (pas de dépendance JS externe, même choix que la 1re
+   version de cette question sur cette page) : affiche le rappel HelloAsso
+   seulement si "Non" est sélectionné. Pas de logique supplémentaire à
+   verrouiller ici (contrairement à 2026-08-11 : plus de champ "wish" à
+   restreindre, le rôle se décide après coup par un·e admin). #}
+<script>
+    (function () {
+        var noRadio = document.getElementById('registration_claimsMembership_1');
+        var notMemberHelpBox = document.getElementById('notMemberHelpBox');
+
+        if (!noRadio || !notMemberHelpBox) {
+            return;
+        }
+
+        function updateBox() {
+            notMemberHelpBox.classList.toggle('d-none', !noRadio.checked);
+        }
+
+        document.querySelectorAll('input[name="registration[claimsMembership]"]').forEach(function (radio) {
+            radio.addEventListener('change', updateBox);
+        });
+        updateBox();
+    })();
+</script>
 {% endblock %}

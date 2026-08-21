@@ -2207,6 +2207,126 @@ li.nav-item.active, li.nav-item:hover,
     color: var(--bb-gold-pale);
 }
 
+/* Question "Es-tu déjà adhérent·e ?" en tête de /register (retour
+   utilisatrice 2026-08-21, cf. User::$claimsMembership). Même traitement
+   "carte détachée" que .registration-notice juste au-dessus (fond
+   --bb-green-deep + liseré doré, même contrastes déjà vérifiés) plutôt
+   qu'un --bb-ink comme sa 1re version sur cette page en 2026-08-11 :
+   --bb-ink avait été jugé "trop éloigné de l'identité verte/dorée du site"
+   au moment de reconstruire .registration-notice (cf. commentaire
+   ci-dessus), même logique appliquée ici pour rester cohérent visuellement
+   entre les deux cartes de cette page. */
+.already-member-step {
+    background: var(--bb-green-deep);
+    border: 2px solid var(--bb-gold);
+    border-radius: 12px;
+    box-shadow: var(--bb-shadow-soft);
+    padding: 1.5rem;
+    margin: 0 auto 2rem;
+    max-width: 560px;
+    text-align: center;
+    color: var(--bb-white);
+}
+.already-member-fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+.already-member-step legend {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--bb-white);
+    margin: 0 0 1rem;
+}
+.already-member-hint {
+    color: var(--bb-gold-pale);
+    margin: 1rem 0 0;
+}
+
+/* Toggle Oui/Non en boutons pilule (même langage visuel que .login/.join,
+   assets/login/join.css) plutôt que des puces radio minuscules faciles à
+   manquer. Input natif gardé (focus clavier, comportement radio natif,
+   lecteur d'écran), juste rendu visuellement discret : le label devient le
+   vrai bouton visible, cliquable via son "for" même quand l'input est
+   quasi invisible. */
+.already-member-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.already-member-toggle .form-check {
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+.already-member-toggle .form-check-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+}
+.already-member-toggle .form-check-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 2rem;
+    border-radius: 50px;
+    border: 2px solid var(--bb-gold);
+    background: transparent;
+    color: var(--bb-white);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.already-member-toggle .form-check-input:checked + .form-check-label {
+    background: var(--bb-gold);
+    color: var(--bb-ink);
+}
+.already-member-toggle .form-check-input:focus-visible + .form-check-label {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
+}
+
+/* Rappel HelloAsso affiché seulement si "Non" est sélectionné (cf. script
+   dans le template). Icône + bloc de texte plutôt qu'un pavé de texte plein
+   pour scinder visuellement l'information, même structure que
+   .registration-notice mais imbriquée dans la carte question ci-dessus
+   plutôt qu'une 2e carte séparée, pour rester visuellement liée à la
+   réponse qui l'a fait apparaître. */
+.already-member-followup {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    text-align: left;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(242, 178, 51, 0.35);
+}
+.already-member-followup > i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--bb-gold-pale);
+}
+.already-member-followup-content {
+    flex: 1;
+    min-width: 0;
+}
+.already-member-followup-content p:first-child {
+    color: var(--bb-white);
+    margin-top: 0;
+}
+.already-member-followup-content .btn-green {
+    margin: 0.5rem 0;
+}
+.already-member-note {
+    font-size: 0.9rem;
+    color: var(--bb-gold-pale);
+    margin: 0.5rem 0 0;
+}
+
 /* Espace Comptabilité (fusion de l'ancien /accountant dans
    /desk/files/accounting, cf. ROADMAP.md "Espace compta") : sous-navigation
    Relevés/Devis & Factures/Trésorerie, solde de trésorerie, lignes de
