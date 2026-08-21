@@ -122,7 +122,14 @@
                         {% endif %}
                     {% endset %}
                     <li>
-                        {% if media %}
+                        {# Écoute du fichier audio réel réservée aux
+                           binioufous/admins (même règle de lecture que
+                           l'espace /desk/files/music, cf. security.yaml) :
+                           le public n'a que le titre/artiste/lien YouTube
+                           ci-dessus, jamais un lien direct vers le mp3
+                           (retour utilisatrice, 2026-08-21 : "public c juste
+                           les liens ytb"). #}
+                        {% if media and (is_granted('ROLE_BINIOUFOUS') or is_granted('ROLE_ADMIN')) %}
                             {# data-track-title : Player.js l'annonce dans la
                                zone aria-live à chaque changement de morceau
                                (clic ou fin automatique) plutôt que de
