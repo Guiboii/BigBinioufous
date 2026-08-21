@@ -104,3 +104,17 @@ Sur `/schedule`, toujours pas revérifié à ce jour (ni vw/vh, ni projection) :
 - `🚧` (work in progress) peut se **combiner** avec l'emoji principal (`🚧✨`, `🚧🐛`...) plutôt que le remplacer, quand un commit apporte un vrai fix/feature mais que l'ensemble (page, fonctionnalité) n'est pas encore considéré fini/validé. Utilisé sur la branche `phase5_story`.
 - Un template de commit est configuré localement (`git config commit.template` → `.gitmessage` à la racine), il s'affiche automatiquement à chaque `git commit`.
 - **Toujours attendre l'accord explicite de l'utilisatrice avant de lancer `git commit`** (sauf instruction contraire donnée dans le fil), même après une série de modifications déjà validées visuellement.
+
+## Code comments
+
+- All code comments must be written in simple, plain English.
+- Comments should explain what the code does and why, not just restate the code.
+- Do not reference any instruction, request, or task in comments (no "as requested", no "per the task", etc.).
+- Keep comments concise, one or two sentences max, not paragraphs.
+- Only comment where it adds real value: complex logic, non-obvious decisions, function purpose, tricky edge cases. Skip obvious lines.
+- Never add comments in: `node_modules/`, `vendor/`, Symfony cache/log folders (`var/cache`, `var/log`), JS build output (`dist/`, `build/`, `.next/`, `coverage/`, `*.min.js`), or any auto-generated/lock files (`package-lock.json`, `yarn.lock`, `composer.lock`).
+
+## Language
+
+- All conversation/chat responses to the user must be in French.
+- This applies only to chat responses, code and code comments stay in English as stated above.
