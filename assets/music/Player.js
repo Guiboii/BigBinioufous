@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Symétrique de l'event "music:audio-playing" plus bas : une vidéo YouTube
-  // ouverte (assets/music/youtube-embed.js) doit couper l'audio en cours,
-  // les deux occupent le même espace à l'écran.
+  // ouverte en grand (assets/music/youtube-embed.js) doit couper l'audio en
+  // cours.
   document.addEventListener('music:show-video', function () {
     wavesurfer.pause();
   });
@@ -55,10 +55,17 @@ document.addEventListener('DOMContentLoaded', function () {
   // Toggle play/pause icon + nom accessible (le bouton n'a pas de texte
   // visible, seulement une icône : sans aria-label à jour, un lecteur
   // d'écran annoncerait toujours "Lecture" même une fois en pause).
+  // Témoin "écran plasma" (habillage visuel, cf. music/index.html.twig) :
+  // pastille rouge allumée seulement pendant une lecture réelle, pas juste
+  // "un morceau est chargé".
+  var powerLed = document.querySelector('#powerLed');
   wavesurfer.on('play', function () {
     document.querySelector('#play').style.display = 'none';
     document.querySelector('#pause').style.display = '';
     playPause.setAttribute('aria-label', playPause.dataset.pauseLabel);
+    if (powerLed) {
+      powerLed.classList.add('is-playing');
+    }
     // Prévient assets/music/youtube-embed.js : une vidéo YouTube ouverte
     // occupe le même espace à l'écran que la waveform, elle doit se fermer
     // si l'audio (re)démarre.
@@ -68,6 +75,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#play').style.display = '';
     document.querySelector('#pause').style.display = 'none';
     playPause.setAttribute('aria-label', playPause.dataset.playLabel);
+    if (powerLed) {
+      powerLed.classList.remove('is-playing');
+    }
   });
 
   var loopRegion = document.querySelector('#loopRegion');
@@ -103,6 +113,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var playlist = document.getElementById('playlist');
   var currentTrack = 0;
   var nowPlaying = document.querySelector('#now-playing');
+  var trackCounter = document.querySelector('#trackCounter');
+  var screenTicker = document.querySelector('#screenTicker');
+  var waveW = document.querySelector('.waveW');
 
   // a.list-group-item seulement : un item de playlist peut aussi contenir un
   // lien YouTube (.badge, cf. music/index.html.twig), pas destiné à
@@ -139,8 +152,24 @@ document.addEventListener('DOMContentLoaded', function () {
     currentTrack = index;
     links[currentTrack].classList.add('active');
     links[currentTrack].setAttribute('aria-current', 'true');
+    var title = links[currentTrack].dataset.trackTitle || '';
     if (nowPlaying) {
-      nowPlaying.textContent = links[currentTrack].dataset.trackTitle || '';
+      nowPlaying.textContent = title;
+    }
+    if (screenTicker) {
+      screenTicker.textContent = title;
+    }
+    if (trackCounter) {
+      trackCounter.textContent =
+        String(currentTrack + 1).padStart(2, '0') + ' / ' + String(links.length).padStart(2, '0');
+    }
+    // Sursaut bref (cf. @keyframes bb-screen-flicker, music.css), retiré
+    // après coup pour pouvoir se redéclencher au morceau suivant (une classe
+    // laissée en place ne rejoue pas son animation).
+    if (waveW) {
+      waveW.classList.remove('screen-flicker');
+      void waveW.offsetWidth; // force le reflow, sinon le navigateur fusionne le remove+add et l'animation ne repart pas
+      waveW.classList.add('screen-flicker');
     }
     pendingAutoplay = false !== autoplay;
     wavesurfer.load(links[currentTrack].href);

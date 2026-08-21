@@ -34,12 +34,11 @@ var black = 0x000000;
 
 // Ancrages de la face avant du meuble SoundSystem (plan quasi plat, x≈-8.406
 // dans le repère monde), mesurés une fois par raycast caméra->modèle sur un
-// rendu de référence, cf. section "Cadrage d'un overlay 2D..." de CLAUDE.md :
-// contrairement au vw/vh (qui suppose une mise à l'échelle linéaire avec la
-// fenêtre), une caméra en perspective ne projette pas ainsi dès que le ratio
-// largeur/hauteur change, d'où le décalage observé sur les fenêtres larges.
-// Reprojeter ces points 3D fixes via camera.project() à chaque resize donne
-// une position d'overlay exacte à toute taille/ratio de fenêtre.
+// rendu de référence, cf. section "Cadrage d'un overlay 2D..." de CLAUDE.md.
+// Reprojetés à chaque resize via camera.project() : le petit écran audio
+// (waveform + boutons + playlist) reste posé sur le meuble, la scène 3D
+// gardant son plein écran/sa mise en page d'origine (retour utilisatrice,
+// 2026-08-21, après un essai de scène réduite jugé "casse le thème").
 var PANEL_PLANE_X = -8.406;
 var PANEL_Z_LEFT = 3.298;
 var PANEL_Z_RIGHT = 0.734;
@@ -54,6 +53,14 @@ var PLAYLIST_Y_BOTTOM = 2.871574;
 // (cf. commentaire là-bas) : sur petit écran, le meuble 3D est illisible,
 // donc on ne l'initialise même pas. Player.js (import plus haut) tourne
 // indépendamment de tout ça et reste actif dans les deux cas.
+//
+// Doit rester APRÈS les "var PANEL_*"/"var SCREEN_*" etc. ci-dessus : init()
+// appelle updateOverlayPosition() de façon synchrone à la fin, qui lit ces
+// constantes immédiatement. Un "var" est hoisté (la déclaration existe dès
+// le haut du fichier) mais pas son AFFECTATION : appeler init() avant que
+// ces lignes "var X = ..." aient réellement été exécutées les laisse tous à
+// `undefined`, d'où des positions aberrantes (bug vécu le 2026-08-21 en
+// réorganisant ce fichier : coordonnées de l'ordre de 10^19px).
 if (!document.documentElement.classList.contains('is-mobile')) {
   init();
   animate();
@@ -375,3 +382,50 @@ function initDialog(triggerIds, dialogId) {
 
 initDialog('musicLoginTrigger', 'musicLoginForm');
 initDialog(['setlistManageTrigger', 'uploadNew'], 'setlistManageDialog');
+
+// Grand écran vidéo en overlay par-dessus la scène 3D (retour utilisatrice,
+// 2026-08-21 : "c'est juste l'écran, quand c'est une vidéo ytb qui doit
+// apparaître par-dessus" - le petit écran audio, lui, reste posé sur le
+// meuble via updateOverlayPosition() ci-dessus, inchangé). Pas une modale à
+// déclencheur fixe comme initDialog() ci-dessus : s'ouvre au clic sur
+// N'IMPORTE quel badge YouTube de la playlist (cf. youtube-embed.js), pas un
+// seul bouton connu d'avance. Écoute le même CustomEvent déjà émis par ce
+// script (music:show-video) plutôt qu'un nouveau mécanisme.
+(function () {
+  var overlay = document.getElementById('videoOverlay');
+  if (!overlay) {
+    return;
+  }
+
+  // Focus posé sur le bouton fermer à l'ouverture (cohérent avec
+  // getFocusable()/initDialog() plus haut) : pas de déclencheur unique à qui
+  // rendre le focus à la fermeture (n'importe quel badge YouTube de la
+  // playlist peut ouvrir cet écran), le navigateur reprend son focus par
+  // défaut dans ce cas plutôt qu'un retour forcé arbitraire.
+  function open() {
+    overlay.classList.remove('d-none');
+    var closeBtn = overlay.querySelector('.video-overlay-close');
+    if (closeBtn) {
+      closeBtn.focus();
+    }
+  }
+
+  function close() {
+    overlay.classList.add('d-none');
+    // youtube-embed.js n'a aucune raison de connaître le mécanisme d'overlay
+    // (backdrop/bouton/Échap) : un seul event, à lui de couper la vidéo.
+    document.dispatchEvent(new CustomEvent('music:close-video'));
+  }
+
+  document.addEventListener('music:show-video', open);
+
+  Array.prototype.slice.call(overlay.querySelectorAll('[data-close]')).forEach(function (el) {
+    el.addEventListener('click', close);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !overlay.classList.contains('d-none')) {
+      close();
+    }
+  });
+})();

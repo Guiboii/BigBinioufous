@@ -371,7 +371,7 @@ music:
     voice_listen: écouter
     youtube_link: "Voir sur YouTube"
     youtube_embed_title_prefix: "Vidéo YouTube : "
-    youtube_embed_close: "Fermer la vidéo"
+    now_playing_close: "Fermer le lecteur"
     youtube_url_label: "Lien YouTube (facultatif)"
     folder_label: "Dossier des fichiers audio (facultatif)"
     folder_empty_option: "Aucun (le morceau n'a pas encore de dossier)"

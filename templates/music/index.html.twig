@@ -14,6 +14,14 @@
     {{ importmap(['app', 'music']) }}
 {% endblock %}
 
+{% block fonts %}
+    {# VT323 (titre/ticker) + IBM Plex Mono (étiquettes/compteur) : même
+       paire déjà utilisée sur /story pour son propre "écran" rétro
+       (assets/story/minisite.css), reprise ici pour l'habillage "écran
+       plasma" du lecteur plutôt qu'une 3e police introduite au hasard. #}
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+{% endblock %}
+
 {% block title %}{{ 'music.title'|trans }}
 {% endblock %}
 
@@ -23,6 +31,13 @@
 
     <p class="mobile-note">{{ 'music.mobile_note'|trans }}</p>
 
+    {# Petit écran audio, inchangé : posé sur le meuble 3D via
+       updateOverlayPosition() (music.js), habillage "écran plasma" (bezel,
+       témoin, compteur, ticker). La vidéo YouTube (plus bas, #videoOverlay)
+       est un grand écran séparé qui s'ouvre par-dessus toute la page à la
+       demande - retour utilisatrice, 2026-08-21 : "c'est juste l'écran,
+       quand c'est une vidéo ytb qui doit apparaître par-dessus", le reste
+       (petit écran audio + scène 3D plein écran) doit rester tel quel. #}
     <div class="overlay">
         {# h2 hors de .player-wrap volontairement : music.js cible
            ".player-wrap .row:first-child" (le sélecteur CSS :first-child
@@ -40,13 +55,20 @@
 
                 <div class="waveW">
                     <div id="waveform"></div>
-                    {# Prend la place de la waveform (jamais affichés en même
-                       temps, cf. assets/music/youtube-embed.js) quand on
-                       clique sur un badge YouTube : même case (positionnée en
-                       projection 3D par music.js via .player-wrap .row:first-child,
-                       parent commun des deux) donc pas de recalcul de
-                       position nécessaire ici. #}
-                    <div id="youtube-embed" class="d-none" data-embed-title-prefix="{{ 'music.youtube_embed_title_prefix'|trans }}" data-close-label="{{ 'music.youtube_embed_close'|trans }}"></div>
+
+                    {# Habillage "écran plasma" (retour utilisatrice,
+                       2026-08-21) : superposé en absolute par-dessus la
+                       waveform, jamais d'espace propre réservé, pour ne pas
+                       toucher au rectangle calé en 3D par
+                       updateOverlayPosition() (music.js). Décoratif -
+                       aria-hidden : le témoin/compteur n'apporte rien de
+                       plus que ce que #now-playing (aria-live, cf. plus
+                       haut) annonce déjà pour un lecteur d'écran. #}
+                    <div class="screen-chrome" aria-hidden="true">
+                        <span class="power-led" id="powerLed"></span>
+                        <span class="track-counter" id="trackCounter"></span>
+                    </div>
+                    <p class="screen-ticker" id="screenTicker" aria-hidden="true"></p>
                 </div>
             </div>
             <div
@@ -101,10 +123,30 @@
                         <svg class="bi bi-arrow-repeat" width="1em" height="1em" viewbox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 00-.708 0l-2 2a.5.5 0 10.708.708L2.5 8.207l1.646 1.647a.5.5 0 00.708-.708l-2-2zm13-1a.5.5 0 00-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 00-.708.708l2 2a.5.5 0 00.708 0l2-2a.5.5 0 000-.708z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M8 3a4.995 4.995 0 00-4.192 2.273.5.5 0 01-.837-.546A6 6 0 0114 8a.5.5 0 01-1.001 0 5 5 0 00-5-5zM2.5 7.5A.5.5 0 013 8a5 5 0 009.192 2.727.5.5 0 11.837.546A6 6 0 012 8a.5.5 0 01.501-.5z" clip-rule="evenodd"/></svg>
                     </span>{{ 'music.loop'|trans }}</button>
                 <input id="slider" data-action="zoom" type="range" min="1" max="200" value="0" aria-label="{{ 'music.zoom_label'|trans }}"/>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="playlist-wrap">
+    {# Grand écran vidéo en overlay par-dessus toute la page (scène 3D
+       comprise), ouvert au clic sur un badge YouTube (assets/music/youtube-embed.js
+       écoute #playlist plus bas) : retour utilisatrice, 2026-08-21 : "c'est
+       juste l'écran, quand c'est une vidéo ytb qui doit apparaître
+       par-dessus". Indépendant du petit écran audio ci-dessus (jamais les
+       deux affichés en même temps, cf. les CustomEvent music:show-video/
+       music:audio-playing échangés entre Player.js et youtube-embed.js). #}
+    <div id="videoOverlay" class="video-overlay d-none" role="dialog" aria-modal="true" aria-labelledby="video-overlay-title">
+        <div class="video-overlay-backdrop" data-close></div>
+        <div class="video-overlay-content">
+            <h2 id="video-overlay-title" class="sr-only">{{ 'music.youtube_embed_title_prefix'|trans }}</h2>
+            <button type="button" class="video-overlay-close" data-close aria-label="{{ 'music.now_playing_close'|trans }}">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div id="youtube-embed" data-embed-title-prefix="{{ 'music.youtube_embed_title_prefix'|trans }}"></div>
+        </div>
+    </div>
+
+    <div class="playlist-wrap">
             {# Un item de la setlist (SetlistItem) sans fichier audio n'a
                rien à charger dans wavesurfer (Player.js appelle
                wavesurfer.load() sur chaque href de #playlist a) : rendu en
@@ -114,6 +156,10 @@
                un lecteur d'écran n'annonce jamais "liste de N éléments",
                cf. audit accessibilité. #}
             <h2 class="sr-only">{{ 'music.playlist_heading'|trans }}</h2>
+            {# Étiquette visuelle décorative : le h2 sr-only ci-dessus porte
+               déjà le nom accessible de la région, doublon volontairement
+               masqué aux lecteurs d'écran. #}
+            <p class="console-label" aria-hidden="true">{{ 'music.playlist_heading'|trans }}</p>
             <ul class="playlist float-left" id="playlist">
                 {% for item in items %}
                     {% set media = item.firstMediaDocument %}

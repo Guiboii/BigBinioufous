@@ -1,34 +1,31 @@
-// Bascule l'écran (waveform) en lecteur vidéo YouTube intégré quand on
-// clique sur le badge YouTube d'un morceau, plutôt qu'ouvrir un nouvel
-// onglet (retour utilisatrice, 2026-08-21 : "un player en mode écran plasma
-// au lieu du son pour les liens ytb"). Ouvert à tout le monde (contrairement
-// au lecteur audio, réservé aux binioufous/admins, cf. music/index.html.twig)
-// et pour n'importe quel morceau ayant un lien YouTube, avec ou sans fichier
-// audio associé.
+// Ouvre un grand lecteur vidéo YouTube en overlay par-dessus la scène 3D
+// quand on clique sur le badge YouTube d'un morceau, plutôt qu'un nouvel
+// onglet (retour utilisatrice, 2026-08-21 : d'abord "un player en mode écran
+// plasma au lieu du son pour les liens ytb", puis précisé "c'est juste
+// l'écran, quand c'est une vidéo ytb qui doit apparaître par-dessus" - le
+// petit écran audio inline, lui, reste posé sur le meuble 3D, cf.
+// music/index.html.twig et Player.js, complètement indépendant de cet
+// overlay). Ouvert à tout le monde (contrairement au lecteur audio, réservé
+// aux binioufous/admins) et pour n'importe quel morceau ayant un lien
+// YouTube, avec ou sans fichier audio associé.
 //
-// Communication avec Player.js via CustomEvent sur document plutôt qu'un
-// import direct : les deux scripts tournent en parallèle sans se connaître
-// (wavesurfer est une variable de module interne à Player.js, pas exportée),
-// chacun coupe l'autre quand il démarre.
+// Communication avec Player.js/music.js via CustomEvent sur document plutôt
+// qu'un import direct : les scripts tournent en parallèle sans se connaître.
 document.addEventListener('DOMContentLoaded', function () {
   var playlist = document.getElementById('playlist');
-  var waveform = document.getElementById('waveform');
   var embed = document.getElementById('youtube-embed');
-  var playerWrap = document.querySelector('.player-wrap');
   var nowPlaying = document.getElementById('now-playing');
 
-  if (!playlist || !waveform || !embed || !playerWrap) {
+  if (!playlist || !embed) {
     return;
   }
 
   var titlePrefix = embed.dataset.embedTitlePrefix || '';
-  var closeLabel = embed.dataset.closeLabel || '';
 
+  // Pas de bouton fermer propre à la vidéo : #videoOverlay (music.js) porte
+  // déjà le sien (backdrop/bouton/Échap).
   function hideVideo() {
-    embed.classList.add('d-none');
     embed.textContent = '';
-    waveform.classList.remove('d-none');
-    playerWrap.classList.remove('video-mode');
   }
 
   // DOM construit via createElement/textContent plutôt qu'innerHTML : le
@@ -36,22 +33,11 @@ document.addEventListener('DOMContentLoaded', function () {
   // un·e binioufous/admin (SetlistController), pas une source qu'on veut
   // interpoler brute dans du HTML.
   function showVideo(videoId, trackTitle) {
-    // Prévient Player.js : un morceau audio en cours de lecture doit
-    // s'arrêter, la waveform n'a plus de sens pendant que la vidéo occupe
-    // le même espace à l'écran.
+    // Prévient Player.js : l'audio en cours doit s'arrêter. Prévient aussi
+    // music.js : ouvre le grand écran en overlay (#videoOverlay).
     document.dispatchEvent(new CustomEvent('music:show-video'));
 
     embed.textContent = '';
-
-    var closeBtn = document.createElement('button');
-    closeBtn.type = 'button';
-    closeBtn.className = 'youtube-embed-close';
-    closeBtn.setAttribute('aria-label', closeLabel);
-    closeBtn.addEventListener('click', hideVideo);
-    var closeIcon = document.createElement('span');
-    closeIcon.setAttribute('aria-hidden', 'true');
-    closeIcon.textContent = '×';
-    closeBtn.appendChild(closeIcon);
 
     var iframe = document.createElement('iframe');
     iframe.src =
@@ -60,21 +46,25 @@ document.addEventListener('DOMContentLoaded', function () {
     iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
     iframe.allowFullscreen = true;
 
-    embed.appendChild(closeBtn);
     embed.appendChild(iframe);
-
-    waveform.classList.add('d-none');
-    embed.classList.remove('d-none');
-    playerWrap.classList.add('video-mode');
 
     if (nowPlaying) {
       nowPlaying.textContent = titlePrefix + trackTitle;
     }
   }
 
-  // Symétrique : un morceau lancé au lecteur audio (Player.js) ferme la
-  // vidéo en cours, la waveform doit reprendre sa place.
+  // Un morceau lancé au petit lecteur audio (Player.js) ferme la vidéo en
+  // cours : les deux ne jouent jamais en même temps.
   document.addEventListener('music:audio-playing', hideVideo);
+
+  // Fermer le grand écran (bouton fermer/backdrop/Échap, cf. music.js) doit
+  // couper la vidéo plutôt que la laisser tourner cachée.
+  document.addEventListener('music:close-video', function () {
+    hideVideo();
+    if (nowPlaying) {
+      nowPlaying.textContent = '';
+    }
+  });
 
   playlist.addEventListener('click', function (e) {
     var badge = e.target.closest('[data-youtube-id]');

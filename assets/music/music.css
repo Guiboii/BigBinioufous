@@ -2,44 +2,145 @@ iframe {
     width: 750px;
     border: none;
 }
-/* Les 3 boîtes ci-dessous (waveform, boutons, playlist) sont positionnées en
-   position:fixed avec des left/top/width/height calculés dynamiquement en JS
-   (updateOverlayPosition() dans music.js), par vraie projection 3D->2D de
-   points ancrés sur la face avant du meuble, recalculée à chaque resize. Le
-   vw/vh utilisé avant ne suit pas une caméra en perspective dès que le ratio
-   largeur/hauteur de la fenêtre change (l'étalement horizontal du champ de
-   vision dépend du ratio, contrairement au vertical qui est fixe) : correct
-   à 1280x800/1600x900 mais décalé sur une fenêtre plus large, cf. section
-   "Cadrage d'un overlay 2D..." de CLAUDE.md. .overlay et .player-wrap ne
-   portent donc plus de positionnement : ce sont juste des conteneurs DOM,
-   leurs enfants sortent du flux via la position fixed posée en JS (chacun
-   avec son propre z-index : sans .overlay positionné pour créer un contexte
-   d'empilement commun, ses enfants fixed doivent porter le leur pour ne pas
-   se retrouver sous le <canvas> WebGL, ajouté plus tard dans le DOM). */
 
 table {
     display: block;
+}
+
+/* Grand écran vidéo en overlay (retour utilisatrice, 2026-08-21 : après un
+   essai de mise en page permanente avec la scène 3D réduite à côté - jugé
+   "casse le thème, nique le travail 3D" - puis un essai d'overlay pour
+   audio ET vidéo - jugé "le petit écran audio sur la chaîne était super",
+   recentré sur la vidéo YouTube seule). La scène 3D reste plein écran et
+   permanente (cf. .mascotte plus bas), le petit écran audio reste posé
+   dessus (cf. .player-wrap .row:first-child plus bas, calé en 3D par
+   updateOverlayPosition() dans music.js) : ce grand écran ne concerne QUE
+   la vidéo YouTube, ouvert par-dessus tout au clic sur un badge (cf.
+   youtube-embed.js). Même famille visuelle que .setlist-dialog (backdrop +
+   carte centrée), z-index 950 : au-dessus de la scène 3D et du petit écran
+   audio (tous deux 800/900), sous la modale de gestion de la setlist
+   (1000) si jamais les deux étaient ouvertes en même temps. */
+.video-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+.video-overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+}
+.video-overlay-content {
+    position: relative;
+    z-index: 1;
+    width: min(92vw, 1100px);
+    aspect-ratio: 16 / 9;
+}
+.video-overlay-close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--bb-ink);
+    border-radius: 50%;
+    background: var(--bb-gold);
+    color: var(--bb-ink);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.video-overlay-close:hover,
+.video-overlay-close:focus-visible {
+    background: var(--bb-gold-pale);
+}
+.video-overlay-close:focus-visible {
+    outline: 3px solid var(--bb-white);
+    outline-offset: 2px;
 }
 
 .player-wrap {
     background: transparent;
 }
 
+/* .row:first-child = la vitre (waveform) : positionnée/dimensionnée par
+   updateOverlayPosition() (music.js, position:fixed + left/top/width/height
+   posés en JS), le padding ci-dessous grignote quelques px vers l'intérieur
+   pour révéler un cadre "métal/bois" autour d'elle plutôt qu'un simple
+   rectangle plat. z-index:900 : au-dessus de la scène 3D (800) une fois
+   passée en position:fixed par le JS. */
 .player-wrap .row:first-child {
-    background: #695044;
+    background: linear-gradient(155deg, #8a6a4c 0%, #695044 45%, #382c26 100%);
+    padding: 5px;
+    box-sizing: border-box;
+    border-radius: 7px;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 2px 3px rgba(255, 255, 255, 0.12),
+        inset 0 -3px 5px rgba(0, 0, 0, 0.45),
+        0 0 20px 2px rgba(var(--bb-gold-rgb), 0.22);
     z-index: 900;
+}
+/* Vis aux coins du cadre : détail "meuble bricolé" cohérent avec le reste du
+   site (mascotte/soundsystem faits main), pas juste décoratif au hasard -
+   léger, jamais au-dessus du texte réel. */
+.player-wrap .row:first-child::before,
+.player-wrap .row:first-child::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    top: 6px;
+    background: radial-gradient(circle at 35% 35%, #cbb08c, #4a3a2c 70%);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+.player-wrap .row:first-child::before {
+    left: 7px;
+}
+.player-wrap .row:first-child::after {
+    right: 7px;
 }
 /* flex + align-items:center : sans ça les enfants (liens, svg, input range)
    s'alignent sur leur baseline par défaut, très différente d'un élément à
    l'autre (le slider en particulier partait visiblement plus haut que les
-   boutons à côté). */
+   boutons à côté). Même langage "façade de meuble" que .row:first-child
+   juste au-dessus (dégradé bois/métal, liseré clair en haut, vis aux coins) :
+   sans ça la rangée de boutons restait plate à côté d'un écran retravaillé,
+   lisible comme "pas fini" plutôt que comme un seul appareil cohérent. */
 .player-wrap .row.playerButtons {
     display: flex;
     align-items: center;
-    background: #695044;
-    padding: 4px;
+    background: linear-gradient(155deg, #8a6a4c 0%, #695044 45%, #382c26 100%);
+    padding: 4px 12px;
     box-sizing: border-box;
+    border-radius: 7px;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+        inset 0 -3px 5px rgba(0, 0, 0, 0.35);
     z-index: 900;
+}
+.player-wrap .row.playerButtons::before,
+.player-wrap .row.playerButtons::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    bottom: 5px;
+    background: radial-gradient(circle at 35% 35%, #cbb08c, #4a3a2c 70%);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+.player-wrap .row.playerButtons::before {
+    left: 7px;
+}
+.player-wrap .row.playerButtons::after {
+    right: 7px;
 }
 
 
@@ -56,10 +157,26 @@ table {
    donc le même traitement que .playlist. */
 .playlist-wrap {
     background: #4a3d37;
-    border: 5px solid #895b41;
+    border: 5px solid;
+    border-image: linear-gradient(155deg, #a4855f, #895b41 55%, #4a3a2c) 1;
     box-sizing: border-box;
     overflow: hidden;
     z-index: 900;
+    box-shadow: 0 0 20px 2px rgba(var(--bb-gold-rgb), 0.12);
+}
+
+/* Étiquette "console" décorative en tête de la playlist, même famille que le
+   compteur de piste de la vitre (.track-counter) : lie visuellement les 2
+   boîtes en un seul "poste" plutôt que 2 blocs sans rapport. */
+.console-label {
+    margin: 0 0 0.4rem;
+    font-family: "IBM Plex Mono", "Courier New", monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bb-gold-pale);
+    opacity: 0.75;
 }
 
 .playlist, .members-only {
@@ -205,8 +322,31 @@ table {
 }
 
 .waveW {
+    position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.55);
+}
+/* Vitre : lignes de balayage + vignette, purement visuelles (pseudo-élément,
+   jamais exposé à l'arbre d'accessibilité, contrairement à un <div>). Reste
+   discret (opacité faible) : la waveform en dessous doit rester lisible,
+   l'effet CRT est une texture, pas un filtre qui dégrade l'usage. */
+.waveW::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0) 0,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0.16) 3px
+        ),
+        radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.5) 100%);
 }
 
 #waveform {
@@ -214,13 +354,10 @@ table {
     height: 100%;
 }
 
-/* Prend la place de #waveform en mode vidéo (jamais affichés en même temps,
-   cf. assets/music/youtube-embed.js), dans le même conteneur .waveW donc pas
-   de position propre à poser ici : hérite du fixed calculé par
-   updateOverlayPosition() sur .player-wrap .row:first-child (parent
-   commun). */
+/* Vit dans #videoOverlay (cf. plus haut), pas dans .waveW : plein le
+   conteneur, sans bezel/scanlines (registre visuel différent du petit écran
+   audio, une vidéo YouTube porte déjà ses propres contrôles). */
 #youtube-embed {
-    position: relative;
     width: 100%;
     height: 100%;
     background: #000;
@@ -229,40 +366,6 @@ table {
     width: 100%;
     height: 100%;
     border: 0;
-}
-.youtube-embed-close {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    z-index: 1;
-    width: 32px;
-    height: 32px;
-    border: 0;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, 0.6);
-    color: var(--bb-white);
-    font-size: 1.2rem;
-    line-height: 1;
-    cursor: pointer;
-}
-.youtube-embed-close:hover,
-.youtube-embed-close:focus-visible {
-    background: rgba(0, 0, 0, 0.85);
-}
-.youtube-embed-close:focus-visible {
-    outline: 2px solid var(--bb-white);
-    outline-offset: 2px;
-}
-
-/* Boutons de transport audio (stop/lecture/boucle/zoom) sans effet pendant
-   qu'une vidéo YouTube occupe l'écran, cf. .video-mode posée par
-   youtube-embed.js. #uploadNew (déclencheur "Gérer la setlist") volontairement
-   pas dans cette liste : reste utile/visible même pendant une vidéo. */
-.player-wrap.video-mode #stopTrack,
-.player-wrap.video-mode #playPause,
-.player-wrap.video-mode #loopRegion,
-.player-wrap.video-mode input#slider {
-    display: none;
 }
 /* wavesurfer.js crée un <wave> interne (overflow-x:auto, pas de classe/id)
    pour le défilement horizontal quand on zoome (#slider) au-delà de la
@@ -284,6 +387,112 @@ table {
 }
 #waveform wave::-webkit-scrollbar-thumb:hover {
     background: var(--bb-gold);
+}
+
+/* Témoin/compteur superposés en coin de la vitre (jamais d'espace propre
+   réservé, cf. commentaire sur .row:first-child plus haut). */
+.screen-chrome {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    font-family: "IBM Plex Mono", "Courier New", monospace;
+}
+
+.power-led {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4a1414;
+    box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.6);
+}
+/* Rouge (--bb-red), jamais la seule différence entre les 2 états : la
+   pastille change aussi de taille/lueur, pas que de teinte (cf. règle
+   "jamais la seule teinte" du CLAUDE.md a11y - decorative/aria-hidden ici
+   donc pas un enjeu de lecteur d'écran, mais s'applique aussi au daltonisme
+   en simple lecture visuelle). */
+.power-led.is-playing {
+    background: var(--bb-red);
+    box-shadow: 0 0 6px 2px rgba(188, 39, 39, 0.85);
+    animation: bb-led-pulse 1.6s ease-in-out infinite;
+}
+
+.track-counter {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    padding: 1px 5px;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--bb-gold-pale);
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 3px;
+}
+
+/* Titre du morceau en cours, doublon visuel de #now-playing (aria-live,
+   sr-only) : celui-ci reste purement décoratif (aria-hidden), l'annonce
+   vocale passe par l'autre élément. Ellipsis plutôt qu'un défilement
+   automatique : un titre long tronqué reste lisible sans animation
+   continue à l'écran (cf. section motion du plan). */
+.screen-ticker {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    margin: 0;
+    padding: 3px 8px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0));
+    color: var(--bb-gold-pale);
+    font-family: "VT323", "Courier New", monospace;
+    font-size: 1.05rem;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+    text-shadow: 0 0 6px rgba(var(--bb-gold-rgb), 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+@keyframes bb-led-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.55;
+    }
+}
+
+/* Bref sursaut de luminosité au changement de piste (posé/retiré par
+   Player.js), écho discret du "changement de chaîne" d'un vrai poste :
+   ~200ms, jamais répété tant qu'on ne change pas de piste. */
+@keyframes bb-screen-flicker {
+    0% {
+        filter: brightness(1);
+    }
+    35% {
+        filter: brightness(1.9);
+    }
+    100% {
+        filter: brightness(1);
+    }
+}
+.waveW.screen-flicker {
+    animation: bb-screen-flicker 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .power-led.is-playing {
+        animation: none;
+        opacity: 1;
+    }
+    .waveW.screen-flicker {
+        animation: none;
+    }
 }
 
 #uploadNew {
@@ -712,6 +921,9 @@ html.is-mobile .playlist-wrap {
     width: 100%;
     height: auto;
     max-height: 60vh;
+}
+html.is-mobile .video-overlay {
+    padding: 0.5rem;
 }
 /* 2 colonnes de 50% deviennent illisibles sous ~500px (cas du .members-only
    vide la plupart du temps, mais .playlist doit rester lisible même seule) :

@@ -12,6 +12,11 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+        {# Vide par défaut : permet à une page de charger une police
+           supplémentaire sans dupliquer les <link> preconnect ci-dessus, cf.
+           music/index.html.twig (VT323/IBM Plex Mono, même paire déjà
+           utilisée sur /story pour son propre "écran"). #}
+        {% block fonts %}{% endblock %}
         <script>
             window.BB_ASSETS = {
 'mascotte/Binioufou_Final4.gltf': '{{ asset('mascotte/Binioufou_Final4.gltf') }}',
