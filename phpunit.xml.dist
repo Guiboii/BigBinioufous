@@ -31,4 +31,13 @@
     <listeners>
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
     </listeners>
+
+    <!-- The prod_vitrine branch cuts off the member area (see MemberAreaDisabledSubscriber):
+         excluding this group here rather than deleting the tests keeps them ready to run again
+         once this branch merges back or the member area is re-enabled. -->
+    <groups>
+        <exclude>
+            <group>member-area</group>
+        </exclude>
+    </groups>
 </phpunit>

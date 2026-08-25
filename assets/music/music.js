@@ -335,7 +335,6 @@ function initDialog(triggerIds, dialogId) {
   });
 }
 
-initDialog('musicLoginTrigger', 'musicLoginForm');
 initDialog(['setlistManageTrigger', 'uploadNew'], 'setlistManageDialog');
 
 // Large video overlay over the 3D scene, distinct from the small audio screen still glued to the furniture via updateOverlayPosition(). Unlike initDialog() above, it has no fixed trigger button: it opens on a click on ANY YouTube badge in the playlist, listening to the same music:show-video CustomEvent already emitted for that.

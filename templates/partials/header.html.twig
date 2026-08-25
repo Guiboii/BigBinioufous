@@ -37,34 +37,9 @@
                         <h2>{{ 'nav.contact'|trans }}</h2>
                     </a>
                 </li>
-                {% if app.user %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('desk') }}"{% if currentRoute == 'desk' %} aria-current="page"{% endif %}>
-                            <i class="ri-user-settings-fill" aria-hidden="true"></i>
-                            <h2>{{ 'nav.desk'|trans }}</h2>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('profile') }}"{% if currentRoute == 'profile' %} aria-current="page"{% endif %}>
-                            <i class="ri-user-fill" aria-hidden="true"></i>
-                            <h2>{{ 'nav.profile'|trans }}</h2>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {# Never aria-current: "Logout" is an action, not a page one can be "on" (redirects immediately, never rendered). #}
-                        <a class="nav-link" href="{{ path('logout') }}">
-                            <i class="ri-logout-box-r-fill" aria-hidden="true"></i>
-                            <h2>{{ 'nav.logout'|trans }}</h2>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('join') }}"{% if currentRoute == 'join' %} aria-current="page"{% endif %}>
-                            <i class="ri-door-open-fill" aria-hidden="true"></i>
-                            <h2>{{ 'nav.join_or_login'|trans }}</h2>
-                        </a>
-                    </li>
-                {% endif %}
+                {# Member area (desk/profile/login/logout) cut off on the prod_vitrine
+                   branch, see MemberAreaDisabledSubscriber: no dead link here while
+                   /desk, /join and co. redirect to the homepage. #}
                 <li class="nav-item lang-switcher">
                     <a href="{{ path('app_locale', {locale: 'fr'}) }}" class="lang-link {% if app.request.locale == 'fr' %}active{% endif %}">FR</a>
                     <a href="{{ path('app_locale', {locale: 'en'}) }}" class="lang-link {% if app.request.locale == 'en' %}active{% endif %}">EN</a>

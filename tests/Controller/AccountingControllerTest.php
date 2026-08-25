@@ -8,6 +8,12 @@ use App\Entity\Client;
 use App\Tests\Support\AppWebTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Member area disabled on the prod_vitrine branch (see MemberAreaDisabledSubscriber): every route this class
+ * exercises is redirected to the homepage, so these assertions no longer apply here.
+ *
+ * @group member-area
+ */
 class AccountingControllerTest extends AppWebTestCase
 {
     public function testDocumentsIndexIsForbiddenWithoutRoleCompta(): void

@@ -5,6 +5,12 @@ namespace App\Tests\Controller;
 use App\Tests\Support\AppWebTestCase;
 use OTPHP\TOTP;
 
+/**
+ * Member area disabled on the prod_vitrine branch (see MemberAreaDisabledSubscriber): every route this class
+ * exercises is redirected to the homepage, so these assertions no longer apply here.
+ *
+ * @group member-area
+ */
 class TwoFactorControllerTest extends AppWebTestCase
 {
     public function testSetupPageIsForbiddenToNonAdminAccount(): void

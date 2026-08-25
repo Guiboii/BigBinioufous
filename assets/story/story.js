@@ -255,82 +255,15 @@ function raycast(e, touch = false) {
         playModifierAnimation(idle, 0.25, next, 0.25);
       }
     } else if (object.name === 'contactPlane') {
-      openContactForm();
+      // Embedded contact popup removed on the prod_vitrine branch (mail form,
+      // never delivered without a mailer): the 3D click now links straight to
+      // the real /contact page, which still has the HelloAsso widgets.
+      location.href = '/contact';
     } else if (object.parent.name === 'Soucoupe') {
       location.href = '/join';
     }
   }
 }
-
-// #contactForm is handled as a real dialog once open, even though its only trigger is a 3D click with no direct keyboard equivalent (the keyboard-accessible contact form is the minisite's, reachable via the navbar). Focus goes to the first field on open; Escape closes it and returns focus to the 3D canvas, since there's no trigger button to return it to here.
-var contactForm = document.getElementById('contactForm');
-
-function openContactForm() {
-  contactForm.classList.remove('d-none');
-  var firstField = contactForm.querySelector('input, textarea');
-  if (firstField) {
-    firstField.focus();
-  }
-}
-
-function closeContactForm() {
-  contactForm.classList.add('d-none');
-  canvas.focus();
-}
-
-var close = document.querySelector('.close');
-close.addEventListener('click', closeContactForm);
-
-// Submitted via fetch so the popup stays open; the server checks honeypot/timing trap/CSRF, this handler only shows the result. data-messages carries already-translated labels indexed by the error code the controller returns.
-var contactStatus = contactForm.querySelector('.contact-status');
-var contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
-var contactMessages = {};
-try {
-  contactMessages = JSON.parse(contactForm.dataset.messages || '{}');
-} catch {
-  contactMessages = {};
-}
-
-contactForm.addEventListener('submit', function (e) {
-  e.preventDefault();
-
-  contactSubmitBtn.disabled = true;
-  contactStatus.classList.remove('is-error');
-  contactStatus.textContent = contactMessages.sending || '';
-
-  fetch(contactForm.action, {
-    method: 'POST',
-    body: new FormData(contactForm),
-  })
-    .then(function (response) {
-      return response.json().then(function (data) {
-        return { ok: response.ok, data: data };
-      });
-    })
-    .then(function (result) {
-      contactSubmitBtn.disabled = false;
-      if (result.ok && result.data.success) {
-        contactStatus.classList.remove('is-error');
-        contactStatus.textContent = contactMessages.success || '';
-        contactForm.reset();
-      } else {
-        contactStatus.classList.add('is-error');
-        contactStatus.textContent =
-          contactMessages[result.data.error] || contactMessages.generic || '';
-      }
-    })
-    .catch(function () {
-      contactSubmitBtn.disabled = false;
-      contactStatus.classList.add('is-error');
-      contactStatus.textContent = contactMessages.generic || '';
-    });
-});
-
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape' && !contactForm.classList.contains('d-none')) {
-    closeContactForm();
-  }
-});
 
 function playModifierAnimation(from, fSpeed, to, tSpeed) {
   to.setLoop(THREE.LoopOnce);

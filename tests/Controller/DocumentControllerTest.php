@@ -7,6 +7,12 @@ use App\Repository\FolderRepository;
 use App\Tests\Support\AppWebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Member area disabled on the prod_vitrine branch (see MemberAreaDisabledSubscriber): every route this class
+ * exercises is redirected to the homepage, so these assertions no longer apply here.
+ *
+ * @group member-area
+ */
 class DocumentControllerTest extends AppWebTestCase
 {
     public function testUploadWithDisallowedMimetypeIsRejected(): void

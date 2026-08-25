@@ -5,6 +5,12 @@ namespace App\Tests\Controller;
 use App\Entity\Event;
 use App\Tests\Support\AppWebTestCase;
 
+/**
+ * Member area disabled on the prod_vitrine branch (see MemberAreaDisabledSubscriber): every route this class
+ * exercises is redirected to the homepage, so these assertions no longer apply here.
+ *
+ * @group member-area
+ */
 class EventControllerTest extends AppWebTestCase
 {
     public function testIndexIsForbiddenWithoutRoleAdmin(): void

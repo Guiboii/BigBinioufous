@@ -6,6 +6,12 @@ use App\Entity\Note;
 use App\Entity\User;
 use App\Tests\Support\AppWebTestCase;
 
+/**
+ * Member area disabled on the prod_vitrine branch (see MemberAreaDisabledSubscriber): every route this class
+ * exercises is redirected to the homepage, so these assertions no longer apply here.
+ *
+ * @group member-area
+ */
 class NoteControllerTest extends AppWebTestCase
 {
     public function testPrivateNoteOfAnotherAuthorIsForbiddenToRead(): void

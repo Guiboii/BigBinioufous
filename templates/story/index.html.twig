@@ -18,43 +18,15 @@
 
     {# title is required on an iframe: without an accessible name, a screen reader just announces "iframe" with no indication of its content. #}
     <iframe id="miniSite" src="{{ path('minisite') }}" title="{{ 'story.title'|trans }}"></iframe>
-    {# This popup is only reachable by clicking a specific 3D object, no direct keyboard trigger: the real keyboard/screen-reader-accessible contact form is the minisite's, reachable via the iframe's navbar. Still managed properly once open (role dialog, Escape, focus) for people who open it with the mouse then continue with the keyboard. #}
-    <form id="contactForm" class="d-none" role="dialog" aria-modal="true" aria-labelledby="contactFormTitle" action="{{ path('contact_submit') }}" method="post" data-messages="{{ {
-        sending: 'contact.sending'|trans,
-        success: 'contact.success'|trans,
-        invalid_email: 'contact.error_invalid_email'|trans,
-        empty_message: 'contact.error_empty_message'|trans,
-        generic: 'contact.error_generic'|trans,
-    }|json_encode }}">
-        <button type="button" class="close" aria-label="{{ 'common.close'|trans }}">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 id="contactFormTitle">{{ 'contact.title'|trans }}</h4>
-        <input type="hidden" name="_token" value="{{ csrf_token('contact') }}">
-        <input type="hidden" name="contact_ts" value="{{ 'now'|date('U') }}">
-        {# Honeypot field: invisible to a human (off-screen CSS, not display:none, since some bots specifically ignore that) and removed from the accessibility tree. A bot filling every form field indiscriminately gives itself away here. #}
-        <input type="text" class="hp-field" id="contactHp" name="contact_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="form-group">
-            <label for="contactName">{{ 'contact.name_label'|trans }}</label>
-            <input type="text" class="form-control" id="contactName" name="name" autocomplete="name" placeholder="John Doe">
-        </div>
-        <div class="form-group">
-            <label for="contactEmail">{{ 'contact.email_label'|trans }}</label>
-            <input type="email" class="form-control" id="contactEmail" name="email" autocomplete="email" placeholder="name@example.com">
-        </div>
-
-        <div class="form-group">
-            <label for="exampleFormControlTextarea1">{{ 'contact.message_label'|trans }}</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" name="message" rows="2"></textarea>
-        </div>
-        <p class="contact-status" aria-live="polite"></p>
-        <button type="submit" class="btn btn-dark">{{ 'contact.submit'|trans }}</button>
-    </form>
+    {# Embedded #contactForm popup removed on the prod_vitrine branch: it sent mail
+       via ContactController, never actually delivered while MAILER_DSN stays on
+       null://null. The 3D click on contactPlane (assets/story/story.js) now links
+       to the real /contact page instead, whose HelloAsso widgets still work. #}
     <div class="loading" id="js-loader" aria-hidden="true">
         <div class="loader"></div>
     </div>
     <div class="mascotte" aria-hidden="true">
-        {# tabindex="-1": a script-only target (story.js returns focus here when #contactForm closes), never reached by Tab, consistent with aria-hidden on the parent. #}
+        {# tabindex="-1": never reached by Tab, consistent with aria-hidden on the parent. #}
         <canvas id="c" tabindex="-1"></canvas>
     </div>
 
