@@ -47,3 +47,4 @@
 npm-debug.log
 ###< node (lint tooling only, plus de build JS) ###
 .playwright-mcp/
+/log.md
