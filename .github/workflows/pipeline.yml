@@ -68,6 +68,8 @@ jobs:
         run: echo "APP_ENV=test" > .env
       - name: .env.test.local éphémère (SQLite fichier, jeté à la fin du job, jamais commité)
         run: echo 'DATABASE_URL="sqlite:///%kernel.project_dir%/var/test.db"' > .env.test.local
+      - name: Télécharge les dépendances JS d'AssetMapper (assets/vendor/, gitignoré, nécessaire pour que les pages avec {{ importmap() }} rendent sans 500)
+        run: php bin/console importmap:install
       - name: Run PHPUnit
         run: composer test
 
