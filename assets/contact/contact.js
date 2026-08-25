@@ -10,7 +10,7 @@ if (contactForm) {
   var contactMessages = {};
   try {
     contactMessages = JSON.parse(contactForm.dataset.messages || '{}');
-  } catch (e) {
+  } catch {
     contactMessages = {};
   }
 

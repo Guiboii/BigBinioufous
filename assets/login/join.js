@@ -13,14 +13,12 @@ var canvas,
   mixerC,
   currentlyAnimating,
   next,
-  carpet,
   camera,
   scene,
   renderer,
   model,
   idle,
   discoBall,
-  logoB,
   mouse = new THREE.Vector2(),
   raycaster = new THREE.Raycaster(),
   loaderAnim = document.querySelector('.loading');
@@ -29,7 +27,6 @@ var red_wall = 0xbc2727;
 var yellow = 0xf2b233;
 var green = 0x1f6652;
 var white = 0xffffff;
-var dark = 0x23272b;
 
 init();
 animate();
@@ -93,8 +90,8 @@ function init() {
   scene.add(planeBack);
 
   // logo B 3D MODEL
-  var loader = new GLTFLoader();
-  loader.load(
+  const logoLoader = new GLTFLoader();
+  logoLoader.load(
     window.BB_ASSETS['mascotte/moveB.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -115,8 +112,8 @@ function init() {
   );
 
   // Saucer 3D model
-  var loader = new GLTFLoader();
-  loader.load(
+  const saucerLoader = new GLTFLoader();
+  saucerLoader.load(
     window.BB_ASSETS['story/Soucoupe.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -138,8 +135,8 @@ function init() {
 
   // model
 
-  var loader = new GLTFLoader();
-  loader.load(
+  const mascotteLoader = new GLTFLoader();
+  mascotteLoader.load(
     window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;

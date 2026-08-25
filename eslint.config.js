@@ -17,12 +17,13 @@ export default [
             },
         },
         rules: {
-            // legacy code has pre-existing dead/duplicate variables; downgraded to warn
-            // so the style pass (Phase 1) doesn't block on cleanup that belongs to the
-            // page-by-page pass (Phase 5): fixing these means touching actual logic
-            'no-unused-vars': 'warn',
-            'no-redeclare': 'warn',
-            'no-unassigned-vars': 'warn',
+            // Was 'warn' while legacy code had pre-existing dead/duplicate variables
+            // (Phase 1 style pass didn't block on cleanup belonging to the page-by-page
+            // pass, Phase 5). That cleanup is done (2026-08-25): back to 'error' so a
+            // regression fails lint instead of blending into the warning noise.
+            'no-unused-vars': 'error',
+            'no-redeclare': 'error',
+            'no-unassigned-vars': 'error',
         },
     },
     prettierRecommended,

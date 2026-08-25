@@ -8,10 +8,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 var canvas,
   clock,
   mixer,
-  actions,
-  activeAction,
-  previousAction,
-  possibleAnims,
   currentlyAnimating,
   camera,
   scene,
@@ -26,7 +22,6 @@ var red_wall = 0xbc2727;
 var yellow = 0xf2b233;
 var green = 0x1f6652;
 var white = 0xffffff;
-var black = 0x000000;
 
 // On small screens the 3D scene is unreadable, so it's never initialized; the content stays displayed as normal flow.
 if (!document.documentElement.classList.contains('is-mobile')) {
@@ -199,8 +194,8 @@ function init() {
 
   // model
 
-  var loader = new GLTFLoader();
-  loader.load(
+  const mascotteLoader = new GLTFLoader();
+  mascotteLoader.load(
     window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -224,8 +219,8 @@ function init() {
   );
 
   // desk
-  var loader = new GLTFLoader();
-  loader.load(
+  const deskLoader = new GLTFLoader();
+  deskLoader.load(
     window.BB_ASSETS['story/Desk1.gltf'],
     function (gltf) {
       model = gltf.scene;

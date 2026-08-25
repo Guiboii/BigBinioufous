@@ -63,8 +63,8 @@ function init() {
 
   // model
 
-  var loader = new GLTFLoader();
-  loader.load(
+  const mascotteLoader = new GLTFLoader();
+  mascotteLoader.load(
     window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -88,8 +88,8 @@ function init() {
   );
 
   // Saucer 3D model
-  var loader = new GLTFLoader();
-  loader.load(
+  const saucerLoader = new GLTFLoader();
+  saucerLoader.load(
     window.BB_ASSETS['story/Soucoupe.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -119,8 +119,8 @@ function init() {
   scene.add(planecontact);
 
   // desk
-  var loader = new GLTFLoader();
-  loader.load(
+  const deskLoader = new GLTFLoader();
+  deskLoader.load(
     window.BB_ASSETS['story/Desk.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -287,7 +287,7 @@ var contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
 var contactMessages = {};
 try {
   contactMessages = JSON.parse(contactForm.dataset.messages || '{}');
-} catch (e) {
+} catch {
   contactMessages = {};
 }
 

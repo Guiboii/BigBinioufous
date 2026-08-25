@@ -12,9 +12,6 @@ import './youtube-embed.js';
 var canvas,
   clock,
   mixer,
-  actions,
-  activeAction,
-  previousAction,
   currentlyAnimating,
   next,
   camera,
@@ -30,7 +27,6 @@ var red_wall = 0xbc2727;
 var yellow = 0xf2b233;
 var green = 0x1f6652;
 var white = 0xffffff;
-var black = 0x000000;
 
 // World-space anchors of the SoundSystem furniture's front panel (a near-flat plane at x≈-8.406), measured once via a camera->model raycast on a reference render. Reprojected on every resize via camera.project() so the small audio screen (waveform + buttons + playlist) stays glued to the furniture while the 3D scene keeps its own full-screen layout.
 var PANEL_PLANE_X = -8.406;
@@ -83,8 +79,8 @@ function init() {
 
   // model
 
-  var loader = new GLTFLoader();
-  loader.load(
+  const mascotteLoader = new GLTFLoader();
+  mascotteLoader.load(
     window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -103,13 +99,13 @@ function init() {
     },
     undefined,
     function (e) {
-      //console.error(e);
+      console.error(e);
     },
   );
 
   // sound system
-  var loader = new GLTFLoader();
-  loader.load(
+  const soundSystemLoader = new GLTFLoader();
+  soundSystemLoader.load(
     window.BB_ASSETS['music/SoundSystem.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -122,7 +118,7 @@ function init() {
     },
     undefined,
     function (e) {
-      //console.error(e);
+      console.error(e);
     },
   );
 
@@ -220,17 +216,6 @@ function roomGeo(width, height, scaleY) {
   planeLeft.position.y = -planeLeft.position.x / 2;
   planeLeft.rotateY(Math.PI / 2);
   scene.add(planeLeft);
-}
-
-function fadeToAction(name, duration) {
-  previousAction = activeAction;
-  activeAction = actions[name];
-
-  if (previousAction !== activeAction) {
-    previousAction.fadeOut(duration);
-  }
-
-  activeAction.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).fadeIn(duration).play();
 }
 
 function playModifierAnimation(from, fSpeed, to, tSpeed) {

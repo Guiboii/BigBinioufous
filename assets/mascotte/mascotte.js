@@ -11,7 +11,6 @@ var canvas,
   mixer,
   currentlyAnimating,
   next,
-  carpet,
   camera,
   scene,
   renderer,
@@ -26,7 +25,6 @@ var red_wall = 0xbc2727;
 var yellow = 0xf2b233;
 var green = 0x1f6652;
 var white = 0xffffff;
-var black = 0x000000;
 
 init();
 animate();
@@ -96,19 +94,19 @@ function init() {
   scene.add(discoBall);
 
   // flyer back
-  var video = document.getElementById('video1');
-  video.play();
-  var texture = new THREE.VideoTexture(video);
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  texture.format = THREE.RGBFormat;
-  texture.encoding = THREE.sRGBEncoding;
+  var joinUsVideo = document.getElementById('video1');
+  joinUsVideo.play();
+  var joinUsTexture = new THREE.VideoTexture(joinUsVideo);
+  joinUsTexture.minFilter = THREE.LinearFilter;
+  joinUsTexture.magFilter = THREE.LinearFilter;
+  joinUsTexture.format = THREE.RGBFormat;
+  joinUsTexture.encoding = THREE.sRGBEncoding;
 
   var flyerBack = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(4.5, 6),
     new THREE.MeshToonMaterial({
       color: 0xffffff,
-      map: texture,
+      map: joinUsTexture,
     }),
   );
   flyerBack.position.set(-5.5, 5, -9.9);
@@ -116,27 +114,29 @@ function init() {
   scene.add(flyerBack);
 
   // flyer right
-  var video = document.getElementById('video2');
-  video.play();
-  var texture = new THREE.VideoTexture(video);
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  texture.format = THREE.RGBFormat;
-  texture.encoding = THREE.sRGBEncoding;
+  var saucerFlyerVideo = document.getElementById('video2');
+  saucerFlyerVideo.play();
+  var saucerFlyerTexture = new THREE.VideoTexture(saucerFlyerVideo);
+  saucerFlyerTexture.minFilter = THREE.LinearFilter;
+  saucerFlyerTexture.magFilter = THREE.LinearFilter;
+  saucerFlyerTexture.format = THREE.RGBFormat;
+  saucerFlyerTexture.encoding = THREE.sRGBEncoding;
 
   var flyerRightVid = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(5.5, 5.3),
-    new THREE.MeshToonMaterial({ color: 0xffffff, map: texture }),
+    new THREE.MeshToonMaterial({ color: 0xffffff, map: saucerFlyerTexture }),
   );
   flyerRightVid.position.set(9.88, 6.1, 2);
   flyerRightVid.rotateY(-Math.PI / 2);
   flyerRightVid.name = 'soucoupe';
   scene.add(flyerRightVid);
 
-  var texture = new THREE.TextureLoader().load(window.BB_ASSETS['schedule/flyer002.png']);
+  var scheduleFlyerTexture = new THREE.TextureLoader().load(
+    window.BB_ASSETS['schedule/flyer002.png'],
+  );
   var flyerRight = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(6, 8),
-    new THREE.MeshToonMaterial({ color: 0xffffff, map: texture }),
+    new THREE.MeshToonMaterial({ color: 0xffffff, map: scheduleFlyerTexture }),
   );
   flyerRight.position.set(9.9, 5, 2);
   flyerRight.rotateY(-Math.PI / 2);
@@ -145,8 +145,8 @@ function init() {
 
   // model
 
-  var loader = new GLTFLoader();
-  loader.load(
+  const mascotteLoader = new GLTFLoader();
+  mascotteLoader.load(
     window.BB_ASSETS['mascotte/Binioufou_Final4.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -172,8 +172,8 @@ function init() {
   );
 
   // desk
-  var loader = new GLTFLoader();
-  loader.load(
+  const deskLoader = new GLTFLoader();
+  deskLoader.load(
     window.BB_ASSETS['story/Desk.gltf'],
     function (gltf) {
       model = gltf.scene;
@@ -190,8 +190,8 @@ function init() {
   );
 
   // sound system
-  var loader = new GLTFLoader();
-  loader.load(
+  const soundSystemLoader = new GLTFLoader();
+  soundSystemLoader.load(
     window.BB_ASSETS['music/SoundSystem.gltf'],
     function (gltf) {
       model = gltf.scene;

@@ -7,7 +7,7 @@ if (minisiteContactForm) {
   var minisiteContactMessages = {};
   try {
     minisiteContactMessages = JSON.parse(minisiteContactForm.dataset.messages || '{}');
-  } catch (e) {
+  } catch {
     minisiteContactMessages = {};
   }
 
