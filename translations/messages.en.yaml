@@ -498,6 +498,10 @@ accounting:
 
 Id: Id
 
+Administrator: Administrator
+Accountant: Accountant
+Binioufous: Binioufous
+
 admin:
     validation_title: Validation
     pending_requests_title: Pending validation requests
