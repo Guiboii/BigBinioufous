@@ -9,5 +9,6 @@ Docs courtes, une par partie du projet, pour se remettre dans le code vite. Chac
 - [security.md](security.md) : authentification, `access_control`, comment les rôles sont obtenus.
 - [style.md](style.md) : frontend : **les trois systèmes d'icônes** (Font Awesome, Remixicon, SVG bootstrap-icons collés à la main), variables de couleurs `--bb-*`, entries AssetMapper, **et le cas à part de la minisite Histoire** (page autonome, sa propre palette `--term-*`).
 - [i18n.md](i18n.md) : traduction (fr/en/br), sélecteur de langue, comment ajouter une clé, limite du check CI sur le breton.
+- [deploiement-vps.md](deploiement-vps.md) : setup one-shot du VPS (utilisateur, SSH, pare-feu, PHP/MySQL/Nginx, `.env.prod.local`, secrets GitHub Actions pour le déploiement auto).
 
 Vue d'ensemble stack/installation/structure : voir le [README.md](../README.md) à la racine.
