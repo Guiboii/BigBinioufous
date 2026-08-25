@@ -104,7 +104,8 @@
         "cs-php": "php-cs-fixer fix --dry-run --diff",
         "cs-php-fix": "php-cs-fixer fix",
         "cs-twig": "twig-cs-fixer lint templates",
-        "cs-twig-fix": "twig-cs-fixer fix templates"
+        "cs-twig-fix": "twig-cs-fixer fix templates",
+        "test": "vendor/bin/phpunit"
     },
     "conflict": {
         "symfony/symfony": "*"

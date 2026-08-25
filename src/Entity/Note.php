@@ -114,6 +114,8 @@ class Note
 
     public function isAuthoredBy(User $user): bool
     {
-        return $this->author === $user;
+        // Compare by id, not object identity: author and $user can come from different EntityManager
+        // instances (e.g. one loaded from the security token, the other freshly fetched by repository).
+        return $this->author->getId() === $user->getId();
     }
 }
