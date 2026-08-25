@@ -1,0 +1,80 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'carpool.index_heading'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'carpool.index_heading'|trans }}</h1>
+    <p class="desk-intro">{{ 'carpool.index_intro'|trans }}</p>
+
+    <a href="{{ path('carpool_new') }}" class="btn btn-green mb-3">{{ 'carpool.add_new'|trans }}</a>
+
+    {% if offers is empty %}
+        <p><em>{{ 'carpool.no_offers'|trans }}</em></p>
+    {% else %}
+        {% set currentEventId = null %}
+        {% for offer in offers %}
+            {% if offer.event.id != currentEventId %}
+                {% if currentEventId is not null %}</div>{% endif %}
+                {% set currentEventId = offer.event.id %}
+                <h2 class="carpool-event-heading">{{ offer.event.date|date('d/m/Y') }} - {{ offer.event.title }} <span class="carpool-event-location">({{ offer.event.location }})</span></h2>
+                <div class="carpool-offer-list">
+            {% endif %}
+
+            {% set mine = offer.driver == app.user %}
+            {% set joined = offer.hasPassenger(app.user) %}
+            <div class="profile-form-card carpool-offer-card">
+                <div class="carpool-offer-header">
+                    <strong>{{ 'carpool.column_driver'|trans }} : {{ offer.driver.nickname }}</strong>
+                    {% if offer.isFull %}
+                        <span class="badge badge-red">{{ 'carpool.seats_full'|trans }}</span>
+                    {% else %}
+                        <span class="note-shared-badge">{{ 'carpool.seats_available'|trans({'%count%': offer.seatsAvailable}) }}</span>
+                    {% endif %}
+                </div>
+
+                <p class="carpool-offer-departure">
+                    <i class="ri-map-pin-fill" aria-hidden="true"></i> {{ offer.departureLocation }}
+                    {% if offer.departureTime %}
+                        &middot; {{ offer.departureTime|date('d/m/Y H:i') }}
+                    {% endif %}
+                </p>
+
+                {% if offer.comment %}
+                    <p class="carpool-offer-comment">{{ offer.comment }}</p>
+                {% endif %}
+
+                <p class="carpool-passengers-heading">{{ 'carpool.passengers_heading'|trans }}</p>
+                {% if offer.passengers is empty %}
+                    <p><em>{{ 'carpool.no_passengers'|trans }}</em></p>
+                {% else %}
+                    <ul class="carpool-passenger-list">
+                        {% for passenger in offer.passengers %}
+                            <li>{{ passenger.nickname }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <div class="carpool-offer-actions">
+                    {% if mine %}
+                        <span class="note-shared-badge">{{ 'carpool.you_are_driver'|trans }}</span>
+                        <form method="post" action="{{ path('carpool_delete', {id: offer.id}) }}" onsubmit="return confirm('{{ 'carpool.confirm_delete'|trans|e('js') }}');" class="btn-form">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ offer.id) }}">
+                            <button class="btn btn-red" aria-label="{{ 'carpool.delete_aria'|trans({'%title%': offer.event.title}) }}"><i class="ri-delete-bin-line" aria-hidden="true"></i></button>
+                        </form>
+                    {% else %}
+                        {% if joined or not offer.isFull %}
+                            <form method="post" action="{{ path('carpool_join_toggle', {id: offer.id}) }}" class="btn-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_join' ~ offer.id) }}">
+                                <button class="btn {{ joined ? 'btn-red' : 'btn-green' }}">{{ (joined ? 'carpool.leave_submit' : 'carpool.join_submit')|trans }}</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

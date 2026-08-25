@@ -22,6 +22,7 @@ nav:
     folders: Dossiers
     planning: Planning
     notes: Notes
+    carpool: Covoiturage
     toggle: Basculer la navigation
     contact: Contact
 
@@ -118,6 +119,36 @@ note:
     edit_aria: "Modifier « %title% »"
     show_meta: "Par %author%, dernière modif le %date%"
     export_pdf: Exporter en PDF
+
+carpool:
+    index_heading: Covoiturage
+    index_intro: "Propose ou rejoins un trajet pour un événement à venir. Les places indiquées sont celles ouvertes aux passager·ères, en plus du·de la conducteur·rice."
+    add_new: Proposer un trajet
+    no_offers: Aucun covoiturage proposé pour l'instant.
+    field_event: Événement
+    field_event_placeholder: "Choisis un événement à venir..."
+    field_departure_location: Lieu de départ
+    field_departure_location_placeholder: "Ex. Parking de la mairie, Rennes"
+    field_departure_time: "Heure de départ (facultatif)"
+    field_seats_total: Places disponibles
+    field_comment: "Remarques (facultatif)"
+    field_comment_placeholder: "Ex. coffre pour un instrument, arrêt possible en route..."
+    new_title: Proposer un trajet
+    create_heading: Proposer un trajet
+    back_to_list: retour à la liste
+    save_submit: Proposer
+    column_driver: Conducteur·rice
+    column_departure: Départ
+    column_seats: Places
+    seats_available: "%count% place(s) disponible(s)"
+    seats_full: Complet
+    you_are_driver: "C'est toi qui conduis"
+    passengers_heading: Passager·ères
+    no_passengers: Aucun·e passager·ère pour l'instant.
+    join_submit: Je viens
+    leave_submit: Je me désiste
+    confirm_delete: "Tu es sûr·e de vouloir supprimer ce trajet ?"
+    delete_aria: "Supprimer le trajet vers « %title% »"
 
 schedule:
     title: Planning

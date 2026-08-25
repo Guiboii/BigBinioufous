@@ -1994,3 +1994,54 @@ body.desk .accounting-lines-heading {
     gap: 0.75rem;
     margin-bottom: 1.5rem;
 }
+
+/* Carpool board (/desk/carpool): one heading per event, offers below as cards. Event heading keeps the default body.desk h2 style (dark ink, readable on the page's gold background); the cards below switch to a darker surface, so they get their own text color rather than inheriting that dark ink (would be close to unreadable on --bb-green-deep). */
+.carpool-event-heading {
+    margin: 2rem 0 1rem;
+}
+.carpool-event-heading:first-of-type {
+    margin-top: 0;
+}
+.carpool-event-location {
+    font-weight: normal;
+    font-size: 0.95rem;
+}
+.carpool-offer-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+/* Reuses .profile-form-card for the same green-deep/gold-border/shadow surface as the rest of /desk, just adds the white text color that card family assumes its content will set for itself (cf. .profile-form-card h2 doing the same for headings). */
+.carpool-offer-card {
+    color: var(--bb-white);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.carpool-offer-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+.carpool-offer-departure,
+.carpool-offer-comment,
+.carpool-passengers-heading {
+    margin: 0;
+}
+.carpool-passengers-heading {
+    font-weight: bold;
+    margin-top: 0.4rem;
+}
+.carpool-passenger-list {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+.carpool-offer-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+}

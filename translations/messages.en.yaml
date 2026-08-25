@@ -22,6 +22,7 @@ nav:
     folders: Folders
     planning: Schedule
     notes: Notes
+    carpool: Carpool
     toggle: Toggle navigation
     contact: Contact
 
@@ -118,6 +119,36 @@ note:
     edit_aria: "Edit \"%title%\""
     show_meta: "By %author%, last updated on %date%"
     export_pdf: Export as PDF
+
+carpool:
+    index_heading: Carpool
+    index_intro: "Offer or join a ride to an upcoming event. The seat count shown is for passengers, on top of the driver."
+    add_new: Offer a ride
+    no_offers: No carpool offered yet.
+    field_event: Event
+    field_event_placeholder: "Pick an upcoming event..."
+    field_departure_location: Departure location
+    field_departure_location_placeholder: "E.g. Town hall parking lot, Rennes"
+    field_departure_time: "Departure time (optional)"
+    field_seats_total: Seats available
+    field_comment: "Notes (optional)"
+    field_comment_placeholder: "E.g. trunk space for an instrument, possible stop on the way..."
+    new_title: Offer a ride
+    create_heading: Offer a ride
+    back_to_list: back to the list
+    save_submit: Offer
+    column_driver: Driver
+    column_departure: Departure
+    column_seats: Seats
+    seats_available: "%count% seat(s) available"
+    seats_full: Full
+    you_are_driver: "You're driving"
+    passengers_heading: Passengers
+    no_passengers: No passengers yet.
+    join_submit: I'm in
+    leave_submit: Drop out
+    confirm_delete: "Are you sure you want to delete this ride?"
+    delete_aria: "Delete the ride to \"%title%\""
 
 schedule:
     title: Schedule

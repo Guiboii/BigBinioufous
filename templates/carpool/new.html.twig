@@ -1,0 +1,22 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'carpool.new_title'|trans }}{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+    <h1>{{ 'carpool.create_heading'|trans }}</h1>
+
+    {{ form_start(form) }}
+    <div class="form-group">
+        {{ form_row(form.event) }}
+        {{ form_row(form.departureLocation) }}
+        {{ form_row(form.departureTime) }}
+        {{ form_row(form.seatsTotal) }}
+        {{ form_row(form.comment) }}
+        <button type="submit" class="btn btn-green">{{ 'carpool.save_submit'|trans }}</button>
+    </div>
+    {{ form_end(form) }}
+
+    <a href="{{ path('carpool_index') }}" class="text-green">{{ 'carpool.back_to_list'|trans }}</a>
+</div>
+{% endblock %}

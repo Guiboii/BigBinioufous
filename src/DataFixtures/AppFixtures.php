@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Artist;
+use App\Entity\CarpoolOffer;
 use App\Entity\Event;
 use App\Entity\Instrument;
 use App\Entity\Note;
@@ -16,7 +17,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-// Demo data set: roles, instruments, users (admin, pending, validated), setlist, schedule, story sections, notes.
+// Demo data set: roles, instruments, users (admin, pending, validated), setlist, schedule, story sections, notes, carpool offer.
 class AppFixtures extends Fixture
 {
     private $encoder;
@@ -229,6 +230,7 @@ class AppFixtures extends Fixture
             ['2027-06-19', 'rehearsal', 'Répétition en West Side', 'ENM de Villeurbanne', null, '09:17-12:34'],
         ];
 
+        $residenceEvent = null;
         foreach ($events as [$date, $type, $title, $location, $description, $hours]) {
             [$startTime, $endTime] = $hours ? explode('-', $hours) : [null, null];
 
@@ -241,6 +243,11 @@ class AppFixtures extends Fixture
                     ->setDescription($description);
 
             $manager->persist($event);
+
+            // Kept aside for the carpool demo below: a multi-day out-of-town event is the typical "dates éloignées" case from ROADMAP.md.
+            if ('Résidence d\'Hiver' === $title) {
+                $residenceEvent = $event;
+            }
         }
 
         // Initial content of the Story page, editable afterwards by ROLE_ADMIN on /admin/story.
@@ -268,6 +275,19 @@ class AppFixtures extends Fixture
             ->setAuthor($quickAdmin)
             ->setShared(true);
         $manager->persist($sharedNote);
+
+        // Demo carpool offer for the out-of-town winter residency: QuickAdmin drives, Guiboï already has a seat.
+        if ($residenceEvent) {
+            $carpoolOffer = new CarpoolOffer();
+            $carpoolOffer->setEvent($residenceEvent)
+                ->setDriver($quickAdmin)
+                ->setDepartureLocation('Parking de la mairie, Villeurbanne')
+                ->setDepartureTime(new \DateTimeImmutable('2027-01-23 07:30'))
+                ->setSeatsTotal(3)
+                ->setComment('Coffre dispo pour un instrument, départ pile à l\'heure !')
+                ->addPassenger($admin);
+            $manager->persist($carpoolOffer);
+        }
 
         $manager->flush();
     }
