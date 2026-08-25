@@ -7,6 +7,7 @@ use App\Entity\Folder;
 use App\Repository\FolderRepository;
 use App\Security\FolderWriteVoter;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,7 +22,7 @@ class DocumentController extends AbstractController
 {
     // Drag-and-drop upload: one file becomes one Document, named after the file itself. The optional "path" field comes from dropping a whole folder (FileSystemEntry.fullPath) and rebuilds the same Folder tree instead of flattening everything to the root.
     #[Route('', name: 'document_upload', methods: ['POST'])]
-    public function upload(string $space, Request $request, EntityManagerInterface $manager, SluggerInterface $slugger, FolderRepository $folderRepository): JsonResponse
+    public function upload(string $space, Request $request, EntityManagerInterface $manager, SluggerInterface $slugger, FolderRepository $folderRepository, LoggerInterface $logger): JsonResponse
     {
         $this->denyAccessUnlessGranted(FolderWriteVoter::WRITE, $space);
 
@@ -36,6 +37,8 @@ class DocumentController extends AbstractController
 
         // Without this check, a file over upload_max_filesize/post_max_size still reaches here (PHP fills $_FILES with an error code rather than omitting it), and getMimeType()/move() below would target a missing temp file and throw an unhandled exception.
         if (!$file->isValid()) {
+            $logger->warning('Upload refusé : fichier trop volumineux', ['space' => $space, 'user' => $this->getUser()?->getUserIdentifier()]);
+
             return $this->json(['error' => 'file_too_large'], 400);
         }
 
@@ -44,6 +47,8 @@ class DocumentController extends AbstractController
         $size = $file->getSize();
 
         if (!\in_array($mimeType, Folder::ALLOWED_MIME_TYPES[$space] ?? [], true)) {
+            $logger->warning('Upload refusé : type de fichier non autorisé', ['space' => $space, 'mimeType' => $mimeType, 'user' => $this->getUser()?->getUserIdentifier()]);
+
             return $this->json(['error' => 'invalid_mimetype'], 400);
         }
 
@@ -54,6 +59,8 @@ class DocumentController extends AbstractController
         try {
             $file->move($this->getParameter('documents_directory'), $newFilename);
         } catch (FileException $e) {
+            $logger->error('Échec de l\'upload : '.$e->getMessage(), ['space' => $space, 'user' => $this->getUser()?->getUserIdentifier()]);
+
             return $this->json(['error' => 'upload_failed'], 500);
         }
 
@@ -69,6 +76,8 @@ class DocumentController extends AbstractController
 
         $manager->persist($document);
         $manager->flush();
+
+        $logger->info('Fichier uploadé', ['space' => $space, 'document' => $document->getId(), 'user' => $this->getUser()?->getUserIdentifier()]);
 
         return $this->json(['success' => true, 'id' => $document->getId()]);
     }
