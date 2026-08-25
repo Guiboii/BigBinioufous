@@ -64,6 +64,8 @@ jobs:
           extensions: pdo_sqlite
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --no-scripts
+      - name: .env éphémère pour booter le kernel (jamais commité, .env réel volontairement hors git)
+        run: echo "APP_ENV=test" > .env
       - name: .env.test.local éphémère (SQLite fichier, jeté à la fin du job, jamais commité)
         run: echo 'DATABASE_URL="sqlite:///%kernel.project_dir%/var/test.db"' > .env.test.local
       - name: Run PHPUnit
