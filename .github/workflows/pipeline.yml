@@ -137,12 +137,16 @@ jobs:
           # Déploie la branche qui vient d'être poussée (master ou prod_vitrine),
           # pas master en dur : checkout explicite au cas où le clone du VPS
           # serait resté sur une autre branche.
+          # Pas de doctrine:migrations:migrate : le repo ne versionne aucune
+          # migration, le schéma se pose via doctrine:schema:create au premier
+          # déploiement (cf. doc/deploiement-vps.md). Les changements de schéma
+          # ultérieurs se font à la main.
           script: |
             cd ${{ secrets.VPS_PATH }}
             git fetch origin ${{ github.ref_name }}
             git checkout ${{ github.ref_name }}
             git pull origin ${{ github.ref_name }}
             composer install --no-dev --no-progress --prefer-dist --optimize-autoloader
-            php bin/console doctrine:migrations:migrate --no-interaction
+            php bin/console importmap:install
             php bin/console asset-map:compile
             php bin/console cache:clear
