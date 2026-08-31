@@ -123,7 +123,9 @@ jobs:
   # initial du repo déjà fait à la main sur le VPS.
   deploy:
     needs: [composer-audit, npm-audit, tests-php]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: >-
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/prod_vitrine')
     runs-on: ubuntu-latest
     steps:
       - name: Déploiement SSH sur le VPS
@@ -132,9 +134,14 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          # Déploie la branche qui vient d'être poussée (master ou prod_vitrine),
+          # pas master en dur : checkout explicite au cas où le clone du VPS
+          # serait resté sur une autre branche.
           script: |
             cd ${{ secrets.VPS_PATH }}
-            git pull origin master
+            git fetch origin ${{ github.ref_name }}
+            git checkout ${{ github.ref_name }}
+            git pull origin ${{ github.ref_name }}
             composer install --no-dev --no-progress --prefer-dist --optimize-autoloader
             php bin/console doctrine:migrations:migrate --no-interaction
             php bin/console asset-map:compile

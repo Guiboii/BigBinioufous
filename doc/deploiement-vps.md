@@ -200,9 +200,9 @@ Repo GitHub → Settings → Secrets and variables → Actions → New repositor
 | `VPS_SSH_KEY` | contenu de `~/.ssh/binioufous_vps` (clé **privée**, celle générée à l'étape 2, jamais la `.pub`) |
 | `VPS_PATH` | `/var/www/binioufous` |
 
-Une fois posés, tout push sur `master` déclenche le job `deploy` du pipeline (`git pull`, `composer install --no-dev`, migrations, `asset-map:compile`, `cache:clear`).
+Une fois posés, tout push sur `master` **ou `prod_vitrine`** déclenche le job `deploy` du pipeline, qui déploie la branche poussée (`git fetch`/`checkout`/`pull` sur `github.ref_name`, puis `composer install --no-dev`, migrations, `asset-map:compile`, `cache:clear`).
 
-**Attention** : le job `deploy` ne se déclenche que sur push vers `master` (`if: github.ref == 'refs/heads/master'`), pas sur `prod_vitrine`. Tant que `prod_vitrine` n'est pas fusionnée, les mises à jour de cette branche doivent être déployées à la main sur le VPS (`git pull origin prod_vitrine` + refaire l'étape 8).
+Le clone du VPS suit donc la dernière branche déployée : tant que `prod_vitrine` est la branche de prod, c'est elle qui tourne sur le VPS. Après fusion dans `master`, un push sur `master` rebascule le VPS dessus.
 
 ## Checklist rapide
 
