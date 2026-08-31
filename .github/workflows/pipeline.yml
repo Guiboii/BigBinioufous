@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - master
+      - prod_vitrine
 
 permissions:
   contents: read
