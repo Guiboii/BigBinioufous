@@ -68,73 +68,123 @@ sudo ufw enable
 
 ## 4. Dépendances serveur
 
+Adapter le numéro de version PHP à ce que fournit la distrib (VPS OVH actuel : Ubuntu 25.04, PHP `8.4`). `composer.json` demande `^8.1`, toute version 8.1+ convient. Node n'est **pas** nécessaire en prod (cf. AssetMapper, section Frontend de `CLAUDE.md`).
+
 ```bash
-sudo apt install -y php8.3 php8.3-fpm php8.3-mysql php8.3-mbstring php8.3-xml php8.3-curl php8.3-zip php8.3-intl php8.3-gd \
+sudo apt install -y php8.4-fpm php8.4-mysql php8.4-mbstring php8.4-xml php8.4-curl php8.4-zip php8.4-intl php8.4-gd \
   mysql-server nginx composer git unzip
 ```
 
-`composer.json` demande PHP `^8.1`, n'importe quelle version 8.1+ des paquets Debian/Ubuntu convient (Node n'est **pas** nécessaire en prod, cf. AssetMapper, section Frontend de `CLAUDE.md`).
+**Piège rencontré le 2026-08-31** : `php8.4-mysql` (extension PDO MySQL) oublié au premier passage : l'appli renvoie un 500 `could not find driver` et `doctrine:*` échoue avec le même message. À installer explicitement, puis `sudo systemctl restart php8.4-fpm`.
 
 ## 5. Base de données
 
+MySQL 8.4 côté VPS OVH. `sudo mysql` fonctionne sans mot de passe (auth_socket root).
+
 ```bash
-sudo mysql_secure_installation
-sudo mysql -u root -p
+sudo mysql_secure_installation   # facultatif mais recommandé
+sudo mysql
 ```
 
 ```sql
 CREATE DATABASE binioufous CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'binioufous'@'localhost' IDENTIFIED BY 'MOT_DE_PASSE_A_GENERER';
-GRANT ALL PRIVILEGES ON binioufous.* TO 'binioufous'@'localhost';
+CREATE USER 'binioufous'@'127.0.0.1' IDENTIFIED BY 'MOT_DE_PASSE';
+GRANT ALL PRIVILEGES ON binioufous.* TO 'binioufous'@'127.0.0.1';
 FLUSH PRIVILEGES;
 ```
 
-Génère le mot de passe avec `openssl rand -base64 24` par exemple, note-le dans le même gestionnaire que le reste (il ira dans `.env.prod.local`, jamais commité).
+- Host `127.0.0.1` (pas `localhost`) pour coller au `DATABASE_URL` (connexion TCP).
+- Génère le mot de passe avec **`openssl rand -hex 24`** (hexa pur) et non `base64` : une valeur base64 peut contenir `:`/`#`/`/`/`+` qui cassent le parsing de l'URL `DATABASE_URL` (le `#` surtout, qui tronque tout ce qui suit). Bug rencontré le 2026-08-31.
 
 ## 6. Cloner le repo
+
+Le repo GitHub est **public** : `git clone`/`git pull` en HTTPS, aucune clé de déploiement nécessaire (ne pas suivre les vieilles instructions "Deploy keys").
 
 ```bash
 sudo mkdir -p /var/www/binioufous
 sudo chown binioufous-deploy:binioufous-deploy /var/www/binioufous
 cd /var/www/binioufous
-git clone git@github.com:Guiboii/BigBinioufous.git .
+git clone https://github.com/Guiboii/BigBinioufous.git .
 ```
 
-Pour que le `git clone`/`git pull` fonctionne en SSH sans mot de passe, ajoute une clé de déploiement GitHub (Settings → Deploy keys du repo, lecture seule suffit) ou utilise une clé perso déjà autorisée.
+`master` est la seule branche de prod (l'ancienne branche vitrine `prod_vitrine`, qui coupait l'espace membre, a été fusionnée puis supprimée).
 
-Pour l'instant, checkout la branche `prod_vitrine` (espace membre coupé, pas de mailer nécessaire) :
+## 7. Fichiers `.env`
 
-```bash
-git checkout prod_vitrine
-```
+Ce projet **gitignore `.env`** (non standard : d'habitude `.env` est versionné avec les défauts de dev). Sur un clone neuf il n'existe donc pas, et `config/bootstrap.php` refuse de démarrer sans lui (`Unable to read the ".env" environment file`, 500). Il faut créer **deux** fichiers à la main (les deux gitignorés) :
 
-## 7. `.env.prod.local`
-
-Jamais commité (cf. `.gitignore`). À créer à la main sur le VPS :
-
-```bash
-nano /var/www/binioufous/.env.prod.local
-```
-
+`.env` (socle, sans secret) :
 ```env
 APP_ENV=prod
-APP_SECRET=GENERE_UNE_VALEUR_ALEATOIRE
-DATABASE_URL="mysql://binioufous:MOT_DE_PASSE@127.0.0.1:3306/binioufous?serverVersion=5.7"
-MAILER_DSN=null://null
+APP_SECRET=change_me
 ```
 
-- `APP_SECRET` : `openssl rand -hex 16`.
-- `MAILER_DSN` reste sur `null://null` tant que la mailbox OVH n'est pas configurée (cf. `CLAUDE.md`, phase "Emails fonctionnels") : cohérent avec `prod_vitrine`, qui coupe justement toute fonctionnalité dépendant du mail.
+`.env.prod.local` (secrets réels, chargé après et écrase `.env`) :
+```env
+DATABASE_URL="mysql://binioufous:MOT_DE_PASSE@127.0.0.1:3306/binioufous?serverVersion=8.4.0"
+APP_SECRET=GENERE_AVEC_openssl_rand_hex_16
+MAILER_DSN=smtp://contact%40binioufous.fr:MOT_DE_PASSE_MAILBOX@ssl0.ovh.net:465
+CONTACT_EMAIL=contact@binioufous.fr
+```
+
+`MAILER_DSN` : boîte OVH (offre MX Plan liée au domaine). Identifiant SMTP = l'adresse complète, le `@` s'encode en `%40` ; si le mot de passe contient des caractères spéciaux (`@ : / # ? % &`), les url-encoder aussi. Sans `MAILER_DSN` valide, l'appli démarre quand même (résolu seulement à l'envoi) mais aucun mail (contact, inscription, validation) ne part.
 
 ## 8. Premier déploiement manuel
+
+**Il n'y a aucun fichier de migration dans le repo** (`migrations/` ne contient qu'un `.gitignore` vide). Le schéma se crée donc directement depuis les entités, pas via `doctrine:migrations` :
 
 ```bash
 cd /var/www/binioufous
 composer install --no-dev --no-progress --prefer-dist --optimize-autoloader
-php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console doctrine:schema:create
+php bin/console doctrine:schema:validate      # doit dire "in sync"
+php bin/console importmap:install             # peuple assets/vendor/ (gitignoré), sinon 500 "jquery vendor asset is missing"
 php bin/console asset-map:compile
 php bin/console cache:clear
 ```
+
+Puis insérer les 3 rôles (les fixtures sont `require-dev`, indisponibles avec `--no-dev`) :
+
+```bash
+php bin/console dbal:run-sql "INSERT INTO role (title, description) VALUES ('ROLE_ADMIN','Administrator'),('ROLE_COMPTA','Accountant'),('ROLE_BINIOUFOUS','Binioufous')"
+```
+
+## 8bis. Contenu vitrine (Histoire + planning)
+
+Les pages `/story` et `/schedule` lisent leur contenu en base (`story_section`, `event`), vide sur un clone neuf. Une commande dédiée le sème, **idempotente** (ne réinsère pas ce qui existe déjà, n'écrase jamais ce qui a été édité via `/admin`) :
+
+```bash
+php bin/console app:seed-content
+```
+
+À lancer **une seule fois** après le premier déploiement. Volontairement **pas** dans le job CI `deploy` : le rejouer à chaque push re-créerait une section supprimée depuis `/admin`.
+
+## 8ter. Pool PHP-FPM dédié
+
+Pour que l'appli tourne sous `binioufous-deploy` (même compte que les `git pull` de la CI, pas de souci de permissions sur `var/`), un pool FPM séparé plutôt que le pool `www-data` global partagé avec les autres vhosts du VPS :
+
+```ini
+# /etc/php/8.4/fpm/pool.d/binioufous.conf
+[binioufous]
+user = binioufous-deploy
+group = binioufous-deploy
+listen = /run/php/php8.4-fpm-binioufous.sock
+listen.owner = www-data
+listen.group = www-data
+pm = dynamic
+pm.max_children = 10
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+php_admin_value[upload_max_filesize] = 200M
+php_admin_value[post_max_size] = 210M
+```
+
+```bash
+sudo systemctl restart php8.4-fpm
+```
+
+Les valeurs `upload_max_filesize`/`post_max_size` reprennent le besoin de l'espace musique (cf. `CLAUDE.md`, gros fichiers audio/vidéo).
 
 ## 9. Vhost Nginx
 
@@ -149,7 +199,7 @@ server {
     }
 
     location ~ ^/index\.php(/|$) {
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.4-fpm-binioufous.sock;   # socket du pool dédié (section 8ter)
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
@@ -197,22 +247,27 @@ Repo GitHub → Settings → Secrets and variables → Actions → New repositor
 |---|---|
 | `VPS_HOST` | IP ou domaine du VPS |
 | `VPS_USER` | `binioufous-deploy` |
-| `VPS_SSH_KEY` | contenu de `~/.ssh/binioufous_vps` (clé **privée**, celle générée à l'étape 2, jamais la `.pub`) |
+| `VPS_SSH_KEY` | contenu de la clé **privée** dédiée (`~/.ssh/binioufous_ci`), pas la `.pub`. Sa `.pub` est dans `~binioufous-deploy/.ssh/authorized_keys` sur le VPS. Sert au runner GitHub à se connecter en SSH sur le VPS (rien à voir avec l'accès Git, le repo étant public). |
 | `VPS_PATH` | `/var/www/binioufous` |
 
-Une fois posés, tout push sur `master` déclenche le job `deploy` du pipeline (`git pull`, `composer install --no-dev`, migrations, `asset-map:compile`, `cache:clear`).
+Une fois posés, tout push sur `master` déclenche le job `deploy` du pipeline : `git fetch`/`checkout master`/`pull`, puis `composer install --no-dev`, `importmap:install`, `asset-map:compile`, `cache:clear`.
 
-**Attention** : le job `deploy` ne se déclenche que sur push vers `master` (`if: github.ref == 'refs/heads/master'`), pas sur `prod_vitrine`. Tant que `prod_vitrine` n'est pas fusionnée, les mises à jour de cette branche doivent être déployées à la main sur le VPS (`git pull origin prod_vitrine` + refaire l'étape 8).
+Le job ne joue **pas** `doctrine:migrations:migrate` : le repo ne versionne aucune migration et le schéma est posé une fois via `doctrine:schema:create` (section 8). Des fichiers `migrations/Version*.php` traînant sur le disque d'un vieux clone feraient d'ailleurs échouer `migrate` (rejeu sur un schéma déjà complet, `Duplicate column name`) : les supprimer du VPS le cas échéant. Les évolutions de schéma se font à la main (`doctrine:schema:update --force --complete` après revue du `--dump-sql`).
 
 ## Checklist rapide
 
 - [ ] Utilisateur `binioufous-deploy` créé, accès `sudo`
 - [ ] Connexion SSH par clé uniquement (mot de passe + root désactivés)
 - [ ] Pare-feu actif (22, 80, 443)
-- [ ] PHP 8.1+, MySQL, Nginx, Composer installés
-- [ ] Base de données créée, identifiants notés dans un gestionnaire de mots de passe
-- [ ] Repo cloné, `.env.prod.local` créé (jamais commité)
-- [ ] Premier déploiement manuel réussi, site accessible en HTTP
+- [ ] PHP 8.4 (dont `php8.4-mysql`), MySQL, Nginx, Composer installés
+- [ ] Pool PHP-FPM dédié `binioufous` (section 8ter), tournant sous `binioufous-deploy`
+- [ ] Base de données créée (user `@127.0.0.1`, mot de passe `openssl rand -hex 24`), identifiants notés
+- [ ] Repo cloné (HTTPS), `.env` **et** `.env.prod.local` créés (jamais commités)
+- [ ] Fichiers `migrations/Version*.php` traînants supprimés du VPS (sinon `migrate` casse ; le job n'y touche plus mais un `migrate` manuel oui)
+- [ ] Schéma créé via `doctrine:schema:create` (pas de migrations dans le repo), `importmap:install` lancé
+- [ ] 3 rôles insérés, `app:seed-content` lancé une fois (Histoire + planning)
+- [ ] vhost nginx pointant sur `/var/www/binioufous/public` + socket du pool dédié
+- [ ] Premier déploiement manuel réussi, site accessible
 - [ ] HTTPS actif (certbot)
-- [ ] 4 secrets GitHub ajoutés
+- [ ] 4 secrets GitHub ajoutés (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_PATH`)
 - [ ] `Strict-Transport-Security` activé une fois HTTPS confirmé

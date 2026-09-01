@@ -131,10 +131,18 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          # checkout master explicite : le clone du VPS a pu rester sur une
+          # ancienne branche de prod, un simple "git pull" ne l'y ramènerait pas.
+          # Pas de doctrine:migrations:migrate : le repo ne versionne aucune
+          # migration, le schéma se pose via doctrine:schema:create au premier
+          # déploiement (cf. doc/deploiement-vps.md). Les changements de schéma
+          # ultérieurs se font à la main.
           script: |
             cd ${{ secrets.VPS_PATH }}
+            git fetch origin master
+            git checkout master
             git pull origin master
             composer install --no-dev --no-progress --prefer-dist --optimize-autoloader
-            php bin/console doctrine:migrations:migrate --no-interaction
+            php bin/console importmap:install
             php bin/console asset-map:compile
             php bin/console cache:clear
