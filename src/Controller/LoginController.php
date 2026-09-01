@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -90,11 +91,13 @@ class LoginController extends AbstractController
         ]);
     }
 
-    // MAILER_DSN isn't configured in prod yet, so nothing actually sends for now. Errors are caught and logged rather than left to bubble up: this must never fail the registration itself, already saved to the database at this point.
+    // Errors are caught and logged rather than left to bubble up: this must never fail the registration itself, already saved to the database at this point.
     private function notifyAdminsOfNewRegistration(MailerInterface $mailer, LoggerInterface $logger, string $adminNotificationEmail, User $user): void
     {
         try {
             $email = (new Email())
+                // Same mailbox as the sender: OVH SMTP rejects a "from" that isn't the authenticated account.
+                ->from(new Address($adminNotificationEmail, 'Binioufous'))
                 ->to($adminNotificationEmail)
                 ->subject('Nouvelle inscription en attente : '.$user->getNickname())
                 ->text(sprintf(
