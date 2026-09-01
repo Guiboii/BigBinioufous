@@ -9,6 +9,8 @@
         {% block importmap %}
             {{ importmap('app') }}
         {% endblock %}
+{# The icon font is pulled in through a CSS import buried in app.js's module graph, so the browser discovers it late and the navbar icons pop in well after the rest of the page. Preloading it here starts that download immediately. #}
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('vendor/remixicon/fonts/remixicon.woff2') }}" crossorigin>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
