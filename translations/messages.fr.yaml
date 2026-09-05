@@ -254,6 +254,8 @@ profile:
     field_gender_placeholder: "Facultatif"
     gender_male: Homme
     gender_female: Femme
+    gender_nonbinary: "Non binaire"
+    gender_other: Autre
     gender_unknown: "Je préfère ne pas répondre"
     field_birth: "Date de naissance"
     field_instrument: Instrument

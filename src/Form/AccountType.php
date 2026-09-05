@@ -33,6 +33,8 @@ class AccountType extends ApplicationType
                     'choices' => [
                         $this->trans('profile.gender_male') => 'male',
                         $this->trans('profile.gender_female') => 'female',
+                        $this->trans('profile.gender_nonbinary') => 'nonbinary',
+                        $this->trans('profile.gender_other') => 'other',
                         $this->trans('profile.gender_unknown') => 'unknown',
                     ],
                 ]

@@ -254,6 +254,8 @@ profile:
     field_gender_placeholder: Optional
     gender_male: Male
     gender_female: Female
+    gender_nonbinary: Non-binary
+    gender_other: Other
     gender_unknown: "I'd rather not say"
     field_birth: Date of birth
     field_instrument: Instrument
