@@ -49,8 +49,14 @@ class AccountType extends ApplicationType
                 'label' => $this->trans('profile.field_instrument'),
                 'required' => false,
                 'placeholder' => 'profile.field_instrument_placeholder',
+                'attr' => ['data-instrument-select' => 'true'],
+                // Flags the "Autre" option so the field below only unlocks when it's the one selected (assets/desk/instrument-other-toggle.js).
+                'choice_attr' => fn (Instrument $instrument) => 'Autre' === $instrument->getTitle() ? ['data-other' => 'true'] : [],
             ])
-            ->add('otherInstrumentDetail', TextType::class, $this->getConfiguration('profile.field_other_instrument', 'profile.field_other_instrument_placeholder', ['required' => false]))
+            ->add('otherInstrumentDetail', TextType::class, $this->getConfiguration('profile.field_other_instrument', 'profile.field_other_instrument_placeholder', [
+                'required' => false,
+                'row_attr' => ['data-other-instrument-row' => 'true'],
+            ]))
             ->add('city', TextType::class, $this->getConfiguration('profile.field_city', 'profile.field_city_placeholder', ['required' => false]))
             ->add('country', CountryType::class, array_merge(
                 $this->getConfiguration('profile.field_country', ''),

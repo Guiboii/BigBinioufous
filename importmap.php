@@ -44,6 +44,10 @@ return [
         'path' => './assets/desk/avatar-preview.js',
         'entrypoint' => true,
     ],
+    'instrument-other-toggle' => [
+        'path' => './assets/desk/instrument-other-toggle.js',
+        'entrypoint' => true,
+    ],
     'note-admin' => [
         'path' => './assets/desk/note-admin.js',
         'entrypoint' => true,
