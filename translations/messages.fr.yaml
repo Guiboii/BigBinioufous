@@ -543,6 +543,13 @@ admin:
     current_roles_title: "Rôles actuels"
     promote_section: "Ajouter un rôle"
     edit_profile_section: Modifier le profil
+    image_rights_title: "Droit à l'image"
+    image_rights_granted: "Accord donné (géré en interne)"
+    image_rights_unknown: "Pas d'accord enregistré"
+    image_rights_grant: "Marquer l'accord comme donné"
+    image_rights_revoke: "Retirer l'accord"
+    confirm_image_rights_grant: "Confirmer que %name% a donné son accord pour le droit à l'image ?"
+    confirm_image_rights_revoke: "Retirer l'accord droit à l'image de %name% ?"
 
 Name: Nom
 Picture: Photo

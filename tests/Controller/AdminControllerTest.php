@@ -46,6 +46,36 @@ class AdminControllerTest extends AppWebTestCase
         $this->assertSame([], $target->getRoles());
     }
 
+    public function testToggleImageRightsConsentFlipsTheFlag(): void
+    {
+        $admin = $this->createUser(['ROLE_ADMIN']);
+        $this->client->loginUser($admin);
+        $target = $this->createUser();
+
+        $this->client->request('POST', '/admin/user/'.$target->getSlug().'/toggle-image-rights', [
+            '_token' => $this->csrfToken('toggle_image_rights'.$target->getId()),
+        ]);
+        $this->assertTrue($this->reload($target)->getImageRightsConsent());
+
+        $this->client->request('POST', '/admin/user/'.$target->getSlug().'/toggle-image-rights', [
+            '_token' => $this->csrfToken('toggle_image_rights'.$target->getId()),
+        ]);
+        $this->assertFalse($this->reload($target)->getImageRightsConsent());
+    }
+
+    public function testToggleImageRightsConsentIsForbiddenWithoutRoleAdmin(): void
+    {
+        $user = $this->createUser();
+        $this->client->loginUser($user);
+        $target = $this->createUser();
+
+        $this->client->request('POST', '/admin/user/'.$target->getSlug().'/toggle-image-rights', [
+            '_token' => $this->csrfToken('toggle_image_rights'.$target->getId()),
+        ]);
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
     public function testToggleMembershipOnlyAffectsRoleBinioufous(): void
     {
         $admin = $this->createUser(['ROLE_ADMIN']);

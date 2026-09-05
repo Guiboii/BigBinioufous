@@ -117,6 +117,25 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('desk');
     }
 
+    // Toggles the "image rights consent given" flag from the member's detail page. Consent itself is collected offline; this is just the recorded acknowledgement by an admin.
+    #[Route('/admin/user/{slug}/toggle-image-rights', name: 'user_toggle_image_rights', methods: ['POST'])]
+    public function toggleImageRightsConsent(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, EntityManagerInterface $manager, Request $request, LoggerInterface $logger): Response
+    {
+        if ($this->isCsrfTokenValid('toggle_image_rights'.$user->getId(), $request->request->get('_token'))) {
+            $user->setImageRightsConsent(!$user->getImageRightsConsent());
+            $manager->persist($user);
+            $manager->flush();
+
+            $logger->info('Accord droit à l\'image '.($user->getImageRightsConsent() ? 'confirmé' : 'retiré'), ['target' => $user->getEmail(), 'by' => $this->getUser()?->getUserIdentifier()]);
+
+            $this->addFlash('success', $user->getImageRightsConsent()
+                ? $user->getFullName().' a donné son accord pour le droit à l\'image.'
+                : 'Accord droit à l\'image retiré pour '.$user->getFullName().'.');
+        }
+
+        return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
+    }
+
     #[Route('/admin/user/{slug}', name: 'user_show')]
     public function showUser(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, Request $request, EntityManagerInterface $manager, RoleRepository $repo)
     {

@@ -76,6 +76,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
     #[ORM\Column(type: 'boolean')]
     private $claimsMembership = false;
 
+    // Set by an admin once the member has confirmed (offline) they agree to the band using their image in its communications. Just a recorded checkmark: consent is collected and stored outside the app.
+    #[ORM\Column(type: 'boolean')]
+    private $imageRightsConsent = false;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $memberCardNumber;
 
@@ -341,6 +345,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
     public function setClaimsMembership(bool $claimsMembership): self
     {
         $this->claimsMembership = $claimsMembership;
+
+        return $this;
+    }
+
+    public function getImageRightsConsent(): bool
+    {
+        return $this->imageRightsConsent;
+    }
+
+    public function setImageRightsConsent(bool $imageRightsConsent): self
+    {
+        $this->imageRightsConsent = $imageRightsConsent;
 
         return $this;
     }

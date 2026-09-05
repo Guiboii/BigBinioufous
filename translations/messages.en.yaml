@@ -537,6 +537,13 @@ admin:
     current_roles_title: Current roles
     promote_section: Add a role
     edit_profile_section: Edit profile
+    image_rights_title: Image rights
+    image_rights_granted: Consent given (handled internally)
+    image_rights_unknown: No consent recorded
+    image_rights_grant: Mark consent as given
+    image_rights_revoke: Remove consent
+    confirm_image_rights_grant: "Confirm that %name% gave consent to use their image?"
+    confirm_image_rights_revoke: "Remove %name%'s image rights consent?"
 
 Name: Name
 Picture: Picture
