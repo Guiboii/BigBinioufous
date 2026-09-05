@@ -33,18 +33,19 @@ class EventRepository extends ServiceEntityRepository
     }
 
     /**
-     * For the public /schedule page: logged-out visitors only see concerts, rehearsals/other are reserved to logged-in accounts. Board meetings are internal and never listed here for anyone. Admins keep a full view via findAllOrderedByDate() elsewhere, independent of this filter.
+     * For the /schedule page: logged-out visitors only see concerts, rehearsals/other are reserved to logged-in accounts, and board meetings stay hidden unless the viewer is an admin.
      *
      * @return Event[]
      */
-    public function findVisibleOrderedByDate(bool $includeAllTypes): array
+    public function findVisibleOrderedByDate(bool $includeInternalTypes, bool $includeBoardMeetings = false): array
     {
-        $qb = $this->createQueryBuilder('e')
-            ->andWhere('e.type != :hidden')
-            ->setParameter('hidden', 'board_meeting')
-            ->orderBy('e.date', 'ASC');
+        $qb = $this->createQueryBuilder('e')->orderBy('e.date', 'ASC');
 
-        if (!$includeAllTypes) {
+        if (!$includeBoardMeetings) {
+            $qb->andWhere('e.type != :hidden')->setParameter('hidden', 'board_meeting');
+        }
+
+        if (!$includeInternalTypes) {
             $qb->andWhere('e.type = :type')->setParameter('type', 'concert');
         }
 

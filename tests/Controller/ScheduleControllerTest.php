@@ -55,6 +55,18 @@ class ScheduleControllerTest extends AppWebTestCase
         $this->assertStringNotContainsString('Conseil de bureau', $content);
     }
 
+    public function testBoardMeetingIsShownOnScheduleForAdmins(): void
+    {
+        $this->persistEvent('Conseil de bureau', 'board_meeting');
+        $this->client->loginUser($this->createUser(['ROLE_ADMIN']));
+
+        $this->client->request('GET', '/schedule');
+        $content = (string) $this->client->getResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('Conseil de bureau', $content);
+    }
+
     public function testIcsExportOfABoardMeetingIsNotFoundForNonAdmins(): void
     {
         $event = $this->persistEvent('Conseil de bureau', 'board_meeting');

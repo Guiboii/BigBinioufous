@@ -23,7 +23,7 @@ class ScheduleController extends AbstractController
     {
         $eventsByMonth = [];
         $eventsByDate = [];
-        foreach ($eventRepository->findVisibleOrderedByDate(null !== $this->getUser()) as $event) {
+        foreach ($eventRepository->findVisibleOrderedByDate(null !== $this->getUser(), $this->isGranted('ROLE_ADMIN')) as $event) {
             $monthNum = $event->getDate()->format('m');
             $eventsByMonth[$monthNum]['label'] = self::MONTH_KEYS[$monthNum];
             $eventsByMonth[$monthNum]['events'][] = [

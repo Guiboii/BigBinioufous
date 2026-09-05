@@ -205,6 +205,11 @@
     background: var(--bb-border-dark);
     color: var(--bb-white);
 }
+/* Admin-only internal date; dark red keeps it visually apart from the three public types. #9E0000 on white is 8.56:1 (AAA). */
+.event-card--board_meeting .event-type {
+    background: var(--bb-red-dark);
+    color: var(--bb-white);
+}
 
 /* A real month/day grid, rendered in JS by initMiniCalendar() in schedule.js, built from a plain <div> rather than reusing a generic Bootstrap navbar class. */
 .mini-calendar {
