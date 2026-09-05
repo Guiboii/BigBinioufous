@@ -194,6 +194,11 @@ server {
     server_name binioufous.fr www.binioufous.fr;
     root /var/www/binioufous/public;
 
+    # Nginx applique sa propre limite (1M par défaut) AVANT même d'atteindre PHP-FPM :
+    # sans ça, un upload rejette en 413 quelle que soit la config upload_max_filesize/post_max_size
+    # du pool PHP-FPM ci-dessus (section 8ter). Alignée sur post_max_size (210M).
+    client_max_body_size 210M;
+
     location / {
         try_files $uri /index.php$is_args$args;
     }
@@ -266,7 +271,7 @@ Le job ne joue **pas** `doctrine:migrations:migrate` : le repo ne versionne aucu
 - [ ] Fichiers `migrations/Version*.php` traînants supprimés du VPS (sinon `migrate` casse ; le job n'y touche plus mais un `migrate` manuel oui)
 - [ ] Schéma créé via `doctrine:schema:create` (pas de migrations dans le repo), `importmap:install` lancé
 - [ ] 3 rôles insérés, `app:seed-content` lancé une fois (Histoire + planning + instruments)
-- [ ] vhost nginx pointant sur `/var/www/binioufous/public` + socket du pool dédié
+- [ ] vhost nginx pointant sur `/var/www/binioufous/public` + socket du pool dédié + `client_max_body_size 210M` (sinon 413 sur les gros uploads avant même PHP-FPM)
 - [ ] Premier déploiement manuel réussi, site accessible
 - [ ] HTTPS actif (certbot)
 - [ ] 4 secrets GitHub ajoutés (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_PATH`)
