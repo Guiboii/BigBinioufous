@@ -24,11 +24,18 @@ class UserTest extends TestCase
         $this->assertSame('Biniou42', $user->getFullName());
     }
 
-    public function testGetFullNameCombinesFirstAndLastNameWhenSet(): void
+    public function testGetFullNameCapitalisesGivenNameAndUppercasesFamilyName(): void
     {
         $user = (new User())->setNickname('Biniou42')->setFirstName('Marine')->setLastName('Gonnord');
 
-        $this->assertSame('Marine Gonnord', $user->getFullName());
+        $this->assertSame('Marine GONNORD', $user->getFullName());
+    }
+
+    public function testGetFullNameNormalisesStoredCasingAndCompoundNames(): void
+    {
+        $user = (new User())->setFirstName('jEAN-luc')->setLastName('de la tour');
+
+        $this->assertSame('Jean-Luc DE LA TOUR', $user->getFullName());
     }
 
     public function testUserIdentifierIsTheEmail(): void

@@ -136,7 +136,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TotpTwo
             return $this->nickname;
         }
 
-        return trim("{$this->firstName} {$this->lastName}");
+        // Display convention across the member area: given name capitalised, family name in uppercase (e.g. "Jean-Luc DUPONT"). Stored values are left untouched.
+        return trim(self::capitalizeWords((string) $this->firstName).' '.mb_strtoupper((string) $this->lastName));
+    }
+
+    // Uppercase the first letter of each word (split on spaces, hyphens, apostrophes), lowercase the rest, so stored casing doesn't matter.
+    private static function capitalizeWords(string $value): string
+    {
+        return preg_replace_callback(
+            '/\p{L}+/u',
+            static fn (array $match) => mb_strtoupper(mb_substr($match[0], 0, 1)).mb_strtolower(mb_substr($match[0], 1)),
+            $value
+        ) ?? $value;
     }
 
     public function getId(): ?int
