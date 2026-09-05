@@ -122,6 +122,11 @@ class ScheduleController extends AbstractController
     // Same visibility rule as findVisibleOrderedByDate(), applied here to direct access by id so a hidden event can't be fetched by guessing its URL. 404 rather than 403 to avoid confirming the event exists.
     private function denyAccessUnlessVisible(Event $event): void
     {
+        // Board meetings are internal: only admins can export them, everyone else gets a 404 as if the event did not exist.
+        if ('board_meeting' === $event->getType() && !$this->isGranted('ROLE_ADMIN')) {
+            throw new NotFoundHttpException();
+        }
+
         if ('concert' !== $event->getType() && null === $this->getUser()) {
             throw new NotFoundHttpException();
         }

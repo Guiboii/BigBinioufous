@@ -26,6 +26,8 @@ class EventType extends ApplicationType
                     $this->trans('event.type_rehearsal') => 'rehearsal',
                     $this->trans('event.type_concert') => 'concert',
                     $this->trans('event.type_other') => 'other',
+                    // Internal-only date (board meetings), never shown on the public /schedule.
+                    $this->trans('event.type_board_meeting') => 'board_meeting',
                 ]]
             ))
             ->add('date', DateTimeType::class, array_merge(

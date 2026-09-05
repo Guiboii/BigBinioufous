@@ -202,6 +202,7 @@ event:
     type_rehearsal: Rehearsal
     type_concert: Concert
     type_other: Other
+    type_board_meeting: Board meeting
     field_date: Date
     field_end_date: "End time (optional)"
     field_description: Description

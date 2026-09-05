@@ -43,6 +43,38 @@ class ScheduleControllerTest extends AppWebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
+    public function testBoardMeetingIsHiddenFromScheduleEvenForLoggedInMembers(): void
+    {
+        $this->persistEvent('Conseil de bureau', 'board_meeting');
+        $this->client->loginUser($this->createUser());
+
+        $this->client->request('GET', '/schedule');
+        $content = (string) $this->client->getResponse()->getContent();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringNotContainsString('Conseil de bureau', $content);
+    }
+
+    public function testIcsExportOfABoardMeetingIsNotFoundForNonAdmins(): void
+    {
+        $event = $this->persistEvent('Conseil de bureau', 'board_meeting');
+        $this->client->loginUser($this->createUser());
+
+        $this->client->request('GET', '/schedule/event/'.$event->getId().'.ics');
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testIcsExportOfABoardMeetingWorksForAdmins(): void
+    {
+        $event = $this->persistEvent('Conseil de bureau', 'board_meeting');
+        $this->client->loginUser($this->createUser(['ROLE_ADMIN']));
+
+        $this->client->request('GET', '/schedule/event/'.$event->getId().'.ics');
+
+        $this->assertResponseIsSuccessful();
+    }
+
     private function persistEvent(string $title, string $type): Event
     {
         $event = (new Event())
