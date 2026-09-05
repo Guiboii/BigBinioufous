@@ -38,15 +38,17 @@ body {
     outline-offset: 2px;
 }
 
+/* Fixed square + object-fit: cover so portrait/landscape photos are centre-cropped instead of rendering as a lopsided rounded rectangle. */
 .avatar {
-    max-width: 128px;
-    max-height: 128px;
-    border-radius: 25px;
+    width: 128px;
+    height: 128px;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .avatar-medium {
-    max-width: 64px;
-    max-height: 64px;
+    width: 64px;
+    height: 64px;
 }
 
 /* Gold on red only reaches 3.24:1, below AA (4.5:1). White (6.07:1, AA) instead, same fix as #joinForm/#loginForm for the same color pair. */
@@ -549,6 +551,44 @@ body.desk .promote-pills .btn-green {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+}
+
+/* "Image rights" acknowledgement: a status pill plus its toggle on one centred row, same block rhythm (h2 + 1.5rem bottom margin) as .role-pills / .promote-pills. */
+body.desk .image-rights {
+    margin-bottom: 1.5rem;
+}
+body.desk .image-rights-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+body.desk .image-rights-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: 25px;
+    font-weight: bold;
+    color: var(--bb-white);
+}
+body.desk .image-rights-status i {
+    font-size: 1.15rem;
+}
+/* Green when consent is recorded, neutral dark grey when not: state never carried by colour alone, the pill text says which it is. */
+body.desk .image-rights-status--ok {
+    background: var(--bb-green-mid);
+}
+body.desk .image-rights-status--unset {
+    background: var(--bb-border-dark);
+}
+body.desk .image-rights .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 25px;
+    padding: 0.45rem 1.2rem;
 }
 
 /* Themed scrollbar matching the rest of the site (Story/Music/Schedule each have one). Targeted on html.desk rather than body.desk: the window scrollbar is driven by the root <html> element, not <body>, as long as <body> has no overflow of its own, so the "desk" class is set on <html> too. */

@@ -39,23 +39,24 @@
             {% endfor %}
         </div>
 
-        <div class="container text-center">
+        <div class="image-rights">
             <h2>{{ 'admin.image_rights_title'|trans }}</h2>
-            <p class="image-rights-status">
-                {% if user.imageRightsConsent %}
-                    <i class="ri-camera-lens-fill" aria-hidden="true"></i> {{ 'admin.image_rights_granted'|trans }}
-                {% else %}
-                    <i class="ri-camera-lens-line" aria-hidden="true"></i> {{ 'admin.image_rights_unknown'|trans }}
-                {% endif %}
-            </p>
-            <form method="post" action="{{ path('user_toggle_image_rights', {slug: user.slug}) }}" onsubmit="return confirm('{{ (user.imageRightsConsent ? 'admin.confirm_image_rights_revoke' : 'admin.confirm_image_rights_grant')|trans({'%name%': user.fullName})|e('js') }}');" class="btn-form">
-                <input type="hidden" name="_token" value="{{ csrf_token('toggle_image_rights' ~ user.id) }}">
-                <button type="submit" class="btn {{ user.imageRightsConsent ? 'btn-red' : 'btn-green' }}">
-                    <i class="ri-{{ user.imageRightsConsent ? 'close-line' : 'check-line' }}" aria-hidden="true"></i>
-                    {{ (user.imageRightsConsent ? 'admin.image_rights_revoke' : 'admin.image_rights_grant')|trans }}
-                </button>
-            </form>
+            <div class="image-rights-row">
+                <span class="image-rights-status image-rights-status--{{ user.imageRightsConsent ? 'ok' : 'unset' }}">
+                    <i class="ri-camera-lens-{{ user.imageRightsConsent ? 'fill' : 'line' }}" aria-hidden="true"></i>
+                    {{ (user.imageRightsConsent ? 'admin.image_rights_granted' : 'admin.image_rights_unknown')|trans }}
+                </span>
+                <form method="post" action="{{ path('user_toggle_image_rights', {slug: user.slug}) }}" onsubmit="return confirm('{{ (user.imageRightsConsent ? 'admin.confirm_image_rights_revoke' : 'admin.confirm_image_rights_grant')|trans({'%name%': user.fullName})|e('js') }}');" class="btn-form">
+                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_image_rights' ~ user.id) }}">
+                    <button type="submit" class="btn {{ user.imageRightsConsent ? 'btn-red' : 'btn-green' }}">
+                        <i class="ri-{{ user.imageRightsConsent ? 'close-line' : 'check-line' }}" aria-hidden="true"></i>
+                        {{ (user.imageRightsConsent ? 'admin.image_rights_revoke' : 'admin.image_rights_grant')|trans }}
+                    </button>
+                </form>
+            </div>
+        </div>
 
+        <div class="container text-center">
             {% if 'ROLE_ADMIN' not in user.roles or 'ROLE_COMPTA' not in user.roles or 'ROLE_BINIOUFOUS' not in user.roles %}
                 <h2>{{ 'admin.promote_section'|trans }}</h2>
                 <div class="promote-pills">
