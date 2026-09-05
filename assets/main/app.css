@@ -656,6 +656,11 @@ body.desk .table td:nth-child(6) {
 body.desk .table td {
     overflow-wrap: break-word;
 }
+/* Text links inside desk/admin content sit on the page's gold background, where the default link green (--bb-green-mid) only reaches 3.63:1, below AA. --bb-green-deep is 7.15:1 (AAA), the same choice as .text-green. Button links keep their own colours. */
+body.desk .table a:not(.btn),
+body.desk .markdown-view a {
+    color: var(--bb-green-deep);
+}
 
 /* White hover text (not gold/red): same contrast fix as the navbar, here for the "pay membership"/"subscribe" CTAs. */
 .red-hover:hover {
