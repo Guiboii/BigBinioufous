@@ -4,8 +4,10 @@ namespace App\Command;
 
 use App\DataFixtures\StorySectionSeedData;
 use App\Entity\Event;
+use App\Entity\Instrument;
 use App\Entity\StorySection;
 use App\Repository\EventRepository;
+use App\Repository\InstrumentRepository;
 use App\Repository\StorySectionRepository;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,16 +17,26 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-// One-off seeding of public showcase content (Story sections + season schedule) for
-// environments where fixtures don't run, e.g. the prod_vitrine deploy. Idempotent:
-// rows already present (matched by slug / by title+date) are skipped, so it is safe
-// to re-run and it never overwrites content edited later from /admin.
+// One-off seeding of public showcase content (Story sections + season schedule) and
+// reference data (instruments) for environments where fixtures don't run, e.g. the
+// prod_vitrine deploy. Idempotent: rows already present (matched by slug / by
+// title+date / by title) are skipped, so it is safe to re-run and it never
+// overwrites content edited later from /admin.
 #[AsCommand(
     name: 'app:seed-content',
-    description: 'Seed Story sections and schedule events if missing (prod-safe, idempotent).',
+    description: 'Seed Story sections, schedule events and instruments if missing (prod-safe, idempotent).',
 )]
 class SeedContentCommand extends Command
 {
+    // Real instrument lineup of the band (not the fixtures' broader demo list).
+    private const INSTRUMENTS = [
+        'Flûte traversière',
+        'Hautbois',
+        'Cor anglais',
+        'Batterie',
+        'Chant',
+        'Autre',
+    ];
     // 2026-2027 season, taken from AppFixtures. Rehearsal times are placeholders
     // (the fixtures had obviously fake ones); adjust from /admin once the real
     // schedule is known.
@@ -48,6 +60,7 @@ class SeedContentCommand extends Command
         private readonly EntityManagerInterface $em,
         private readonly StorySectionRepository $storySections,
         private readonly EventRepository $events,
+        private readonly InstrumentRepository $instruments,
     ) {
         parent::__construct();
     }
@@ -93,12 +106,22 @@ class SeedContentCommand extends Command
             ++$eventsAdded;
         }
 
+        $instrumentsAdded = 0;
+        foreach (self::INSTRUMENTS as $title) {
+            if (null !== $this->instruments->findOneBy(['title' => $title])) {
+                continue;
+            }
+            $this->em->persist((new Instrument())->setTitle($title));
+            ++$instrumentsAdded;
+        }
+
         $this->em->flush();
 
         $io->success(sprintf(
-            '%d story section(s) and %d event(s) added. Existing rows were left untouched.',
+            '%d story section(s), %d event(s) and %d instrument(s) added. Existing rows were left untouched.',
             $storyAdded,
             $eventsAdded,
+            $instrumentsAdded,
         ));
 
         return Command::SUCCESS;

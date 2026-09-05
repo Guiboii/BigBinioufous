@@ -149,9 +149,9 @@ Puis insérer les 3 rôles (les fixtures sont `require-dev`, indisponibles avec 
 php bin/console dbal:run-sql "INSERT INTO role (title, description) VALUES ('ROLE_ADMIN','Administrator'),('ROLE_COMPTA','Accountant'),('ROLE_BINIOUFOUS','Binioufous')"
 ```
 
-## 8bis. Contenu vitrine (Histoire + planning)
+## 8bis. Contenu vitrine (Histoire + planning + instruments)
 
-Les pages `/story` et `/schedule` lisent leur contenu en base (`story_section`, `event`), vide sur un clone neuf. Une commande dédiée le sème, **idempotente** (ne réinsère pas ce qui existe déjà, n'écrase jamais ce qui a été édité via `/admin`) :
+Les pages `/story` et `/schedule` lisent leur contenu en base (`story_section`, `event`), vide sur un clone neuf, tout comme la liste des instruments proposée sur le profil (`instrument`). Une commande dédiée sème le tout, **idempotente** (ne réinsère pas ce qui existe déjà, n'écrase jamais ce qui a été édité via `/admin`) :
 
 ```bash
 php bin/console app:seed-content
@@ -265,7 +265,7 @@ Le job ne joue **pas** `doctrine:migrations:migrate` : le repo ne versionne aucu
 - [ ] Repo cloné (HTTPS), `.env` **et** `.env.prod.local` créés (jamais commités)
 - [ ] Fichiers `migrations/Version*.php` traînants supprimés du VPS (sinon `migrate` casse ; le job n'y touche plus mais un `migrate` manuel oui)
 - [ ] Schéma créé via `doctrine:schema:create` (pas de migrations dans le repo), `importmap:install` lancé
-- [ ] 3 rôles insérés, `app:seed-content` lancé une fois (Histoire + planning)
+- [ ] 3 rôles insérés, `app:seed-content` lancé une fois (Histoire + planning + instruments)
 - [ ] vhost nginx pointant sur `/var/www/binioufous/public` + socket du pool dédié
 - [ ] Premier déploiement manuel réussi, site accessible
 - [ ] HTTPS actif (certbot)
