@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Role;
 use App\Entity\User;
 use App\Form\EditUserType;
-use App\Form\ValidRoleType;
 use App\Mailer\RegistrationMailer;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
@@ -145,14 +144,10 @@ class AdminController extends AbstractController
     }
 
     // Validates a pending registration and emails the user. Grants no role: membership is decided separately via toggleMembership() above.
-    #[Route('/admin/{slug}/valid', name: 'user_valid')]
-    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, Request $request, RegistrationMailer $registrationMailer, LoggerInterface $logger)
+    #[Route('/admin/{slug}/valid', name: 'user_valid', methods: ['POST'])]
+    public function validUser(EntityManagerInterface $manager, #[MapEntity(mapping: ['slug' => 'slug'])] User $user, Request $request, RegistrationMailer $registrationMailer, LoggerInterface $logger): Response
     {
-        $form = $this->createForm(ValidRoleType::class, $user);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($this->isCsrfTokenValid('valid'.$user->getId(), $request->request->get('_token'))) {
             $user->setValidation(true);
 
             $manager->persist($user);
@@ -166,14 +161,9 @@ class AdminController extends AbstractController
                 'success',
                 'Utilisateur accepté'
             );
-
-            return $this->redirectToRoute('valid');
         }
 
-        return $this->render('admin/user/valid.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('valid');
     }
 
     // Rejects a pending registration by deleting the account, since it was never validated.

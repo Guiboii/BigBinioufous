@@ -526,6 +526,7 @@ admin:
     date_of_birth: Date of Birth
     edit_user_aria: "Edit %name%'s profile"
     validate_user_aria: "Approve %name%'s registration"
+    confirm_valid: "Approve %name%'s registration?"
     remove_role_aria: "Remove role \"%role%\""
     confirm_remove_role: "Remove the \"%role%\" role?"
     refuse: Refuse

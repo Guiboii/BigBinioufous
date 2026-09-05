@@ -37,9 +37,9 @@ class AdminControllerTest extends AppWebTestCase
         $this->client->loginUser($admin);
         $target = $this->createUser([], false);
 
-        $crawler = $this->client->request('GET', '/admin/'.$target->getSlug().'/valid');
-        $form = $crawler->filter('form')->form();
-        $this->client->submit($form);
+        $this->client->request('POST', '/admin/'.$target->getSlug().'/valid', [
+            '_token' => $this->csrfToken('valid'.$target->getId()),
+        ]);
 
         $target = $this->reload($target);
         $this->assertTrue($target->getValidation());
