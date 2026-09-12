@@ -1076,7 +1076,7 @@ li.nav-item.active, li.nav-item:hover,
     opacity: 0.6;
 }
 
-/* "New folder" and the drop zone: the two most likely actions on arriving in a folder, given equal visual weight side by side on desktop, stacked on mobile. */
+/* "New folder" and the drop zone: the two most likely actions on arriving in a folder, given equal visual weight side by side on desktop, stacked on mobile. Equal-width columns (not 1fr/1.3fr as before): a wider drop zone read as "the" way to add content and buried the folder card, per user feedback that folder creation wasn't discoverable. */
 .desk-actions {
     display: grid;
     grid-template-columns: 1fr;
@@ -1084,7 +1084,7 @@ li.nav-item.active, li.nav-item:hover,
 }
 @media (min-width: 640px) {
     .desk-actions {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         align-items: stretch;
     }
 }
@@ -1100,6 +1100,16 @@ li.nav-item.active, li.nav-item:hover,
     border: 2px solid var(--bb-green-mid);
     border-radius: 10px;
     box-shadow: var(--bb-shadow-soft);
+}
+/* Mirrors .quick-upload-zone's icon + text pairing next to it, so "create a folder" reads as an action card of the same weight instead of a plain form label. */
+.desk-new-folder-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.desk-new-folder-header i {
+    font-size: 1.3rem;
+    color: var(--bb-green-mid);
 }
 .desk-new-folder label {
     margin: 0;

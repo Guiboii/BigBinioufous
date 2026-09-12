@@ -121,7 +121,10 @@
             {# .desk-actions groups the two most likely actions on arriving in a folder (new folder / drop files), given equal visual weight side by side. Hidden without FOLDER_WRITE, no point showing an action that would be refused on click. #}
             <div class="desk-actions">
                 <form method="post" action="{{ path('folder_create', {space: space}) }}" class="desk-new-folder">
-                    <label for="new-folder-name">{{ 'desk.new_folder_label'|trans }}</label>
+                    <div class="desk-new-folder-header">
+                        <i class="ri-folder-add-line" aria-hidden="true"></i>
+                        <label for="new-folder-name">{{ 'desk.new_folder_label'|trans }}</label>
+                    </div>
                     <div class="desk-new-folder-row">
                         <input type="text" id="new-folder-name" name="name" placeholder="{{ 'desk.new_folder_placeholder'|trans }}" required maxlength="255">
                         <input type="hidden" name="parent" value="{{ currentFolder.id }}">
