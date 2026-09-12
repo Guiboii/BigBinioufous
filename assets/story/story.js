@@ -231,34 +231,43 @@ function raycast(e, touch = false) {
   raycaster.setFromCamera(mouse, camera);
   // calculate objects intersecting the picking ray
   var intersects = raycaster.intersectObjects(scene.children, true);
-  console.log(intersects);
 
-  // The binders are thin slices that can be occluded by the rest of the desk at nearly the same distance, so they're searched across every hit object, not just the closest.
+  if (!intersects[0]) {
+    return;
+  }
+
+  var object = intersects[0].object;
+
   var trieurSpaces = {
     trieurAccounting: 'accounting',
     trieurMusic: 'music',
     trieurAdmin: 'admin',
     trieurOther: 'other',
   };
-  var trieurHit = intersects.find((i) => trieurSpaces[i.object.name]);
-  if (trieurHit) {
-    location.href = '/desk/files/' + trieurSpaces[trieurHit.object.name];
-    return;
+
+  // The binders are thin slices that can be occluded by the desk mesh at nearly the same
+  // distance, so a click on the desk searches past the closest hit for one behind it. Only
+  // done when the desk (or a binder) is actually the closest hit: searching every hit
+  // regardless let unrelated, closer objects further along the same ray (the mascot, the
+  // saucer) get overridden by a binder hit behind them, sending those clicks to a members-only
+  // /desk/files page instead of their own handler.
+  if (trieurSpaces[object.name] || isDescendantOf(object, 'desk')) {
+    var trieurHit = intersects.find((i) => trieurSpaces[i.object.name]);
+    if (trieurHit) {
+      location.href = '/desk/files/' + trieurSpaces[trieurHit.object.name];
+      return;
+    }
   }
 
-  if (intersects[0]) {
-    var object = intersects[0].object;
-    console.log(object.name);
-    if (isDescendantOf(object, 'desk')) {
-      if (!currentlyAnimating) {
-        currentlyAnimating = true;
-        playModifierAnimation(idle, 0.25, next, 0.25);
-      }
-    } else if (object.name === 'contactPlane') {
-      openContactForm();
-    } else if (object.parent.name === 'Soucoupe') {
-      location.href = '/join';
+  if (isDescendantOf(object, 'desk')) {
+    if (!currentlyAnimating) {
+      currentlyAnimating = true;
+      playModifierAnimation(idle, 0.25, next, 0.25);
     }
+  } else if (object.name === 'contactPlane') {
+    openContactForm();
+  } else if (isDescendantOf(object, 'soucoupe')) {
+    location.href = '/join';
   }
 }
 
