@@ -46,6 +46,10 @@ security:
                 path: logout
                 target: home
 
+            # Redirects a logged-in user who lacks the required role to /desk with an
+            # explanation instead of Symfony's bare 403 page (cf. App\Security\AppAccessDeniedHandler).
+            access_denied_handler: App\Security\AppAccessDeniedHandler
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
