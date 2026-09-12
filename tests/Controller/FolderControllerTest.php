@@ -36,7 +36,7 @@ class FolderControllerTest extends AppWebTestCase
             'name' => 'Medley breton',
         ]);
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testDeletingAFolderDoesNotTrashItsChildren(): void

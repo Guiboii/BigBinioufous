@@ -104,7 +104,7 @@ class CarpoolControllerTest extends AppWebTestCase
         $token = $this->csrfToken('delete'.$offer->getId());
         $this->client->request('POST', '/desk/carpool/'.$offer->getId(), ['_method' => 'DELETE', '_token' => $token]);
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     private function persistEvent(string $date): Event

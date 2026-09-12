@@ -17,7 +17,7 @@ class NoteControllerTest extends AppWebTestCase
 
         $this->client->request('GET', '/desk/notes/'.$note->getId());
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testSharedNoteOfAnotherAuthorIsReadableButNotEditable(): void
@@ -31,7 +31,7 @@ class NoteControllerTest extends AppWebTestCase
         $this->assertResponseIsSuccessful();
 
         $this->client->request('GET', '/desk/notes/'.$note->getId().'/edit');
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testCreatingANoteAttachesTheCurrentUserAsAuthor(): void

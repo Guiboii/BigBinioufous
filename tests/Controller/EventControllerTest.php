@@ -14,7 +14,7 @@ class EventControllerTest extends AppWebTestCase
 
         $this->client->request('GET', '/admin/event/');
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testCreatingAnEventPersistsIt(): void

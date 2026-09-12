@@ -30,7 +30,7 @@ class DeskControllerTest extends AppWebTestCase
 
         $this->client->request('GET', '/desk/files/music');
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testAccountingSpaceRequiresRoleCompta(): void
@@ -38,7 +38,7 @@ class DeskControllerTest extends AppWebTestCase
         $binioufous = $this->createUser(['ROLE_BINIOUFOUS']);
         $this->client->loginUser($binioufous);
         $this->client->request('GET', '/desk/files/accounting');
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
 
         $accountant = $this->createUser(['ROLE_COMPTA']);
         $this->client->loginUser($accountant);

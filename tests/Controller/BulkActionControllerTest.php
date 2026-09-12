@@ -41,6 +41,6 @@ class BulkActionControllerTest extends AppWebTestCase
             '_token' => $this->csrfToken('bulk_deletemusic'),
         ]);
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 }

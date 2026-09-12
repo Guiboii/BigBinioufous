@@ -13,7 +13,7 @@ class AdminControllerTest extends AppWebTestCase
 
         $this->client->request('GET', '/admin/valid');
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testCreateBinioufousRoleGrantsIt(): void
@@ -73,7 +73,7 @@ class AdminControllerTest extends AppWebTestCase
             '_token' => $this->csrfToken('toggle_image_rights'.$target->getId()),
         ]);
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testToggleMembershipOnlyAffectsRoleBinioufous(): void

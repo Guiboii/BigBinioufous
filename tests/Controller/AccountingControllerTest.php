@@ -17,7 +17,7 @@ class AccountingControllerTest extends AppWebTestCase
 
         $this->client->request('GET', '/desk/files/accounting/documents');
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testCreatingAQuotePersistsItWithItsLineAndANumber(): void

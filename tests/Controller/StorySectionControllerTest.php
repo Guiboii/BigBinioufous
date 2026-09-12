@@ -14,7 +14,7 @@ class StorySectionControllerTest extends AppWebTestCase
 
         $this->client->request('GET', '/admin/story/');
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testCreatingASectionPersistsIt(): void

@@ -14,7 +14,7 @@ class TwoFactorControllerTest extends AppWebTestCase
 
         $this->client->request('GET', '/desk/profile/2fa');
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/desk');
     }
 
     public function testEnablingWithAValidCodePersistsTheSecret(): void
