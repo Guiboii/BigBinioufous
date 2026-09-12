@@ -2,7 +2,7 @@
 
 Application web Symfony pour la gestion d'un orchestre/fanfare (les "Binioufous") : inscription et validation des adhésions, gestion des rôles, gestion des instruments, bibliothèque musicale (setlist publique + partitions/voix), gestionnaire de fichiers façon Drive (musique, administratif, comptabilité, autre), comptabilité (devis/factures/clients/trésorerie), notes de bureau, planning et pages vitrines (accueil, histoire, planning). Authentification 2FA (TOTP) pour les comptes admin. Interface en français/anglais/breton.
 
-Pour le détail par sujet (entités, contrôleurs/routes, rôles, sécurité, style frontend, i18n), voir [doc/](doc/README.md). Pour l'historique des chantiers en cours et l'état d'avancement, voir [CLAUDE.md](CLAUDE.md) et [ROADMAP.md](ROADMAP.md).
+Pour le détail par sujet (entités, contrôleurs/routes, rôles, sécurité, style frontend, i18n), voir [doc/](doc/README.md). Pour un parcours complet côté utilisateur·ice (inscription, tableau de bord, fichiers, musique, compta, planning, administration...), voir [doc/guide-utilisateur.md](doc/guide-utilisateur.md). Pour l'historique des chantiers en cours et l'état d'avancement, voir [CLAUDE.md](CLAUDE.md) et [ROADMAP.md](ROADMAP.md).
 
 ## Stack technique
 
@@ -69,10 +69,10 @@ Pour le détail par sujet (entités, contrôleurs/routes, rôles, sécurité, st
 │   │                            # DocumentController, BulkActionController, AccountingController,
 │   │                            # EventController, ScheduleController, StoryController,
 │   │                            # StorySectionController, NoteController, TwoFactorController,
-│   │                            # ContactController, LocaleController
+│   │                            # ContactController, LocaleController, CarpoolController
 │   ├── Entity/                  # User, Role, Instrument, Folder, Document, SetlistItem, Artist,
 │   │                             # Event, Note, StorySection, Client, AccountingDocument(Line),
-│   │                             # LedgerEntry, PasswordUpdate
+│   │                             # LedgerEntry, PasswordUpdate, CarpoolOffer
 │   ├── Security/                 # FolderWriteVoter (droits d'écriture par espace du gestionnaire de fichiers)
 │   ├── Form/                      # Types de formulaires (inscription, profil, édition user...)
 │   ├── Repository/                 # Repositories Doctrine associés à chaque entité
@@ -103,6 +103,7 @@ Aperçu rapide, détail complet dans [doc/entities.md](doc/entities.md) et [doc/
 - **SetlistItem** / **Artist** : setlist affichée sur `/music` (page publique), chaque morceau pointe éventuellement vers un `Folder` de l'espace `music` portant les fichiers audio réels.
 - **AccountingDocument** / **AccountingDocumentLine** / **Client** / **LedgerEntry** : devis/factures et trésorerie de l'espace comptabilité.
 - **Event** : planning (`/schedule`), export `.ics`.
+- **CarpoolOffer** : covoiturage pour un événement à venir (`/desk/carpool`), ouvert à tout compte connecté.
 - **StorySection** : contenu éditorial de la page Histoire (`/story`), édité en markdown (EasyMDE).
 - **Note** : notes du bureau/conseil (`/desk/notes`).
 
@@ -119,6 +120,7 @@ Table complète des routes par contrôleur dans [doc/controllers.md](doc/control
 | Setlist (gestion)               | `/desk/files/music/setlist`               | `ROLE_BINIOUFOUS`/`ROLE_ADMIN` (écriture espace musique) |
 | Comptabilité                     | `/desk/files/accounting/{documents,clients,treasury}` | `ROLE_COMPTA`/`ROLE_ADMIN`         |
 | Notes de bureau                   | `/desk/notes`                             | `ROLE_ADMIN`/`ROLE_COMPTA`                      |
+| Covoiturage                        | `/desk/carpool`                          | Connecté (tout rôle)                            |
 | Validation / gestion des membres   | `/admin/*` (valid, user, event, story...) | `ROLE_ADMIN`                                    |
 | 2FA (activation compte admin)       | `/desk/profile/2fa`, `/2fa`               | `ROLE_ADMIN` (optionnel côté compte)            |
 
@@ -170,13 +172,13 @@ DATABASE_URL=mysql://root:root@127.0.0.1:3306/binioufous_4?serverVersion=5.7
 
 ## Tests
 
-Tests PHPUnit via le pack Symfony `test-pack` :
-
 ```bash
-php bin/phpunit
+composer test
 ```
 
-Aucun test réel actuellement (seulement `tests/bootstrap.php`).
+76 tests fonctionnels/unitaires (`tests/Controller`/`Entity`/`Security`), base SQLite recréée à chaque test (`tests/Support/AppWebTestCase`, `SchemaTool`, contourne `doctrine:migrations` peu fiable sur ce projet, cf. `CLAUDE.md`). Nécessite `DATABASE_URL="sqlite:///%kernel.project_dir%/var/test.db"` dans `.env.test.local` (gitignored, à créer localement).
+
+**Piège** : jamais `php bin/phpunit` (wrapper `simple-phpunit` du bridge Symfony) : casse sur PHP 8.4 à cause d'une version épinglée trop ancienne dans `phpunit.xml.dist`. `composer test` utilise directement `vendor/bin/phpunit` (`phpunit/phpunit ^9.5`), qui fonctionne très bien.
 
 ## Conventions de code
 

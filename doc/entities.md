@@ -170,6 +170,23 @@ Date du planning (`/schedule`, public ; CRUD sous `/admin/event`, `ROLE_ADMIN`).
 
 Export `.ics` par événement : `GET /schedule/event/{id}.ics`.
 
+## `CarpoolOffer`
+
+Offre de covoiturage pour un `Event` à venir (`/desk/carpool`, tout compte connecté). Un dossier admin de suppression manquant : la suppression est vérifiée en dur dans `CarpoolController`, pas via `access_control`.
+
+| Champ | Type | Notes |
+|---|---|---|
+| `event` | `Event` | ManyToOne, `onDelete: CASCADE` |
+| `driver` | `User` | ManyToOne, `onDelete: CASCADE` |
+| `departureLocation` | string | |
+| `departureTime` | datetime, nullable | Facultatif : ne sert que si l'heure de départ diffère de celle de l'événement (ex. départ la veille) |
+| `seatsTotal` | smallint | Places offertes aux passager·ères, **hors** conducteur·rice |
+| `comment` | text, nullable | |
+| `passengers` | `Collection<User>` | ManyToMany, `JoinTable: carpool_offer_passenger` |
+| `createdAt` | datetime immutable | Rempli automatiquement |
+
+Points clés : `getSeatsAvailable()`/`isFull()` calculés à la volée (`seatsTotal - passengers.count()`), pas de colonne dédiée. Suppression réservée au conducteur·rice ou `ROLE_ADMIN` (vérifié en dur dans `CarpoolController::delete()`, pas de voter dédié).
+
 ## `Note`
 
 Prise de notes du bureau/conseil (`/desk/notes`, `ROLE_ADMIN`/`ROLE_COMPTA`). Non collaboratif : seul l'auteur·ice peut modifier/supprimer sa note, même partagée.
@@ -223,6 +240,10 @@ AccountingDocument ──ManyToOne──> AccountingDocument (sourceQuote)
 LedgerEntry ──ManyToOne──> AccountingDocument (optionnel)
 
 Note ──ManyToOne──> User (author)
+
+CarpoolOffer ──ManyToOne──> Event
+CarpoolOffer ──ManyToOne──> User (driver)
+CarpoolOffer ──ManyToMany──> User (passengers)
 ```
 
 ## Fixtures (`src/DataFixtures/AppFixtures.php`)

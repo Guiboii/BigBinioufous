@@ -17,6 +17,8 @@
 
   Détail métier complet (qui a accès à quoi, comment un rôle est obtenu, comportement des comptes multi-rôles) : [role.md](role.md).
 
+- **`access_denied_handler`** (`App\Security\AppAccessDeniedHandler`, 2026-09-12) : un compte connecté qui déclenche une `AccessDeniedException` (rôle insuffisant, `access_control` ou `denyAccessUnlessGranted`) est redirigé vers `/desk` avec un message flash plutôt que de voir la page 403 brute de Symfony. Un visiteur anonyme n'atteint jamais ce handler : le firewall `form_login` le redirige vers `/join` avant même de lever l'exception. Les tests fonctionnels qui vérifient un refus d'accès attendent donc `assertResponseRedirects('/desk')`, pas un statut 403 (exception : `ContactControllerTest`, dont le 403 est renvoyé directement par le contrôleur, pas via le security voter).
+
 ## Upload / fichiers
 
 - Paramètres définis dans `config/services.yaml` : `documents_directory` (`public/uploads/documents`, gestionnaire de fichiers `/desk/files/*`), `pictures_directory` (`public/uploads/pictures`, photos de profil), `event_posters` (`public/uploads/events`, affiches de planning). Voir [forms.md](forms.md).
@@ -25,5 +27,5 @@
 ## Gotcha
 
 - Pas de `Security\Voter` générique dans le projet, un seul cas dédié : `FolderWriteVoter` (attribut `FOLDER_WRITE`, sujet = le `space`), pour distinguer lecture (`access_control`) et écriture (`Folder::WRITE_ROLES`) sur `/desk/files/*`. Pour une nouvelle page réservée à un rôle donné ailleurs, ajouter une règle `access_control` (ou, à défaut, un `denyAccessUnlessGranted`/`isGranted` dans le contrôleur) : rien de générique ne le fait automatiquement.
-- `access_control` gère l'accès aux **routes**, pas l'affichage : un lien/bouton vers une route réservée peut rester visible dans un template pour quelqu'un qui n'a pas le rôle (cliquer dessus renvoie un 403, mais rien ne le cache). À vérifier au cas par cas plutôt que de supposer que la visibilité d'un lien reflète les droits réels.
+- `access_control` gère l'accès aux **routes**, pas l'affichage : un lien/bouton vers une route réservée peut rester visible dans un template pour quelqu'un qui n'a pas le rôle (cliquer dessus renvoie un refus, mais rien ne le cache). À vérifier au cas par cas plutôt que de supposer que la visibilité d'un lien reflète les droits réels. **Exemple réel corrigé le 2026-09-12** : `templates/desk/lists/binioufous.html.twig` est inclus à la fois pour les admins et pour un simple binioufous (`desk/index.html.twig`), mais sa colonne "Actions" pointait vers des routes `/admin/*` sans être gardée par un `is_granted('ROLE_ADMIN')` dans le template : un binioufous cliquant sur sa propre ligne se prenait un refus d'accès.
 - Pas de `role_hierarchy` configuré : `ROLE_ADMIN` n'hérite **pas** automatiquement des permissions des autres rôles au niveau `access_control`, chaque règle doit lister explicitement `[ROLE_X, ROLE_ADMIN]` si un admin doit y avoir accès (c'est le cas pour toutes les règles `/desk/files/*` actuelles). Toujours vérifier au cas par cas plutôt que de supposer qu'un admin passe partout.

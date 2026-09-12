@@ -2,6 +2,7 @@
 
 Docs courtes, une par partie du projet, pour se remettre dans le code vite. Chacune liste surtout les **gotchas / trucs pas évidents** plutôt que de réexpliquer ce que le code montre déjà.
 
+- [guide-utilisateur.md](guide-utilisateur.md) : parcours complet côté utilisateur·ice (pas technique), de l'inscription à l'administration, page par page.
 - [role.md](role.md) : les rôles utilisateurs (`ROLE_ADMIN`, `ROLE_COMPTA`...), qui a accès à quoi, comment un rôle est attribué.
 - [entities.md](entities.md) : le modèle de données Doctrine (`User`, `Role`, `Instrument`, `Folder`/`Document`, `SetlistItem`/`Artist`, comptabilité, `Event`, `Note`, `StorySection`, `PasswordUpdate`) et leurs relations.
 - [controllers.md](controllers.md) : toutes les routes, par contrôleur, + où le contrôle d'accès est (et n'est pas) vérifié.

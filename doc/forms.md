@@ -18,6 +18,7 @@ Mise à jour 2026-08-17 : ce fichier décrivait encore `TrackType`/`VoiceType` (
 | `AccountingDocumentType` | `AccountingDocument` | `AccountingController::handleDocumentForm` (new/edit/from quote) | `date`, `client` (EntityType, préremplit côté JS via `choice_attr` data-address/data-contact, cf. `assets/accounting/client-autofill.js`), `clientName`/`clientAddress`/`clientContact` (les champs réellement soumis), `correspondentName`/`Email`/`Phone`, `lines` (CollectionType imbriquant `AccountingDocumentLineType`, `allow_add`/`allow_delete`) |
 | `AccountingDocumentLineType` | `AccountingDocumentLine` | Entrée de `AccountingDocumentType.lines` | `label`, `unitPrice` (NumberType, `min=0`, `step=0.01`), `quantity` (IntegerType, `min=1`) |
 | `LedgerEntryType` | `LedgerEntry` | `AccountingController::treasuryNew` | `date`, `type` (ChoiceType : income/expense), `label`, `amount` (`min=0.01`, `step=0.01`), `category` (facultatif) |
+| `CarpoolOfferType` | `CarpoolOffer` | `CarpoolController::new` | `event` (EntityType, filtré aux événements futurs uniquement), `departureLocation`, `departureTime` (facultatif), `seatsTotal` (`Range` 1-20), `comment` (facultatif) |
 
 `AddAdminType`/`AddAccountantType`/`AddBinioufousType` n'existent pas : `AdminController::addAdminRole`/`addAccountantRole`/`addBinioufousRole` font un CSRF check direct sans passer par `$this->createForm()`, même pattern que `user_refuse`/`user_remove_role`/toutes les suppressions du gestionnaire de fichiers.
 

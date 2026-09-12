@@ -131,7 +131,7 @@ CONTACT_EMAIL=contact@binioufous.fr
 
 ## 8. Premier déploiement manuel
 
-**Il n'y a aucun fichier de migration dans le repo** (`migrations/` ne contient qu'un `.gitignore` vide). Le schéma se crée donc directement depuis les entités, pas via `doctrine:migrations` :
+Le repo versionne bien des migrations (`src/Migrations/`, historique depuis 2020), mais `doctrine:migrations:migrate` n'est **pas** utilisé pour poser le schéma initial : le schéma de prod a dérivé au fil des années via des `ALTER TABLE` manuels jamais tous capturés en migrations, rejouer l'historique complet depuis zéro sur une base neuve échoue (`Duplicate column name`, colonnes déjà présentes autrement). Le schéma se crée donc directement depuis les entités actuelles :
 
 ```bash
 cd /var/www/binioufous
@@ -257,7 +257,7 @@ Repo GitHub → Settings → Secrets and variables → Actions → New repositor
 
 Une fois posés, tout push sur `master` déclenche le job `deploy` du pipeline : `git fetch`/`checkout master`/`pull`, puis `composer install --no-dev`, `importmap:install`, `asset-map:compile`, `cache:clear`.
 
-Le job ne joue **pas** `doctrine:migrations:migrate` : le repo ne versionne aucune migration et le schéma est posé une fois via `doctrine:schema:create` (section 8). Des fichiers `migrations/Version*.php` traînant sur le disque d'un vieux clone feraient d'ailleurs échouer `migrate` (rejeu sur un schéma déjà complet, `Duplicate column name`) : les supprimer du VPS le cas échéant. Les évolutions de schéma se font à la main (`doctrine:schema:update --force --complete` après revue du `--dump-sql`).
+Le job ne joue **pas** `doctrine:migrations:migrate` : le schéma est posé une fois via `doctrine:schema:create` (section 8), voir l'explication en tête de la section 8 sur pourquoi rejouer l'historique des migrations (`src/Migrations/`) échouerait sur une base neuve (`Duplicate column name`). Les évolutions de schéma se font à la main (`doctrine:schema:update --force --complete` après revue du `--dump-sql`) plutôt qu'en écrivant de nouvelles migrations.
 
 ## Checklist rapide
 

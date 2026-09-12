@@ -30,7 +30,7 @@ Basé sur `config/packages/security.yaml` (`access_control`), plus quelques vér
 |---|---|---|
 | `/` , `/story`, `/story/mini`, `/schedule`, `/schedule/event/{id}.ics`, `/music` (lecture), `/contact` | public | Pages vitrines + setlist en lecture, aucune restriction. |
 | `/join`, `/login`, `/logout`, `/register`, `/locale/{locale}` | public | Flux pré-connexion. |
-| `/desk`, `/desk/profile`, `/desk/update-password`, `/desk/files` (hub) | `IS_AUTHENTICATED_FULLY` | Tout compte connecté, validé ou non, quel que soit son rôle. Le hub `/desk/files` est atteignable par n'importe quel compte connecté, mais n'affiche une carte que pour les espaces auxquels le compte a vraiment accès. |
+| `/desk`, `/desk/profile`, `/desk/update-password`, `/desk/files` (hub), `/desk/carpool/*` | `IS_AUTHENTICATED_FULLY` | Tout compte connecté, validé ou non, quel que soit son rôle. Le hub `/desk/files` est atteignable par n'importe quel compte connecté, mais n'affiche une carte que pour les espaces auxquels le compte a vraiment accès. Suppression d'une offre de covoiturage réservée au conducteur·rice ou `ROLE_ADMIN` (vérifié en dur, pas dans `access_control`). |
 | `/desk/files/music/*` (dossiers/documents/setlist) | `ROLE_BINIOUFOUS` ou `ROLE_ADMIN` | Lecture et écriture soumises à la même règle. |
 | `/desk/files/admin/*` | `ROLE_ADMIN` | Lecture et écriture. |
 | `/desk/files/accounting/*` (dossiers/documents + devis/factures/clients/trésorerie, `AccountingController`) | `ROLE_COMPTA` ou `ROLE_ADMIN` | Lecture et écriture. |

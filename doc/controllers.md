@@ -77,6 +77,12 @@ Routes du bundle scheb/2fa (pas dans ce contrôleur) : `ANY /2fa` (`2fa_login`),
 - Clients : `GET /clients` (`accounting_clients_index`), `GET|POST /clients/new` (`accounting_client_new`), `GET|POST /clients/{id}/edit` (`accounting_client_edit`), `DELETE /clients/{id}` (`accounting_client_delete`).
 - Trésorerie : `GET /treasury` (`accounting_treasury_index`, avec solde), `GET|POST /treasury/new` (`accounting_treasury_new`), `DELETE /treasury/{id}` (`accounting_treasury_delete`).
 
+## `CarpoolController` (préfixe `/desk/carpool`, `IS_AUTHENTICATED_FULLY` via `^/desk`, aucun rôle métier requis)
+- `GET /` (`carpool_index`) : liste des offres à venir, triées par date d'événement.
+- `GET|POST /new` (`carpool_new`) : propose un trajet pour un événement futur (`CarpoolOfferType`), auteur = conducteur·rice courant·e.
+- `POST /{id}/join` (`carpool_join_toggle`) : rejoint/quitte un trajet en tant que passager·ère. Refuse si complet ou si c'est déjà le/la conducteur·rice (message flash, pas une erreur HTTP).
+- `DELETE /{id}` (`carpool_delete`) : **écriture vérifiée en dur**, réservée au conducteur·rice ou `ROLE_ADMIN` (`throw $this->createAccessDeniedException()` sinon).
+
 ## `ContactController`
 - `POST /contact` (`contact_submit`) : formulaire de contact public, JSON. Anti-spam à 3 niveaux : CSRF, honeypot + piège temporel (délai minimum entre affichage et soumission, faux succès renvoyé sans email si détecté), rate limiting (1/min/IP, `RateLimiterFactoryInterface`). `MAILER_DSN` non configuré : le circuit est actif, mais rien ne part réellement pour l'instant.
 
