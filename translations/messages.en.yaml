@@ -554,6 +554,10 @@ admin:
     image_rights_revoke: Remove consent
     confirm_image_rights_grant: "Confirm that %name% gave consent to use their image?"
     confirm_image_rights_revoke: "Remove %name%'s image rights consent?"
+    image_rights_export: Export as CSV
+    image_rights_granted_list: "Consent given (%count%)"
+    image_rights_unset_list: "No consent recorded (%count%)"
+    image_rights_empty: Nobody yet
 
 Name: Name
 Picture: Picture

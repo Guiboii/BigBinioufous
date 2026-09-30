@@ -560,6 +560,10 @@ admin:
     image_rights_revoke: "Retirer l'accord"
     confirm_image_rights_grant: "Confirmer que %name% a donné son accord pour le droit à l'image ?"
     confirm_image_rights_revoke: "Retirer l'accord droit à l'image de %name% ?"
+    image_rights_export: Exporter en CSV
+    image_rights_granted_list: "Accord donné (%count%)"
+    image_rights_unset_list: "Pas d'accord enregistré (%count%)"
+    image_rights_empty: Personne pour l'instant
 
 Name: Nom
 Picture: Photo

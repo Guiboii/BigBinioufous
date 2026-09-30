@@ -30,6 +30,20 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return User[]
+     */
+    public function findValidatedSortedByName(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.validation = true')
+            ->orderBy('u.lastName', 'ASC')
+            ->addOrderBy('u.firstName', 'ASC')
+            ->addOrderBy('u.nickname', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findAdmins($roleAdmin)
     {
         return $this->createQueryBuilder('u')

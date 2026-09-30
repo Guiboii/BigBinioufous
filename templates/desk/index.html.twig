@@ -32,6 +32,7 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <div class="col">
                         <a href="{{ path('valid') }}" class="btn btn-red">{{ 'desk.pending_count'|trans({'%count%': unvalids|length}) }}</a>
+                        <a href="{{ path('image_rights') }}" class="btn btn-green"><i class="ri-camera-lens-line" aria-hidden="true"></i> {{ 'admin.image_rights_title'|trans }}</a>
                     </div>
                     <div class="mt-2">
                         {{ include('/desk/lists/admins.html.twig') }}

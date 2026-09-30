@@ -102,6 +102,33 @@ class AdminControllerTest extends AppWebTestCase
         $this->assertFalse($this->reload($pending)->getValidation());
     }
 
+    public function testImageRightsExportListsValidatedAccountsWithTheirConsent(): void
+    {
+        $admin = $this->createUser(['ROLE_ADMIN']);
+        $this->client->loginUser($admin);
+        $consenting = $this->createUser();
+        $consenting->setImageRightsConsent(true);
+        $this->entityManager->flush();
+        $pending = $this->createUser([], false);
+
+        $this->client->request('GET', '/admin/image-rights/export.csv');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('Content-Type', 'text/csv; charset=UTF-8');
+        $csv = $this->client->getResponse()->getContent();
+        $this->assertStringContainsString($consenting->getEmail().';;Oui', $csv);
+        $this->assertStringNotContainsString($pending->getEmail(), $csv);
+    }
+
+    public function testImageRightsPageIsForbiddenWithoutRoleAdmin(): void
+    {
+        $this->client->loginUser($this->createUser());
+
+        $this->client->request('GET', '/admin/image-rights');
+
+        $this->assertResponseRedirects('/desk');
+    }
+
     public function testToggleImageRightsConsentFlipsTheFlag(): void
     {
         $admin = $this->createUser(['ROLE_ADMIN']);

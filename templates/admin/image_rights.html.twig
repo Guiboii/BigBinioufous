@@ -1,0 +1,45 @@
+{% extends 'desk/base.html.twig' %}
+
+{% block title %}{{ 'admin.image_rights_title'|trans }}{% endblock %}
+
+{% macro users_table(users, caption) %}
+    <table class="table table-hover text-center">
+        <caption class="sr-only">{{ caption }}</caption>
+        <thead>
+            <tr>
+                <th>{{ 'Name'|trans }}</th>
+                <th>{{ 'Instrument'|trans }}</th>
+                <th>{{ 'Actions'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.fullName }}</td>
+                <td>{{ user.instrument ? user.instrument.title : '-' }}</td>
+                <td><a href="{{ path('user_show', {slug: user.slug}) }}" class="btn btn-green" aria-label="{{ 'admin.edit_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-edit-line" aria-hidden="true"></i></a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3"><em>{{ 'admin.image_rights_empty'|trans }}</em></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% block body %}
+<div class="container mt-2">
+    <div class="profile-header">
+        <a class="btn btn-red" href="{{ path('desk') }}" aria-label="{{ 'admin.back_to_lists'|trans }}"><i class="ri-arrow-left-line" aria-hidden="true"></i></a>
+        <h1>{{ 'admin.image_rights_title'|trans }}</h1>
+    </div>
+    <p>
+        <a href="{{ path('image_rights_export') }}" class="btn btn-green"><i class="ri-download-2-line" aria-hidden="true"></i> {{ 'admin.image_rights_export'|trans }}</a>
+    </p>
+
+    <h2>{{ 'admin.image_rights_granted_list'|trans({'%count%': granted|length}) }}</h2>
+    {{ _self.users_table(granted, 'admin.image_rights_granted_list'|trans({'%count%': granted|length})) }}
+
+    <h2>{{ 'admin.image_rights_unset_list'|trans({'%count%': unset|length}) }}</h2>
+    {{ _self.users_table(unset, 'admin.image_rights_unset_list'|trans({'%count%': unset|length})) }}
+</div>
+{% endblock %}

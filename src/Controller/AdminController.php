@@ -136,6 +136,59 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('user_show', ['slug' => $user->getSlug()]);
     }
 
+    // Overview of every validated account split by image rights consent, so the team can check who may appear in photos without opening each profile.
+    #[Route('/admin/image-rights', name: 'image_rights')]
+    public function imageRights(UserRepository $repo): Response
+    {
+        $users = $repo->findValidatedSortedByName();
+
+        return $this->render('admin/image_rights.html.twig', [
+            'granted' => array_filter($users, fn (User $user) => $user->getImageRightsConsent()),
+            'unset' => array_filter($users, fn (User $user) => !$user->getImageRightsConsent()),
+        ]);
+    }
+
+    // Same list as imageRights() as a CSV file, semicolon-separated with a UTF-8 BOM so it opens correctly in a French Excel/LibreOffice.
+    #[Route('/admin/image-rights/export.csv', name: 'image_rights_export')]
+    public function exportImageRights(UserRepository $repo): Response
+    {
+        $handle = fopen('php://temp', 'r+');
+        if (false === $handle) {
+            throw new \RuntimeException('Impossible de créer le fichier temporaire pour l\'export CSV du droit à l\'image.');
+        }
+
+        fwrite($handle, "\xEF\xBB\xBF");
+        fputcsv($handle, ['Nom', 'Pseudo', 'Email', 'Instrument', 'Droit à l\'image'], ';');
+
+        foreach ($repo->findValidatedSortedByName() as $user) {
+            fputcsv($handle, array_map([self::class, 'escapeCsvFormula'], [
+                $user->getFullName(),
+                $user->getNickname(),
+                $user->getEmail(),
+                $user->getInstrument()?->getTitle() ?? '',
+                $user->getImageRightsConsent() ? 'Oui' : 'Non',
+            ]), ';');
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
+
+        $response = new Response($csv);
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="droit-a-l-image-'.date('Y-m-d').'.csv"');
+
+        return $response;
+    }
+
+    // Names/nicknames are user input: a value starting with = + - @ would run as a formula once opened in a spreadsheet (CSV injection).
+    private static function escapeCsvFormula(?string $value): string
+    {
+        $value = (string) $value;
+
+        return '' !== $value && \in_array($value[0], ['=', '+', '-', '@'], true) ? "'".$value : $value;
+    }
+
     #[Route('/admin/user/{slug}', name: 'user_show')]
     public function showUser(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, Request $request, EntityManagerInterface $manager, RoleRepository $repo)
     {
