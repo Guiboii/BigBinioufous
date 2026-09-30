@@ -541,6 +541,15 @@ admin:
     refuse: Refuser
     refuse_user_aria: "Refuser l'inscription de %name%"
     confirm_refuse: "Refuser l'inscription de %name% ? Le compte sera supprimé."
+    bulk_select_all: Tout sélectionner
+    bulk_select_column: Sélection
+    bulk_select_user_aria: "Sélectionner l'inscription de %name%"
+    bulk_selection: Sélection
+    bulk_selected_count: "%count% sélectionnée(s)"
+    bulk_valid: Valider la sélection
+    bulk_refuse: Refuser la sélection
+    bulk_confirm_valid: "Valider toutes les inscriptions sélectionnées ?"
+    bulk_confirm_refuse: "Refuser toutes les inscriptions sélectionnées ? Les comptes seront supprimés."
     current_roles_title: "Rôles actuels"
     promote_section: "Ajouter un rôle"
     edit_profile_section: Modifier le profil

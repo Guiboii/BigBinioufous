@@ -2,14 +2,28 @@
 
 {% block title %}{{ 'admin.validation_title'|trans }}{% endblock %}
 
+{% block importmap %}
+    {{ importmap(['app', 'registration-bulk']) }}
+{% endblock %}
+
 {% block body %}
 
 <div class="container mt-2">
     <div class="container mt-2">
         <h1>{{ 'admin.pending_requests_title'|trans }}</h1>
+        {% if unvalids is not empty %}
+        {# Row checkboxes are tied to the bulk form below through the HTML "form" attribute: the per-row forms can't wrap them since forms can't be nested. #}
+        <div class="desk-bulk-toolbar text-left">
+            <label class="desk-select-all">
+                <input type="checkbox" id="registration-select-all" class="desk-select">
+                {{ 'admin.bulk_select_all'|trans }}
+            </label>
+        </div>
+        {% endif %}
         <table class="table table-hover text-center">
             <thead>
                 <tr>
+                    <th><span class="sr-only">{{ 'admin.bulk_select_column'|trans }}</span></th>
                     <th>{{ 'Name'|trans }}</th>
                     <th>{{ 'Picture'|trans }}</th>
                     <th>{{ 'Instrument'|trans }}</th>
@@ -24,6 +38,7 @@
             <tbody>
                 {% for user in unvalids %}
                 <tr>
+                    <td><input type="checkbox" name="user_ids[]" value="{{ user.id }}" form="registration-bulk-form" class="desk-select registration-select" aria-label="{{ 'admin.bulk_select_user_aria'|trans({'%name%': user.fullName}) }}"></td>
                     <td>{% if user.gender == 'male' %}<i class="ri-men-fill" aria-hidden="true"></i>{% elseif user.gender == 'female' %}<i class="ri-women-fill" aria-hidden="true"></i>{% else %}<i class="ri-genderless-fill" aria-hidden="true"></i>{% endif %} {{ user.fullName }}</td>
                     <td>{% if user.picture == null %}
                         <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
@@ -54,6 +69,20 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% if unvalids is not empty %}
+        {# Always visible (not revealed by JS like the file manager's bar) so the bulk action still works without JavaScript; the server just ignores an empty selection. #}
+        <form method="post" action="{{ path('user_bulk_valid') }}" id="registration-bulk-form" class="desk-bulk-bar"
+            data-count-label="{{ 'admin.bulk_selected_count'|trans({'%count%': '__COUNT__'}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('bulk_valid') }}">
+            <span id="desk-bulk-count" aria-live="polite">{{ 'admin.bulk_selection'|trans }}</span>
+            <button type="submit" name="bulk_action" value="valid" class="btn btn-green" onclick="return confirm('{{ 'admin.bulk_confirm_valid'|trans|e('js') }}');">
+                <i class="ri-checkbox-circle-line" aria-hidden="true"></i> {{ 'admin.bulk_valid'|trans }}
+            </button>
+            <button type="submit" name="bulk_action" value="refuse" class="btn btn-red" onclick="return confirm('{{ 'admin.bulk_confirm_refuse'|trans|e('js') }}');">
+                <i class="ri-close-circle-line" aria-hidden="true"></i> {{ 'admin.bulk_refuse'|trans }}
+            </button>
+        </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

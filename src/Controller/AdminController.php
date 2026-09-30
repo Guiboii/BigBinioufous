@@ -204,6 +204,59 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('valid');
     }
 
+    // Validates or refuses every checked pending registration at once, same effect as the single-row buttons applied one by one.
+    // Only still-unvalidated accounts are touched, so a forged request can't delete an already validated member.
+    #[Route('/admin/valid/bulk', name: 'user_bulk_valid', methods: ['POST'])]
+    public function bulkValidUsers(Request $request, UserRepository $repo, EntityManagerInterface $manager, RegistrationMailer $registrationMailer, LoggerInterface $logger): Response
+    {
+        if (!$this->isCsrfTokenValid('bulk_valid', $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton de sécurité invalide, recharge la page et réessaie.');
+
+            return $this->redirectToRoute('valid');
+        }
+
+        $action = $request->request->get('bulk_action');
+        if (!\in_array($action, ['valid', 'refuse'], true)) {
+            $this->addFlash('danger', 'Action groupée inconnue.');
+
+            return $this->redirectToRoute('valid');
+        }
+
+        $users = array_filter(
+            $repo->findBy(['id' => $request->request->all('user_ids')]),
+            fn (User $user) => !$user->getValidation()
+        );
+
+        if ([] === $users) {
+            $this->addFlash('warning', 'Aucune inscription sélectionnée.');
+
+            return $this->redirectToRoute('valid');
+        }
+
+        foreach ($users as $user) {
+            if ('valid' === $action) {
+                $user->setValidation(true);
+                $logger->info('Inscription validée', ['target' => $user->getEmail(), 'by' => $this->getUser()?->getUserIdentifier()]);
+            } else {
+                $manager->remove($user);
+                $logger->info('Inscription refusée', ['target' => $user->getEmail(), 'by' => $this->getUser()?->getUserIdentifier()]);
+            }
+        }
+
+        $manager->flush();
+
+        // Mails go out only once the database write succeeded, so nobody is told they're accepted if the flush fails.
+        if ('valid' === $action) {
+            foreach ($users as $user) {
+                $registrationMailer->sendValidated($user);
+            }
+        }
+
+        $this->addFlash('success', \count($users).('valid' === $action ? ' inscription(s) validée(s)' : ' inscription(s) refusée(s)'));
+
+        return $this->redirectToRoute('valid');
+    }
+
     // Removes a single role from a user (the trash button on each role badge).
     #[Route('/admin/user/{slug}/role/{roleId}', name: 'user_remove_role', methods: ['DELETE'])]
     public function removeUserRole(#[MapEntity(mapping: ['slug' => 'slug'])] User $user, #[MapEntity(mapping: ['roleId' => 'id'])] Role $role, EntityManagerInterface $manager, Request $request, LoggerInterface $logger): Response

@@ -535,6 +535,15 @@ admin:
     refuse: Refuse
     refuse_user_aria: "Refuse %name%'s registration"
     confirm_refuse: "Refuse %name%'s registration? The account will be deleted."
+    bulk_select_all: Select all
+    bulk_select_column: Selection
+    bulk_select_user_aria: "Select %name%'s registration"
+    bulk_selection: Selection
+    bulk_selected_count: "%count% selected"
+    bulk_valid: Approve selection
+    bulk_refuse: Refuse selection
+    bulk_confirm_valid: "Approve all selected registrations?"
+    bulk_confirm_refuse: "Refuse all selected registrations? The accounts will be deleted."
     current_roles_title: Current roles
     promote_section: Add a role
     edit_profile_section: Edit profile

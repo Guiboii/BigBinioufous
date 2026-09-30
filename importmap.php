@@ -52,6 +52,10 @@ return [
         'path' => './assets/desk/note-admin.js',
         'entrypoint' => true,
     ],
+    'registration-bulk' => [
+        'path' => './assets/admin/registration-bulk.js',
+        'entrypoint' => true,
+    ],
     'contact' => [
         'path' => './assets/contact/contact.js',
         'entrypoint' => true,

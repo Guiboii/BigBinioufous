@@ -46,6 +46,62 @@ class AdminControllerTest extends AppWebTestCase
         $this->assertSame([], $target->getRoles());
     }
 
+    public function testBulkValidValidatesEveryCheckedPendingAccount(): void
+    {
+        $admin = $this->createUser(['ROLE_ADMIN']);
+        $this->client->loginUser($admin);
+        $first = $this->createUser([], false);
+        $second = $this->createUser([], false);
+        $untouched = $this->createUser([], false);
+
+        $this->client->request('POST', '/admin/valid/bulk', [
+            '_token' => $this->csrfToken('bulk_valid'),
+            'bulk_action' => 'valid',
+            'user_ids' => [$first->getId(), $second->getId()],
+        ]);
+
+        $this->assertResponseRedirects('/admin/valid');
+        $this->assertTrue($this->reload($first)->getValidation());
+        $this->assertTrue($this->reload($second)->getValidation());
+        $this->assertFalse($this->reload($untouched)->getValidation());
+    }
+
+    public function testBulkRefuseDeletesOnlyPendingAccounts(): void
+    {
+        $admin = $this->createUser(['ROLE_ADMIN']);
+        $this->client->loginUser($admin);
+        $pending = $this->createUser([], false);
+        $validated = $this->createUser();
+        $pendingId = $pending->getId();
+        $validatedId = $validated->getId();
+
+        $this->client->request('POST', '/admin/valid/bulk', [
+            '_token' => $this->csrfToken('bulk_valid'),
+            'bulk_action' => 'refuse',
+            'user_ids' => [$pendingId, $validatedId],
+        ]);
+
+        $this->entityManager->clear();
+        $repo = $this->entityManager->getRepository(\App\Entity\User::class);
+        $this->assertNull($repo->find($pendingId));
+        $this->assertNotNull($repo->find($validatedId));
+    }
+
+    public function testBulkValidIsForbiddenWithoutRoleAdmin(): void
+    {
+        $user = $this->createUser();
+        $this->client->loginUser($user);
+        $pending = $this->createUser([], false);
+
+        $this->client->request('POST', '/admin/valid/bulk', [
+            'bulk_action' => 'valid',
+            'user_ids' => [$pending->getId()],
+        ]);
+
+        $this->assertResponseRedirects('/desk');
+        $this->assertFalse($this->reload($pending)->getValidation());
+    }
+
     public function testToggleImageRightsConsentFlipsTheFlag(): void
     {
         $admin = $this->createUser(['ROLE_ADMIN']);

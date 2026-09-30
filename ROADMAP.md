@@ -123,6 +123,7 @@ Priorité moyenne, mais à faire *avant* le passage page par page (Phase 5) : é
 ## Phase 7 : Nouvelles fonctionnalités
 
 - [ ] Une par une, sur une base stabilisée
+- [x] Validation/refus groupés des inscriptions (`/admin/valid`, 2026-09-30) : cases à cocher + "Tout sélectionner", route unique `user_bulk_valid`, n'agit que sur des comptes encore non validés.
 - [x] Import/rendu de Markdown pour le texte de la page Histoire (branche `phase7_story_markdown`), plutôt que codé en dur dans `minisite.html.twig`/`translations/*.yaml`. Éditable par ROLE_ADMIN uniquement (décidé le 2026-08-12). Entité `StorySection` (titre, slug, contenu Markdown, position), CRUD `/admin/story` : nombre de sections et ordre libres, réordonnancement par boutons monter/descendre plutôt qu'un glisser-déposer (non atteignable au clavier, même choix que le gestionnaire de fichiers). Rendu via `twig/markdown-extra` + `league/commonmark` (extension GFM pour le strikethrough, `~~texte~~` remplace les `<s>` en dur d'origine).
     - Éditeur : EasyMDE (barre d'outils réduite au strict nécessaire, aperçu affiché en permanence à côté plutôt qu'à activer), pour rester simple à des rédacteur·ices non-informaticien·nes plutôt qu'un textarea Markdown brut.
     - Contenu existant (Intro/Qui/Quoi/Pourquoi) repris dans une migration écrite à la main (`doctrine:migrations` toujours cassé sur cette base, cf. Phase 5) et dans `AppFixtures.php` (`StorySectionSeedData`) pour survivre à un futur `fixtures:load`.
