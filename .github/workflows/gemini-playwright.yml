@@ -1,0 +1,97 @@
+name: Gemini Playwright
+
+# Comment "@gemini-cli /playwright" on a PR to have Gemini write basic Playwright tests for it.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: gemini-playwright-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  write-tests:
+    # issue_comment also fires on plain issues: keep PR comments from trusted people only.
+    if: >-
+      github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '@gemini-cli /playwright') &&
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    steps:
+      # The issue_comment payload has no head repo info, so the fork check needs an API call.
+      - name: Récupère la branche de la PR et refuse les forks
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          pr_json=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}")
+          head_repo=$(echo "$pr_json" | jq -r '.head.repo.full_name')
+          if [ "$head_repo" != "${{ github.repository }}" ]; then
+            echo "::error::PR venant d'un fork ($head_repo), refusée."
+            exit 1
+          fi
+          echo "head_ref=$(echo "$pr_json" | jq -r '.head.ref')" >> "$GITHUB_OUTPUT"
+          echo "base_ref=$(echo "$pr_json" | jq -r '.base.ref')" >> "$GITHUB_OUTPUT"
+
+      # No persisted credentials: Gemini runs in this workspace and must not be able to push.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.head_ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Écrit le diff de la PR dans un fichier lisible par Gemini
+        run: git diff "origin/${{ steps.pr.outputs.base_ref }}...HEAD" > pr.diff
+
+      - name: Lance Gemini
+        uses: google-github-actions/run-gemini-cli@v0.1.22
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          github_pr_number: ${{ github.event.issue.number }}
+          workflow_name: gemini-playwright
+          # The action runs the CLI with --yolo: shell is disabled so Gemini can only read/write files.
+          settings: |-
+            {
+              "model": { "maxSessionTurns": 25 },
+              "tools": { "exclude": ["run_shell_command"] }
+            }
+          prompt: |-
+            Le diff de la PR est dans le fichier pr.diff à la racine du dépôt.
+            Lis le diff de la PR et les tests existants dans tests/e2e/.
+            Ajoute des tests Playwright basiques pour ce que la PR change, dans le même style.
+            Ne modifie aucun fichier hors de tests/e2e/.
+            N'utilise jamais de tiret cadratin (caractère Unicode U+2014), ni dans le code ni dans les commentaires.
+
+      - name: Vérifie que seul tests/e2e/ a été modifié
+        run: |
+          rm -f pr.diff
+          # .gemini/ is written by the action itself (settings, telemetry), not by the model.
+          outside=$(git status --porcelain --untracked-files=all \
+            | cut -c4- \
+            | grep -v -e '^tests/e2e/' -e '^\.gemini/' || true)
+          if [ -n "$outside" ]; then
+            echo "::error::Gemini a modifié des fichiers hors de tests/e2e/ :"
+            echo "$outside"
+            exit 1
+          fi
+
+      - name: Commit et push des tests sur la branche de la PR
+        env:
+          # PAT instead of github.token: pushes made with github.token don't trigger pipeline.yml.
+          PUSH_TOKEN: ${{ secrets.GEMINI_PUSH_TOKEN }}
+        run: |
+          git add tests/e2e/
+          if git diff --cached --quiet; then
+            echo "Gemini n'a ajouté aucun test, rien à commiter."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "✅ Ajoute des tests Playwright générés par Gemini"
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/${{ github.repository }}.git" \
+            "HEAD:${{ steps.pr.outputs.head_ref }}"
