@@ -33,3 +33,4 @@ npm run test:e2e
 ### Tests existants
 
 - `folder-drop.spec.js` : dépôt d'un dossier dans un dossier qui a un homonyme (régression #36). Un `DataTransfer` synthétique ne peut pas contenir de vrais dossiers, donc l'API `webkitGetAsEntry` du navigateur est simulée ; tout le reste (chemins, envoi, arborescence côté serveur) est réel.
+- `click-through.spec.js` : sur les 5 pages 3D, un clic sur le burger ne doit pas atteindre la scène derrière (régression #44, reproduite sur l'accueil en 1280×800 avec l'ancien code).
