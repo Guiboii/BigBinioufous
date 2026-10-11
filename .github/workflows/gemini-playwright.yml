@@ -70,9 +70,10 @@ jobs:
           github_pr_number: ${{ env.PR_NUMBER }}
           workflow_name: gemini-playwright
           # The action runs the CLI with --yolo: shell is disabled so Gemini can only read/write files.
+          # maxSessionTurns stays under the free tier's 20 requests/day, so one run can't burn the whole daily quota.
           settings: |-
             {
-              "model": { "maxSessionTurns": 25 },
+              "model": { "maxSessionTurns": 15 },
               "tools": { "exclude": ["run_shell_command"] }
             }
           prompt: |-
