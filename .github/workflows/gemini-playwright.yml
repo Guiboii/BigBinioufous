@@ -85,10 +85,10 @@ jobs:
       - name: Vérifie que seul tests/e2e/ a été modifié
         run: |
           rm -f pr.diff
-          # .gemini/ is written by the action itself (settings, telemetry), not by the model.
+          # .gemini/ and gemini-artifacts/ are written by the action itself (settings, telemetry, logs), not by the model.
           outside=$(git status --porcelain --untracked-files=all \
             | cut -c4- \
-            | grep -v -e '^tests/e2e/' -e '^\.gemini/' || true)
+            | grep -v -e '^tests/e2e/' -e '^\.gemini/' -e '^gemini-artifacts/' || true)
           if [ -n "$outside" ]; then
             echo "::error::Gemini a modifié des fichiers hors de tests/e2e/ :"
             echo "$outside"
