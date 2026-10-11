@@ -62,6 +62,9 @@ jobs:
 
       - name: Lance Gemini
         uses: google-github-actions/run-gemini-cli@v0.1.22
+        # The CLI refuses to run headless in an untrusted folder; the action has no input for this, the CLI reads it from the environment.
+        env:
+          GEMINI_CLI_TRUST_WORKSPACE: "true"
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           github_pr_number: ${{ env.PR_NUMBER }}
