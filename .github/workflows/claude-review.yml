@@ -1,0 +1,79 @@
+name: Claude Review
+
+# Comment "@claude review" on a PR to have Claude review it (comments only, no push).
+# Can also be started by hand from the Actions tab, with the PR number.
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Numéro de la PR"
+        required: true
+        type: number
+
+# contents: read means the workflow token cannot push, whatever Claude tries.
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+env:
+  PR_NUMBER: ${{ inputs.pr_number || github.event.issue.number }}
+
+concurrency:
+  group: claude-review-${{ inputs.pr_number || github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    # issue_comment also fires on plain issues: keep PR comments from trusted people only.
+    # workflow_dispatch needs write access to the repo, so it is trusted already.
+    if: >-
+      github.event_name == 'workflow_dispatch' || (
+        github.event.issue.pull_request &&
+        startsWith(github.event.comment.body, '@claude review') &&
+        contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+      )
+    runs-on: ubuntu-latest
+    steps:
+      # The issue_comment payload has no head repo info, so the fork check needs an API call.
+      - name: Refuse les PR venant d'un fork
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          head_repo=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}" --jq '.head.repo.full_name')
+          if [ "$head_repo" != "${{ github.repository }}" ]; then
+            echo "::error::PR venant d'un fork ($head_repo), refusée."
+            exit 1
+          fi
+
+      # Check out the PR code itself, not master, so Claude reads the files being reviewed.
+      - uses: actions/checkout@v6
+        with:
+          ref: refs/pull/${{ env.PR_NUMBER }}/head
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Lance Claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Passing the workflow token skips the Claude GitHub App exchange, which would need id-token: write.
+          github_token: ${{ github.token }}
+          # Read and comment tools only: no Edit/Write, no git, no other shell command.
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Glob,Grep"
+            --disallowedTools "Edit,Write,MultiEdit,NotebookEdit"
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ env.PR_NUMBER }}
+
+            Relis cette PR : correction, sécurité, couverture de tests, lisibilité.
+            Commente en français, sois concis·e et donne des remarques précises.
+            Ne modifie aucun fichier.
+
+            Utilise `gh pr diff` et `gh pr view` pour lire la PR.
+            Poste les remarques ciblées en commentaires inline sur les lignes concernées,
+            et une synthèse courte avec `gh pr comment`.
+            N'utilise jamais de tiret cadratin (caractère Unicode U+2014) dans tes commentaires.
