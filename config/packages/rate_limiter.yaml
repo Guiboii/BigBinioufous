@@ -8,3 +8,10 @@ framework:
             policy: sliding_window
             limit: 1
             interval: '1 minute'
+        # Anti-spam de l'inscription (LoginController::register) : 3 comptes
+        # créés/heure/IP, en plus du honeypot et du piège temporel. Assez large
+        # pour une famille qui s'inscrit depuis la même box, cf. issue #34.
+        registration:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'

@@ -19,6 +19,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -27,6 +28,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 // Authentication: login page, registration, password change, profile picture upload.
 class LoginController extends AbstractController
 {
+    // Same bot timing trap as the contact form: no human fills nickname/email/password twice in under 3 seconds.
+    private const MIN_REGISTER_SECONDS = 3;
+
     #[Route('/join', name: 'join')]
     public function index(AuthenticationUtils $utils, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder)
     {
@@ -58,7 +62,7 @@ class LoginController extends AbstractController
      * Security::login() needs the authenticator name spelled out ('form_login') because the main firewall exposes two (form_login + scheb/2fa-bundle's two_factor); omitting it throws "Too many authenticators". No 2FA interference here since a brand new account never has a TOTP secret yet.
      */
     #[Route('/register', name: 'register')]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, MailerInterface $mailer, LoggerInterface $logger, #[Autowire(param: 'admin_notification_email')] string $adminNotificationEmail, RegistrationMailer $registrationMailer, Security $security)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, MailerInterface $mailer, LoggerInterface $logger, #[Autowire(param: 'admin_notification_email')] string $adminNotificationEmail, RegistrationMailer $registrationMailer, Security $security, RateLimiterFactoryInterface $registrationLimiter)
     {
         $user = new User();
 
@@ -66,7 +70,23 @@ class LoginController extends AbstractController
 
         $form->handleRequest($request);
 
+        // A filled honeypot or a too-fast submission is a bot signature: silently drop it without creating anything, never reveal the trap.
+        if ($form->isSubmitted() && $this->looksLikeABot($request)) {
+            $logger->notice('Inscription bloquée par le piège anti-bot.', ['ip' => $request->getClientIp()]);
+
+            return $this->redirectToRoute('join');
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
+            // Only real account creations count toward the limit, so a human fixing a validation error isn't penalised.
+            if (!$registrationLimiter->create($request->getClientIp())->consume(1)->isAccepted()) {
+                $this->addFlash('danger', 'Trop d\'inscriptions depuis ta connexion récemment. Réessaie dans une heure, ou écris-nous via le formulaire de contact.');
+
+                return $this->render('join/registration.html.twig', [
+                    'form' => $form->createView(),
+                ], new Response(null, Response::HTTP_TOO_MANY_REQUESTS));
+            }
+
             $hash = $encoder->hashPassword($user, $user->getHash());
             $user->setHash($hash)->setValidation(false);
 
@@ -89,6 +109,14 @@ class LoginController extends AbstractController
         return $this->render('join/registration.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    private function looksLikeABot(Request $request): bool
+    {
+        $renderedAt = (int) $request->request->get('register_ts', 0);
+        $tooFast = $renderedAt <= 0 || (time() - $renderedAt) < self::MIN_REGISTER_SECONDS;
+
+        return '' !== (string) $request->request->get('register_hp', '') || $tooFast;
     }
 
     // Errors are caught and logged rather than left to bubble up: this must never fail the registration itself, already saved to the database at this point.
