@@ -652,6 +652,53 @@ body.desk .table th:nth-child(6),
 body.desk .table td:nth-child(6) {
     width: 12%;
 }
+/* Pending registrations table: 9 columns instead of the shared 6, so the widths above left the last 3 columns with no room and made them overlap. Own widths (summing to 100%), plus a min-width so .table-responsive scrolls on phones instead of crushing the columns. */
+body.desk .table.pending-table {
+    min-width: 60rem;
+}
+body.desk .pending-table th:nth-child(1),
+body.desk .pending-table td:nth-child(1) {
+    width: 4%;
+}
+body.desk .pending-table th:nth-child(2),
+body.desk .pending-table td:nth-child(2) {
+    width: 17%;
+}
+body.desk .pending-table th:nth-child(3),
+body.desk .pending-table td:nth-child(3) {
+    width: 10%;
+}
+body.desk .pending-table th:nth-child(4),
+body.desk .pending-table td:nth-child(4) {
+    width: 13%;
+}
+body.desk .pending-table th:nth-child(5),
+body.desk .pending-table td:nth-child(5),
+body.desk .pending-table th:nth-child(6),
+body.desk .pending-table td:nth-child(6),
+body.desk .pending-table th:nth-child(8),
+body.desk .pending-table td:nth-child(8) {
+    width: 11%;
+}
+body.desk .pending-table th:nth-child(7),
+body.desk .pending-table td:nth-child(7) {
+    width: 10%;
+}
+body.desk .pending-table th:nth-child(9),
+body.desk .pending-table td:nth-child(9) {
+    width: 13%;
+}
+body.desk .pending-table td {
+    vertical-align: middle;
+}
+/* Dates and the two action buttons must never wrap onto each other. */
+body.desk .pending-table td:nth-child(8),
+body.desk .pending-actions {
+    white-space: nowrap;
+}
+body.desk .pending-actions .btn-form + .btn-form {
+    margin-left: 0.4rem;
+}
 /* table-layout: fixed no longer auto-shrinks a column for a very long word: allows wrapping instead of overflowing the cell. */
 body.desk .table td {
     overflow-wrap: break-word;

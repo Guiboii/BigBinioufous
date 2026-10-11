@@ -9,7 +9,6 @@
 {% block body %}
 
 <div class="container mt-2">
-    <div class="container mt-2">
         <h1>{{ 'admin.pending_requests_title'|trans }}</h1>
         {% if unvalids is not empty %}
         {# Row checkboxes are tied to the bulk form below through the HTML "form" attribute: the per-row forms can't wrap them since forms can't be nested. #}
@@ -20,7 +19,9 @@
             </label>
         </div>
         {% endif %}
-        <table class="table table-hover text-center">
+        {# Horizontal scroll on narrow screens rather than squeezing 9 columns into the phone width. #}
+        <div class="table-responsive">
+        <table class="table table-hover text-center pending-table">
             <thead>
                 <tr>
                     <th><span class="sr-only">{{ 'admin.bulk_select_column'|trans }}</span></th>
@@ -43,7 +44,7 @@
                     <td>{% if user.picture == null %}
                         <i class="ri-image-line" aria-hidden="true"></i> <em>{{ 'no picture'|trans }}</em>
                     {% else %}
-                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt=" Avatar de {{ user.firstname }}">
+                        <img src="{{ asset('uploads/pictures/' ~ user.picture) }}" class="items-align-right avatar avatar-medium" alt="">
                     {% endif %}</td>
                     <td>{{ user.instrument.title|default('-') }}</td>
                     <td>{{ user.country|default('-') }}</td>
@@ -54,7 +55,7 @@
                         <span class="badge badge-secondary"><i class="ri-close-circle-line" aria-hidden="true"></i> {{ 'No'|trans }}</span>
                     {% endif %}</td>
                     <td>{{ user.createdAt|date('d/m/Y') }}</td>
-                    <td>
+                    <td class="pending-actions">
                         <form method="post" action="{{ path('user_valid', {slug: user.slug}) }}" onsubmit="return confirm('{{ 'admin.confirm_valid'|trans({'%name%': user.fullName})|e('js') }}');" class="btn-form">
                             <input type="hidden" name="_token" value="{{ csrf_token('valid' ~ user.id) }}">
                             <button type="submit" class="btn btn-green" aria-label="{{ 'admin.validate_user_aria'|trans({'%name%': user.fullName}) }}"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></button>
@@ -69,6 +70,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
         {% if unvalids is not empty %}
         {# Always visible (not revealed by JS like the file manager's bar) so the bulk action still works without JavaScript; the server just ignores an empty selection. #}
         <form method="post" action="{{ path('user_bulk_valid') }}" id="registration-bulk-form" class="desk-bulk-bar"
@@ -83,6 +85,5 @@
             </button>
         </form>
         {% endif %}
-    </div>
 </div>
 {% endblock %}
