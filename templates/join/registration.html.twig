@@ -20,6 +20,9 @@
 
     {# .registration-form: same contrast fix already applied to body.desk form. The generic "form" rule's gold-on-green only reaches 3.63:1, below AA; white reaches 6.82:1 (AAA), scoped to this page rather than made global. #}
     {{ form_start(form, {attr: {class: 'registration-form'}}) }}
+    {# Anti-bot traps, outside the Symfony form like on /contact: a render timestamp and a honeypot invisible to humans and removed from the accessibility tree. #}
+    <input type="hidden" name="register_ts" value="{{ 'now'|date('U') }}">
+    <input type="text" class="hp-field" name="register_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     {# "Already a member?" is rendered separately (manual form_label/form_widget) ahead of the rest of the form, in its own detached card, so it reads as THE question to answer first. The later form_widget(form) won't re-render it: Symfony marks a field as already rendered once form_row/form_widget has been applied to it individually. #}
     <div class="already-member-step">
         {# <legend> must be the fieldset's very first child for the accessible group name to be reliable, so the hint paragraph stays after the widget, not between them. #}
