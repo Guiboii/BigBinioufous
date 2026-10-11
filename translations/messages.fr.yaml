@@ -322,6 +322,7 @@ desk:
     quick_upload_error_invalid_input: "aucun fichier reçu"
     quick_upload_error_upload_failed: "échec de l'enregistrement du fichier"
     quick_upload_error_invalid_token: "session expirée, recharge la page"
+    quick_upload_error_invalid_folder: "ce dossier n'existe plus (supprimé ou déplacé ?), recharge la page"
     documents_heading: Documents
     document_uploaded_by: "déposé par"
     confirm_delete_document: "Tu es sûr·e de vouloir supprimer ce document ?"

@@ -141,7 +141,7 @@
                         role="button"
                         aria-label="{{ 'desk.quick_upload_zone'|trans }}"
                         data-document-action="{{ path('document_upload', {space: space}) }}"
-                        data-current-path="{{ currentFolderPath }}"
+                        data-current-folder="{{ currentFolder.id }}"
                         data-token="{{ csrf_token('quick_upload') }}"
                         data-uploading="{{ 'desk.quick_upload_uploading'|trans }}"
                         data-success="{{ 'desk.quick_upload_success'|trans }}"
@@ -152,6 +152,7 @@
                             invalid_input: 'desk.quick_upload_error_invalid_input'|trans,
                             upload_failed: 'desk.quick_upload_error_upload_failed'|trans,
                             invalid_token: 'desk.quick_upload_error_invalid_token'|trans,
+                            invalid_folder: 'desk.quick_upload_error_invalid_folder'|trans,
                         }|json_encode|e('html_attr') }}"
                     >
                         <i class="ri-upload-cloud-2-line" aria-hidden="true"></i>

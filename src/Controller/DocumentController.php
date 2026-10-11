@@ -52,6 +52,16 @@ class DocumentController extends AbstractController
             return $this->json(['error' => 'invalid_mimetype'], 400);
         }
 
+        // The destination is the viewed folder's id, not its name: rebuilding it from names picked another folder whenever two shared the same name. "path" is now only the dropped subfolders, relative to it.
+        $base = null;
+        $folderId = $request->request->get('folder');
+        if (null !== $folderId && '' !== $folderId) {
+            $base = $folderRepository->find($folderId);
+            if (!$base || $base->getSpace() !== $space || $base->isDeleted() || $folderRepository->hasDeletedAncestor($base)) {
+                return $this->json(['error' => 'invalid_folder'], 400);
+            }
+        }
+
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $slugger->slug($originalFilename);
         $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
@@ -64,7 +74,7 @@ class DocumentController extends AbstractController
             return $this->json(['error' => 'upload_failed'], 500);
         }
 
-        $folder = $folderRepository->findOrCreateByPath($space, (string) $request->request->get('path'), $manager);
+        $folder = $folderRepository->findOrCreateByPath($space, (string) $request->request->get('path'), $manager, $base);
 
         $document = new Document();
         $document->setName($originalFilename)

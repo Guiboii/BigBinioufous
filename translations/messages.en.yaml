@@ -322,6 +322,7 @@ desk:
     quick_upload_error_invalid_input: "no file received"
     quick_upload_error_upload_failed: "failed to save the file"
     quick_upload_error_invalid_token: "session expired, reload the page"
+    quick_upload_error_invalid_folder: "this folder no longer exists (deleted or moved?), reload the page"
     documents_heading: Documents
     document_uploaded_by: "uploaded by"
     confirm_delete_document: "Are you sure you want to delete this document?"

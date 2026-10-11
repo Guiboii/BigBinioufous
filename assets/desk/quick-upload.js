@@ -67,23 +67,17 @@ if (zone) {
     handleFiles(Array.from(input.files).map(withRootPath));
   });
 
-  // When already inside a folder, everything dropped here must land inside it, in addition to its own subpath if any.
+  // Loose files land directly in the viewed folder (sent separately by id in uploadEntry), so no subpath.
   function withRootPath(file) {
-    return { file: file, path: zone.dataset.currentPath || '' };
+    return { file: file, path: '' };
   }
 
-  // entry.fullPath looks like "/Set/02 Medley XXI/title.mp3": strip the filename and leading slash to keep just the folder path, prefixed with the current folder if any.
+  // entry.fullPath looks like "/Set/02 Medley XXI/title.mp3": strip the filename and leading slash to keep just the dropped folder path, relative to the viewed folder.
   function directoryOf(fullPath) {
     var withoutLeadingSlash = fullPath.replace(/^\//, '');
     var lastSlash = withoutLeadingSlash.lastIndexOf('/');
-    var relative = lastSlash === -1 ? '' : withoutLeadingSlash.slice(0, lastSlash);
-    var current = zone.dataset.currentPath || '';
 
-    if (current && relative) {
-      return current + '/' + relative;
-    }
-
-    return current || relative;
+    return lastSlash === -1 ? '' : withoutLeadingSlash.slice(0, lastSlash);
   }
 
   function readEntries(queue) {
@@ -204,6 +198,7 @@ if (zone) {
   function uploadEntry(entry) {
     var formData = new FormData();
     formData.append('file', entry.file);
+    formData.append('folder', zone.dataset.currentFolder || '');
     formData.append('path', entry.path);
     formData.append('_token', zone.dataset.token);
 
