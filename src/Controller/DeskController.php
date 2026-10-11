@@ -119,7 +119,6 @@ class DeskController extends AbstractController
             'root' => $root,
             'atRoot' => $atRoot,
             'currentFolder' => $currentFolder,
-            'currentFolderPath' => implode('/', array_map(static fn (Folder $f) => $f->getName(), $breadcrumb)),
             'breadcrumb' => $breadcrumb,
             'query' => $query,
             'searching' => $searching,

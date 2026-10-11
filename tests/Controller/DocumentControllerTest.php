@@ -37,6 +37,53 @@ class DocumentControllerTest extends AppWebTestCase
         $this->assertCount(1, $this->entityManager->getRepository(Document::class)->findAll());
     }
 
+    public function testUploadLandsInTheViewedFolderEvenWithADuplicateName(): void
+    {
+        $user = $this->createUser(['ROLE_BINIOUFOUS']);
+        $this->client->loginUser($user);
+        $folders = static::getContainer()->get(FolderRepository::class);
+        $root = $folders->findOrCreateRoot('music', $this->entityManager);
+        // Two sibling folders with the same name: resolving the destination by name would pick the first one.
+        $this->createFolder('Set', $root);
+        $viewed = $this->createFolder('Set', $root);
+
+        $this->client->request('POST', '/desk/files/music/documents', [
+            '_token' => $this->csrfToken('quick_upload'),
+            'folder' => $viewed->getId(),
+            'path' => 'Medley',
+        ], ['file' => $this->tempFile('voix.txt', 'Une voix')]);
+
+        $this->assertResponseIsSuccessful();
+        $document = $this->entityManager->getRepository(Document::class)->findOneBy([]);
+        $this->assertSame('Medley', $document->getFolder()->getName());
+        $this->assertSame($viewed->getId(), $document->getFolder()->getParent()->getId());
+    }
+
+    public function testUploadIntoAFolderOfAnotherSpaceIsRejected(): void
+    {
+        $user = $this->createUser(['ROLE_BINIOUFOUS']);
+        $this->client->loginUser($user);
+        $otherRoot = static::getContainer()->get(FolderRepository::class)->findOrCreateRoot('accounting', $this->entityManager);
+
+        $this->client->request('POST', '/desk/files/music/documents', [
+            '_token' => $this->csrfToken('quick_upload'),
+            'folder' => $otherRoot->getId(),
+        ], ['file' => $this->tempFile('voix.txt', 'Une voix')]);
+
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertJsonStringEqualsJsonString('{"error":"invalid_folder"}', (string) $this->client->getResponse()->getContent());
+        $this->assertCount(0, $this->entityManager->getRepository(Document::class)->findAll());
+    }
+
+    private function createFolder(string $name, \App\Entity\Folder $parent): \App\Entity\Folder
+    {
+        $folder = (new \App\Entity\Folder())->setName($name)->setParent($parent)->setSpace($parent->getSpace());
+        $this->entityManager->persist($folder);
+        $this->entityManager->flush();
+
+        return $folder;
+    }
+
     public function testFavoriteToggleIsAllowedWithoutWriteRole(): void
     {
         // "other" space: read is open to binioufous, write is admin-only (Folder::WRITE_ROLES), so this account

@@ -45,9 +45,9 @@ class FolderRepository extends ServiceEntityRepository
     }
 
     // Resolves a slash-separated path (e.g. "Medley/Oboe") into nested folders under the space's root, creating what's missing, and returns the deepest one. Ignores trashed folders when matching by name, otherwise a new upload would silently resurrect a deleted folder.
-    public function findOrCreateByPath(string $space, string $path, EntityManagerInterface $manager): Folder
+    public function findOrCreateByPath(string $space, string $path, EntityManagerInterface $manager, ?Folder $base = null): Folder
     {
-        $parent = $this->findOrCreateRoot($space, $manager);
+        $parent = $base ?? $this->findOrCreateRoot($space, $manager);
 
         $segments = array_filter(explode('/', $path), static fn (string $s) => '' !== trim($s));
 
