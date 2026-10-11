@@ -51,7 +51,7 @@ jobs:
           echo "base_ref=$(echo "$pr_json" | jq -r '.base.ref')" >> "$GITHUB_OUTPUT"
 
       # No persisted credentials: Gemini runs in this workspace and must not be able to push.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ steps.pr.outputs.head_ref }}
           fetch-depth: 0

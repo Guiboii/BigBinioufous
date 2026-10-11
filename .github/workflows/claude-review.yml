@@ -49,7 +49,7 @@ jobs:
           fi
 
       # Check out the PR code itself, not master, so Claude reads the files being reviewed.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ env.PR_NUMBER }}/head
           fetch-depth: 1
