@@ -5,6 +5,7 @@ Ce qui change sur le site, en clair. 💬 = corrigé ou ajouté suite à vos ret
 ## 11 octobre 2026
 
 - 💬 **Déposer un dossier entier fonctionne enfin** : les fichiers glissés atterrissent bien dans le dossier ouvert à l'écran (avant, ils pouvaient partir dans un autre dossier du même nom, laissant celui-ci vide). Les fichiers déjà envoyés sont à retrouver avec la recherche de l'espace.
+- 💬 **Le bouton menu (☰) ne déclenche plus la scène 3D derrière lui** : cliquer dessus pouvait ouvrir le formulaire de contact ou faire réagir la mascotte.
 - 💬 **Moins de faux comptes** : l'inscription bloque maintenant les robots de spam. Rien ne change pour vous.
 - 💬 **Tableau des inscriptions en attente** (admins) : les colonnes ne se chevauchent plus, et le tableau défile sur téléphone.
 - Mise en ligne des nouveautés du 30 septembre, bloquées jusqu'ici par une mise à jour de sécurité.

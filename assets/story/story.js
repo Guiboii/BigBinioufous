@@ -143,8 +143,9 @@ function init() {
   addTrieur('trieurAdmin', 2.96, 3.34);
   addTrieur('trieurOther', 3.34, 3.7);
 
-  window.addEventListener('click', (e) => raycast(e));
-  window.addEventListener('touchend', (e) => raycast(e, true));
+  // Listen on the 3D canvas only: on window, a click on an HTML element drawn over the scene (navbar burger, panels) also hit the 3D object behind it.
+  renderer.domElement.addEventListener('click', (e) => raycast(e));
+  renderer.domElement.addEventListener('touchend', (e) => raycast(e, true));
   window.addEventListener('resize', onWindowResize, false);
 }
 
