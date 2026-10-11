@@ -99,6 +99,7 @@ jobs:
           echo "APP_ENV=dev" > .env
           echo "APP_SECRET=$(openssl rand -hex 16)" >> .env
           echo "VAR_DUMPER_SERVER=127.0.0.1:9912" >> .env
+          echo 'DATABASE_URL="sqlite:///%kernel.project_dir%/var/e2e.db"' >> .env
       - name: Télécharge les dépendances JS d'AssetMapper
         run: php bin/console importmap:install
       - name: Install Chromium
