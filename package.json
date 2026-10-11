@@ -2,6 +2,7 @@
     "type": "module",
     "devDependencies": {
         "@eslint/js": "^10.0.1",
+        "@playwright/test": "1.63.0",
         "eslint": "^10.8.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.6",
@@ -11,7 +12,8 @@
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
-        "lint:js": "eslint assets",
-        "lint:js:fix": "eslint assets --fix"
+        "lint:js": "eslint assets tests/e2e playwright.config.js",
+        "lint:js:fix": "eslint assets tests/e2e playwright.config.js --fix",
+        "test:e2e": "playwright test"
     }
 }

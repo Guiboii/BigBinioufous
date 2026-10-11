@@ -26,5 +26,12 @@ export default [
             'no-unassigned-vars': 'error',
         },
     },
+    // Playwright files run in Node (process, child_process), with page.evaluate() callbacks running in the browser.
+    {
+        files: ['tests/e2e/**/*.js', 'playwright.config.js'],
+        languageOptions: {
+            globals: { ...globals.node, ...globals.browser },
+        },
+    },
     prettierRecommended,
 ];
