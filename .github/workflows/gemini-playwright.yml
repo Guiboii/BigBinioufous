@@ -61,6 +61,8 @@ jobs:
         run: git diff "origin/${{ steps.pr.outputs.base_ref }}...HEAD" > pr.diff
 
       - name: Lance Gemini
+        id: gemini
+        continue-on-error: true
         uses: google-github-actions/run-gemini-cli@v0.1.22
         # The CLI refuses to run headless in an untrusted folder; the action has no input for this, the CLI reads it from the environment.
         env:
@@ -82,6 +84,22 @@ jobs:
             Ajoute des tests Playwright basiques pour ce que la PR change, dans le même style.
             Ne modifie aucun fichier hors de tests/e2e/.
             N'utilise jamais de tiret cadratin (caractère Unicode U+2014), ni dans le code ni dans les commentaires.
+
+      - name: Ignore les pannes Gemini temporaires, échoue sinon
+        if: steps.gemini.outcome == 'failure'
+        env:
+          GEMINI_ERRORS: ${{ steps.gemini.outputs.gemini_errors }}
+        run: |
+          if echo "${GEMINI_ERRORS}" | grep -qiE 'quota|429|503|UNAVAILABLE|high demand|FatalTurnLimitedError'; then
+            echo "::warning::Gemini indisponible ou quota atteint, run ignoré."
+            exit 0
+          fi
+
+          echo "::error::Échec Gemini inattendu."
+          if [ -n "${GEMINI_ERRORS}" ]; then
+            echo "${GEMINI_ERRORS}"
+          fi
+          exit 1
 
       - name: Vérifie que seul tests/e2e/ a été modifié
         run: |
