@@ -78,13 +78,13 @@ Le plus gros bloc, et celui qui a le plus cassé.
 
 ## 6. Agenda `/schedule` (`schedule.js`)
 
-| Scénario                                                   | Vérification                                                    | Prio | Statut |
-| ---------------------------------------------------------- | --------------------------------------------------------------- | ---- | ------ |
-| Arrivée sans ancre                                         | Le mois courant est affiché                                     | P2   |        |
-| Arrivée sur `/schedule#month-09`                           | Le mois de septembre est ouvert directement                     | P2   |        |
-| Mois suivant / précédent, puis bouton Retour du navigateur | Cohérence entre l'ancre et le mois affiché                      | P2   |        |
-| Mobile (<700px)                                            | Pas de 3D, contenu en flux normal                               | P2   |        |
-| Cadrage de l'overlay sur la scène                          | À traiter après passage en "vraie projection" (cf. `CLAUDE.md`) | P3   |        |
+| Scénario                                               | Vérification                                                    | Prio | Statut                                             |
+| ------------------------------------------------------ | --------------------------------------------------------------- | ---- | -------------------------------------------------- |
+| Arrivée sans ancre                                     | Le mois courant est affiché                                     | P2   | ✅ `schedule.spec.js` (+ mois vide → mois suivant) |
+| Arrivée sur `/schedule#month-09`                       | Le mois de septembre est ouvert directement                     | P2   | ✅ `schedule.spec.js`                              |
+| Mois suivant / précédent, clic sur un jour d'événement | Le titre change, le jour mène à l'ancre de son mois             | P2   | ✅ `schedule.spec.js`                              |
+| Mobile (<700px)                                        | Pas de 3D, contenu en flux normal                               | P2   | ✅ `schedule.spec.js`                              |
+| Cadrage de l'overlay sur la scène                      | À traiter après passage en "vraie projection" (cf. `CLAUDE.md`) | P3   |                                                    |
 
 ## 7. Histoire `/story` (`story.js`, `minisite.js`)
 
