@@ -15,14 +15,14 @@ Priorités :
 - [ ] **Comptes de test fixes** (pas encore nécessaire : tous les tests P1 passent en admin) : les fixtures n'ont que 2 comptes à email connu (admins). Ajouter des comptes stables pour l'e2e : un·e binioufous validé·e, un compte simple validé, un compte en attente de validation (emails fixes, mot de passe `password`).
 - [x] **Helper partagé** `tests/e2e/support/helpers.js` (`login`, `openFreshFolder`, `uploadFiles`, `fixture`) + session admin enregistrée une fois par `auth.setup.js` (`storageState`) : un test fichiers passe de ~17 s à ~2 s. `folder-drop.spec.js` garde encore son propre `login()`.
 - [x] **Fichiers de test** `tests/e2e/fixtures/` : un petit mp3 (quelques Ko), un PDF, une image, un fichier non autorisé (`.zip`).
-- [ ] **Projet mobile** dans `playwright.config.js` (ex. `devices['Pixel 7']`), lancé uniquement sur les specs taguées `@mobile`.
+- [x] **Réglages mobile** : `MOBILE` (Pixel 7) dans `helpers.js`, appliqué par `test.use(MOBILE)` dans un `test.describe` plutôt qu'un projet Playwright séparé (plus simple, pas de tag à maintenir).
 
 ## 1. Transverse (toutes pages)
 
 | Scénario                                             | Vérification                                                          | Prio | Statut                     |
 | ---------------------------------------------------- | --------------------------------------------------------------------- | ---- | -------------------------- |
 | Clic sur le burger au-dessus d'une scène 3D          | Le clic n'atteint pas la scène (#44)                                  | P1   | ✅ `click-through.spec.js` |
-| Menu mobile ouvert puis `Échap`                      | Le menu se ferme, le focus revient au burger (`app.js`)               | P2   |                            |
+| Menu mobile ouvert puis `Échap`                      | Le menu se ferme, le focus revient au burger (`app.js`)               | P2   | ✅ `navigation.spec.js`    |
 | Navigation au clavier (Tab) sur chaque page publique | Un indicateur `:focus-visible` est visible sur chaque élément atteint | P3   |                            |
 
 ## 2. Connexion `/join` (`login/join.js`)
@@ -36,11 +36,11 @@ Priorités :
 
 ## 3. Profil `/desk/profile`
 
-| Scénario                       | Vérification                                                                                              | Prio      | Statut |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------- | --------- | ------ |
-| Instrument "Autre" sélectionné | Le champ "lequel ?" apparaît et devient actif ; masqué et `disabled` sinon (`instrument-other-toggle.js`) | P2        |        |
-| Choix d'un avatar              | Aperçu affiché avant envoi du formulaire (`avatar-preview.js`)                                            | P3        |        |
-| Compte non validé              | Bandeau "en cours de vérification" visible                                                                | (PHPUnit) |        |
+| Scénario                       | Vérification                                                                                              | Prio      | Statut               |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------- | --------- | -------------------- |
+| Instrument "Autre" sélectionné | Le champ "lequel ?" apparaît et devient actif ; masqué et `disabled` sinon (`instrument-other-toggle.js`) | P2        | ✅ `profile.spec.js` |
+| Choix d'un avatar              | Aperçu affiché avant envoi du formulaire (`avatar-preview.js`)                                            | P3        |                      |
+| Compte non validé              | Bandeau "en cours de vérification" visible                                                                | (PHPUnit) |                      |
 
 ## 4. Gestionnaire de fichiers `/desk/files/{space}`
 
