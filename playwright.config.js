@@ -17,7 +17,11 @@ export default defineConfig({
     locale: 'fr-FR',
     trace: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    // Logs in once and saves the session (see auth.setup.js), so specs don't each go through the 3D /join page.
+    { name: 'setup', testMatch: /.*\.setup\.js/ },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, dependencies: ['setup'] },
+  ],
   webServer: {
     // variables_order=EGPCS: without the E, php -S hides env vars from $_ENV and Symfony would silently fall back to the .env database.
     command: `php -d variables_order=EGPCS -d upload_max_filesize=200M -d post_max_size=210M -S 127.0.0.1:${port} -t public`,

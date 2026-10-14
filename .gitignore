@@ -52,3 +52,4 @@ npm-debug.log
 # Playwright (e2e tests)
 /test-results/
 /playwright-report/
+/playwright/.auth/
