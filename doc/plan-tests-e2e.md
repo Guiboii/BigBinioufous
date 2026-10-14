@@ -132,3 +132,11 @@ Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre
 - ✅ **Dépôt refusé sans message** (`quick-upload.js`) : `var status` dans un script classique, c'est `window.status`, qui transforme tout en texte. Plantage `status.appendChild is not a function`, aucun message affiché. Variable renommée.
 - ✅ **Échec de connexion invisible** (`join.js`) : le message d'erreur était dans la popup, fermée après le rechargement. Elle se rouvre maintenant seule. Le focus allait aussi sur « fermer » au lieu du 1er champ.
 - ⚠️ **Clic sur la mascotte de `/story` (ouvert)** : à (95, 590) en 1280×800, le rayon ne touche jamais la mascotte (modèle animé, probablement testé dans sa pose de repos par three r128). Le 1er objet touché est la boîte invisible `trieurAccounting`, ce qui envoie vers `/desk/files/accounting` (puis `/join` pour un visiteur). Le correctif du 2026-09-12 ne couvrait que le cas où la mascotte est touchée. Test en `fixme` en attendant.
+
+## Durée des tests musique (~30 s chacun)
+
+Mesuré le 2026-10-14, sans corriger :
+
+- **Cause :** dès que les modèles 3D de `/music` sont chargés, le navigateur headless (rendu WebGL logiciel, pas de GPU) est saturé. Ouvrir la modale et remplir un champ prend environ 8 s, contre moins d'1 s pour charger la page.
+- **Bloquer les `.gltf` ne marche pas :** `#uploadNew` n'est positionné qu'une fois le meuble 3D chargé, donc il n'apparaît jamais.
+- **Pistes si ça devient gênant :** un mode "sans 3D" pour les tests (comme le mode mobile, qui n'initialise pas la scène), ou un viewport plus petit.
