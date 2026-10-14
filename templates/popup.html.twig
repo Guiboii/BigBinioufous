@@ -2,6 +2,8 @@
 <html lang="{{ app.request.locale }}">
     <head>
         <meta charset="UTF-8">
+        {# Without it, phones lay the page out ~980px wide and zoom out: no mobile CSS rule (max-width) would ever apply. #}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>
             {% block title %}Binioufous!
             {% endblock %}
