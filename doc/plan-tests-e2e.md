@@ -125,7 +125,7 @@ Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre
 
 1. Prérequis (section 0).
 2. ✅ Tous les **P1** : `files.spec.js`, `music.spec.js`, `join.spec.js`, `story.spec.js` (une spec par fonctionnalité plutôt que par scénario).
-3. Les **P2**, une spec par fonctionnalité.
+3. ✅ Les **P2**, une spec par fonctionnalité : `navigation`, `profile`, `files`, `music`, `schedule`, `story`, `contact`, `admin`.
 4. Les **P3** si le temps d'exécution en CI reste raisonnable (objectif : sous 2 minutes au total).
 
 ## Bugs trouvés par ces tests
