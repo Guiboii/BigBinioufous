@@ -38,6 +38,11 @@ export function createMarkdownEditor(fieldId) {
     autoDownloadFontAwesome: false,
     spellChecker: false,
     status: false,
+    // The real textarea is hidden but still "required": without live syncing it stays empty until submit, so the
+    // browser's own validation silently blocks the form before EasyMDE gets a chance to fill it.
+    forceSync: true,
+    // Keeps the side-by-side preview inside the page: EasyMDE turns it into a fullscreen view by default.
+    sideBySideFullscreen: false,
     toolbar: [
       { name: 'bold', action: toggleBold, className: 'ri-bold', title: 'Gras' },
       { name: 'italic', action: toggleItalic, className: 'ri-italic', title: 'Italique' },
@@ -66,7 +71,7 @@ export function createMarkdownEditor(fieldId) {
     ],
   });
 
-  easyMDE.toggleSideBySideView();
+  easyMDE.toggleSideBySide();
 
   return easyMDE;
 }
