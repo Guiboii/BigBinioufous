@@ -244,9 +244,14 @@ function getFocusable(container) {
 function openPopup(form, trigger) {
   form.classList.remove('d-none');
   trigger.setAttribute('aria-expanded', 'true');
+  // The close button comes first in the markup, so the first field is looked for explicitly.
   var focusable = getFocusable(form);
-  if (focusable.length) {
-    focusable[0].focus();
+  var firstField = focusable.find(function (el) {
+    return el.matches('input, textarea, select');
+  });
+  var target = firstField || focusable[0];
+  if (target) {
+    target.focus();
   }
 }
 
@@ -259,6 +264,11 @@ function closePopup(form, trigger) {
 loginButton.addEventListener('click', function () {
   openPopup(loginForm, loginButton);
 });
+
+// After a failed login the page reloads with the error rendered inside the popup, which is closed by default: reopen it so the error is seen.
+if (loginForm.querySelector('[role="alert"]')) {
+  openPopup(loginForm, loginButton);
+}
 
 var closeL = loginForm.querySelector('.close');
 closeL.addEventListener('click', function () {
