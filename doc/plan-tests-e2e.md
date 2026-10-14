@@ -12,27 +12,27 @@ Priorités :
 
 ## 0. Prérequis (avant d'écrire les tests)
 
-- [ ] **Comptes de test fixes** : les fixtures n'ont que 2 comptes à email connu (admins). Ajouter des comptes stables pour l'e2e : un·e binioufous validé·e, un compte simple validé, un compte en attente de validation (emails fixes, mot de passe `password`).
-- [ ] **Helper partagé** `tests/e2e/support/auth.js` : `login(page, role)` (le `login()` de `folder-drop.spec.js` y est déplacé), éventuellement en `storageState` pour ne pas se reconnecter à chaque test.
-- [ ] **Fichiers de test** `tests/e2e/fixtures/` : un petit mp3 (quelques Ko), un PDF, une image, un fichier non autorisé.
+- [ ] **Comptes de test fixes** (pas encore nécessaire : tous les tests P1 passent en admin) : les fixtures n'ont que 2 comptes à email connu (admins). Ajouter des comptes stables pour l'e2e : un·e binioufous validé·e, un compte simple validé, un compte en attente de validation (emails fixes, mot de passe `password`).
+- [x] **Helper partagé** `tests/e2e/support/helpers.js` (`login`, `openFreshFolder`, `uploadFiles`, `fixture`) + session admin enregistrée une fois par `auth.setup.js` (`storageState`) : un test fichiers passe de ~17 s à ~2 s. `folder-drop.spec.js` garde encore son propre `login()`.
+- [x] **Fichiers de test** `tests/e2e/fixtures/` : un petit mp3 (quelques Ko), un PDF, une image, un fichier non autorisé (`.zip`).
 - [ ] **Projet mobile** dans `playwright.config.js` (ex. `devices['Pixel 7']`), lancé uniquement sur les specs taguées `@mobile`.
 
 ## 1. Transverse (toutes pages)
 
-| Scénario                                             | Vérification                                                          | Prio | Statut                    |
-| ---------------------------------------------------- | --------------------------------------------------------------------- | ---- | ------------------------- |
+| Scénario                                             | Vérification                                                          | Prio | Statut                     |
+| ---------------------------------------------------- | --------------------------------------------------------------------- | ---- | -------------------------- |
 | Clic sur le burger au-dessus d'une scène 3D          | Le clic n'atteint pas la scène (#44)                                  | P1   | ✅ `click-through.spec.js` |
-| Menu mobile ouvert puis `Échap`                      | Le menu se ferme, le focus revient au burger (`app.js`)               | P2   |                           |
-| Navigation au clavier (Tab) sur chaque page publique | Un indicateur `:focus-visible` est visible sur chaque élément atteint | P3   |                           |
+| Menu mobile ouvert puis `Échap`                      | Le menu se ferme, le focus revient au burger (`app.js`)               | P2   |                            |
+| Navigation au clavier (Tab) sur chaque page publique | Un indicateur `:focus-visible` est visible sur chaque élément atteint | P3   |                            |
 
 ## 2. Connexion `/join` (`login/join.js`)
 
-| Scénario                                | Vérification                                                | Prio | Statut                                    |
-| --------------------------------------- | ----------------------------------------------------------- | ---- | ----------------------------------------- |
-| Bouton "connexion" accessible (hors 3D) | La popup s'ouvre, focus dans le 1er champ, `Échap` la ferme | P1   |                                           |
-| Identifiants valides                    | Arrivée sur `/desk`                                         | P1   | (couvert indirectement par `folder-drop`) |
-| Identifiants faux                       | Message d'erreur visible, popup toujours ouverte            | P2   |                                           |
-| Clic 3D sur la soucoupe / le tapis      | Redirection attendue (`/join` ↔ inscription / accueil)      | P3   |                                           |
+| Scénario                                | Vérification                                                | Prio | Statut                          |
+| --------------------------------------- | ----------------------------------------------------------- | ---- | ------------------------------- |
+| Bouton "connexion" accessible (hors 3D) | La popup s'ouvre, focus dans le 1er champ, `Échap` la ferme | P1   | ✅ `join.spec.js`               |
+| Identifiants valides                    | Arrivée sur `/desk`                                         | P1   | ✅ `auth.setup.js`              |
+| Identifiants faux                       | Message d'erreur visible, popup toujours ouverte            | P2   | ✅ `join.spec.js` (bug corrigé) |
+| Clic 3D sur la soucoupe / le tapis      | Redirection attendue (`/join` ↔ inscription / accueil)      | P3   |                                 |
 
 ## 3. Profil `/desk/profile`
 
@@ -46,34 +46,34 @@ Priorités :
 
 Le plus gros bloc, et celui qui a le plus cassé.
 
-| Scénario                                            | Vérification                                                                                                 | Prio | Statut                  |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ---- | ----------------------- |
-| Dépôt d'un dossier dans un dossier homonyme         | Arrive dans le dossier affiché (#36)                                                                         | P1   | ✅ `folder-drop.spec.js` |
-| Dépôt d'un fichier simple sur la zone               | Le document apparaît dans la liste sans erreur                                                               | P1   |                         |
-| Dépôt d'un fichier refusé (type ou taille)          | Le message précis s'affiche (`invalid_mimetype`, `file_too_large`), pas un "échec" générique                 | P1   |                         |
-| Dépôt mp3 + PDF + image dans l'espace `music`       | Les 3 sont acceptés (régression du 2026-08-13)                                                               | P1   |                         |
-| Glisser un document sur un dossier                  | Le document est déplacé (`drag-move.js`)                                                                     | P1   |                         |
-| Glisser un dossier sur lui-même / un de ses enfants | Refusé, rien ne bouge                                                                                        | P2   |                         |
-| Multi-sélection puis "Déplacer"                     | Seuls les éléments cochés sont déplacés ; 2e action groupée sans ids résiduels de la 1re (`bulk-actions.js`) | P1   |                         |
-| Multi-sélection puis "Supprimer"                    | Éléments en corbeille, puis restauration depuis la corbeille                                                 | P2   |                         |
-| Clic sur une image / un PDF / un mp3                | Modale d'aperçu avec le bon lecteur ; un `.docx` reste un lien normal (`file-preview.js`)                    | P2   |                         |
-| Création d'un dossier                               | La carte "Nouveau dossier" est visible et fonctionne                                                         | P3   |                         |
-| Recherche et tri                                    | (PHPUnit : rendu serveur)                                                                                    |      |                         |
+| Scénario                                            | Vérification                                                                                                 | Prio | Statut                                            |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ---- | ------------------------------------------------- |
+| Dépôt d'un dossier dans un dossier homonyme         | Arrive dans le dossier affiché (#36)                                                                         | P1   | ✅ `folder-drop.spec.js`                          |
+| Dépôt d'un fichier simple sur la zone               | Le document apparaît dans la liste sans erreur                                                               | P1   | ✅ `files.spec.js`                                |
+| Dépôt d'un fichier refusé (type ou taille)          | Le message précis s'affiche (`invalid_mimetype`, `file_too_large`), pas un "échec" générique                 | P1   | ✅ `files.spec.js` (bug corrigé ; taille simulée) |
+| Dépôt mp3 + PDF + image dans l'espace `music`       | Les 3 sont acceptés (régression du 2026-08-13)                                                               | P1   | ✅ `files.spec.js`                                |
+| Glisser un document sur un dossier                  | Le document est déplacé (`drag-move.js`)                                                                     | P1   | ✅ `files.spec.js`                                |
+| Glisser un dossier sur lui-même / un de ses enfants | Refusé, rien ne bouge                                                                                        | P2   |                                                   |
+| Multi-sélection puis "Déplacer"                     | Seuls les éléments cochés sont déplacés ; 2e action groupée sans ids résiduels de la 1re (`bulk-actions.js`) | P1   | 🟡 `files.spec.js` (ids résiduels pas testés)     |
+| Multi-sélection puis "Supprimer"                    | Éléments en corbeille, puis restauration depuis la corbeille                                                 | P2   |                                                   |
+| Clic sur une image / un PDF / un mp3                | Modale d'aperçu avec le bon lecteur ; un `.docx` reste un lien normal (`file-preview.js`)                    | P2   |                                                   |
+| Création d'un dossier                               | La carte "Nouveau dossier" est visible et fonctionne                                                         | P3   | ✅ indirect (tous les tests fichiers)             |
+| Recherche et tri                                    | (PHPUnit : rendu serveur)                                                                                    |      |                                                   |
 
 ## 5. Musique `/music` (`music.js`, `Player.js`, `setlist-manage.js`, `youtube-embed.js`)
 
-| Scénario                                                                                        | Vérification                                                                                                               | Prio | Statut |
-| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---- | ------ |
-| Arrivée sur la page                                                                             | **Aucune lecture automatique** (`pendingAutoplay`)                                                                         | P1   |        |
-| Clic sur un morceau de la playlist                                                              | Lecture lancée, morceau marqué actif                                                                                       | P1   |        |
-| Modale "Gérer la setlist" : ajout d'un morceau                                                  | Morceau ajouté dans la modale **et** dans `#playlist`, **sans rechargement** (marqueur posé sur `window` toujours présent) | P1   |        |
-| Idem : monter / descendre / supprimer                                                           | Ordre mis à jour en place, modale toujours ouverte                                                                         | P1   |        |
-| Après un ajout, clic sur un morceau                                                             | Le lecteur fonctionne toujours (délégation d'événements après `innerHTML`)                                                 | P1   |        |
-| Rond jaune "Envoyer"                                                                            | Ouvre la même modale                                                                                                       | P2   |        |
-| Badge YouTube (visiteur non connecté)                                                           | Overlay vidéo ouvert, fermable au clavier                                                                                  | P2   |        |
-| Position du lecteur sur le meuble à 1280×800, 1835×901, 2200×700, 1920×1080 + redimensionnement | `left/top/width/height` du lecteur à quelques px des valeurs de référence                                                  | P3   |        |
-| Mobile (<700px)                                                                                 | Pas de canvas 3D, lecteur utilisable                                                                                       | P2   |        |
-| Espace membres, longue liste de voix                                                            | La liste défile (pas rognée)                                                                                               | P3   |        |
+| Scénario                                                                                        | Vérification                                                                                                               | Prio | Statut             |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------ |
+| Arrivée sur la page                                                                             | **Aucune lecture automatique** (`pendingAutoplay`)                                                                         | P1   | ✅ `music.spec.js` |
+| Clic sur un morceau de la playlist                                                              | Lecture lancée, morceau marqué actif                                                                                       | P1   | ✅ `music.spec.js` |
+| Modale "Gérer la setlist" : ajout d'un morceau                                                  | Morceau ajouté dans la modale **et** dans `#playlist`, **sans rechargement** (marqueur posé sur `window` toujours présent) | P1   | ✅ `music.spec.js` |
+| Idem : monter / descendre / supprimer                                                           | Ordre mis à jour en place, modale toujours ouverte                                                                         | P1   | ✅ `music.spec.js` |
+| Après un ajout, clic sur un morceau                                                             | Le lecteur fonctionne toujours (délégation d'événements après `innerHTML`)                                                 | P1   | ✅ `music.spec.js` |
+| Rond jaune "Envoyer"                                                                            | Ouvre la même modale                                                                                                       | P2   | ✅ `music.spec.js` |
+| Badge YouTube (visiteur non connecté)                                                           | Overlay vidéo ouvert, fermable au clavier                                                                                  | P2   |                    |
+| Position du lecteur sur le meuble à 1280×800, 1835×901, 2200×700, 1920×1080 + redimensionnement | `left/top/width/height` du lecteur à quelques px des valeurs de référence                                                  | P3   |                    |
+| Mobile (<700px)                                                                                 | Pas de canvas 3D, lecteur utilisable                                                                                       | P2   |                    |
+| Espace membres, longue liste de voix                                                            | La liste défile (pas rognée)                                                                                               | P3   |                    |
 
 ## 6. Agenda `/schedule` (`schedule.js`)
 
@@ -87,13 +87,13 @@ Le plus gros bloc, et celui qui a le plus cassé.
 
 ## 7. Histoire `/story` (`story.js`, `minisite.js`)
 
-| Scénario                                 | Vérification                                                              | Prio | Statut |
-| ---------------------------------------- | ------------------------------------------------------------------------- | ---- | ------ |
-| Clic sur la mascotte dansante (1280×800) | **Pas** de redirection vers un espace fichiers (régression du 2026-09-12) | P1   |        |
-| Clic sur la soucoupe                     | Redirection vers `/join`                                                  | P2   |        |
-| Iframe `#miniSite`                       | Chargée, sans navbar (mode iframe)                                        | P2   |        |
-| Mobile (<700px)                          | Redirection vers le minisite, avec sa petite navbar                       | P2   |        |
-| Formulaire de contact du minisite        | Envoi en `fetch`, résultat affiché sans quitter la page                   | P2   |        |
+| Scénario                                 | Vérification                                                              | Prio | Statut                                                   |
+| ---------------------------------------- | ------------------------------------------------------------------------- | ---- | -------------------------------------------------------- |
+| Clic sur la mascotte dansante (1280×800) | **Pas** de redirection vers un espace fichiers (régression du 2026-09-12) | P1   | ⚠️ `story.spec.js` en `fixme` (bug ouvert, cf. plus bas) |
+| Clic sur la soucoupe                     | Redirection vers `/join`                                                  | P2   |                                                          |
+| Iframe `#miniSite`                       | Chargée, sans navbar (mode iframe)                                        | P2   |                                                          |
+| Mobile (<700px)                          | Redirection vers le minisite, avec sa petite navbar                       | P2   |                                                          |
+| Formulaire de contact du minisite        | Envoi en `fetch`, résultat affiché sans quitter la page                   | P2   |                                                          |
 
 Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre fixe et vérifier la **destination** (`page.waitForURL`), pas le pixel.
 
@@ -123,6 +123,12 @@ Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre
 ## Ordre de mise en œuvre conseillé
 
 1. Prérequis (section 0).
-2. Tous les **P1** : `files-upload.spec.js`, `files-move.spec.js`, `music-player.spec.js`, `music-setlist.spec.js`, `story-click.spec.js`, `join-login.spec.js`.
+2. ✅ Tous les **P1** : `files.spec.js`, `music.spec.js`, `join.spec.js`, `story.spec.js` (une spec par fonctionnalité plutôt que par scénario).
 3. Les **P2**, une spec par fonctionnalité.
 4. Les **P3** si le temps d'exécution en CI reste raisonnable (objectif : sous 2 minutes au total).
+
+## Bugs trouvés par ces tests
+
+- ✅ **Dépôt refusé sans message** (`quick-upload.js`) : `var status` dans un script classique, c'est `window.status`, qui transforme tout en texte. Plantage `status.appendChild is not a function`, aucun message affiché. Variable renommée.
+- ✅ **Échec de connexion invisible** (`join.js`) : le message d'erreur était dans la popup, fermée après le rechargement. Elle se rouvre maintenant seule. Le focus allait aussi sur « fermer » au lieu du 1er champ.
+- ⚠️ **Clic sur la mascotte de `/story` (ouvert)** : à (95, 590) en 1280×800, le rayon ne touche jamais la mascotte (modèle animé, probablement testé dans sa pose de repos par three r128). Le 1er objet touché est la boîte invisible `trieurAccounting`, ce qui envoie vers `/desk/files/accounting` (puis `/join` pour un visiteur). Le correctif du 2026-09-12 ne couvrait que le cas où la mascotte est touchée. Test en `fixme` en attendant.
