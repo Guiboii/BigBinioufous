@@ -79,3 +79,62 @@ test('bulk move only moves the checked items', async ({ page }) => {
   await expect(page.locator('.desk-document')).toHaveCount(1);
   await expect(page.locator('.desk-document--image')).toBeVisible();
 });
+
+test('dropping a folder onto itself moves nothing', async ({ page }) => {
+  await openFreshFolder(page, 'other', 'self-drop');
+  await page.locator('#new-folder-name').fill('Lui-meme');
+  await page.locator('.desk-new-folder button[type="submit"]').click();
+  const badge = page.locator('[data-dropzone="folder"]', { hasText: 'Lui-meme' });
+
+  // dragTo() onto its own center would just be a click (opening the folder): fire the drag events directly instead.
+  const dataTransfer = await page.evaluateHandle(() => new DataTransfer());
+  await badge.dispatchEvent('dragstart', { dataTransfer });
+  await Promise.all([page.waitForEvent('load'), badge.dispatchEvent('drop', { dataTransfer })]);
+
+  await expect(badge).toBeVisible();
+  await page.locator('.desk-folders a', { hasText: 'Lui-meme' }).click();
+  await expect(page.locator('.desk-folders a', { hasText: 'Lui-meme' })).toHaveCount(0);
+});
+
+test('bulk delete sends to the trash, and restoring brings the item back', async ({ page }) => {
+  const folderName = await openFreshFolder(page, 'other', 'trash');
+  const childName = `Jeter-${Date.now()}`;
+  await page.locator('#new-folder-name').fill(childName);
+  await page.locator('.desk-new-folder button[type="submit"]').click();
+
+  await page.locator('.desk-folder-badge', { hasText: childName }).locator('.desk-select').check();
+  await page.locator('#desk-bulk-delete-btn').click();
+  await expect(page.locator('.desk-folders a', { hasText: childName })).toHaveCount(0);
+
+  await page.goto('/desk/files/other/trash');
+  await page
+    .getByRole('button', { name: new RegExp(childName) })
+    .first()
+    .click();
+
+  await page.goto('/desk/files/other');
+  await page.locator('.desk-folders a', { hasText: folderName }).click();
+  await expect(page.locator('.desk-folders a', { hasText: childName })).toBeVisible();
+});
+
+test('images open in the preview modal, other files stay plain links', async ({ page }) => {
+  await openFreshFolder(page, 'other', 'preview');
+  await uploadFiles(page, [fixture('sample.png'), fixture('sample.txt')]);
+
+  const imageLink = page.locator('.desk-document--image [data-preview-kind]');
+  await imageLink.click();
+  const modal = page.locator('#file-preview-modal');
+  await expect(modal).toBeVisible();
+  await expect(modal.locator('#file-preview-body img')).toBeVisible();
+  await expect(modal.locator('.file-preview-close')).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(modal).toBeHidden();
+  await expect(imageLink).toBeFocused();
+
+  // A text file has no in-browser viewer: clicking it must leave the modal closed.
+  const textLink = page.locator('.desk-document--file [data-preview-kind]');
+  await expect(textLink).toHaveAttribute('href', /\.txt$/);
+  await textLink.click({ modifiers: ['ControlOrMeta'] });
+  await expect(modal).toBeHidden();
+});

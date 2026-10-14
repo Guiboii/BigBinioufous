@@ -35,10 +35,15 @@ npm run test:e2e
 
 - `folder-drop.spec.js` : dépôt d'un dossier dans un dossier qui a un homonyme (régression #36). Un `DataTransfer` synthétique ne peut pas contenir de vrais dossiers, donc l'API `webkitGetAsEntry` du navigateur est simulée ; tout le reste (chemins, envoi, arborescence côté serveur) est réel.
 - `click-through.spec.js` : sur les 5 pages 3D, un clic sur le burger ne doit pas atteindre la scène derrière (régression #44, reproduite sur l'accueil en 1280×800 avec l'ancien code).
-- `files.spec.js` : dépôt (types acceptés, messages d'erreur précis), glisser-déposer d'un document, déplacement groupé.
-- `music.spec.js` : modale setlist sans rechargement (ajout, ordre, suppression), lecture au clic, pas de lecture automatique.
+- `files.spec.js` : dépôt (types acceptés, messages d'erreur précis), glisser-déposer, déplacement groupé, corbeille, aperçu des fichiers.
+- `music.spec.js` : modale setlist sans rechargement (ajout, ordre, suppression), lecture au clic, pas de lecture automatique, overlay YouTube, téléphone.
 - `join.spec.js` : popup de connexion (focus, `Échap`, message après identifiants faux).
-- `story.spec.js` : clic sur la mascotte, en `fixme` (bug ouvert, cf. `doc/plan-tests-e2e.md`).
+- `story.spec.js` : minisite (iframe sans navbar, redirection sur téléphone, formulaire). Clics sur la mascotte et la soucoupe en `fixme` (bug ouvert, cf. `doc/plan-tests-e2e.md`).
+- `navigation.spec.js` : sur téléphone, chaque gabarit de page fait la largeur de l'écran (balise viewport) ; `Échap` ferme le menu.
+- `profile.spec.js` : champ « lequel ? » de l'instrument Autre.
+- `schedule.spec.js` : mois d'ouverture du mini calendrier (horloge figée avec `page.clock`), navigation, téléphone.
+- `contact.spec.js` : affichage des réponses du formulaire (réponses serveur simulées).
+- `admin.spec.js` : sélection des inscriptions, éditeur Markdown, lignes de devis et fiche client.
 
 Ce qui reste à écrire, fonctionnalité par fonctionnalité : `doc/plan-tests-e2e.md`.
 
@@ -46,4 +51,7 @@ Ce qui reste à écrire, fonctionnalité par fonctionnalité : `doc/plan-tests-e
 
 - Session admin déjà ouverte : `test.use({ storageState: ADMIN_STATE })` (connexion faite une seule fois par `auth.setup.js`, au lieu de repasser par la scène 3D de `/join` à chaque test).
 - Chaque test crée son propre dossier (`openFreshFolder()`, nom horodaté) : la base est partagée entre tous les tests d'un lancement.
+- Téléphone : `test.use(MOBILE)` dans un `test.describe` (réglages Pixel 7 de `helpers.js`).
+- Formulaires dont le serveur a une limite par IP (contact) : simuler la réponse avec `page.route()`, les règles serveur restent testées par PHPUnit.
+- **Piège** : jamais de vrai `/logout` dans un test qui utilise `ADMIN_STATE` : la session côté serveur est partagée par toutes les specs, les suivantes se retrouveraient déconnectées. Pour devenir visiteur·ice : `page.context().clearCookies()`.
 - **Piège** : attendre l'événement `load` avant d'interagir (`openFreshFolder()` le fait). Les scripts JS arrivent après le HTML : un fichier choisi trop tôt n'est jamais envoyé, sans aucune erreur.
