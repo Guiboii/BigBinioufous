@@ -1,5 +1,10 @@
 // Shared helpers for the e2e specs: login and a fresh, uniquely named folder per test so tests sharing the database never see each other's files.
-import { expect } from '@playwright/test';
+import { expect, devices } from '@playwright/test';
+
+// Phone settings for test.use() inside a describe: defaultBrowserType can't be overridden there, so it's dropped.
+const pixel = { ...devices['Pixel 7'] };
+delete pixel.defaultBrowserType;
+export const MOBILE = pixel;
 
 export const ADMIN = { email: 'admin@admin.com', password: 'admin' };
 
