@@ -19,11 +19,12 @@ Priorités :
 
 ## 1. Transverse (toutes pages)
 
-| Scénario                                             | Vérification                                                          | Prio | Statut                     |
-| ---------------------------------------------------- | --------------------------------------------------------------------- | ---- | -------------------------- |
-| Clic sur le burger au-dessus d'une scène 3D          | Le clic n'atteint pas la scène (#44)                                  | P1   | ✅ `click-through.spec.js` |
-| Menu mobile ouvert puis `Échap`                      | Le menu se ferme, le focus revient au burger (`app.js`)               | P2   | ✅ `navigation.spec.js`    |
-| Navigation au clavier (Tab) sur chaque page publique | Un indicateur `:focus-visible` est visible sur chaque élément atteint | P3   |                            |
+| Scénario                                                                                                 | Vérification                                                          | Prio | Statut                     |
+| -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ---- | -------------------------- |
+| Clic sur le burger au-dessus d'une scène 3D                                                              | Le clic n'atteint pas la scène (#44)                                  | P1   | ✅ `click-through.spec.js` |
+| Menu mobile ouvert puis `Échap`                                                                          | Le menu se ferme, le focus revient au burger (`app.js`)               | P2   | ✅ `navigation.spec.js`    |
+| Largeur réelle sur téléphone (`/contact`, `/music`, `/desk/profile`, `/desk/files/music`, `/story/mini`) | La page fait la largeur de l'écran (balise viewport, bug corrigé)     | P1   | ✅ `navigation.spec.js`    |
+| Navigation au clavier (Tab) sur chaque page publique                                                     | Un indicateur `:focus-visible` est visible sur chaque élément atteint | P3   |                            |
 
 ## 2. Connexion `/join` (`login/join.js`)
 
@@ -70,9 +71,9 @@ Le plus gros bloc, et celui qui a le plus cassé.
 | Idem : monter / descendre / supprimer                                                           | Ordre mis à jour en place, modale toujours ouverte                                                                         | P1   | ✅ `music.spec.js` |
 | Après un ajout, clic sur un morceau                                                             | Le lecteur fonctionne toujours (délégation d'événements après `innerHTML`)                                                 | P1   | ✅ `music.spec.js` |
 | Rond jaune "Envoyer"                                                                            | Ouvre la même modale                                                                                                       | P2   | ✅ `music.spec.js` |
-| Badge YouTube (visiteur non connecté)                                                           | Overlay vidéo ouvert, fermable au clavier                                                                                  | P2   |                    |
+| Badge YouTube (visiteur non connecté)                                                           | Overlay vidéo ouvert, fermable au clavier                                                                                  | P2   | ✅ `music.spec.js` |
 | Position du lecteur sur le meuble à 1280×800, 1835×901, 2200×700, 1920×1080 + redimensionnement | `left/top/width/height` du lecteur à quelques px des valeurs de référence                                                  | P3   |                    |
-| Mobile (<700px)                                                                                 | Pas de canvas 3D, lecteur utilisable                                                                                       | P2   |                    |
+| Mobile (<700px)                                                                                 | Pas de canvas 3D, lecteur utilisable                                                                                       | P2   | ✅ `music.spec.js` |
 | Espace membres, longue liste de voix                                                            | La liste défile (pas rognée)                                                                                               | P3   |                    |
 
 ## 6. Agenda `/schedule` (`schedule.js`)
@@ -131,6 +132,8 @@ Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre
 
 - ✅ **Dépôt refusé sans message** (`quick-upload.js`) : `var status` dans un script classique, c'est `window.status`, qui transforme tout en texte. Plantage `status.appendChild is not a function`, aucun message affiché. Variable renommée.
 - ✅ **Échec de connexion invisible** (`join.js`) : le message d'erreur était dans la popup, fermée après le rechargement. Elle se rouvre maintenant seule. Le focus allait aussi sur « fermer » au lieu du 1er champ.
+- ✅ **Pas de balise viewport** (`base.html.twig`, `desk/base.html.twig`, `popup.html.twig`) : sur un vrai téléphone, toutes les pages (sauf le minisite) s'affichaient comme sur un écran de ~980 px, dézoomées. Aucune règle CSS mobile (`max-width: 700px`...) ne s'appliquait, et `/music` ne passait jamais en mode mobile. Cause probable d'une bonne partie de #39.
+- ⚠️ **Tableaux qui débordent sur téléphone (ouvert, #39)** : 12 tableaux sans `.table-responsive` (listes de membres de `/desk`, notes, planning, compta...), la colonne Actions sort de l'écran. Seul `admin/unvalids.html.twig` est déjà corrigé.
 - ⚠️ **Clic sur la mascotte de `/story` (ouvert)** : à (95, 590) en 1280×800, le rayon ne touche jamais la mascotte (modèle animé, probablement testé dans sa pose de repos par three r128). Le 1er objet touché est la boîte invisible `trieurAccounting`, ce qui envoie vers `/desk/files/accounting` (puis `/join` pour un visiteur). Le correctif du 2026-09-12 ne couvrait que le cas où la mascotte est touchée. Test en `fixme` en attendant.
 
 ## Durée des tests musique (~30 s chacun)
