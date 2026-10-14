@@ -7,7 +7,8 @@ if (zone) {
   var progressBar = document.getElementById('quick-upload-progress-bar');
   var progressTrack = document.getElementById('quick-upload-progress-track');
   var progressLabel = document.getElementById('quick-upload-progress-label');
-  var status = document.getElementById('quick-upload-status');
+  // Not named "status": this is a classic script, so a top-level var "status" would be window.status, which turns anything assigned to it into a string.
+  var statusList = document.getElementById('quick-upload-status');
   var errorMessages = {};
   try {
     errorMessages = JSON.parse(zone.dataset.errorMessages || '{}');
@@ -139,7 +140,7 @@ if (zone) {
     zone.classList.add('uploading');
     zone.setAttribute('aria-disabled', 'true');
     input.disabled = true;
-    status.textContent = '';
+    statusList.textContent = '';
     progress.hidden = false;
     updateProgress(0, entries.length, entries[0].file.name);
 
@@ -179,7 +180,7 @@ if (zone) {
         var item = document.createElement('li');
         var message = errorMessages[failure.error] || zone.dataset.error;
         item.textContent = failure.name + ' : ' + message;
-        status.appendChild(item);
+        statusList.appendChild(item);
       });
     });
   }

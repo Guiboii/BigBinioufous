@@ -34,3 +34,15 @@ npm run test:e2e
 
 - `folder-drop.spec.js` : dépôt d'un dossier dans un dossier qui a un homonyme (régression #36). Un `DataTransfer` synthétique ne peut pas contenir de vrais dossiers, donc l'API `webkitGetAsEntry` du navigateur est simulée ; tout le reste (chemins, envoi, arborescence côté serveur) est réel.
 - `click-through.spec.js` : sur les 5 pages 3D, un clic sur le burger ne doit pas atteindre la scène derrière (régression #44, reproduite sur l'accueil en 1280×800 avec l'ancien code).
+- `files.spec.js` : dépôt (types acceptés, messages d'erreur précis), glisser-déposer d'un document, déplacement groupé.
+- `music.spec.js` : modale setlist sans rechargement (ajout, ordre, suppression), lecture au clic, pas de lecture automatique.
+- `join.spec.js` : popup de connexion (focus, `Échap`, message après identifiants faux).
+- `story.spec.js` : clic sur la mascotte, en `fixme` (bug ouvert, cf. `doc/plan-tests-e2e.md`).
+
+Ce qui reste à écrire, fonctionnalité par fonctionnalité : `doc/plan-tests-e2e.md`.
+
+### Écrire un test
+
+- Session admin déjà ouverte : `test.use({ storageState: ADMIN_STATE })` (connexion faite une seule fois par `auth.setup.js`, au lieu de repasser par la scène 3D de `/join` à chaque test).
+- Chaque test crée son propre dossier (`openFreshFolder()`, nom horodaté) : la base est partagée entre tous les tests d'un lancement.
+- **Piège** : attendre l'événement `load` avant d'interagir (`openFreshFolder()` le fait). Les scripts JS arrivent après le HTML : un fichier choisi trop tôt n'est jamais envoyé, sans aucune erreur.

@@ -180,6 +180,37 @@ composer test
 
 **Piège** : jamais `php bin/phpunit` (wrapper `simple-phpunit` du bridge Symfony) : casse sur PHP 8.4 à cause d'une version épinglée trop ancienne dans `phpunit.xml.dist`. `composer test` utilise directement `vendor/bin/phpunit` (`phpunit/phpunit ^9.5`), qui fonctionne très bien.
 
+## Branche `master` protégée
+
+Pas de push direct sur `master` : tout passe par une **pull request**, mergeable seulement si la CI (`.github/workflows/pipeline.yml`) est verte. Sinon, le merge est bloqué.
+
+1. Créer une branche depuis `master` (`git switch -c ma-branche`).
+2. Pousser la branche et ouvrir une PR vers `master` (`gh pr create`).
+3. Attendre que ces vérifications passent : `lint-php-twig`, `lint-js`, `tests-php`, `tests-e2e`, `dependency-review`.
+4. Merger la PR. Le push sur `master` qui en résulte déclenche le déploiement (job `deploy`).
+
+La règle s'applique aussi aux admins du dépôt. Elle se règle côté GitHub (Settings > Branches), uniquement par un compte **admin** du dépôt. Commande équivalente :
+
+```bash
+gh api -X PUT repos/Guiboii/BigBinioufous/branches/master/protection --input - <<'EOF'
+{
+  "required_status_checks": {
+    "strict": true,
+    "contexts": ["lint-php-twig", "lint-js", "tests-php", "tests-e2e", "dependency-review"]
+  },
+  "enforce_admins": true,
+  "required_pull_request_reviews": { "required_approving_review_count": 0 },
+  "restrictions": null,
+  "allow_force_pushes": false,
+  "allow_deletions": false
+}
+EOF
+```
+
+- `strict` : la branche de la PR doit être à jour avec `master` avant le merge, pour que les tests aient tourné sur le code réellement mergé.
+- `required_approving_review_count: 0` : une PR est obligatoire, mais pas une relecture humaine (à passer à `1` le jour où il y a plusieurs contributeur·ices réguliers).
+- Si un job change de nom dans `pipeline.yml`, mettre la liste `contexts` à jour, sinon la PR attendra indéfiniment une vérification qui n'existe plus.
+
 ## Conventions de code
 
 PHP (PHP-CS-Fixer, ruleset `@Symfony`), Twig (Twig-CS-Fixer) et JS (ESLint + Prettier), avec un `.editorconfig` commun pour l'indentation. Un `Makefile` unifie les commandes des deux écosystèmes (composer/npm) :

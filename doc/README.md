@@ -11,6 +11,7 @@ Docs courtes, une par partie du projet, pour se remettre dans le code vite. Chac
 - [style.md](style.md) : frontend : **les trois systèmes d'icônes** (Font Awesome, Remixicon, SVG bootstrap-icons collés à la main), variables de couleurs `--bb-*`, entries AssetMapper, **et le cas à part de la minisite Histoire** (page autonome, sa propre palette `--term-*`).
 - [i18n.md](i18n.md) : traduction (fr/en/br), sélecteur de langue, comment ajouter une clé, limite du check CI sur le breton.
 - [tests.md](tests.md) : PHPUnit par défaut, Playwright (navigateur réel) seulement quand le bug vit dans le JS ou le rendu ; comment lancer, pièges.
+- [plan-tests-e2e.md](plan-tests-e2e.md) : plan des tests Playwright à écrire, fonctionnalité par fonctionnalité, avec priorités et statut.
 - [deploiement-vps.md](deploiement-vps.md) : setup one-shot du VPS (utilisateur, SSH, pare-feu, PHP/MySQL/Nginx, `.env.prod.local`, secrets GitHub Actions pour le déploiement auto).
 
 Vue d'ensemble stack/installation/structure : voir le [README.md](../README.md) à la racine.
