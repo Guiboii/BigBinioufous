@@ -62,6 +62,8 @@ jobs:
         with:
           php-version: "8.4"
           extensions: pdo_sqlite
+          # pcov : driver de couverture léger (contrairement à Xdebug, ne fait que ça)
+          coverage: pcov
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --no-scripts
       - name: .env éphémère pour booter le kernel (jamais commité, .env réel volontairement hors git)
@@ -70,8 +72,24 @@ jobs:
         run: echo 'DATABASE_URL="sqlite:///%kernel.project_dir%/var/test.db"' > .env.test.local
       - name: Télécharge les dépendances JS d'AssetMapper (assets/vendor/, gitignoré, nécessaire pour que les pages avec {{ importmap() }} rendent sans 500)
         run: php bin/console importmap:install
-      - name: Run PHPUnit
-        run: composer test
+      - name: Run PHPUnit (avec couverture)
+        run: composer test:coverage
+      - name: Résumé de couverture dans l'onglet Summary du run
+        if: always()
+        run: |
+          if [ -f var/coverage/coverage.txt ]; then
+            echo '### Couverture PHPUnit (`src/`)' >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            cat var/coverage/coverage.txt >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Rapport de couverture HTML (artefact à télécharger)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-php
+          path: var/coverage/
+          retention-days: 14
 
   # Tests de bout en bout (Playwright, tests/e2e/) : uniquement ce que PHPUnit
   # ne voit pas (JS, glisser-déposer, rendu). Base SQLite dédiée, recréée par

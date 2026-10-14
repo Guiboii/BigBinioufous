@@ -105,7 +105,8 @@
         "cs-php-fix": "php-cs-fixer fix",
         "cs-twig": "twig-cs-fixer lint templates",
         "cs-twig-fix": "twig-cs-fixer fix templates",
-        "test": "vendor/bin/phpunit"
+        "test": "vendor/bin/phpunit",
+        "test:coverage": "vendor/bin/phpunit --coverage-text=var/coverage/coverage.txt --coverage-html=var/coverage/html && cat var/coverage/coverage.txt"
     },
     "conflict": {
         "symfony/symfony": "*"

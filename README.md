@@ -174,7 +174,12 @@ DATABASE_URL=mysql://root:root@127.0.0.1:3306/binioufous_4?serverVersion=5.7
 
 ```bash
 composer test
+composer test:coverage   # + couverture de src/ : résumé dans le terminal, détail dans var/coverage/html/index.html
 ```
+
+La couverture a besoin d'un driver PHP : `sudo dnf install php-pecl-pcov` (Fedora). En CI, le job `tests-php` la calcule à chaque run : résumé dans l'onglet **Summary** du run GitHub Actions, rapport HTML complet dans l'artefact `coverage-php`.
+
+Les tests Playwright (`npm run test:e2e`) ne tournent en CI que sur les **pull requests** (environ 6 min) ; en local, à lancer avant d'ouvrir une PR qui touche au JS ou au rendu.
 
 76 tests fonctionnels/unitaires (`tests/Controller`/`Entity`/`Security`), base SQLite recréée à chaque test (`tests/Support/AppWebTestCase`, `SchemaTool`, contourne `doctrine:migrations` peu fiable sur ce projet, cf. `CLAUDE.md`). Nécessite `DATABASE_URL="sqlite:///%kernel.project_dir%/var/test.db"` dans `.env.test.local` (gitignored, à créer localement).
 
