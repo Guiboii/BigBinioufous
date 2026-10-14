@@ -88,23 +88,23 @@ Le plus gros bloc, et celui qui a le plus cassé.
 
 ## 7. Histoire `/story` (`story.js`, `minisite.js`)
 
-| Scénario                                 | Vérification                                                              | Prio | Statut                                                   |
-| ---------------------------------------- | ------------------------------------------------------------------------- | ---- | -------------------------------------------------------- |
-| Clic sur la mascotte dansante (1280×800) | **Pas** de redirection vers un espace fichiers (régression du 2026-09-12) | P1   | ⚠️ `story.spec.js` en `fixme` (bug ouvert, cf. plus bas) |
-| Clic sur la soucoupe                     | Redirection vers `/join`                                                  | P2   |                                                          |
-| Iframe `#miniSite`                       | Chargée, sans navbar (mode iframe)                                        | P2   |                                                          |
-| Mobile (<700px)                          | Redirection vers le minisite, avec sa petite navbar                       | P2   |                                                          |
-| Formulaire de contact du minisite        | Envoi en `fetch`, résultat affiché sans quitter la page                   | P2   |                                                          |
+| Scénario                                 | Vérification                                                              | Prio | Statut                                     |
+| ---------------------------------------- | ------------------------------------------------------------------------- | ---- | ------------------------------------------ |
+| Clic sur la mascotte dansante (1280×800) | **Pas** de redirection vers un espace fichiers (régression du 2026-09-12) | P1   | ⚠️ `story.spec.js` en `fixme` (bug ouvert) |
+| Clic sur la soucoupe                     | Redirection vers `/join`                                                  | P2   | ⚠️ `story.spec.js` en `fixme` (même bug)   |
+| Iframe `#miniSite`                       | Chargée, sans navbar (mode iframe)                                        | P2   | ✅ `story.spec.js`                         |
+| Mobile (<700px)                          | Redirection vers le minisite, avec sa petite navbar                       | P2   | ✅ `story.spec.js`                         |
+| Formulaire de contact du minisite        | Envoi en `fetch`, résultat affiché sans quitter la page                   | P2   | ✅ `story.spec.js` (réponse simulée)       |
 
-Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre fixe et vérifier la **destination** (`page.waitForURL`), pas le pixel.
+Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre fixe et vérifier la **destination** (`page.waitForURL`), pas le pixel. Vérifier aussi les pages traversées : un clic sur un trieur finit lui aussi sur `/join` pour un visiteur (redirection de connexion), ce qui a fait passer à tort un 1er jet du test de la soucoupe.
 
 ## 8. Contact `/contact` (`contact.js`)
 
-| Scénario                                    | Vérification                                                                           | Prio | Statut |
-| ------------------------------------------- | -------------------------------------------------------------------------------------- | ---- | ------ |
-| Envoi valide (attendre le délai anti-robot) | Message de succès affiché, pas de navigation                                           | P2   |        |
-| Envoi trop rapide / honeypot rempli         | Message d'erreur affiché proprement                                                    | P2   |        |
-| Widgets HelloAsso                           | Non testé (service externe, à bloquer via `page.route` pour ne pas dépendre du réseau) |      |        |
+| Scénario                                         | Vérification                                                                                                      | Prio | Statut                                 |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ---- | -------------------------------------- |
+| Envoi réussi                                     | Message de succès affiché, formulaire vidé, pas de navigation                                                     | P2   | ✅ `contact.spec.js` (réponse simulée) |
+| Réponse d'erreur du serveur (ex. email invalide) | Message précis affiché, saisie conservée (le piège anti-robot répond un faux succès, rien à voir côté navigateur) | P2   | ✅ `contact.spec.js` (réponse simulée) |
+| Widgets HelloAsso                                | Non testé (service externe, à bloquer via `page.route` pour ne pas dépendre du réseau)                            |      |                                        |
 
 ## 9. Administration
 
@@ -134,7 +134,7 @@ Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre
 - ✅ **Échec de connexion invisible** (`join.js`) : le message d'erreur était dans la popup, fermée après le rechargement. Elle se rouvre maintenant seule. Le focus allait aussi sur « fermer » au lieu du 1er champ.
 - ✅ **Pas de balise viewport** (`base.html.twig`, `desk/base.html.twig`, `popup.html.twig`) : sur un vrai téléphone, toutes les pages (sauf le minisite) s'affichaient comme sur un écran de ~980 px, dézoomées. Aucune règle CSS mobile (`max-width: 700px`...) ne s'appliquait, et `/music` ne passait jamais en mode mobile. Cause probable d'une bonne partie de #39.
 - ⚠️ **Tableaux qui débordent sur téléphone (ouvert, #39)** : 12 tableaux sans `.table-responsive` (listes de membres de `/desk`, notes, planning, compta...), la colonne Actions sort de l'écran. Seul `admin/unvalids.html.twig` est déjà corrigé.
-- ⚠️ **Clic sur la mascotte de `/story` (ouvert)** : à (95, 590) en 1280×800, le rayon ne touche jamais la mascotte (modèle animé, probablement testé dans sa pose de repos par three r128). Le 1er objet touché est la boîte invisible `trieurAccounting`, ce qui envoie vers `/desk/files/accounting` (puis `/join` pour un visiteur). Le correctif du 2026-09-12 ne couvrait que le cas où la mascotte est touchée. Test en `fixme` en attendant.
+- ⚠️ **Clics 3D de `/story` captés par les trieurs (ouvert)** : les boîtes invisibles des trieurs (`trieurAdmin`, `trieurAccounting`, `trieurMusic`) sont plus proches de la caméra que la mascotte et la soucoupe, et couvrent toute la gauche de la scène en 1280×800. Un clic sur la mascotte (95, 590) ou pile sur la soucoupe (12, 295) part vers `/desk/files/...` (puis `/join` pour un visiteur). Le correctif du 2026-09-12 ne couvrait que le cas où l'objet visé est touché en premier. Les 2 tests sont en `fixme`.
 
 ## Durée des tests musique (~30 s chacun)
 
