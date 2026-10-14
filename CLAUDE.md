@@ -101,6 +101,7 @@ Sur `/schedule`, toujours pas revérifié à ce jour (ni vw/vh, ni projection) :
 ## Branches & CI
 
 - `master` est la branche principale de travail (2026-08-12 : `main_2026` fusionnée dans `master` via PR GitHub #33, puis supprimée locale + distante, devenue inutile). Chaque fonctionnalité part d'une branche dédiée depuis `master`, mergée dedans une fois prête.
+- **Pas de push direct sur `master`** (demandé le 2026-10-14) : toujours une branche + PR, merge seulement CI verte (`lint-php-twig`, `lint-js`, `tests-php`, `tests-e2e`, `dependency-review`). Protection GitHub à activer par un compte admin du dépôt (le compte `gh` local n'est pas admin), commande dans `README.md` section "Branche `master` protégée". Renommer un job de `pipeline.yml` impose de mettre à jour cette liste.
 - `.github/workflows/pipeline.yml` : un seul fichier, jobs enchaînés via `needs:` (lint → sécurité → déploiement à venir en Phase 3) :
   - `lint-php-twig` / `lint-js` : PHP-CS-Fixer + Twig-CS-Fixer / ESLint, sur chaque push (toutes branches) et PR vers `master`
   - `npm-audit` (sur push) / `dependency-review` (sur PR) : dépendent des jobs de lint, mêmes seuils qu'avant (`--audit-level=high` / `fail-on-severity: high`)
