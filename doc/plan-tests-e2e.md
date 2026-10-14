@@ -108,13 +108,13 @@ Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre
 
 ## 9. Administration
 
-| Scénario                                            | Vérification                                                                                                     | Prio | Statut |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---- | ------ |
-| `/admin/valid` : "Tout sélectionner"                | Toutes les cases cochées, compteur à jour (`registration-bulk.js`)                                               | P2   |        |
-| Validation groupée                                  | (PHPUnit)                                                                                                        |      |        |
-| Édition d'une section Histoire / d'une note         | L'éditeur Markdown se charge, un bouton de la barre d'outils (gras) modifie le texte, la valeur est bien soumise | P2   |        |
-| Compta : devis/facture, ajouter / retirer une ligne | Les lignes apparaissent, indices corrects, le formulaire s'enregistre (`document-lines.js`)                      | P2   |        |
-| Compta : choix d'un client                          | Adresse et contact pré-remplis, toujours modifiables (`client-autofill.js`)                                      | P2   |        |
+| Scénario                                            | Vérification                                                                                                     | Prio | Statut                                                            |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---- | ----------------------------------------------------------------- |
+| `/admin/valid` : "Tout sélectionner"                | Toutes les cases cochées, compteur à jour (`registration-bulk.js`)                                               | P2   | ✅ `admin.spec.js`                                                |
+| Validation groupée                                  | (PHPUnit)                                                                                                        |      |                                                                   |
+| Édition d'une section Histoire / d'une note         | L'éditeur Markdown se charge, un bouton de la barre d'outils (gras) modifie le texte, la valeur est bien soumise | P2   | ✅ `admin.spec.js` (via une note, même éditeur ; 2 bugs corrigés) |
+| Compta : devis/facture, ajouter / retirer une ligne | Les lignes apparaissent, indices corrects, le formulaire s'enregistre (`document-lines.js`)                      | P2   | ✅ `admin.spec.js`                                                |
+| Compta : choix d'un client                          | Adresse et contact pré-remplis, toujours modifiables (`client-autofill.js`)                                      | P2   | ✅ `admin.spec.js`                                                |
 
 ## 10. Accessibilité automatisée (optionnel)
 
@@ -133,6 +133,8 @@ Note : pour les clics 3D, viser des coordonnées fixes à une taille de fenêtre
 - ✅ **Dépôt refusé sans message** (`quick-upload.js`) : `var status` dans un script classique, c'est `window.status`, qui transforme tout en texte. Plantage `status.appendChild is not a function`, aucun message affiché. Variable renommée.
 - ✅ **Échec de connexion invisible** (`join.js`) : le message d'erreur était dans la popup, fermée après le rechargement. Elle se rouvre maintenant seule. Le focus allait aussi sur « fermer » au lieu du 1er champ.
 - ✅ **Pas de balise viewport** (`base.html.twig`, `desk/base.html.twig`, `popup.html.twig`) : sur un vrai téléphone, toutes les pages (sauf le minisite) s'affichaient comme sur un écran de ~980 px, dézoomées. Aucune règle CSS mobile (`max-width: 700px`...) ne s'appliquait, et `/music` ne passait jamais en mode mobile. Cause probable d'une bonne partie de #39.
+- ✅ **Impossible de créer une note ou une section Histoire** (`markdown-editor.js`) : EasyMDE cache le vrai `<textarea>` (champ obligatoire) et ne le remplit qu'à l'envoi ; la validation du navigateur, qui passe avant, le voit vide et bloque l'envoi sans aucun message. Corrigé avec `forceSync: true`. L'édition d'un contenu existant n'était pas touchée (champ déjà rempli).
+- ✅ **Aperçu Markdown jamais affiché** (`markdown-editor.js`) : appel à `toggleSideBySideView()`, méthode qui n'existe pas dans EasyMDE (erreur JS à chaque chargement). Remplacé par `toggleSideBySide()`, avec `sideBySideFullscreen: false` pour rester dans la page.
 - ⚠️ **Tableaux qui débordent sur téléphone (ouvert, #39)** : 12 tableaux sans `.table-responsive` (listes de membres de `/desk`, notes, planning, compta...), la colonne Actions sort de l'écran. Seul `admin/unvalids.html.twig` est déjà corrigé.
 - ⚠️ **Clics 3D de `/story` captés par les trieurs (ouvert)** : les boîtes invisibles des trieurs (`trieurAdmin`, `trieurAccounting`, `trieurMusic`) sont plus proches de la caméra que la mascotte et la soucoupe, et couvrent toute la gauche de la scène en 1280×800. Un clic sur la mascotte (95, 590) ou pile sur la soucoupe (12, 295) part vers `/desk/files/...` (puis `/join` pour un visiteur). Le correctif du 2026-09-12 ne couvrait que le cas où l'objet visé est touché en premier. Les 2 tests sont en `fixme`.
 
