@@ -62,6 +62,8 @@ jobs:
         with:
           php-version: "8.4"
           extensions: pdo_sqlite
+          # pcov : driver de couverture léger (contrairement à Xdebug, ne fait que ça)
+          coverage: pcov
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --no-scripts
       - name: .env éphémère pour booter le kernel (jamais commité, .env réel volontairement hors git)
@@ -70,14 +72,33 @@ jobs:
         run: echo 'DATABASE_URL="sqlite:///%kernel.project_dir%/var/test.db"' > .env.test.local
       - name: Télécharge les dépendances JS d'AssetMapper (assets/vendor/, gitignoré, nécessaire pour que les pages avec {{ importmap() }} rendent sans 500)
         run: php bin/console importmap:install
-      - name: Run PHPUnit
-        run: composer test
+      - name: Run PHPUnit (avec couverture)
+        run: composer test:coverage
+      - name: Résumé de couverture dans l'onglet Summary du run
+        if: always()
+        run: |
+          if [ -f var/coverage/coverage.txt ]; then
+            echo '### Couverture PHPUnit (`src/`)' >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            cat var/coverage/coverage.txt >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Rapport de couverture HTML (artefact à télécharger)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-php
+          path: var/coverage/
+          retention-days: 14
 
   # Tests de bout en bout (Playwright, tests/e2e/) : uniquement ce que PHPUnit
   # ne voit pas (JS, glisser-déposer, rendu). Base SQLite dédiée, recréée par
   # tests/e2e/global-setup.js, serveur php -S lancé par Playwright lui-même.
+  # Seulement sur les PR (~6 min) : master est protégée, rien n'y arrive sans
+  # une PR dont ce job est passé (cf. README, "Branche master protégée").
   tests-e2e:
     needs: [lint-php-twig, lint-js]
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -162,7 +183,8 @@ jobs:
   # VPS_USER, VPS_SSH_KEY, VPS_PATH (voir ROADMAP.md, Phase 3), et un clone
   # initial du repo déjà fait à la main sur le VPS.
   deploy:
-    needs: [composer-audit, npm-audit, tests-php, tests-e2e]
+    # Pas de tests-e2e ici : il ne tourne que sur PR, déjà passé avant le merge.
+    needs: [composer-audit, npm-audit, tests-php]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:

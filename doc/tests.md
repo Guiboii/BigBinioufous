@@ -7,6 +7,7 @@ Deux niveaux de tests, du plus rapide au plus lent.
 - `vendor/bin/phpunit` (ou `composer test`), quelques secondes.
 - Couvre tout ce qui se joue côté serveur : routes, droits d'accès, formulaires, réponses JSON, base de données.
 - Un nouveau correctif ou une nouvelle fonctionnalité commence **ici**.
+- `composer test:coverage` : mêmes tests + couverture de `src/` (résumé texte + `var/coverage/html/index.html`). Nécessite `pcov` (`sudo dnf install php-pecl-pcov`). En CI : résumé dans l'onglet Summary du run, HTML dans l'artefact `coverage-php`. Pas de seuil minimum imposé pour l'instant.
 
 ## Playwright (`tests/e2e/`) : seulement si PHPUnit ne suffit pas
 
