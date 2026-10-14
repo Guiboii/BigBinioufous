@@ -89,7 +89,8 @@ test('a visitor opens a YouTube video over the scene and closes it with Escape',
     youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
   });
   await expect(page.locator('#playlist li', { hasText: title })).toBeVisible();
-  await page.goto('/logout');
+  // Become a visitor by dropping the cookies: a real /logout would end the admin session every other spec shares.
+  await page.context().clearCookies();
   // Never load the real YouTube player: only the overlay and the iframe address are checked.
   await page.route(/youtube-nocookie\.com/, (route) => route.abort());
 
