@@ -46,19 +46,19 @@ Priorités :
 
 Le plus gros bloc, et celui qui a le plus cassé.
 
-| Scénario                                            | Vérification                                                                                                 | Prio | Statut                                            |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ---- | ------------------------------------------------- |
-| Dépôt d'un dossier dans un dossier homonyme         | Arrive dans le dossier affiché (#36)                                                                         | P1   | ✅ `folder-drop.spec.js`                          |
-| Dépôt d'un fichier simple sur la zone               | Le document apparaît dans la liste sans erreur                                                               | P1   | ✅ `files.spec.js`                                |
-| Dépôt d'un fichier refusé (type ou taille)          | Le message précis s'affiche (`invalid_mimetype`, `file_too_large`), pas un "échec" générique                 | P1   | ✅ `files.spec.js` (bug corrigé ; taille simulée) |
-| Dépôt mp3 + PDF + image dans l'espace `music`       | Les 3 sont acceptés (régression du 2026-08-13)                                                               | P1   | ✅ `files.spec.js`                                |
-| Glisser un document sur un dossier                  | Le document est déplacé (`drag-move.js`)                                                                     | P1   | ✅ `files.spec.js`                                |
-| Glisser un dossier sur lui-même / un de ses enfants | Refusé, rien ne bouge                                                                                        | P2   |                                                   |
-| Multi-sélection puis "Déplacer"                     | Seuls les éléments cochés sont déplacés ; 2e action groupée sans ids résiduels de la 1re (`bulk-actions.js`) | P1   | 🟡 `files.spec.js` (ids résiduels pas testés)     |
-| Multi-sélection puis "Supprimer"                    | Éléments en corbeille, puis restauration depuis la corbeille                                                 | P2   |                                                   |
-| Clic sur une image / un PDF / un mp3                | Modale d'aperçu avec le bon lecteur ; un `.docx` reste un lien normal (`file-preview.js`)                    | P2   |                                                   |
-| Création d'un dossier                               | La carte "Nouveau dossier" est visible et fonctionne                                                         | P3   | ✅ indirect (tous les tests fichiers)             |
-| Recherche et tri                                    | (PHPUnit : rendu serveur)                                                                                    |      |                                                   |
+| Scénario                                            | Vérification                                                                                                 | Prio | Statut                                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ---- | ----------------------------------------------------------------------------------------- |
+| Dépôt d'un dossier dans un dossier homonyme         | Arrive dans le dossier affiché (#36)                                                                         | P1   | ✅ `folder-drop.spec.js`                                                                  |
+| Dépôt d'un fichier simple sur la zone               | Le document apparaît dans la liste sans erreur                                                               | P1   | ✅ `files.spec.js`                                                                        |
+| Dépôt d'un fichier refusé (type ou taille)          | Le message précis s'affiche (`invalid_mimetype`, `file_too_large`), pas un "échec" générique                 | P1   | ✅ `files.spec.js` (bug corrigé ; taille simulée)                                         |
+| Dépôt mp3 + PDF + image dans l'espace `music`       | Les 3 sont acceptés (régression du 2026-08-13)                                                               | P1   | ✅ `files.spec.js`                                                                        |
+| Glisser un document sur un dossier                  | Le document est déplacé (`drag-move.js`)                                                                     | P1   | ✅ `files.spec.js`                                                                        |
+| Glisser un dossier sur lui-même / un de ses enfants | Refusé, rien ne bouge                                                                                        | P2   | 🟡 `files.spec.js` (sur lui-même ; sur un enfant impossible à glisser depuis la même vue) |
+| Multi-sélection puis "Déplacer"                     | Seuls les éléments cochés sont déplacés ; 2e action groupée sans ids résiduels de la 1re (`bulk-actions.js`) | P1   | 🟡 `files.spec.js` (ids résiduels pas testés)                                             |
+| Multi-sélection puis "Supprimer"                    | Éléments en corbeille, puis restauration depuis la corbeille                                                 | P2   | ✅ `files.spec.js`                                                                        |
+| Clic sur une image / un PDF / un mp3                | Modale d'aperçu avec le bon lecteur ; un `.docx` reste un lien normal (`file-preview.js`)                    | P2   | ✅ `files.spec.js` (image + `.txt` ; PDF/mp3 même code)                                   |
+| Création d'un dossier                               | La carte "Nouveau dossier" est visible et fonctionne                                                         | P3   | ✅ indirect (tous les tests fichiers)                                                     |
+| Recherche et tri                                    | (PHPUnit : rendu serveur)                                                                                    |      |                                                                                           |
 
 ## 5. Musique `/music` (`music.js`, `Player.js`, `setlist-manage.js`, `youtube-embed.js`)
 
